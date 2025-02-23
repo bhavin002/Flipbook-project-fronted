@@ -1,9 +1,12 @@
-import { Button } from "@/components/ui/button"
+import { Route, Routes } from "react-router-dom"
+import SignUp from "./pages/SignUp"
+import SignIn from "./pages/SignIn"
 
-export default function Home() {
+export default function App() {
   return (
-    <div>
-      <Button>Click me</Button>
-    </div>
+    <Routes>
+      <Route path="/" element={<SignUp/>} />
+      <Route path="/sign-in" element={<SignIn/>} />
+    </Routes>
   )
 }
