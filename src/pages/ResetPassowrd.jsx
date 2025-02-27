@@ -1,5 +1,4 @@
 
-import { ForgotPasswordForm } from "@/components/forgot-password-form"
 import { ResetPasswordForm } from "@/components/reset-password-form"
 
 export default function ResetPassword() {
