@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router-dom"
-import SignUp from "./pages/SignUp"
-import SignIn from "./pages/SignIn"
-import ForgotPassword from "./pages/ForgotPassword"
-import ResetPassword from "./pages/ResetPassowrd"
-import MyFlipbooks from "./pages/MyFlipbooks"
+import SignUp from "./pages/Auth/SignUp"
+import SignIn from "./pages/Auth/SignIn"
+import ForgotPassword from "./pages/Auth/ForgotPassword"
+import ResetPassword from "./pages/Auth/ResetPassowrd"
+import MyFlipbooks from "./pages/MyFlipbooks/MyFlipbooks"
 
 export default function App() {
   return (
