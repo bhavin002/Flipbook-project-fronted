@@ -1,9 +1,24 @@
 import { useState } from "react";
-import FilterCom from "./components/FilterCom"
+import FilterCom from "./components/Filter/FilterCom"
 import CreateDropDownCom from "./components/CreateDropDownCom";
 import ProfileDropDownCom from "./components/ProfileDropDownCom";
 import SearchInputCom from "./components/SearchInputCom";
-
+import SidebarNavigation from "./components/SidebarNavigation";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+  } from "@/components/ui/breadcrumb"
+  import { Separator } from "@/components/ui/separator"
+  import {
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
+  } from "@/components/ui/sidebar"
+import { AppSidebar } from "./components/AppSidebar";
 
 export default function MyFlipbooks() {
     const [searchValue, setSearchValue] = useState("");
@@ -42,6 +57,16 @@ export default function MyFlipbooks() {
                 </div>
                 <FilterCom />
             </div>
+            <div className="flex">
+                <SidebarNavigation />
+                <div className="relative flex h-[calc(100vh-80px)] w-[237px] flex-col items-center justify-between bg-primary/80 rounded-tr-xl">
+                    <SidebarProvider>
+                        <AppSidebar />
+                        <SidebarTrigger className="-ml-1" />
+                    </SidebarProvider>
+                </div>
+            </div>
+
         </>
     )
 }

@@ -20,7 +20,9 @@ export default function FilterSelectCom({ label, options, value, onChange, place
 
     const handleApplyDateRange = (dateRange) => {
         if (dateRange?.from && dateRange?.to) {
-            const formattedValue = `${format(dateRange.from, "yyyy-MM-dd")} - ${format(dateRange.to, "yyyy-MM-dd")}`;
+            console.log("dateRange.from", dateRange.from);
+            console.log("dateRange.to", dateRange.to);
+            const formattedValue = `${format(dateRange.from, "MMM d, yyyy")} - ${format(dateRange.to, "MMM d, yyyy")}`;
             setDisplayValue(formattedValue);
             onChange(formattedValue);
         }
