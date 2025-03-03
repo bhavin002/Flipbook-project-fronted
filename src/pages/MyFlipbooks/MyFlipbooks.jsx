@@ -5,20 +5,10 @@ import ProfileDropDownCom from "./components/ProfileDropDownCom";
 import SearchInputCom from "./components/SearchInputCom";
 import SidebarNavigation from "./components/SidebarNavigation";
 import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-  } from "@/components/ui/breadcrumb"
-  import { Separator } from "@/components/ui/separator"
-  import {
-    SidebarInset,
     SidebarProvider,
-    SidebarTrigger,
-  } from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar"
 import { AppSidebar } from "./components/AppSidebar";
+import BottomSidebarNavigation from "./components/BottomSidebarNavigation";
 
 export default function MyFlipbooks() {
     const [searchValue, setSearchValue] = useState("");
@@ -34,7 +24,7 @@ export default function MyFlipbooks() {
 
     return (
         <>
-            <header className="flex h-20 w-full justify-between shrink-0 items-center px-4 md:px-6">
+            <header className="flex h-16 w-full justify-between shrink-0 items-center px-4 md:px-6">
                 <div>
                     <img src="/src/assets/logo.png" width={200} />
                 </div>
@@ -48,22 +38,23 @@ export default function MyFlipbooks() {
                 <div className="flex md:gap-6 gap-2 items-center">
                     <CreateDropDownCom />
                     <ProfileDropDownCom />
-
                 </div>
             </header>
-            <div className="relative flex gap-2 justify-end mx-4 md:hidden" onBlur={handleBlur}>
-                <div className="w-full">
-                    <SearchInputCom searchValue={searchValue} setSearchValue={setSearchValue} isFocused={isFocused} setIsFocused={setIsFocused} />
-                </div>
-                <FilterCom />
-            </div>
             <div className="flex">
-                <SidebarNavigation />
-                <div className="relative flex h-[calc(100vh-80px)] w-[237px] flex-col items-center justify-between bg-primary/80 rounded-tr-xl">
+                <div className="hidden relative md:flex h-[calc(100vh-64px)] flex-col items-center justify-between overflow-hidden">
                     <SidebarProvider>
+                        <SidebarNavigation />
                         <AppSidebar />
-                        <SidebarTrigger className="-ml-1" />
                     </SidebarProvider>
+                </div>
+                {/* <BottomSidebarNavigation /> */}
+                <div className="flex-1">
+                    <div className="relative flex gap-2 justify-end mx-4 md:hidden" onBlur={handleBlur}>
+                        <div className="w-full">
+                            <SearchInputCom searchValue={searchValue} setSearchValue={setSearchValue} isFocused={isFocused} setIsFocused={setIsFocused} />
+                        </div>
+                        <FilterCom />
+                    </div>
                 </div>
             </div>
 

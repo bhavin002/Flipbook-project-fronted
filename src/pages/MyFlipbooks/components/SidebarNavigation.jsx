@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import { Home, Bot, BarChart2, Diamond, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import { useSidebar } from '@/components/ui/sidebar'
 
-function NavItem({ item, isSelected, isHovered, onClick, onMouseEnter, onMouseLeave }) {
+function NavItem({ item, isSelected, onClick, onMouseEnter, onMouseLeave }) {
     const { icon: Icon, label } = item;
 
     return (
         <div className='flex flex-col items-center'>
             <Button
-                className={`shadow-none [&_svg]:size-5 ${isSelected ? "bg-white hover:bg-white" : "hover:bg-white"}`}
+                className={`shadow-none [&_svg]:size-5 ${isSelected ? "bg-violet-400 hover:bg-violet-400" : "hover:bg-violet-400"}`}
                 onClick={onClick}
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
             >
-                <Icon
-                    color={isSelected || isHovered ? "hsl(var(--primary))" : "white"}
-                />
+                <Icon/>
             </Button>
             <p className="text-xs text-white mt-1">{label}</p>
         </div>
@@ -25,7 +23,7 @@ function NavItem({ item, isSelected, isHovered, onClick, onMouseEnter, onMouseLe
 
 export default function SidebarNavigation() {
     const [selectedItem, setSelectedItem] = useState('home');
-    const [hoveredItem, setHoveredItem] = useState(null);
+    const { toggleSidebar } = useSidebar()
 
     const navItems = [
         { id: 'home', icon: Home, label: 'Home' },
@@ -35,18 +33,20 @@ export default function SidebarNavigation() {
         { id: 'settings', icon: Settings, label: 'Settings' }
     ];
 
+    const handleItemClick = (itemId) => {
+        setSelectedItem(itemId);
+        toggleSidebar();
+    };
+
     return (
-        <div className="flex h-[calc(100vh-80px)] w-[75px] flex-col items-center justify-between bg-primary py-4 z-[11]">
+        <div className="flex h-[calc(100vh-64px)] w-[75px] flex-col items-center justify-between bg-primary py-4 z-[11]">
             <div className="items-center flex flex-col">
                 {navItems.slice(0, 1).map(item => (
                     <NavItem
                         key={item.id}
                         item={item}
                         isSelected={selectedItem === item.id}
-                        isHovered={hoveredItem === item.id}
-                        onClick={() => setSelectedItem(item.id)}
-                        onMouseEnter={() => setHoveredItem(item.id)}
-                        onMouseLeave={() => setHoveredItem(null)}
+                        onClick={() => handleItemClick(item.id)}
                     />
                 ))}
             </div>
@@ -56,10 +56,7 @@ export default function SidebarNavigation() {
                         key={item.id}
                         item={item}
                         isSelected={selectedItem === item.id}
-                        isHovered={hoveredItem === item.id}
-                        onClick={() => setSelectedItem(item.id)}
-                        onMouseEnter={() => setHoveredItem(item.id)}
-                        onMouseLeave={() => setHoveredItem(null)}
+                        onClick={() => handleItemClick(item.id)}
                     />
                 ))}
             </div>
