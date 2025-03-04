@@ -13,6 +13,7 @@ import BottomSidebarNavigation from "./components/BottomSidebarNavigation";
 export default function MyFlipbooks() {
     const [searchValue, setSearchValue] = useState("");
     const [isFocused, setIsFocused] = useState(false);
+    const [selectedItem, setSelectedItem] = useState('home'); // Add selectedItem state
 
     const handleBlur = (e) => {
         setTimeout(() => {
@@ -30,11 +31,15 @@ export default function MyFlipbooks() {
                 </div>
                 <div className="relative md:flex gap-6 hidden" onBlur={handleBlur}>
                     <div>
-                        <SearchInputCom searchValue={searchValue} setSearchValue={setSearchValue} isFocused={isFocused} setIsFocused={setIsFocused} />
+                        <SearchInputCom
+                            searchValue={searchValue}
+                            setSearchValue={setSearchValue}
+                            isFocused={isFocused}
+                            setIsFocused={setIsFocused}
+                        />
                     </div>
                     <FilterCom />
                 </div>
-
                 <div className="flex md:gap-6 gap-2 items-center">
                     <CreateDropDownCom />
                     <ProfileDropDownCom />
@@ -42,16 +47,26 @@ export default function MyFlipbooks() {
             </header>
             <div className="flex">
                 <div className="hidden relative md:flex h-[calc(100vh-64px)] flex-col items-center justify-between overflow-hidden">
-                    <SidebarProvider>
+                    <SidebarProvider
+                        value={{
+                            selectedItem,
+                            setSelectedItem,
+                        }}
+                    >
                         <SidebarNavigation />
                         <AppSidebar />
                     </SidebarProvider>
                 </div>
-                {/* <BottomSidebarNavigation /> */}
+                <BottomSidebarNavigation />
                 <div className="flex-1">
                     <div className="relative flex gap-2 justify-end mx-4 md:hidden" onBlur={handleBlur}>
                         <div className="w-full">
-                            <SearchInputCom searchValue={searchValue} setSearchValue={setSearchValue} isFocused={isFocused} setIsFocused={setIsFocused} />
+                            <SearchInputCom
+                                searchValue={searchValue}
+                                setSearchValue={setSearchValue}
+                                isFocused={isFocused}
+                                setIsFocused={setIsFocused}
+                            />
                         </div>
                         <FilterCom />
                     </div>

@@ -37,7 +37,6 @@ function useSidebar() {
   if (!context) {
     throw new Error("useSidebar must be used within a SidebarProvider.")
   }
-
   return context
 }
 
@@ -49,6 +48,7 @@ const SidebarProvider = React.forwardRef((
     className,
     style,
     children,
+    value = {}, // Add value prop to allow overriding selectedItem from parent
     ...props
   },
   ref
@@ -67,10 +67,10 @@ const SidebarProvider = React.forwardRef((
     } else {
       _setOpen(openState)
     }
-
-    // This sets the cookie to keep the sidebar state.
     document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
   }, [setOpenProp, open])
+
+  const [selectedItem, setSelectedItem] = React.useState(value.selectedItem || 'home')
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
@@ -90,7 +90,6 @@ const SidebarProvider = React.forwardRef((
         toggleSidebar()
       }
     }
-
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [toggleSidebar])
@@ -107,7 +106,9 @@ const SidebarProvider = React.forwardRef((
     openMobile,
     setOpenMobile,
     toggleSidebar,
-  }), [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar])
+    selectedItem: value.selectedItem || selectedItem,
+    setSelectedItem: value.setSelectedItem || setSelectedItem,
+  }), [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, selectedItem, setSelectedItem, value.selectedItem, value.setSelectedItem])
 
   return (
     <SidebarContext.Provider value={contextValue}>

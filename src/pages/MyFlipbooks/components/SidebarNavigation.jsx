@@ -23,19 +23,24 @@ function NavItem({ item, isSelected, onClick, onMouseEnter, onMouseLeave }) {
 
 export default function SidebarNavigation() {
     const [selectedItem, setSelectedItem] = useState('home');
-    const { toggleSidebar } = useSidebar()
+    const { setOpen, setSelectedItem: setGlobalSelectedItem } = useSidebar();
 
     const navItems = [
         { id: 'home', icon: Home, label: 'Home' },
         { id: 'automation', icon: Bot, label: 'Automation' },
         { id: 'statistics', icon: BarChart2, label: 'Statistics' },
         { id: 'branding', icon: Diamond, label: 'Branding' },
-        { id: 'settings', icon: Settings, label: 'Settings' }
+        { id: 'settings', icon: Settings, label: 'Settings' },
     ];
 
     const handleItemClick = (itemId) => {
         setSelectedItem(itemId);
-        toggleSidebar();
+        setGlobalSelectedItem(itemId);
+        if (['home', 'branding', 'settings'].includes(itemId)) {
+            setOpen(true);
+        } else {
+            setOpen(false);
+        }
     };
 
     return (
