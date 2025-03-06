@@ -20,9 +20,7 @@ export default function CreateFolderDialog() {
                 <DialogHeader>
                     <DialogTitle>Create new folder</DialogTitle>
                 </DialogHeader>
-                <div className="">
-                    <Input placeholder="Folder Name" className="col-span-3" />
-                </div>
+                <Input placeholder="Folder Name" />
                 <DialogFooter>
                     <Button type="submit">Create Folder</Button>
                 </DialogFooter>

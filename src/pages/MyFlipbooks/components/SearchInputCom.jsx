@@ -31,7 +31,7 @@ export default function SearchInputCom({ searchValue, setSearchValue, isFocused,
                     />
                 </div>
             </div>
-            {searchValue && isFocused && (
+            {searchValue && (
                 <div className="absolute mt-2">
                     <RecentSearchTabCom />
                 </div>

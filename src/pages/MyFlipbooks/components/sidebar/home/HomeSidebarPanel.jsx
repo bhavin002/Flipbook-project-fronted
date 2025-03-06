@@ -116,7 +116,6 @@ export default function HomeSidebarPanel() {
                                                                     {folder.name}
                                                                     <div className="w-5 h-5 hover:bg-[#8e65ff] flex items-center justify-center rounded-sm">
                                                                         <FolderDropdown />
-
                                                                     </div>
                                                                 </div>
                                                             </SidebarMenuButton>

@@ -9,11 +9,12 @@ import {
 } from "@/components/ui/sidebar"
 import { AppSidebar } from "./components/AppSidebar";
 import BottomSidebarNavigation from "./components/BottomSidebarNavigation";
+import { AppContent } from "./components/AppContent";
 
 export default function MyFlipbooks() {
     const [searchValue, setSearchValue] = useState("");
     const [isFocused, setIsFocused] = useState(false);
-    const [selectedItem, setSelectedItem] = useState('home'); // Add selectedItem state
+    const [selectedItem, setSelectedItem] = useState('home');
 
     const handleBlur = (e) => {
         setTimeout(() => {
@@ -70,6 +71,7 @@ export default function MyFlipbooks() {
                         </div>
                         <FilterCom />
                     </div>
+                    <AppContent selectedItem={selectedItem}/>
                 </div>
             </div>
 
