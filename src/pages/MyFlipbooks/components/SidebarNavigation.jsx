@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Home, Bot, BarChart2, Diamond, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useSidebar } from '@/components/ui/sidebar'
+import { useSidebar } from '@/components/ui/sidebar';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 function NavItem({ item, isSelected, onClick, onMouseEnter, onMouseLeave }) {
     const { icon: Icon, label } = item;
@@ -22,25 +23,47 @@ function NavItem({ item, isSelected, onClick, onMouseEnter, onMouseLeave }) {
 };
 
 export default function SidebarNavigation() {
-    const [selectedItem, setSelectedItem] = useState('home');
-    const { setOpen, setSelectedItem: setGlobalSelectedItem } = useSidebar();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem } = useSidebar();
 
     const navItems = [
-        { id: 'home', icon: Home, label: 'Home' },
-        { id: 'automation', icon: Bot, label: 'Automation' },
-        { id: 'statistics', icon: BarChart2, label: 'Statistics' },
-        { id: 'branding', icon: Diamond, label: 'Branding' },
-        { id: 'settings', icon: Settings, label: 'Settings' },
+        { id: 'home', icon: Home, label: 'Home', path: '/my-flipbooks' },
+        { id: 'automation', icon: Bot, label: 'Automation', path: '/automation' },
+        { id: 'statistics', icon: BarChart2, label: 'Statistics', path: '/statistics' },
+        { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings' },
+        { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace' },
     ];
 
-    const handleItemClick = (itemId) => {
-        setSelectedItem(itemId);
+    // Set initial selection based on current URL path
+    useEffect(() => {
+        const currentPath = location.pathname;
+        
+        const matchedItem = navItems.find(item => 
+            currentPath.startsWith(item.path.split('/').slice(0, 2).join('/'))
+        );
+        
+        if (matchedItem && matchedItem.id !== selectedItem) {
+            setGlobalSelectedItem(matchedItem.id);
+            
+            if (['home', 'branding', 'settings'].includes(matchedItem.id)) {
+                setOpen(true);
+            } else {
+                setOpen(false);
+            }
+        }
+    }, [location.pathname, setGlobalSelectedItem, setOpen, selectedItem]);
+
+    const handleItemClick = (itemId, path) => {
         setGlobalSelectedItem(itemId);
+        
         if (['home', 'branding', 'settings'].includes(itemId)) {
             setOpen(true);
         } else {
             setOpen(false);
         }
+        
+        navigate(path);
     };
 
     return (
@@ -51,7 +74,7 @@ export default function SidebarNavigation() {
                         key={item.id}
                         item={item}
                         isSelected={selectedItem === item.id}
-                        onClick={() => handleItemClick(item.id)}
+                        onClick={() => handleItemClick(item.id, item.path)}
                     />
                 ))}
             </div>
@@ -61,7 +84,7 @@ export default function SidebarNavigation() {
                         key={item.id}
                         item={item}
                         isSelected={selectedItem === item.id}
-                        onClick={() => handleItemClick(item.id)}
+                        onClick={() => handleItemClick(item.id, item.path)}
                     />
                 ))}
             </div>
