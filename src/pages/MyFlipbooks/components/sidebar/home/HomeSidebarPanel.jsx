@@ -92,14 +92,7 @@ export default function HomeSidebarPanel() {
                                                         <section.icon />
                                                         <div className="flex items-center justify-between w-full">
                                                             {section.label}
-                                                            <div
-                                                                className="w-6 h-6 hover:bg-[#8e65ff] flex items-center justify-center rounded-sm"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                }}
-                                                            >
-                                                                <CreateFolderDialog />
-                                                            </div>
+                                                            <CreateFolderDialog />
                                                         </div>
                                                     </SidebarMenuButton>
                                                 </CollapsibleTrigger>
@@ -114,9 +107,7 @@ export default function HomeSidebarPanel() {
                                                                 <Folder />
                                                                 <div className="flex items-center justify-between w-full">
                                                                     {folder.name}
-                                                                    <div className="w-5 h-5 hover:bg-[#8e65ff] flex items-center justify-center rounded-sm">
-                                                                        <FolderDropdown />
-                                                                    </div>
+                                                                    <FolderDropdown />
                                                                 </div>
                                                             </SidebarMenuButton>
                                                         ))}
@@ -159,14 +150,12 @@ export default function HomeSidebarPanel() {
                         <div className="space-y-2">
                             <Button
                                 className="w-full bg-violet-700"
-                                onClick={() => console.log('Invite teammates')}
                             >
                                 <Users />
                                 Invite teammates
                             </Button>
                             <Button
                                 className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-600 hover:to-indigo-700"
-                                onClick={() => console.log('Upgrade')}
                             >
                                 <Crown />Upgrade
                             </Button>

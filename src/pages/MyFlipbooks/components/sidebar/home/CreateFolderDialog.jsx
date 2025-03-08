@@ -14,9 +14,16 @@ export default function CreateFolderDialog() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <FolderPlus className="w-4 h-4" />
+                <div
+                    className="w-6 h-6 hover:bg-[#8e65ff] flex items-center justify-center rounded-sm"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                    }}
+                >
+                    <FolderPlus className="w-4 h-4" />
+                </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Create new folder</DialogTitle>
                 </DialogHeader>

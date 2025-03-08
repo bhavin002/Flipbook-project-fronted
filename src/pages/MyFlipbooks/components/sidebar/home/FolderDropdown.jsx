@@ -34,7 +34,9 @@ export default function FolderDropdown() {
         <div>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <EllipsisVertical className="w-4 h-4" />
+                    <div className="w-5 h-5 hover:bg-[#8e65ff] flex items-center justify-center rounded-sm">
+                        <EllipsisVertical className="w-4 h-4" />
+                    </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="start">
                     <DropdownMenuGroup>
@@ -52,9 +54,9 @@ export default function FolderDropdown() {
                 </DropdownMenuContent>
             </DropdownMenu>
 
-            <RenameFolderDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen}/>
-            <GetShareLink isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen}/>
-            <ConfirmationDialog isConfirmModalOpen={isTrashModalOpen} setIsConfirmModalOpen={setIsTrashModalOpen}/>
+            <RenameFolderDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} />
+            <GetShareLink isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
+            <ConfirmationDialog isConfirmModalOpen={isTrashModalOpen} setIsConfirmModalOpen={setIsTrashModalOpen} />
         </div>
     );
 }

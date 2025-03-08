@@ -1,5 +1,4 @@
 import {
-    EllipsisVertical,
     Eye,
     NotebookTabs,
     Pencil,
@@ -8,11 +7,10 @@ import {
     Send,
     Upload,
     Sparkles,
-    File,
 } from 'lucide-react';
+import MyFlipbookDropdown from './MyFlipbooks/MyFlipbookDropdown';
 
-export default function HomeContent() {
-    // Adding status property to each flipbook
+export default function MyFlipbooks({isSidebarOpen}) {
     const flipbooks = [
         { id: 1, name: "Flipbook 1", created: "March 05, 2025", status: "draft" },
         { id: 2, name: "Flipbook 2", created: "March 04, 2025", status: "published" },
@@ -22,14 +20,12 @@ export default function HomeContent() {
         { id: 6, name: "Flipbook 6", created: "February 28, 2025", status: "published" },
     ]
     
-    // Buttons for Unpublished state (previously handled by !published)
     const unpublishedButtons = [
         { icon: Pencil, title: "Edit", color: "text-amber-600", bg: "bg-amber-50", hover: "hover:bg-amber-100" },
         { icon: SlidersHorizontal, title: "Customize", color: "text-blue-600", bg: "bg-blue-50", hover: "hover:bg-blue-100" },
         { icon: Upload, title: "Publish", color: "text-green-600", bg: "bg-green-50", hover: "hover:bg-green-100" },
     ];
 
-    // Buttons for Published state
     const publishedButtons = [
         { icon: Eye, title: "View", color: "text-blue-600", bg: "bg-blue-50", hover: "hover:bg-blue-100" },
         { icon: NotebookTabs, title: "Details", color: "text-pink-600", bg: "bg-pink-50", hover: "hover:bg-pink-100" },
@@ -39,7 +35,6 @@ export default function HomeContent() {
         { icon: Send, title: "Share", color: "text-green-600", bg: "bg-green-50", hover: "hover:bg-green-100" },
     ];
     
-    // Helper function to get the appropriate buttons based on status
     const getButtonsForStatus = (status) => {
         switch (status) {
             case 'draft':
@@ -53,7 +48,6 @@ export default function HomeContent() {
         }
     };
     
-    // Helper function to get badge styling based on status
     const getStatusBadgeStyle = (status) => {
         switch (status) {
             case 'draft':
@@ -67,7 +61,6 @@ export default function HomeContent() {
         }
     };
     
-    // Helper function to get status display text
     const getStatusDisplayText = (status) => {
         switch (status) {
             case 'draft':
@@ -80,9 +73,9 @@ export default function HomeContent() {
                 return 'Unknown';
         }
     };
-    
+
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 mx-4 my-2">
+        <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1  ${isSidebarOpen ? "lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" : "lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"} gap-4 mx-4 my-2`}>
             {flipbooks.map((flipbook) => (
                 <div
                     key={flipbook.id}
@@ -94,11 +87,7 @@ export default function HomeContent() {
                             alt="Flipbook Cover"
                             className="max-h-[200px] h-full m-auto transition-transform duration-500"
                         />
-                        {/* Ellipsis Menu */}
-                        <div className="absolute top-3 right-3 bg-white/50 p-1.5 rounded-full shadow-sm cursor-pointer hover:bg-violet-50/50 hover:scale-110 transition-all duration-200">
-                            <EllipsisVertical size={16} className="text-violet-700" />
-                        </div>
-                        {/* Status Badge */}
+                         <MyFlipbookDropdown status={flipbook.status} />
                         <div className="absolute top-3 left-3 transform transition-transform duration-200 hover:scale-105">
                             <span className={`text-xs font-medium px-2.5 py-1 rounded-md ${getStatusBadgeStyle(flipbook.status)}`}>
                                 {getStatusDisplayText(flipbook.status)}

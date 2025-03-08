@@ -16,7 +16,7 @@ export default function ConfirmationDialog({
 }) {
     return (
         <Dialog open={isConfirmModalOpen} onOpenChange={setIsConfirmModalOpen}>
-            <DialogContent>
+            <DialogContent className="sm:max-w-[540px] w-[90vw]">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>

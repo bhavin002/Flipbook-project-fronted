@@ -15,18 +15,18 @@ function NavItem({ item, isSelected, onClick, onMouseEnter, onMouseLeave }) {
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}
             >
-                <Icon/>
+                <Icon />
             </Button>
             <p className="text-xs text-white mt-1">{label}</p>
         </div>
     );
 };
 
-export default function SidebarNavigation() {
+export default function SidebarNavigation({ setIsSidebarOpen,isSidebarOpen }) {
     const navigate = useNavigate();
     const location = useLocation();
-    const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem } = useSidebar();
-
+    const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem,open } = useSidebar();
+    console.log("open from SidebarNavigation", open);
     const navItems = [
         { id: 'home', icon: Home, label: 'Home', path: '/my-flipbooks' },
         { id: 'automation', icon: Bot, label: 'Automation', path: '/automation' },
@@ -38,31 +38,35 @@ export default function SidebarNavigation() {
     // Set initial selection based on current URL path
     useEffect(() => {
         const currentPath = location.pathname;
-        
-        const matchedItem = navItems.find(item => 
+        setIsSidebarOpen(open);
+        const matchedItem = navItems.find(item =>
             currentPath.startsWith(item.path.split('/').slice(0, 2).join('/'))
         );
-        
+
         if (matchedItem && matchedItem.id !== selectedItem) {
             setGlobalSelectedItem(matchedItem.id);
-            
+
             if (['home', 'branding', 'settings'].includes(matchedItem.id)) {
                 setOpen(true);
+                setIsSidebarOpen(true);
             } else {
                 setOpen(false);
+                setIsSidebarOpen(false);
             }
         }
-    }, [location.pathname, setGlobalSelectedItem, setOpen, selectedItem]);
+    }, [location.pathname, setGlobalSelectedItem, setOpen, setIsSidebarOpen, selectedItem]);
 
     const handleItemClick = (itemId, path) => {
         setGlobalSelectedItem(itemId);
-        
+
         if (['home', 'branding', 'settings'].includes(itemId)) {
             setOpen(true);
+            setIsSidebarOpen(true);
         } else {
             setOpen(false);
+            setIsSidebarOpen(false);
         }
-        
+
         navigate(path);
     };
 
