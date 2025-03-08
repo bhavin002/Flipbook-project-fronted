@@ -10,18 +10,23 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Globe, Lock, ListX, LockKeyhole, X } from 'lucide-react'
+import { Globe, Lock, ListX, LockKeyhole, X, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import FilterDropdownCom from "../../../Filter/FilterDropdownCom";
 import ReaderSelection from "./ReaderSelection";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublishModalOpen }) {
     const [selectedRadio, setSelectedRadio] = useState("email");
     const [emailInput, setEmailInput] = useState("");
-     const [createdByFilter, setCreatedByFilter] = useState([]);
+    const [createdByFilter, setCreatedByFilter] = useState([]);
     const [addedEmails, setAddedEmails] = useState([
         "bvxx@xx.com",
         "sgxx@xx.com",
@@ -53,7 +58,10 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
             options: [
                 { value: 'bhavinv', label: 'BhavinV' },
                 { value: 'satyamg', label: 'SatyamG' },
-                { value: 'utsavp', label: 'UtsavP' }
+                { value: 'utsavp', label: 'UtsavP' },
+                { value: 'nirav', label: 'Nirav' },
+                { value: 'parth', label: 'Parth' },
+                { value: 'pratik', label: 'Pratik' },
             ],
             selectedValues: createdByFilter,
             onChange: setCreatedByFilter
@@ -91,16 +99,16 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                     <Tabs defaultValue="public">
                         <TabsList className="grid w-full grid-cols-4">
                             <TabsTrigger value="public">
-                                <Globe className="w-4 h-4 mr-2" /> Public
+                                <Globe className="w-4 h-4 mr-2 hidden md:block" /> Public
                             </TabsTrigger>
                             <TabsTrigger value="unlisted">
-                                <ListX className="w-4 h-4 mr-2" /> Unlisted
+                                <ListX className="w-4 h-4 mr-2 hidden md:block" /> Unlisted
                             </TabsTrigger>
                             <TabsTrigger value="passwordLocked">
-                                <LockKeyhole className="w-4 h-4 mr-2" /> Locked
+                                <LockKeyhole className="w-4 h-4 mr-2 hidden md:block" /> Locked
                             </TabsTrigger>
                             <TabsTrigger value="private">
-                                <Lock className="w-4 h-4 mr-2" /> Private
+                                <Lock className="w-4 h-4 mr-2 hidden md:block" /> Private
                             </TabsTrigger>
                         </TabsList>
 
@@ -122,6 +130,7 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                                 <Input
                                     id="password"
                                     placeholder="Enter password"
+                                    type="password"
                                 />
                                 <p className="text-sm font-medium text-gray-600">Your catalog will not appear anywhere on the web. Your readers must enter the password you have set in order to read your flipbook.</p>
                             </div>
@@ -206,10 +215,11 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                                             onChange={filter.onChange}
                                         />
                                     ))
-                                )}
+                                )
+                                }
 
                                 {selectedRadio === "sso" && (
-                                    <div className="p-4 border rounded-md bg-gray-50">
+                                    <div className="p-4 border rounded-md bg-violet-50">
                                         <p>Access will be restricted to SSO users only.</p>
                                         <p className="text-gray-500 text-sm mt-2">Users must authenticate through your organization's SSO provider.</p>
                                     </div>
@@ -222,9 +232,22 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                     <Button variant="outline">
                         Close
                     </Button>
-                    <Button>
-                        Save
-                    </Button>
+                    <div className="flex items-center">
+                        <Button className="rounded-r-none flex-1 md:flex-none">
+                            Publish
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button className="rounded-l-none">
+                                    <ChevronDown className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem>Save as draft</DropdownMenuItem>
+                                <DropdownMenuItem>Schedule publication</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

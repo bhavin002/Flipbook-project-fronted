@@ -11,9 +11,11 @@ import {
 import MyFlipbookDropdown from './MyFlipbooks/MyFlipbookDropdown';
 import ShareFlipbookDialog from './MyFlipbooks/ShareFlipbookDialog';
 import { useState } from 'react';
+import PublishFlipbookDialog from './MyFlipbooks/PublishFlipbookDialog';
 
 export default function MyFlipbooks({ isSidebarOpen }) {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const flipbooks = [
         { id: 1, name: "Flipbook 1", created: "March 05, 2025", status: "draft" },
         { id: 2, name: "Flipbook 2", created: "March 04, 2025", status: "published" },
@@ -24,9 +26,9 @@ export default function MyFlipbooks({ isSidebarOpen }) {
     ]
 
     const unpublishedButtons = [
-        { icon: Pencil, title: "Edit", color: "text-amber-600", bg: "bg-amber-50", hover: "hover:bg-amber-100" },
-        { icon: SlidersHorizontal, title: "Customize", color: "text-blue-600", bg: "bg-blue-50", hover: "hover:bg-blue-100" },
-        { icon: Send, title: "Publish", color: "text-green-600", bg: "bg-green-50", hover: "hover:bg-green-100" },
+        { icon: Pencil, title: "Edit", value: "edit", color: "text-amber-600", bg: "bg-amber-50", hover: "hover:bg-amber-100" },
+        { icon: SlidersHorizontal, title: "Customize", value: "customize", color: "text-blue-600", bg: "bg-blue-50", hover: "hover:bg-blue-100" },
+        { icon: Send, title: "Publish", value: "publish", color: "text-green-600", bg: "bg-green-50", hover: "hover:bg-green-100" },
     ];
 
     const publishedButtons = [
@@ -41,6 +43,8 @@ export default function MyFlipbooks({ isSidebarOpen }) {
     const handleItemClick = (action) => {
         if (action === 'share') {
             setIsShareModalOpen(true);
+        } else if (action === 'publish') {
+            setIsPublishModalOpen(true);
         }
         else {
             console.error("Invalid action:", action);
@@ -139,6 +143,7 @@ export default function MyFlipbooks({ isSidebarOpen }) {
                 ))}
             </div>
             <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
+            <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} />
         </>
     )
 }
