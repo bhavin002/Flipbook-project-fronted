@@ -6,22 +6,41 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EllipsisVertical, Pencil, LayoutPanelLeft, PencilOff, CopyPlus, PencilLine, Share2, Code, Link2, Download, ChartPie, ChartColumnIncreasing, SquareArrowRight, Trash, Send } from 'lucide-react';
+import { EllipsisVertical, Pencil, LayoutPanelLeft, PencilOff, CopyPlus, PencilLine, Share2, Code, Link2, Download, ChartPie, ChartColumnIncreasing, SquareArrowRight, Trash, Send, Facebook, Twitter, Linkedin, Mail } from 'lucide-react';
 import SaveAsTemplateDialog from "./SaveAsTemplateDialog";
 import { useState } from "react";
 import RenameFlipbookDialog from "./RenameFlipbookDialog";
+import ShareFlipbookDialog from "./ShareFlipbookDialog";
+import DownloadDialog from "./DownloadDialog";
+import MoveToWorkspaceDialog from "./MoveToWorkspaceDialog";
+import ConfirmationDialog from "@/utils/ConfirmationDialog";
+import PublishFlipbookDialog from "./PublishFlipbookDialog";
 
 export default function MyFlipbookDropdown({ status }) {
     const [isSaveAsTemplateModalOpen, setIsSaveAsTemplateModalOpen] = useState(false);
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+    const [isMoveToWorkspaceModalOpen, setIsMoveToWorkspaceModalOpen] = useState(false);
+    const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
+    const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
 
     const handleItemClick = (action) => {
         if (action === 'saveAsTemplate') {
             setIsSaveAsTemplateModalOpen(true);
         } else if (action === 'rename') {
             setIsRenameModalOpen(true);
-        }
-        else {
+        } else if (action === 'share') {
+            setIsShareModalOpen(true);
+        } else if (action === 'download') {
+            setIsDownloadModalOpen(true);
+        } else if (action === 'moveToWorkspace') {
+            setIsMoveToWorkspaceModalOpen(true);
+        } else if (action === 'trash') {
+            setIsTrashModalOpen(true);
+        } else if (action === 'publish') {
+            setIsPublishModalOpen(true);
+        } else {
             console.error("Invalid action:", action);
         }
     };
@@ -43,7 +62,7 @@ export default function MyFlipbookDropdown({ status }) {
                     <PencilLine className="mr-2 h-4 w-4" /> Rename
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('share')}>
                     <Share2 className="mr-2 h-4 w-4" /> Sharing options
                 </DropdownMenuItem>
                 <DropdownMenuItem >
@@ -52,7 +71,7 @@ export default function MyFlipbookDropdown({ status }) {
                 <DropdownMenuItem >
                     <Link2 className="mr-2 h-4 w-4" /> Trackable links
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('download')}>
                     <Download className="mr-2 h-4 w-4" /> Download
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -63,10 +82,10 @@ export default function MyFlipbookDropdown({ status }) {
                     <ChartColumnIncreasing className="mr-2 h-4 w-4" /> Analytics
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('moveToWorkspace')}>
                     <SquareArrowRight className="mr-2 h-4 w-4" /> Move to workspace
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('trash')}>
                     <Trash className="mr-2 h-4 w-4" /> Move to trash
                 </DropdownMenuItem>
             </>
@@ -92,7 +111,7 @@ export default function MyFlipbookDropdown({ status }) {
                     <PencilLine className="mr-2 h-4 w-4" /> Rename
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('share')}>
                     <Share2 className="mr-2 h-4 w-4" /> Sharing options
                 </DropdownMenuItem>
                 <DropdownMenuItem >
@@ -101,7 +120,7 @@ export default function MyFlipbookDropdown({ status }) {
                 <DropdownMenuItem >
                     <Link2 className="mr-2 h-4 w-4" /> Trackable links
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('download')}>
                     <Download className="mr-2 h-4 w-4" /> Download
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -112,10 +131,10 @@ export default function MyFlipbookDropdown({ status }) {
                     <ChartColumnIncreasing className="mr-2 h-4 w-4" /> Analytics
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('moveToWorkspace')}>
                     <SquareArrowRight className="mr-2 h-4 w-4" /> Move to workspace
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('trash')}>
                     <Trash className="mr-2 h-4 w-4" /> Move to trash
                 </DropdownMenuItem>
             </>
@@ -123,7 +142,7 @@ export default function MyFlipbookDropdown({ status }) {
 
         const unpublishedItems = (
             <>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleItemClick('publish')}>
                     <Send className="mr-2 h-4 w-4" /> Publish
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -140,10 +159,10 @@ export default function MyFlipbookDropdown({ status }) {
                     <PencilLine className="mr-2 h-4 w-4" /> Rename
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('moveToWorkspace')}>
                     <SquareArrowRight className="mr-2 h-4 w-4" /> Move to workspace
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('trash')}>
                     <Trash className="mr-2 h-4 w-4" /> Move to trash
                 </DropdownMenuItem>
             </>
@@ -189,6 +208,16 @@ export default function MyFlipbookDropdown({ status }) {
             </DropdownMenu>
             <SaveAsTemplateDialog isSaveAsTemplateModalOpen={isSaveAsTemplateModalOpen} setIsSaveAsTemplateModalOpen={setIsSaveAsTemplateModalOpen} />
             <RenameFlipbookDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} />
+            <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
+            <DownloadDialog isDownloadModalOpen={isDownloadModalOpen} setIsDownloadModalOpen={setIsDownloadModalOpen} />
+            <MoveToWorkspaceDialog isMoveToWorkspaceModalOpen={isMoveToWorkspaceModalOpen} setIsMoveToWorkspaceModalOpen={setIsMoveToWorkspaceModalOpen} />
+            <ConfirmationDialog
+                isConfirmModalOpen={isTrashModalOpen}
+                setIsConfirmModalOpen={setIsTrashModalOpen}
+                title="Move to Trash"
+                description="Are you sure you want to move this flipbook to Trash?"
+            />
+            <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} />
         </>
     );
 }

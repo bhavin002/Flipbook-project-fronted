@@ -21,7 +21,7 @@ import {
   
     return (
       <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-[540px] w-[90vw]">
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">Share Folder</DialogTitle>
           </DialogHeader>

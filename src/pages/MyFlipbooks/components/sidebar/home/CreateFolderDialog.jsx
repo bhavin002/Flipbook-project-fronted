@@ -23,7 +23,7 @@ export default function CreateFolderDialog() {
                     <FolderPlus className="w-4 h-4" />
                 </div>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-[540px] w-[90vw]">
                 <DialogHeader>
                     <DialogTitle>Create new folder</DialogTitle>
                 </DialogHeader>

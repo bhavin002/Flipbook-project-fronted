@@ -32,7 +32,7 @@ export default function SearchInputCom({ searchValue, setSearchValue, isFocused,
                 </div>
             </div>
             {searchValue && (
-                <div className="absolute mt-2">
+                <div className="absolute mt-2 top-10 left-0 bg-white">
                     <RecentSearchTabCom />
                 </div>
             )}

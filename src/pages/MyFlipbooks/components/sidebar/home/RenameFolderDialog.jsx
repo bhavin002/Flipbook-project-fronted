@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 export default function RenameFolderDialog({ isRenameModalOpen, setIsRenameModalOpen }) {
     return (
         <Dialog open={isRenameModalOpen} onOpenChange={setIsRenameModalOpen}>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-[540px] w-[90vw]">
                 <DialogHeader>
                     <DialogTitle>Rename Folder</DialogTitle>
                 </DialogHeader>

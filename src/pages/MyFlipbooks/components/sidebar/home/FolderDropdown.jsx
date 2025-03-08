@@ -11,7 +11,7 @@ import { FolderPen, Share2, Trash } from 'lucide-react';
 import { useState } from 'react';
 import RenameFolderDialog from './RenameFolderDialog';
 import GetShareLink from './GetShareLink';
-import ConfirmationDialog from './ConfirmationDialog';
+import ConfirmationDialog from '../../../../../utils/ConfirmationDialog';
 
 export default function FolderDropdown() {
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
@@ -56,7 +56,12 @@ export default function FolderDropdown() {
 
             <RenameFolderDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} />
             <GetShareLink isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
-            <ConfirmationDialog isConfirmModalOpen={isTrashModalOpen} setIsConfirmModalOpen={setIsTrashModalOpen} />
+            <ConfirmationDialog
+                isConfirmModalOpen={isTrashModalOpen}
+                setIsConfirmModalOpen={setIsTrashModalOpen}
+                title="Delete folder"
+                description="Are you sure you want to delete this folder?"
+            />
         </div>
     );
 }
