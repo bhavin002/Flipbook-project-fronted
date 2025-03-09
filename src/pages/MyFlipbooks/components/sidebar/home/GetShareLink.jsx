@@ -25,8 +25,8 @@ import {
           <DialogHeader>
             <DialogTitle className="text-xl font-semibold">Share Folder</DialogTitle>
           </DialogHeader>
-          
-          <p className="text-sm font-medium mb-2">Visibility</p>
+          <div>
+          <p className="text-sm font-medium mb-1">Visibility</p>
           <Tabs defaultValue="public">
             <TabsList className="grid w-full grid-cols-2 mb-4">
               <TabsTrigger value="public">
@@ -101,6 +101,7 @@ import {
               </Card>
             </TabsContent>
           </Tabs>
+          </div>
         </DialogContent>
       </Dialog>
     )

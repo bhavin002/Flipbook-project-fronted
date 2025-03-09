@@ -60,7 +60,7 @@ export default function AppLayout({ setIsSidebarOpen,isSidebarOpen }) {
                 </header>
 
                 {/* Main Content Area */}
-                <div className="flex-1 mt-[64px] md:mt-[64px] max-md:mt-[112px] max-md:mb-[64px] overflow-y-auto">
+                <div className="flex-1 mt-[64px] md:mt-[64px] max-md:mt-[112px] max-md:mb-[80px] overflow-y-auto">
                     <div className="flex">
                         {/* Sidebar for Desktop */}
                         <div className="hidden relative md:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">

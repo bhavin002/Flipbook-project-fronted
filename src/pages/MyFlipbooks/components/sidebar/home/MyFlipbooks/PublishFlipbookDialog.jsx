@@ -137,7 +137,7 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                         </TabsContent>
 
                         <TabsContent value="private">
-                            <div className="space-y-4 my-6">
+                            <div className="space-y-4 my-4">
                                 <RadioGroup
                                     className="flex"
                                     value={selectedRadio}

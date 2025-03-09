@@ -29,8 +29,8 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                 <DialogHeader>
                     <DialogTitle className="text-xl font-semibold">Share Folder</DialogTitle>
                 </DialogHeader>
-                <div className="py-4 space-y-6">
-                    <div className="flex items-center space-x-2">
+                <div className="py-4">
+                    <div className="flex items-center gap-2 flex-wrap">
                         <Button variant="outline">
                             <img className="w-7" src="/src/assets/social/facebook.png" alt="Facebook" />
                         </Button>
@@ -44,8 +44,8 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                             <Mail /> Send Email
                         </Button>
                     </div>
-                    <div className="space-y-3">
-                        <p className="text-sm text-gray-600">Link to fullscreen mode on Flipsnack without Flipsnack branding</p>
+                    <div className="space-y-2 mt-6">
+                        <p className="text-[12px] font-medium text-gray-600">Link to fullscreen mode on Flipsnack without Flipsnack branding</p>
                         <div className="flex items-center gap-3">
                             <Input
                                 value="https://www.flipsnack.com/65BDD977C6F/d/a5a5f848-2a20-45ee-b4aa-4d21fa7fff08/"
@@ -73,8 +73,8 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                     </div>
 
                     {/* Trackable Links Section */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-gray-700">Create trackable links</span>
+                    <div className="flex items-center mt-6 gap-2">
+                        <a className="text-sm font-medium text-purple-600 cursor-pointer">Create trackable links</a>
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
@@ -92,18 +92,18 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                     </div>
 
                     {/* White Label URL Section */}
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-gray-700">White label URL -</span>
+                    <div className="flex items-center mt-6 gap-2">
+                        <span className="text-[12px] font-medium text-gray-700">White label URL -</span>
                         <a
                             href="https://help.flipsnack.com/en/articles/2139448-using-a-custom-domain-with-flipsnack"
-                            className="text-sm text-purple-600 hover:underline"
+                            className="text-[12px] font-medium text-purple-600 hover:underline"
                         >
                             Learn more
                         </a>
                     </div>
 
                     {/* White Label Input */}
-                    <div className="flex items-center">
+                    <div className="flex items-center mt-2">
                         <div className="flex-grow mr-1 max-w-[50%] relative">
                             <Input
                                 value="flibook.yourdomain.com"
