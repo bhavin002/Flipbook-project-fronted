@@ -26,7 +26,6 @@ export default function SidebarNavigation({ setIsSidebarOpen,isSidebarOpen }) {
     const navigate = useNavigate();
     const location = useLocation();
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem,open } = useSidebar();
-    console.log("open from SidebarNavigation", open);
     const navItems = [
         { id: 'home', icon: Home, label: 'Home', path: '/my-flipbooks' },
         { id: 'automation', icon: Bot, label: 'Automation', path: '/automation' },

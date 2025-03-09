@@ -17,8 +17,14 @@ export default function FolderDropdown() {
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-    const handleItemClick = (action) => {
+    const handleItemClick = (action, e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        
+        setIsDropdownOpen(false);
+        
         if (action === 'rename') {
             setIsRenameModalOpen(true);
         } else if (action === 'share') {
@@ -30,24 +36,32 @@ export default function FolderDropdown() {
         }
     };
 
+    const handleTriggerClick = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+    };
+
     return (
-        <div>
-            <DropdownMenu>
+        <div onClick={(e) => e.stopPropagation()}>
+            <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
                 <DropdownMenuTrigger asChild>
-                    <div className="w-5 h-5 hover:bg-[#8e65ff] flex items-center justify-center rounded-sm">
+                    <div 
+                        className="w-5 h-5 hover:bg-[#8e65ff] flex items-center justify-center rounded-sm cursor-pointer"
+                        onClick={handleTriggerClick}
+                    >
                         <EllipsisVertical className="w-4 h-4" />
                     </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="start">
+                <DropdownMenuContent className="w-56" align="start" onClick={(e) => e.stopPropagation()}>
                     <DropdownMenuGroup>
-                        <DropdownMenuItem onClick={() => handleItemClick('rename')}>
+                        <DropdownMenuItem onClick={(e) => handleItemClick('rename', e)}>
                             <FolderPen className="mr-2 h-4 w-4" /> Rename
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleItemClick('share')}>
+                        <DropdownMenuItem onClick={(e) => handleItemClick('share', e)}>
                             <Share2 className="mr-2 h-4 w-4" /> Get share link
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => handleItemClick('trash')}>
+                        <DropdownMenuItem onClick={(e) => handleItemClick('trash', e)}>
                             <Trash className="mr-2 h-4 w-4" /> Move to trash
                         </DropdownMenuItem>
                     </DropdownMenuGroup>

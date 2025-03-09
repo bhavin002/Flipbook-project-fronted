@@ -17,7 +17,7 @@ export default function RenameFolderDialog({ isRenameModalOpen, setIsRenameModal
                 <DialogHeader>
                     <DialogTitle>Rename Folder</DialogTitle>
                 </DialogHeader>
-                <Input value="Folder 1" placeholder="Enter new folder name" />
+                <Input defaultValue="Folder 1" placeholder="Enter new folder name" />
                 <DialogFooter>
                     <Button variant="outline">Cancel</Button>
                     <Button>OK</Button>
