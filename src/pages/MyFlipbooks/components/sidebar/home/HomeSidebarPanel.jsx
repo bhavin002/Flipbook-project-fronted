@@ -25,34 +25,10 @@ import { Crown } from 'lucide-react';
 import { Separator } from "@/components/ui/separator"
 import CreateFolderDialog from "./CreateFolderDialog";
 import FolderDropdown from "./FolderDropdown";
+import { getData } from "@/utils/datas";
 
 export default function HomeSidebarPanel() {
-    const sidebarSections = [
-        {
-            id: 'flipbooks-team',
-            icon: Users,
-            label: 'Team',
-            type: 'flipbooks',
-            folders: [
-                { id: 'flipbooks-folder-1', name: 'Folder 1' },
-                { id: 'flipbooks-folder-2', name: 'Folder 2' },
-                { id: 'flipbooks-folder-3', name: 'Folder 3' },
-                { id: 'flipbooks-folder-4', name: 'Folder 4' },
-            ]
-        },
-        {
-            id: 'template-team',
-            icon: Users,
-            label: 'Team',
-            type: 'template',
-            folders: [
-                { id: 'template-folder-1', name: 'Folder 1' },
-                { id: 'template-folder-2', name: 'Folder 2' },
-                { id: 'template-folder-3', name: 'Folder 3' },
-                { id: 'template-folder-4', name: 'Folder 4' },
-            ]
-        }
-    ]
+    const sidebarSections = getData('sidebarSections');
 
     const [selectedItem, setSelectedItem] = useState({
         sectionId: "flipbooks-team",

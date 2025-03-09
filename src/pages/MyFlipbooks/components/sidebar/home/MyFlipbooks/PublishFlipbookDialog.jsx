@@ -3,7 +3,8 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogFooter
+    DialogFooter,
+    DialogDescription
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -70,9 +71,12 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
 
     return (
         <Dialog open={isPublishModalOpen} onOpenChange={setIsPublishModalOpen}>
-            <DialogContent className="sm:max-w-[540px] w-[90vw] ">
+            <DialogContent className="sm:max-w-[540px] w-[90vw]">
                 <DialogHeader>
                     <DialogTitle>Publish your work</DialogTitle>
+                    <DialogDescription className="sr-only">
+                        Description
+                    </DialogDescription>
                 </DialogHeader>
                 <div className="px-1 max-h-[calc(100vh-300px)] overflow-y-auto">
                     <div className="grid gap-4 py-4">
@@ -82,7 +86,7 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                             </Label>
                             <Input
                                 id="title"
-                                value="New flipbook"
+                                defaultValue="New flipbook"
                             />
                         </div>
                         <div className="grid gap-2">

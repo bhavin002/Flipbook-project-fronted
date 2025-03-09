@@ -3,6 +3,7 @@
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -16,6 +17,9 @@ export default function RenameFolderDialog({ isRenameModalOpen, setIsRenameModal
             <DialogContent className="sm:max-w-[540px] w-[90vw]">
                 <DialogHeader>
                     <DialogTitle>Rename Folder</DialogTitle>
+                    <DialogDescription className="sr-only">
+                        Description
+                    </DialogDescription>
                 </DialogHeader>
                 <Input defaultValue="Folder 1" placeholder="Enter new folder name" />
                 <DialogFooter>

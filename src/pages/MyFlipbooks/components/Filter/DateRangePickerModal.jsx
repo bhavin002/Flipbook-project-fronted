@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { DialogDescription } from "@radix-ui/react-dialog"
 
 export function DateRangePickerModal({
   open,
@@ -38,6 +39,9 @@ export function DateRangePickerModal({
       <DialogContent className="sm:max-w-[540px] w-[90vw]">
         <DialogHeader>
           <DialogTitle>Select Date Range</DialogTitle>
+          <DialogDescription className="sr-only">
+            Description
+          </DialogDescription>
         </DialogHeader>
         <div className="py-4">
           <Calendar

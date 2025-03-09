@@ -1,83 +1,25 @@
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button";
-import {
-    FileCode,
-    FileText,
-    Image,
-    CirclePlay,
-    Crown
-} from 'lucide-react';
+import { Crown } from 'lucide-react';
+import { getData } from "@/utils/datas";
 
 export default function DownloadDialog({ isDownloadModalOpen, setIsDownloadModalOpen }) {
-    const downloadOptions = [
-        {
-            id: 1,
-            icon: FileCode,
-            title: "Download HTML5",
-            description: "Download the animated HTML5 flipbook on your computer for offline use self hosting.",
-            learnMoreLink: "#",
-            isPremium: true,
-        },
-        {
-            id: 2,
-            icon: FileText,
-            title: "Download PDF for web",
-            description: "Download your design as web PDF, if you need it for online sharing.",
-            learnMoreLink: "#",
-            isPremium: true,
-        },
-        {
-            id: 3,
-            icon: FileText,
-            title: "Download PDF for print",
-            description: "Download the print-ready PDF, if you need to print your design.",
-            learnMoreLink: "#",
-            isPremium: false,
-        },
-        {
-            id: 4,
-            icon: Image,
-            title: "Download GIF",
-            description: "Perfect for sharing a preview on email and social media. Always accompany it with the catalog link.",
-            learnMoreLink: "#",
-            isPremium: true,
-        },
-        {
-            id: 5,
-            icon: Image,
-            title: "Download PNG",
-            description: "Perfect for sharing a preview on email and social media. Always accompany it with the catalog link.",
-            learnMoreLink: "#",
-            isPremium: true,
-        },
-        {
-            id: 6,
-            icon: Image,
-            title: "Download GPEG",
-            description: "Perfect for sharing a preview on email and social media. Always accompany it with the catalog link.",
-            learnMoreLink: "#",
-            isPremium: false,
-        },
-        {
-            id: 7,
-            icon: CirclePlay,
-            title: "Download MP4",
-            description: "Get a 10-12 seconds teaser trailer of your catalog, perfect for social sharing.",
-            learnMoreLink: "#",
-            isPremium: true,
-        },
-    ];
+    const downloadOptions = getData("downloadOptions");
 
     return (
         <Dialog open={isDownloadModalOpen} onOpenChange={setIsDownloadModalOpen}>
             <DialogContent className="sm:max-w-[540px] w-[90vw]">
                 <DialogHeader>
                     <DialogTitle>Download</DialogTitle>
+                    <DialogDescription className="sr-only">
+                        Description
+                    </DialogDescription>
                 </DialogHeader>
                 <div className="max-h-[calc(100vh-300px)] overflow-y-auto space-y-4 py-4">
                     {downloadOptions.map((option) => (

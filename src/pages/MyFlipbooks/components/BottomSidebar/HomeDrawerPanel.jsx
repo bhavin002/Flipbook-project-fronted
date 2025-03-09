@@ -5,40 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import CreateFolderDialog from "../sidebar/home/CreateFolderDialog";
 import FolderDropdown from "../sidebar/home/FolderDropdown";
+import { getData } from "@/utils/datas";
 
-export default function DrawerHomeSidebarPanel() {
-  const sidebarSections = [
-    {
-      id: 'flipbooks-team',
-      icon: Users,
-      label: 'Team',
-      type: 'flipbooks',
-      folders: [
-        { id: 'flipbooks-folder-1', name: 'Folder 1' },
-        { id: 'flipbooks-folder-2', name: 'Folder 2' },
-        { id: 'flipbooks-folder-3', name: 'Folder 3' },
-        { id: 'flipbooks-folder-4', name: 'Folder 4' },
-      ]
-    },
-    {
-      id: 'template-team',
-      icon: Users,
-      label: 'Team',
-      type: 'template',
-      folders: [
-        { id: 'template-folder-1', name: 'Folder 1' },
-        { id: 'template-folder-2', name: 'Folder 2' },
-        { id: 'template-folder-3', name: 'Folder 3' },
-        { id: 'template-folder-4', name: 'Folder 4' },
-        { id: 'flipbooks-folder-5', name: 'Folder 5' },
-        { id: 'flipbooks-folder-6', name: 'Folder 6' },
-        { id: 'flipbooks-folder-7', name: 'Folder 7' },
-        { id: 'flipbooks-folder-8', name: 'Folder 8' },
-        { id: 'flipbooks-folder-9', name: 'Folder 9' },
-        { id: 'flipbooks-folder-10', name: 'Folder 10' }
-      ]
-    }
-  ];
+export default function HomeDrawerPanel() {
+  const sidebarSections = getData('sidebarSections');
 
   const [selectedItem, setSelectedItem] = useState({
     sectionId: "flipbooks-team",

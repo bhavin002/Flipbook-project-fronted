@@ -28,7 +28,6 @@ export default function AppLayout({ setIsSidebarOpen,isSidebarOpen }) {
     return (
         <>
             <div className="flex flex-col min-h-screen">
-                {/* Fixed Header */}
                 <header className="fixed top-0 left-0 right-0 z-10 bg-white">
                     <div className="flex h-16 w-full justify-between shrink-0 items-center px-4 md:px-6">
                         <div>
@@ -59,25 +58,21 @@ export default function AppLayout({ setIsSidebarOpen,isSidebarOpen }) {
                     </div>
                 </header>
 
-                {/* Main Content Area */}
                 <div className="flex-1 mt-[64px] md:mt-[64px] max-md:mt-[112px] max-md:mb-[80px] overflow-y-auto">
                     <div className="flex">
-                        {/* Sidebar for Desktop */}
                         <div className="hidden relative md:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
                             <SidebarProvider value={{ selectedItem, setSelectedItem }}>
-                                <SidebarNavigation setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen}/>
+                                <SidebarNavigation setIsSidebarOpen={setIsSidebarOpen}/>
                                 <AppSidebar />
                             </SidebarProvider>
                         </div>
 
-                        {/* Content */}
                         <div className="flex-1 md:max-h-[calc(100vh-64px)] md:overflow-y-auto">
                             <Outlet />
                         </div>
                     </div>
                 </div>
 
-                {/* Fixed Footer */}
                 <BottomSidebarNavigation />
             </div>
         </>

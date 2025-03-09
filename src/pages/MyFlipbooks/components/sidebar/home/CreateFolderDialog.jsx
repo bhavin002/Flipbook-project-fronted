@@ -1,6 +1,7 @@
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -26,6 +27,9 @@ export default function CreateFolderDialog() {
             <DialogContent className="sm:max-w-[540px] w-[90vw]">
                 <DialogHeader>
                     <DialogTitle>Create new folder</DialogTitle>
+                    <DialogDescription className="sr-only">
+                        Description
+                    </DialogDescription>
                 </DialogHeader>
                 <Input placeholder="Folder Name" />
                 <DialogFooter>

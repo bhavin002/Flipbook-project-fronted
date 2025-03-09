@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Home, Bot, BarChart2, Diamond, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { getData } from '@/utils/datas';
 
 function NavItem({ item, isSelected, onClick, onMouseEnter, onMouseLeave }) {
     const { icon: Icon, label } = item;
@@ -22,51 +23,71 @@ function NavItem({ item, isSelected, onClick, onMouseEnter, onMouseLeave }) {
     );
 };
 
-export default function SidebarNavigation({ setIsSidebarOpen,isSidebarOpen }) {
+export default function SidebarNavigation({ setIsSidebarOpen }) {
     const navigate = useNavigate();
     const location = useLocation();
-    const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem,open } = useSidebar();
-    const navItems = [
-        { id: 'home', icon: Home, label: 'Home', path: '/my-flipbooks' },
-        { id: 'automation', icon: Bot, label: 'Automation', path: '/automation' },
-        { id: 'statistics', icon: BarChart2, label: 'Statistics', path: '/statistics' },
-        { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings' },
-        { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace' },
-    ];
+    const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
+    const defaultRoutes = getData('defaultRoutes');
+    const navItems = getData('navItems');
+    
+    const [lastVisitedPaths, setLastVisitedPaths] = useState({...defaultRoutes});
+    const [activeSection, setActiveSection] = useState(null);
 
-    // Set initial selection based on current URL path
+    const getPathSection = (path) => {
+        const sections = navItems.map(item => ({
+            id: item.id,
+            basePath: item.path.split('/').slice(0, 2).join('/')
+        }));
+        
+        return sections.find(section => path.startsWith(section.basePath))?.id;
+    };
+
     useEffect(() => {
         const currentPath = location.pathname;
-        setIsSidebarOpen(open);
-        const matchedItem = navItems.find(item =>
-            currentPath.startsWith(item.path.split('/').slice(0, 2).join('/'))
-        );
-
-        if (matchedItem && matchedItem.id !== selectedItem) {
-            setGlobalSelectedItem(matchedItem.id);
-
-            if (['home', 'branding', 'settings'].includes(matchedItem.id)) {
-                setOpen(true);
-                setIsSidebarOpen(true);
-            } else {
-                setOpen(false);
-                setIsSidebarOpen(false);
+        
+        const currentSection = getPathSection(currentPath);
+        
+        if (currentSection) {
+            setActiveSection(currentSection);
+            
+            setLastVisitedPaths(prev => ({
+                ...prev,
+                [currentSection]: currentPath
+            }));
+            
+            if (currentSection !== selectedItem) {
+                setGlobalSelectedItem(currentSection);
             }
         }
-    }, [location.pathname, setGlobalSelectedItem, setOpen, setIsSidebarOpen, selectedItem]);
+    }, [location.pathname, setGlobalSelectedItem, selectedItem]);
 
-    const handleItemClick = (itemId, path) => {
-        setGlobalSelectedItem(itemId);
+    useEffect(() => {
+        setIsSidebarOpen(open);
+    }, [open, setIsSidebarOpen]);
 
-        if (['home', 'branding', 'settings'].includes(itemId)) {
-            setOpen(true);
-            setIsSidebarOpen(true);
-        } else {
-            setOpen(false);
-            setIsSidebarOpen(false);
+    const handleItemClick = (itemId) => {
+        const currentPath = location.pathname;
+        const currentSection = getPathSection(currentPath);
+        
+        if (itemId === currentSection) {
+            const newOpenState = !open;
+            setOpen(newOpenState);
+            setIsSidebarOpen(newOpenState);
+            
+            return;
         }
-
-        navigate(path);
+        
+        setGlobalSelectedItem(itemId);
+        
+        const shouldOpenSidebar = ['home', 'branding', 'settings'].includes(itemId);
+        setOpen(shouldOpenSidebar);
+        setIsSidebarOpen(shouldOpenSidebar);
+        
+        if (itemId !== activeSection) {
+            navigate(defaultRoutes[itemId]);
+        } else {
+            navigate(lastVisitedPaths[itemId]);
+        }
     };
 
     return (
@@ -77,7 +98,7 @@ export default function SidebarNavigation({ setIsSidebarOpen,isSidebarOpen }) {
                         key={item.id}
                         item={item}
                         isSelected={selectedItem === item.id}
-                        onClick={() => handleItemClick(item.id, item.path)}
+                        onClick={() => handleItemClick(item.id)}
                     />
                 ))}
             </div>
@@ -87,7 +108,7 @@ export default function SidebarNavigation({ setIsSidebarOpen,isSidebarOpen }) {
                         key={item.id}
                         item={item}
                         isSelected={selectedItem === item.id}
-                        onClick={() => handleItemClick(item.id, item.path)}
+                        onClick={() => handleItemClick(item.id)}
                     />
                 ))}
             </div>

@@ -1,17 +1,9 @@
-import {
-    Pencil,
-    SlidersHorizontal,
-    ChartPie,
-    Send,
-    BookOpen,
-    Sparkles,
-    Share2,
-    Info
-} from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import MyFlipbookDropdown from './MyFlipbooks/MyFlipbookDropdown';
 import ShareFlipbookDialog from './MyFlipbooks/ShareFlipbookDialog';
 import { useState, useEffect } from 'react';
 import PublishFlipbookDialog from './MyFlipbooks/PublishFlipbookDialog';
+import { getData } from '@/utils/datas';
 
 export default function MyFlipbooks({ isSidebarOpen }) {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -19,14 +11,9 @@ export default function MyFlipbooks({ isSidebarOpen }) {
     const [isLoading, setIsLoading] = useState(true);
     const [imageLoadingStates, setImageLoadingStates] = useState({});
 
-    const flipbooks = [
-        { id: 1, name: "Flipbook 1", created: "March 05, 2025", status: "draft" },
-        { id: 2, name: "Flipbook 2", created: "March 04, 2025", status: "published" },
-        { id: 3, name: "Flipbook 3", created: "March 03, 2025", status: "unpublished" },
-        { id: 4, name: "Flipbook 4", created: "March 02, 2025", status: "published" },
-        { id: 5, name: "Flipbook 5", created: "March 01, 2025", status: "unpublished" },
-        { id: 6, name: "Flipbook 6", created: "February 28, 2025", status: "published" },
-    ];
+    const flipbooks = getData('flipbooks');
+    const unpublishedButtons = getData('unpublishedButtons');
+    const publishedButtons = getData('publishedButtons');
 
     // Simulate initial data loading
     useEffect(() => {
@@ -51,21 +38,6 @@ export default function MyFlipbooks({ isSidebarOpen }) {
         });
         setImageLoadingStates(initialStates);
     }, []);
-
-    const unpublishedButtons = [
-        { icon: Pencil, title: "Edit", value: "edit", color: "text-amber-600", bg: "bg-amber-50", hover: "hover:bg-amber-100" },
-        { icon: SlidersHorizontal, title: "Customize", value: "customize", color: "text-blue-600", bg: "bg-blue-50", hover: "hover:bg-blue-100" },
-        { icon: Send, title: "Publish", value: "publish", color: "text-green-600", bg: "bg-green-50", hover: "hover:bg-green-100" },
-    ];
-
-    const publishedButtons = [
-        { icon: BookOpen, title: "View", value: "view", color: "text-blue-600", bg: "bg-blue-50", hover: "hover:bg-blue-100" },
-        { icon: Info, title: "Details", value: "details", color: "text-pink-600", bg: "bg-pink-50", hover: "hover:bg-pink-100" },
-        { icon: Pencil, title: "Edit", value: "edit", color: "text-amber-600", bg: "bg-amber-50", hover: "hover:bg-amber-100" },
-        { icon: SlidersHorizontal, title: "Customize", value: "customize", color: "text-blue-600", bg: "bg-blue-50", hover: "hover:bg-blue-100" },
-        { icon: ChartPie, title: "Statistics", value: "stats", color: "text-amber-600", bg: "bg-amber-50", hover: "hover:bg-amber-100" },
-        { icon: Share2, title: "Share", value: "share", color: "text-green-600", bg: "bg-green-50", hover: "hover:bg-green-100" },
-    ];
 
     const handleItemClick = (action) => {
         if (action === 'share') {

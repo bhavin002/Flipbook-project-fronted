@@ -28,7 +28,7 @@ export default function SaveAsTemplateDialog({ isSaveAsTemplateModalOpen, setIsS
                         </Label>
                         <Input
                             id="title"
-                            value="New flipbook"
+                            defaultValue="New flipbook"
                         />
                     </div>
                     <div className="grid gap-2">
