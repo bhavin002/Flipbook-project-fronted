@@ -79,11 +79,11 @@ export default function DownloadDialog({ isDownloadModalOpen, setIsDownloadModal
                 <DialogHeader>
                     <DialogTitle>Download</DialogTitle>
                 </DialogHeader>
-                <div className="p-2 max-h-[calc(100vh-300px)] overflow-y-auto">
+                <div className="max-h-[calc(100vh-300px)] overflow-y-auto space-y-4 py-4">
                     {downloadOptions.map((option) => (
                         <div
                             key={option.id}
-                            className="flex flex-col sm:flex-row items-start p-4 bg-violet-50 rounded-lg my-2"
+                            className="flex flex-col sm:flex-row items-start p-4 bg-violet-50 rounded-lg"
                         >
                             <div className="flex items-start w-full">
                                 <div className="mr-4 mt-1 bg-violet-100 p-2 rounded-lg shrink-0">

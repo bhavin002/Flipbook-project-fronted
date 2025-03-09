@@ -81,6 +81,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
@@ -94,7 +95,26 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+.load-effect {
+  opacity: 0;
+  /* opacity-0 */
+  transition: all 0.2s;
+  /* transition-all duration-200 */
+  animation: fadeIn 0.5s forwards;
+  /* animate-fadeIn */
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
   }
 }
