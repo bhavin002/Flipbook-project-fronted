@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Home, Bot, BarChart2, Diamond, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useNavigate, useLocation } from 'react-router-dom';

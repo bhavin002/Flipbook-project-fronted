@@ -10,8 +10,18 @@ import {
 import { AppSidebar } from "./components/AppSidebar";
 import BottomSidebarNavigation from "./components/BottomSidebarNavigation";
 import { Outlet } from "react-router-dom";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import AppBreadcrumbs from "@/utils/AppBreadcrumb";
 
-export default function AppLayout({ setIsSidebarOpen,isSidebarOpen }) {
+
+export default function AppLayout({ setIsSidebarOpen, isSidebarOpen }) {
     const [searchValue, setSearchValue] = useState("");
     const [isFocused, setIsFocused] = useState(false);
     const [selectedItem, setSelectedItem] = useState('home');
@@ -56,18 +66,24 @@ export default function AppLayout({ setIsSidebarOpen,isSidebarOpen }) {
                         />
                         <FilterCom />
                     </div>
+                    <div className="md:hidden px-4 py-3 sticky top-0 bg-white z-10">
+                        <AppBreadcrumbs />
+                    </div>
                 </header>
 
-                <div className="flex-1 mt-[64px] md:mt-[64px] max-md:mt-[112px] max-md:mb-[80px] overflow-y-auto">
+                <div className="flex-1 md:mt-[64px] max-md:mt-[156px] max-md:mb-[80px] overflow-y-auto">
                     <div className="flex">
                         <div className="hidden relative md:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
                             <SidebarProvider value={{ selectedItem, setSelectedItem }}>
-                                <SidebarNavigation setIsSidebarOpen={setIsSidebarOpen}/>
+                                <SidebarNavigation setIsSidebarOpen={setIsSidebarOpen} />
                                 <AppSidebar />
                             </SidebarProvider>
                         </div>
 
                         <div className="flex-1 md:max-h-[calc(100vh-64px)] md:overflow-y-auto">
+                            <div className="hidden md:block px-4 py-1 sticky top-0 bg-white z-10">
+                                <AppBreadcrumbs />
+                            </div>
                             <Outlet />
                         </div>
                     </div>
