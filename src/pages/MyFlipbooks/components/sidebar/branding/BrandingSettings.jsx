@@ -2,7 +2,7 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import CustomDomainSettings from "./CustomDomainSettings";
+import CustomDomainSettings from "./setting/CustomDomainSettings";
 
 export default function BrandingSettings() {
   return (
