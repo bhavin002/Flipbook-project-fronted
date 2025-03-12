@@ -6,7 +6,7 @@ import CustomDomainSettings from "./setting/CustomDomainSettings";
 
 export default function BrandingSettings() {
   return (
-    <div className="mx-auto p-6 max-w-[100vw] overflow-auto">
+    <div className="p-6 max-w-[100vw] overflow-auto">
       <div className="p-6 mb-8 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
         <h1 className="text-2xl font-bold mb-2">Settings</h1>
         <p className="text-gray-500">Set your profile private and add advanced integrations.</p>
