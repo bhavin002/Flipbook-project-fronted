@@ -4,9 +4,9 @@ import { Trash2 } from "lucide-react";
 
 export default function BrandingFonts() {
     const fonts = [
-        { id: 1, name: "Open Sans", styles: ["Regular", "Italic", "Bold", "Bold Italic"] },
-        { id: 2, name: "Montserrat", styles: ["Regular", "SemiBold", "Bold"] },
-        { id: 3, name: "Roboto", styles: ["Light", "Regular", "Medium", "Bold"] },
+        { id: 1, name: "Open Sans", styles: ["Regular", "Italic",] },
+        { id: 2, name: "Montserrat", styles: ["Regular", "SemiBold",] },
+        { id: 3, name: "Roboto", styles: ["Regular", "Bold",] },
     ];
     return (
         <div className="flex flex-col max-w-[100vw] overflow-auto p-6 h-full">

@@ -1,8 +1,8 @@
 import { Sidebar, SidebarRail } from '@/components/ui/sidebar';
 import { useSidebar } from '@/components/ui/sidebar';
-import HomeSidebarPanel from './sidebar/home/HomeSidebarPanel';
-import BrandingSidebarPanel from './sidebar/branding/BrandingSidebarPanel';
-import SettingSidebarPanel from './sidebar/setting/SettingSidebarPanel';
+import HomeSidebarPanel from './Sidebar/Home/HomeSidebarPanel';
+import BrandingSidebarPanel from './Sidebar/Branding/BrandingSidebarPanel';
+import SettingSidebarPanel from './Sidebar/Setting/SettingSidebarPanel';
 
 export function AppSidebar() {
     const { selectedItem } = useSidebar();

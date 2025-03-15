@@ -3,8 +3,8 @@ import { ChevronRight, Folder, BookOpen, Users, UserCheck, LayoutPanelLeft, Tras
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import CreateFolderDialog from "../sidebar/home/CreateFolderDialog";
-import FolderDropdown from "../sidebar/home/FolderDropdown";
+import CreateFolderDialog from "../Sidebar/Home/CreateFolderDialog";
+import FolderDropdown from "../Sidebar/Home/FolderDropdown";
 import { getData } from "@/utils/datas";
 
 export default function HomeDrawerPanel() {

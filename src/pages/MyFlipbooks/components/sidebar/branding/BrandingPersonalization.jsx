@@ -1,11 +1,11 @@
-import Favicon from "./personalization/Favicon";
-import Header from "./personalization/Header";
-import Profile from "./personalization/Profile";
-import Social from "./personalization/Social";
-import SocialThumnail from "./personalization/SocialThumnail";
-import Footer from "./personalization/Footer";
-import Preview from "./personalization/Preview";
-import TabPersonalization from "./personalization/TabPersonalization";
+import Favicon from "./Personalization/Favicon";
+import Header from "./Personalization/Header";
+import Profile from "./Personalization/Profile";
+import Social from "./Personalization/Social";
+import SocialThumnail from "./Personalization/SocialThumnail";
+import Footer from "./Personalization/Footer";
+import Preview from "./Personalization/Preview";
+import TabPersonalization from "./Personalization/TabPersonalization";
 export default function BrandingPersonalization() {
     return (
         <>
