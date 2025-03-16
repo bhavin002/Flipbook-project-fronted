@@ -102,7 +102,7 @@ export default function BrandingTypography() {
             </div>
 
             {editors.map((editor) => (
-                <Card key={editor.id} className="p-4 overflow-hidden mb-4">
+                <Card key={editor.id} className="p-4 overflow-hidden mb-4 shadow-sm rounded-lg">
                     <div className="text-sm text-gray-500 mb-2">{editor.name}</div>
 
                     <CardContent className="p-0 mb-2">

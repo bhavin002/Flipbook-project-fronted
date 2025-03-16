@@ -20,7 +20,7 @@ import {
 export default function SelectLogoDialog() {
     const [logos, setLogos] = useState([
         { id: 1, src: "/src/assets/book_logo.png", alt: "Logo 1", selected: false, type: "PNG" },
-        { id: 2, src: "/src/assets/logo.png", alt: "Logo 2", selected: false, type: "PNG" }
+        { id: 2, src: "/src/assets/logo.png", alt: "Logo 2", selected: false, type: "PNG" },
     ]);
 
     const handleDelete = (id) => {
@@ -28,7 +28,6 @@ export default function SelectLogoDialog() {
     };
 
     const toggleSelected = (id) => {
-
         setLogos(logos.map(logo =>
             logo.id === id ? { ...logo, selected: !logo.selected } : { ...logo, selected: false }
         ));
@@ -56,9 +55,9 @@ export default function SelectLogoDialog() {
                         Insert
                     </Button>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="max-h-[calc(100vh-300px)] flex flex-wrap overflow-auto">
                     {logos.map((logo) => (
-                        <LogoCard
+                        <LogoCard 
                             key={logo.id}
                             logo={logo}
                             onDelete={handleDelete}
@@ -82,7 +81,7 @@ function LogoCard({ logo, onDelete, onToggleSelect }) {
 
     return (
         <Card
-            className="relative overflow-hidden aspect-square border border-gray-200 rounded-lg shadow-sm hover:shadow transition-all cursor-pointer"
+            className="relative max-h-[80px] md:w-1/4 w-1/2 p-1  h-full overflow-hidden aspect-square border-none shadow-none"
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => {
                 if (!dropdownOpen) {
@@ -91,7 +90,8 @@ function LogoCard({ logo, onDelete, onToggleSelect }) {
             }}
             onClick={() => onToggleSelect(logo.id)}
         >
-            <div
+            <div className="relative w-full h-full border border-gray-200 rounded-lg shadow-sm hover:shadow transition-all cursor-pointer">
+                  <div
                 className="absolute inset-0 bg-center bg-repeat"
                 style={{ backgroundImage: 'url(https://cdn.flipsnack.com/site/images/transparent-bg-pattern.png)' }}
             />
@@ -108,7 +108,7 @@ function LogoCard({ logo, onDelete, onToggleSelect }) {
 
             {(isHovering || logo.selected) && (
                 <>
-                    <div className="absolute bottom-2 left-2 bg-gray-700 text-white text-xs px-2 py-1 rounded opacity-70 z-20">
+                    <div className="absolute bottom-2 left-2 bg-gray-700 text-white text-[10px] px-1 rounded opacity-70 z-20">
                         {logo.type}
                     </div>
                     <div className="absolute inset-0 bg-black bg-opacity-20 z-20">
@@ -128,7 +128,6 @@ function LogoCard({ logo, onDelete, onToggleSelect }) {
                             )}
                         </div>
 
-                        {/* Three dots menu */}
                         <DropdownMenu
                             open={dropdownOpen}
                             onOpenChange={(open) => {
@@ -150,7 +149,7 @@ function LogoCard({ logo, onDelete, onToggleSelect }) {
                                     <MoreVertical size={16} />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-48 z-50" align="end">
+                            <DropdownMenuContent className="w-48 z-50" align="start">
                                 <DropdownMenuItem
                                     className="flex items-center gap-2"
                                 >
@@ -173,6 +172,8 @@ function LogoCard({ logo, onDelete, onToggleSelect }) {
                 </>
 
             )}
+            </div>
+          
         </Card>
     );
 }

@@ -17,12 +17,12 @@ const navItems = [
 ];
 
 const bottomNavItems = [
-        { id: 'home', icon: Home, label: 'Home', path: '/my-flipbooks', hasDrawer: true },
-        { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', hasDrawer: false },
-        { id: 'statistics', icon: BarChart2, label: 'Statistics', path: '/statistics', hasDrawer: false },
-        { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings', hasDrawer: true },
-        { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', hasDrawer: true }
-    ];
+    { id: 'home', icon: Home, label: 'Home', path: '/my-flipbooks', hasDrawer: true },
+    { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', hasDrawer: false },
+    { id: 'statistics', icon: BarChart2, label: 'Statistics', path: '/statistics', hasDrawer: false },
+    { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings', hasDrawer: true },
+    { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', hasDrawer: true }
+];
 
 const settingMenuItems = [
     {
@@ -43,7 +43,7 @@ const settingMenuItems = [
         path: '/settings/billing',
         subItems: [
             { id: 'subscription', label: 'Subscription', path: '/settings/billing/subscription' },
-            { id: 'invoice', label: 'Billing History', path: '/settings/billing/invoice' }
+            { id: 'invoice', label: 'Invoices', path: '/settings/billing/invoice' }
         ]
     },
     {
@@ -248,6 +248,198 @@ const brandingMenuItems = [
     }
 ];
 
+const mainPlans = {
+    monthly: [
+        {
+            id: "starter",
+            title: "Starter Monthly",
+            price: "$35",
+            billedAs: "Billed Monthly",
+            features: [
+                "5 flipbooks",
+                "Add links / detect links",
+                "Share link, email, QR code, unlisted",
+                "Download flipbook as PDF"
+            ]
+        },
+        {
+            id: "professional",
+            title: "Professional Monthly",
+            price: "$52",
+            billedAs: "Billed Monthly",
+            features: [
+                "50 flipbooks",
+                "YouTube & Vimeo videos, lead forms, charts & more",
+                "Share multiple flipbooks in bookshelves",
+                "Password protected sharing",
+                "Embed (without watermark)",
+                "Flipsnack statistics & Google Analytics",
+                "50 credits"
+            ]
+        },
+        {
+            id: "business",
+            title: "Business Monthly",
+            price: "$109",
+            billedAs: "Billed Monthly",
+            features: [
+                "100 flipbooks",
+                "Custom domain",
+                "Add your logo in Flipsnack dashboard & flipbooks",
+                "Send fully branded emails",
+                "Download as HTML5",
+                "250 AI credits",
+                "200 individual tracking links",
+                "Export lead forms to CRM via Zapier",
+                "Extract flipbook text for accessibility"
+            ],
+            showContactSales: true
+        }
+    ],
+    yearly: [
+        {
+            id: "starter",
+            title: "Starter Yearly",
+            price: "$16",
+            billedAs: "Billed Yearly 192",
+            features: [
+                "5 flipbooks",
+                "Add links / detect links",
+                "Share link, email, QR code, unlisted",
+                "Download flipbook as PDF"
+            ]
+        },
+        {
+            id: "professional",
+            title: "Professional Yearly",
+            price: "$38",
+            billedAs: "Billed Yearly 456",
+            features: [
+                "50 flipbooks",
+                "YouTube & Vimeo videos, lead forms, charts & more",
+                "Share multiple flipbooks in bookshelves",
+                "Password protected sharing",
+                "Embed (without watermark)",
+                "Flipsnack statistics & Google Analytics",
+                "50 credits"
+            ]
+        },
+        {
+            id: "business",
+            title: "Business Yearly",
+            price: "$85",
+            billedAs: "Billed Yearly 1020",
+            features: [
+                "100 flipbooks",
+                "Custom domain",
+                "Add your logo in Flipsnack dashboard & flipbooks",
+                "Send fully branded emails",
+                "Download as HTML5",
+                "250 AI credits",
+                "200 individual tracking links",
+                "Export lead forms to CRM via Zapier",
+                "Extract flipbook text for accessibility"
+            ],
+            showContactSales: true
+        }
+    ]
+};
+
+const enterprisePlans = {
+    monthly: {
+        title: "Enterprise Monthly",
+        features: [
+            "1000+ flipbooks",
+            "Collaboration",
+            "Centralized management for multiple teams",
+            "Assigning roles and permissions",
+            "Teammates activity logs",
+            "SSO sharing",
+            "Share flipbooks with readers",
+            "Import feeds (CSV, XLSX) or Sync with Google Spreadsheets",
+            "Automate interactions",
+            "Flipsnack API access",
+            "Insert custom code in flipbooks",
+            "Zapier (coming soon)",
+            "Custom credits"
+        ]
+    },
+    yearly: {
+        title: "Enterprise Yearly",
+        features: [
+            "1000+ flipbooks",
+            "Collaboration",
+            "Centralized management for multiple teams",
+            "Assigning roles and permissions",
+            "Teammates activity logs",
+            "SSO sharing",
+            "Share flipbooks with readers",
+            "Import feeds (CSV, XLSX) or Sync with Google Spreadsheets",
+            "Automate interactions",
+            "Flipsnack API access",
+            "Insert custom code in flipbooks",
+            "Zapier (coming soon)",
+            "Custom credits"
+        ]
+    }
+};
+
+const teammates = [
+    { id: 1, email: "bhavin@flipnova.com", role: "Admin", ssoOnly: false, status: "Pending" },
+    { id: 2, email: "utsavp@flipnova.com", role: "Admin", ssoOnly: false, status: "Pending" },
+    { id: 3, email: "john.doe@example.com", role: "Editor", ssoOnly: true, status: "Active" },
+    { id: 4, email: "jane.smith@example.com", role: "Admin", ssoOnly: false, status: "Inactive" },
+    { id: 5, email: "alice.johnson@example.com", role: "Editor", ssoOnly: false, status: "Active" },
+    { id: 6, email: "michael.brown@example.com", role: "Agent", ssoOnly: true, status: "Pending" },
+    { id: 7, email: "emma.wilson@example.com", role: "Admin", ssoOnly: false, status: "Active" },
+    { id: 8, email: "oliver.martin@example.com", role: "Editor", ssoOnly: false, status: "Inactive" },
+    { id: 9, email: "sophia.thomas@example.com", role: "Admin", ssoOnly: true, status: "Active" },
+    { id: 10, email: "liam.moore@example.com", role: "Agent", ssoOnly: false, status: "Pending" },
+    { id: 11, email: "noah.clark@example.com", role: "Editor", ssoOnly: false, status: "Inactive" },
+    { id: 12, email: "ava.rodriguez@example.com", role: "Admin", ssoOnly: true, status: "Active" },
+    { id: 13, email: "william.lewis@example.com", role: "Agent", ssoOnly: false, status: "Pending" },
+    { id: 14, email: "mia.walker@example.com", role: "Editor", ssoOnly: false, status: "Active" },
+    { id: 15, email: "james.hall@example.com", role: "Admin", ssoOnly: true, status: "Inactive" },
+    { id: 16, email: "charlotte.allen@example.com", role: "Agent", ssoOnly: false, status: "Active" },
+    { id: 17, email: "benjamin.young@example.com", role: "Editor", ssoOnly: false, status: "Pending" },
+    { id: 18, email: "amelia.king@example.com", role: "Admin", ssoOnly: true, status: "Active" },
+    { id: 19, email: "lucas.scott@example.com", role: "Agent", ssoOnly: false, status: "Inactive" },
+    { id: 20, email: "harper.green@example.com", role: "Editor", ssoOnly: false, status: "Active" },
+    { id: 21, email: "elijah.adams@example.com", role: "Admin", ssoOnly: true, status: "Pending" },
+    { id: 22, email: "evelyn.baker@example.com", role: "Agent", ssoOnly: false, status: "Active" },
+    { id: 23, email: "matthew.carter@example.com", role: "Editor", ssoOnly: false, status: "Inactive" },
+    { id: 24, email: "scarlett.phillips@example.com", role: "Admin", ssoOnly: true, status: "Active" },
+    { id: 25, email: "daniel.evans@example.com", role: "Agent", ssoOnly: false, status: "Pending" },
+];
+
+const readers = [
+    { id: 1, email: "bhavin@flipnova.com", ssoOnly: false, status: "Pending" },
+    { id: 2, email: "utsavp@flipnova.com", ssoOnly: false, status: "Pending" },
+    { id: 3, email: "john.doe@example.com", ssoOnly: true, status: "Active" },
+    { id: 4, email: "jane.smith@example.com", ssoOnly: false, status: "Inactive" },
+    { id: 5, email: "alice.johnson@example.com", ssoOnly: false, status: "Active" },
+    { id: 6, email: "michael.brown@example.com", ssoOnly: true, status: "Pending" },
+    { id: 7, email: "emma.wilson@example.com", ssoOnly: false, status: "Active" },
+    { id: 8, email: "oliver.martin@example.com", ssoOnly: false, status: "Inactive" },
+    { id: 9, email: "sophia.thomas@example.com", ssoOnly: true, status: "Active" },
+    { id: 10, email: "liam.moore@example.com", ssoOnly: false, status: "Pending" },
+    { id: 11, email: "noah.clark@example.com", ssoOnly: false, status: "Inactive" },
+    { id: 12, email: "ava.rodriguez@example.com", ssoOnly: true, status: "Active" },
+    { id: 13, email: "william.lewis@example.com", ssoOnly: false, status: "Pending" },
+    { id: 14, email: "mia.walker@example.com", ssoOnly: false, status: "Active" },
+    { id: 15, email: "james.hall@example.com", ssoOnly: true, status: "Inactive" },
+    { id: 16, email: "charlotte.allen@example.com", ssoOnly: false, status: "Active" },
+    { id: 17, email: "benjamin.young@example.com", ssoOnly: false, status: "Pending" },
+    { id: 18, email: "amelia.king@example.com", ssoOnly: true, status: "Active" },
+    { id: 19, email: "lucas.scott@example.com", ssoOnly: false, status: "Inactive" },
+    { id: 20, email: "harper.green@example.com", ssoOnly: false, status: "Active" },
+    { id: 21, email: "elijah.adams@example.com", ssoOnly: true, status: "Pending" },
+    { id: 22, email: "evelyn.baker@example.com", ssoOnly: false, status: "Active" },
+    { id: 23, email: "matthew.carter@example.com", ssoOnly: false, status: "Inactive" },
+    { id: 24, email: "scarlett.phillips@example.com", ssoOnly: true, status: "Active" },
+    { id: 25, email: "daniel.evans@example.com", ssoOnly: false, status: "Pending" },
+];
+
 export function getData(dataType) {
     switch (dataType) {
         case 'defaultRoutes':
@@ -270,6 +462,14 @@ export function getData(dataType) {
             return downloadOptions;
         case 'brandingMenuItems':
             return brandingMenuItems;
+        case 'mainPlans':
+            return mainPlans;
+        case 'enterprisePlans':
+            return enterprisePlans;
+        case 'teammates':
+            return teammates;
+        case 'readers':
+            return readers;
         default:
             return [];
     }

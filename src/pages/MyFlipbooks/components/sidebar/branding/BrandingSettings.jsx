@@ -13,14 +13,14 @@ export default function BrandingSettings() {
       </div>
 
       <Card className="shadow-sm rounded-lg">
-        <CardHeader className="pb-0">
+        <CardHeader>
           <div className="flex items-center justify-between w-full">
             <CardTitle className="text-xl font-semibold">Settings</CardTitle>
             <Button variant="outline">See my profile</Button>
           </div>
         </CardHeader>
         
-        <CardContent className="pt-6 pb-8 px-6">
+        <CardContent>
           <div className="mb-8">
             <h3 className="text-base font-medium mb-4">Profile privacy</h3>
             <div className="flex items-center">

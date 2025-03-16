@@ -11,7 +11,6 @@ import { useState, useEffect } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 
-
 export default function ReaderSelection({ options, selectedValues, onChange }) {
     const [open, setOpen] = useState(false);
     const [allSelected, setAllSelected] = useState(selectedValues.length === 0);

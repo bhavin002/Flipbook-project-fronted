@@ -44,7 +44,7 @@ export default function RenameFlipbookDialog({ isRenameModalOpen, setIsRenameMod
                 </div>
                 <DialogFooter>
                     <Button variant="outline">
-                        Cancle
+                        Cancel
                     </Button>
                     <Button>
                         OK

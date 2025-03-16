@@ -12,11 +12,11 @@ export default function SettingWorkspace() {
                     where you can create and manage flipbooks, payments, branding and teams.</p>
             </div>
             <Card className="shadow-sm rounded-lg">
-                <CardHeader className="pb-0">
+                <CardHeader>
                     <CardTitle className="text-xl font-semibold">Name your workspace</CardTitle>
                 </CardHeader>
 
-                <CardContent className="pt-6 pb-8 px-6">
+                <CardContent>
                     <div className="space-y-4">
                         <div>
                             <h3 className="text-base font-medium mb-2">Name</h3>
@@ -33,14 +33,14 @@ export default function SettingWorkspace() {
                 </CardContent>
             </Card>
             <Card className="shadow-sm rounded-lg">
-                <CardHeader className="pb-0">
+                <CardHeader>
                     <CardTitle className="text-xl font-semibold">Brand your workspace</CardTitle>
                     <CardDescription>
                         Your logo will be displayed in the top left corner of this workspace, replacing the Flipsnack logo.
                     </CardDescription>
                 </CardHeader>
 
-                <CardContent className="pt-6 pb-8 px-6">
+                <CardContent>
                     <div className="space-y-4">
                         <div className="space-y-4">
                             <p className="text-xs text-gray-500">Recommended: 5:1 ratio, 2MB size.</p>

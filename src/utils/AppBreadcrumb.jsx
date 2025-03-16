@@ -12,7 +12,7 @@ const breadcrumbNameConfig = {
     'my-flipbooks': 'My Flipbooks',
     'logos': 'Brand Logos',
     'text-styles': 'Typography Styles',
-    'invoice': 'Billing History',
+    'invoice': 'Invoices',
     'sso': "Single Sign-On",
     'access': "Workspace Access",
     'logs': "Teammate Activity",

@@ -98,7 +98,7 @@ export default function MyFlipbookDropdown({ status }) {
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                    <PencilOff className="mr-2 h-4 w-4" /> Cancle draft
+                    <PencilOff className="mr-2 h-4 w-4" /> Cancel draft
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
