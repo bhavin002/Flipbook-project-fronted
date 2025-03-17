@@ -71,8 +71,8 @@ export default function AppLayout({ setIsSidebarOpen, isSidebarOpen }) {
                     </div>
                 </header>
 
-                <div className="flex-1 md:mt-[64px] max-md:mt-[156px] max-md:mb-[80px] overflow-y-auto">
-                    <div className="flex">
+                <div className="flex-1 max-md:flex md:mt-[64px] max-md:mt-[156px] max-md:mb-[80px] overflow-y-auto">
+                    <div className="flex flex-1">
                         <div className="hidden relative md:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
                             <SidebarProvider value={{ selectedItem, setSelectedItem }}>
                                 <SidebarNavigation setIsSidebarOpen={setIsSidebarOpen} />

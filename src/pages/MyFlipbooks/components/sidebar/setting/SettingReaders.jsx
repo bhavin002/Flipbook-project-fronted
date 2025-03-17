@@ -108,8 +108,8 @@ export default function SettingReaders() {
                 <CardContent>
                     <InviteReaderDialog />
                     <div className="mt-8">
-                        <div className="flex justify-between mb-4">
-                            <h2 className="text-lg font-medium">Readers ({filteredReaders.length})</h2>
+                        <div className="flex justify-between mb-4 gap-4">
+                            <h2 className="text-lg font-medium w-full">Readers ({filteredReaders.length})</h2>
                             <div className="relative">
                                 <div className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground">
                                     <Search className="h-4 w-4" />

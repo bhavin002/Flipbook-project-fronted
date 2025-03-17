@@ -440,6 +440,117 @@ const readers = [
     { id: 25, email: "daniel.evans@example.com", ssoOnly: false, status: "Pending" },
 ];
 
+const groups = [
+    { id: 1, name: "Sales", members: 5 },
+    { id: 2, name: "Marketing", members: 8 },
+    { id: 3, name: "Development", members: 15 },
+    { id: 4, name: "HR", members: 4 },
+    { id: 5, name: "Finance", members: 6 },
+    { id: 6, name: "Operations", members: 7 },
+    { id: 7, name: "Customer Support", members: 12 },
+    { id: 8, name: "Legal", members: 3 },
+    { id: 9, name: "Research", members: 9 },
+    { id: 10, name: "Product Management", members: 10 },
+    { id: 11, name: "Quality Assurance", members: 6 },
+    { id: 12, name: "IT", members: 14 },
+    { id: 13, name: "Security", members: 5 },
+    { id: 14, name: "Design", members: 7 },
+    { id: 15, name: "Business Intelligence", members: 8 },
+]
+
+const historyData = [
+    {
+        approvedOn: "March 16, 2025 12:48 UTC",
+        status: "Active, expires April 15, 2025 12:48 UTC",
+        isActive: true
+    },
+    {
+        approvedOn: "March 16, 2025 12:48 UTC",
+        status: "Revoked March 16, 2025 12:48 UTC",
+        isActive: false
+    },
+    {
+        approvedOn: "March 12, 2025 18:59 UTC",
+        status: "Revoked March 16, 2025 12:48 UTC",
+        isActive: false
+    }
+];
+
+const logs = [
+    {
+        id: 1,
+        user: "hopoleh620",
+        activity: "created the group marketing",
+        date: "March 17, 2025 16:30 UTC",
+        ipAddress: "49.36.80.54"
+    },
+    {
+        id: 2,
+        user: "hopoleh620",
+        activity: "made changes in the workspace access",
+        date: "March 16, 2025 12:48 UTC",
+        ipAddress: "49.36.82.64"
+    },
+    {
+        id: 3,
+        user: "hopoleh620",
+        activity: "made changes in the workspace access",
+        date: "March 16, 2025 12:48 UTC",
+        ipAddress: "49.36.82.64"
+    },
+    {
+        id: 4,
+        user: "hopoleh620",
+        activity: "made changes in the workspace access",
+        date: "March 16, 2025 12:48 UTC",
+        ipAddress: "49.36.82.64"
+    },
+    {
+        id: 5,
+        user: "hopoleh620",
+        activity: "made changes in the workspace access",
+        date: "March 16, 2025 12:48 UTC",
+        ipAddress: "49.36.82.64"
+    },
+    {
+        id: 6,
+        user: "hopoleh620",
+        activity: "created the flipbook New flipbook",
+        date: "March 16, 2025 12:43 UTC",
+        ipAddress: "49.36.82.64"
+    },
+    {
+        id: 7,
+        user: "hopoleh620",
+        activity: "created the flipbook New flipbook",
+        date: "March 16, 2025 12:43 UTC",
+        ipAddress: "49.36.82.64"
+    },
+];
+
+const activityOptions = [
+    { value: "all-activities", label: "All activities" },
+    { value: "create-flipbook", label: "Create Flipbook" },
+    { value: "edit-flipbook", label: "Edit Flipbook" },
+    { value: "update-flipbook", label: "Update flipbook" },
+    { value: "create-template", label: "Create template" },
+    { value: "save-template", label: "Save as template" },
+    { value: "edit-template", label: "Edit template" },
+    { value: "update-template", label: "Update template" },
+    { value: "move-flipbook-trash", label: "Moved flipbook to trash" },
+    { value: "permanetly-delete-flipbook", label: "Permanently delete flipbook" },
+    { value: "scheduled-flipbook-publish", label: "Scheduled flipbook for publish" }
+]
+
+const teammateOptions = [
+    { value: "all-teammates", label: "All Teammates" },
+    { value: "BhavinV", label: "BhavinV" },
+    { value: "SatyamG", label: "SatyamG" },
+    { value: "UtsavP", label: "UtsavP" },
+    { value: "NayanS", label: "NayanS" },
+    { value: "ParthP", label: "ParthP" }
+]
+
 export function getData(dataType) {
     switch (dataType) {
         case 'defaultRoutes':
@@ -470,6 +581,16 @@ export function getData(dataType) {
             return teammates;
         case 'readers':
             return readers;
+        case 'groups':
+            return groups;
+        case 'historyData':
+            return historyData;
+        case 'logs':
+            return logs;
+        case 'activityOptions':
+            return activityOptions;
+        case 'teammateOptions':
+            return teammateOptions;
         default:
             return [];
     }
