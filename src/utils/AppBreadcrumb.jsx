@@ -20,36 +20,49 @@ const breadcrumbNameConfig = {
     'email-provider': "Email Providers",
 };
 
+const excludedRoutes = [
+    '/details'
+];
+
 export default function DynamicBreadcrumb() {
     const location = useLocation();
     const navigate = useNavigate();
     const [breadcrumbs, setBreadcrumbs] = useState([]);
+    const [shouldShowBreadcrumb, setShouldShowBreadcrumb] = useState(true);
 
     useEffect(() => {
-        const generateBreadcrumbs = () => {
-            const pathSegments = location.pathname.split('/').filter(segment => segment);
-            if (pathSegments.length === 0) {
-                setBreadcrumbs([{ label: 'Home', path: '/my-flipbooks' }]);
-                return;
-            }
+        const shouldExclude = excludedRoutes.some(route => 
+            location.pathname === route || 
+            location.pathname.startsWith(`${route}/`)
+        );
+        
+        setShouldShowBreadcrumb(!shouldExclude);
+        
+        if (!shouldExclude) {
+            const generateBreadcrumbs = () => {
+                const pathSegments = location.pathname.split('/').filter(segment => segment);
+                if (pathSegments.length === 0) {
+                    setBreadcrumbs([{ label: 'Home', path: '/my-flipbooks' }]);
+                    return;
+                }
 
-            const breadcrumbItems = [{ label: 'Home', path: '/my-flipbooks' }];
+                const breadcrumbItems = [{ label: 'Home', path: '/my-flipbooks' }];
 
-            pathSegments.forEach((segment) => {
-                console.log("segment", segment);
-                const displayName = breadcrumbNameConfig[segment] ||
-                    segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
+                pathSegments.forEach((segment) => {
+                    const displayName = breadcrumbNameConfig[segment] ||
+                        segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
 
-                breadcrumbItems.push({
-                    label: displayName,
-                    path: '#'
+                    breadcrumbItems.push({
+                        label: displayName,
+                        path: '#'
+                    });
                 });
-            });
 
-            setBreadcrumbs(breadcrumbItems);
-        };
+                setBreadcrumbs(breadcrumbItems);
+            };
 
-        generateBreadcrumbs();
+            generateBreadcrumbs();
+        }
     }, [location]);
 
     const handleHomeClick = (e) => {
@@ -57,7 +70,7 @@ export default function DynamicBreadcrumb() {
         navigate('/my-flipbooks');
     };
 
-    if (breadcrumbs.length <= 1) {
+    if (!shouldShowBreadcrumb || breadcrumbs.length <= 1) {
         return null;
     }
 

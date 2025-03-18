@@ -16,7 +16,7 @@ export function AppSidebar() {
             case 'settings':
                 return <SettingSidebarPanel />;
             default:
-                return <HomeSidebarPanel />;
+                return null;
         }
     };
 

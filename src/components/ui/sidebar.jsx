@@ -59,7 +59,16 @@ const SidebarProvider = React.forwardRef((
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
   const [_open, _setOpen] = React.useState(defaultOpen)
-  const open = openProp ?? _open
+  const [selectedItem, setSelectedItem] = React.useState(value.selectedItem || null)
+  
+  // Determine if sidebar should be visible based on selectedItem
+  const hasSelectedItem = value.selectedItem !== undefined 
+    ? !!value.selectedItem 
+    : !!selectedItem
+
+  // Use the provided open state or calculate based on selectedItem
+  const open = openProp !== undefined ? openProp : (_open && hasSelectedItem)
+  
   const setOpen = React.useCallback((value) => {
     const openState = typeof value === "function" ? value(open) : value
     if (setOpenProp) {
@@ -70,14 +79,17 @@ const SidebarProvider = React.forwardRef((
     document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
   }, [setOpenProp, open])
 
-  const [selectedItem, setSelectedItem] = React.useState(value.selectedItem || 'home')
+  console.log("selectedItem", selectedItem, "hasSelectedItem", hasSelectedItem, "open", open)
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
-    return isMobile
-      ? setOpenMobile((open) => !open)
-      : setOpen((open) => !open);
-  }, [isMobile, setOpen, setOpenMobile])
+    // Only toggle if there's a selected item
+    if (hasSelectedItem) {
+      return isMobile
+        ? setOpenMobile((open) => !open)
+        : setOpen((open) => !open);
+    }
+  }, [isMobile, setOpen, setOpenMobile, hasSelectedItem])
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
@@ -108,7 +120,8 @@ const SidebarProvider = React.forwardRef((
     toggleSidebar,
     selectedItem: value.selectedItem || selectedItem,
     setSelectedItem: value.setSelectedItem || setSelectedItem,
-  }), [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, selectedItem, setSelectedItem, value.selectedItem, value.setSelectedItem])
+    hasSelectedItem
+  }), [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, selectedItem, setSelectedItem, value.selectedItem, value.setSelectedItem, hasSelectedItem])
 
   return (
     <SidebarContext.Provider value={contextValue}>
@@ -146,7 +159,12 @@ const Sidebar = React.forwardRef((
   },
   ref
 ) => {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
+  const { isMobile, state, openMobile, setOpenMobile, hasSelectedItem } = useSidebar()
+
+  // If there's no selected item, don't render the sidebar at all
+  if (!hasSelectedItem) {
+    return null;
+  }
 
   if (collapsible === "none") {
     return (
@@ -228,7 +246,12 @@ const Sidebar = React.forwardRef((
 Sidebar.displayName = "Sidebar"
 
 const SidebarTrigger = React.forwardRef(({ className, onClick, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, hasSelectedItem } = useSidebar()
+
+  // Don't render the trigger if there's no selected item
+  if (!hasSelectedItem) {
+    return null;
+  }
 
   return (
     <Button
@@ -250,7 +273,12 @@ const SidebarTrigger = React.forwardRef(({ className, onClick, ...props }, ref) 
 SidebarTrigger.displayName = "SidebarTrigger"
 
 const SidebarRail = React.forwardRef(({ className, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+  const { toggleSidebar, hasSelectedItem } = useSidebar()
+
+  // Don't render the rail if there's no selected item
+  if (!hasSelectedItem) {
+    return null;
+  }
 
   return (
     <button
