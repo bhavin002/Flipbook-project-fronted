@@ -551,6 +551,68 @@ const teammateOptions = [
     { value: "ParthP", label: "ParthP" }
 ]
 
+const initialPermissions = [
+    {
+        category: "Features",
+        items: []
+    },
+    {
+        category: "Workspace",
+        items: [
+            {
+                name: "Disable Create from scratch",
+                tooltip: "Prevent users from creating content from scratch",
+                id: "create-from-scratch"
+            },
+            {
+                name: "Disable Create from scratch button",
+                tooltip: "Hide the create from scratch button",
+                id: "create-from-scratch-button"
+            },
+            {
+                name: "Disable My templates",
+                tooltip: "Prevent users from accessing personal templates",
+                id: "my-templates"
+            }
+        ]
+    },
+    {
+        category: "Branding",
+        items: [
+            {
+                name: "Disable non-brand colors",
+                tooltip: "Prevent users from using colors outside your brand palette",
+                id: "non-brand-colors"
+            },
+            {
+                name: "Disable non-brand fonts",
+                tooltip: "Prevent users from using fonts outside your brand guidelines",
+                id: "non-brand-fonts"
+            },
+            {
+                name: "Disable Branding settings",
+                tooltip: "Restrict teammates from changing company branding settings such as colors, fonts or typography",
+                id: "branding-settings"
+            }
+        ]
+    },
+    {
+        category: "Player",
+        items: [
+            {
+                name: "Disable embed page",
+                tooltip: "Prevent users from accessing embed functionality",
+                id: "embed-page"
+            },
+            {
+                name: "Disable the download options",
+                tooltip: "Prevent users from downloading content",
+                id: "download-options"
+            }
+        ]
+    }
+];
+
 export function getData(dataType) {
     switch (dataType) {
         case 'defaultRoutes':
@@ -591,6 +653,8 @@ export function getData(dataType) {
             return activityOptions;
         case 'teammateOptions':
             return teammateOptions;
+        case 'initialPermissions':
+            return initialPermissions;
         default:
             return [];
     }
