@@ -10,13 +10,22 @@ import {
 import { AppSidebar } from "./components/AppSidebar";
 import BottomSidebarNavigation from "./components/BottomSidebarNavigation";
 import { Outlet } from "react-router-dom";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 import AppBreadcrumbs from "@/utils/AppBreadcrumb";
 
 
-export default function AppLayout({ setIsSidebarOpen }) {
+export default function AppLayout({ setIsSidebarOpen, isSidebarOpen }) {
     const [searchValue, setSearchValue] = useState("");
     const [isFocused, setIsFocused] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedItem, setSelectedItem] = useState('home');
+
 
     const handleBlur = (e) => {
         setTimeout(() => {

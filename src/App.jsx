@@ -36,7 +36,6 @@ import SettingTeammateActivity from "./pages/MyFlipbooks/components/Sidebar/Sett
 import SettingPermission from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingPermission";
 import SettingEmailProvider from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingEmailProvider";
 import { useState } from "react";
-import Details from "./pages/MyFlipbooks/components/Details";
 
 // Route configurations
 const brandingRoutes = [
@@ -79,24 +78,20 @@ export default function App() {
       <Route path="/" element={<Navigate to="/my-flipbooks" replace />} />
       
       {/* Main content routes */}
-      <Route path="/my-flipbooks" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
+      <Route path="/my-flipbooks" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />}>
         <Route index element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
       </Route>
-
-      <Route path="/details/:id" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
-        <Route index element={<Details />} />
-      </Route>
       
-      <Route path="/automation" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
+      <Route path="/automation" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />}>
         <Route index element={<AutomationContent />} />
       </Route>
       
-      <Route path="/statistics" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
+      <Route path="/statistics" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />}>
         <Route index element={<StatisticsContent />} />
       </Route>
       
       {/* Branding routes */}
-      <Route path="/branding" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
+      <Route path="/branding" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />}>
         <Route index element={<Navigate to="profile/settings" replace />} />
         {brandingRoutes.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
@@ -104,7 +99,7 @@ export default function App() {
       </Route>
 
       {/* Settings routes */}
-      <Route path="/settings" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
+      <Route path="/settings" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen} />}>
         <Route index element={<Navigate to="workspace" replace />} />
         {settingsRoutes.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
@@ -113,7 +108,7 @@ export default function App() {
       
       {/* Legacy settings route - redirect to workspace */}
       <Route path="/settings" element={<Navigate to="/settings/workspace" replace />} />
-      <Route path="/settings/workspace" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
+      <Route path="/settings/workspace" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} isSidebarOpen={isSidebarOpen}/>}>
         <Route index element={<SettingContent />} />
       </Route>
     </Routes>
