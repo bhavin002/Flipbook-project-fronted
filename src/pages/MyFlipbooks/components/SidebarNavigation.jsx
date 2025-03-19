@@ -42,7 +42,12 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
     };
 
     useEffect(() => {
-        const currentPath = location.pathname;
+        const currentPath = location.pathname.split('/').slice(0, 2).join('/');
+        const pathsToCloseSidebar = ["/statistics", "/automation", "/details"];
+        
+        if (pathsToCloseSidebar.includes(currentPath)) {
+            setOpen(false);
+        }
         
         const currentSection = getPathSection(currentPath);
         

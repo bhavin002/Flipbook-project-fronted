@@ -36,7 +36,7 @@ function NavItem({ item, isSelected, onClick }) {
 export default function BottomSidebarNavigation() {
     const navigate = useNavigate();
     const location = useLocation();
-    const [selectedItem, setSelectedItem] = useState('home');
+    const [selectedItem, setSelectedItem] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [activeSection, setActiveSection] = useState(null);
     const defaultRoutes = getData('defaultRoutes');

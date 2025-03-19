@@ -70,7 +70,7 @@ const SidebarProvider = React.forwardRef((
     document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
   }, [setOpenProp, open])
 
-  const [selectedItem, setSelectedItem] = React.useState(value.selectedItem || 'home')
+  const [selectedItem, setSelectedItem] = React.useState(value.selectedItem || null)
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
