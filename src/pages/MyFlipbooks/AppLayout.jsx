@@ -73,14 +73,13 @@ export default function AppLayout({ setIsSidebarOpen }) {
                         </div>
 
                         <div className="flex flex-1 flex-col md:max-h-[calc(100vh-64px)] md:overflow-y-auto">
-                            <div className="hidden md:block px-4 py-1 sticky top-0 bg-white z-10">
+                            <div className="hidden md:block px-4 sticky top-0 bg-white z-10">
                                 <AppBreadcrumbs />
                             </div>
                             <Outlet />
                         </div>
                     </div>
                 </div>
-
                 <BottomSidebarNavigation />
             </div>
         </>

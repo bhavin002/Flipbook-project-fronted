@@ -15,7 +15,7 @@ export default function BrandingPersonalization() {
                     <p className="text-gray-500">Add your logo, header image and color, and configure your social and footer links.</p>
                 </div>
                 <div className="flex max-lg:flex-wrap gap-4 lg:h-0 flex-grow overflow-auto">
-                    <div className="lg:w-[40%] hidden lg:block space-y-4 lg:h-full overflow-auto">
+                    <div className="lg:w-[40%] hidden lg:block space-y-4 lg:h-full">
                         <Favicon />
                         <Header />
                         <Profile />
@@ -24,7 +24,7 @@ export default function BrandingPersonalization() {
                         <Footer />
                     </div>
                     <TabPersonalization />
-                    <div className="lg:w-[60%] lg:h-full overflow-auto">
+                    <div className="lg:w-[60%] sticky top-0 h-fit">
                         <Preview />
                     </div>
                 </div>

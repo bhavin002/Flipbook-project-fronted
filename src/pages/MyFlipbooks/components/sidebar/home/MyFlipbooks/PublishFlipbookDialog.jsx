@@ -117,17 +117,17 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                         </TabsList>
 
                         <TabsContent value="public">
-                            <p className="text-sm font-medium text-gray-600">Your catalog will appear on your public Flipsnack profile and it will be indexed
+                            <p className="text-sm font-medium text-gray-600 my-4">Your catalog will appear on your public Flipsnack profile and it will be indexed
                                 by the search engines (Google, Bing, etc).</p>
                         </TabsContent>
 
                         <TabsContent value="unlisted">
-                            <p className="text-sm font-medium text-gray-600">Your catalog will not appear anywhere on the web.
+                            <p className="text-sm font-medium text-gray-600 my-4">Your catalog will not appear anywhere on the web.
                                 Only people you personally share the direct link with will have access to your catalog.</p>
                         </TabsContent>
 
                         <TabsContent value="passwordLocked">
-                            <div className="grid gap-2">
+                            <div className="grid gap-2 my-4">
                                 <Label htmlFor="password">
                                     Password
                                 </Label>
