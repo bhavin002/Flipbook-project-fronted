@@ -11,24 +11,24 @@ export default function SettingWorkspaceAccess() {
         <div className="p-6 max-w-[100vw] overflow-auto space-y-8">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Workspace access</h1>
-                <p className="text-gray-500">Temporarily allow Flipsnack access to your workspace.</p>
+                <p className="text-gray-500">Temporarily allow Flipnova access to your workspace.</p>
             </div>
             <Card className="shadow-sm rounded-lg">
                 <CardHeader>
-                    <CardTitle>Give Flipsnack access to your account</CardTitle>
+                    <CardTitle>Give Flipnova access to your account</CardTitle>
                     <CardDescription>
                         We may need to temporarily access your account to diagnose and resolve a customer support issue you've raised. Expires after 30 days.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Button variant="outline" className="text-red-500 hover:text-red-500">
-                        Revoke Flipsnack access
+                        Revoke Flipnova access
                     </Button>
                 </CardContent>
             </Card>
             <Card className="shadow-sm rounded-lg">
                 <CardHeader>
-                    <CardTitle>Flipsnack access approval history</CardTitle>
+                    <CardTitle>Flipnova access approval history</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Table>

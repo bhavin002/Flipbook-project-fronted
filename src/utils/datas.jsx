@@ -1,4 +1,4 @@
-import { FileCode, FileText, Image, CirclePlay, Pencil, SlidersHorizontal, ChartPie, Send, BookOpen, Share2, Info, Home, Bot, BarChart2, Diamond, Settings, Users } from 'lucide-react';
+import { FileCode, FileText, Image, CirclePlay, Pencil, SlidersHorizontal, ChartPie, Send, BookOpen, Share2, Info, Home, Bot, BarChart2, Diamond, Settings, Users, Eye } from 'lucide-react';
 
 const defaultRoutes = {
     home: '/my-flipbooks',
@@ -118,8 +118,8 @@ const unpublishedButtons = [
 ];
 
 const publishedButtons = [
-    { icon: BookOpen, title: "View", value: "view", color: "text-blue-600", bg: "bg-blue-50", hover: "hover:bg-blue-100" },
-    { icon: Info, title: "Details", value: "details", color: "text-pink-600", bg: "bg-pink-50", hover: "hover:bg-pink-100" },
+    { icon: Eye, title: "View", value: "view", color: "text-blue-600", bg: "bg-blue-50", hover: "hover:bg-blue-100" },
+    { icon: BookOpen, title: "Details", value: "details", color: "text-pink-600", bg: "bg-pink-50", hover: "hover:bg-pink-100" },
     { icon: Pencil, title: "Edit", value: "edit", color: "text-amber-600", bg: "bg-amber-50", hover: "hover:bg-amber-100" },
     { icon: SlidersHorizontal, title: "Customize", value: "customize", color: "text-blue-600", bg: "bg-blue-50", hover: "hover:bg-blue-100" },
     { icon: ChartPie, title: "Statistics", value: "stats", color: "text-amber-600", bg: "bg-amber-50", hover: "hover:bg-amber-100" },
@@ -273,7 +273,7 @@ const mainPlans = {
                 "Share multiple flipbooks in bookshelves",
                 "Password protected sharing",
                 "Embed (without watermark)",
-                "Flipsnack statistics & Google Analytics",
+                "Flipnova statistics & Google Analytics",
                 "50 credits"
             ]
         },
@@ -285,7 +285,7 @@ const mainPlans = {
             features: [
                 "100 flipbooks",
                 "Custom domain",
-                "Add your logo in Flipsnack dashboard & flipbooks",
+                "Add your logo in Flipnova dashboard & flipbooks",
                 "Send fully branded emails",
                 "Download as HTML5",
                 "250 AI credits",
@@ -320,7 +320,7 @@ const mainPlans = {
                 "Share multiple flipbooks in bookshelves",
                 "Password protected sharing",
                 "Embed (without watermark)",
-                "Flipsnack statistics & Google Analytics",
+                "Flipnova statistics & Google Analytics",
                 "50 credits"
             ]
         },
@@ -332,7 +332,7 @@ const mainPlans = {
             features: [
                 "100 flipbooks",
                 "Custom domain",
-                "Add your logo in Flipsnack dashboard & flipbooks",
+                "Add your logo in Flipnova dashboard & flipbooks",
                 "Send fully branded emails",
                 "Download as HTML5",
                 "250 AI credits",
@@ -358,7 +358,7 @@ const enterprisePlans = {
             "Share flipbooks with readers",
             "Import feeds (CSV, XLSX) or Sync with Google Spreadsheets",
             "Automate interactions",
-            "Flipsnack API access",
+            "Flipnova API access",
             "Insert custom code in flipbooks",
             "Zapier (coming soon)",
             "Custom credits"
@@ -376,7 +376,7 @@ const enterprisePlans = {
             "Share flipbooks with readers",
             "Import feeds (CSV, XLSX) or Sync with Google Spreadsheets",
             "Automate interactions",
-            "Flipsnack API access",
+            "Flipnova API access",
             "Insert custom code in flipbooks",
             "Zapier (coming soon)",
             "Custom credits"
@@ -551,6 +551,19 @@ const teammateOptions = [
     { value: "ParthP", label: "ParthP" }
 ]
 
+const pageOptions = [
+    {value: "1",label: "Page 1"},
+    {value: "2",label: "Page 2"},
+    {value: "3",label: "Page 3"},
+    {value: "4",label: "Page 4"},
+    {value: "5",label: "Page 5"},
+    {value: "6",label: "Page 6"},
+    {value: "7",label: "Page 7"},
+    {value: "8",label: "Page 8"},
+    {value: "9",label: "Page 9"},   
+    {value: "10",label: "Page 10"},
+]
+
 const initialPermissions = [
     {
         category: "Features",
@@ -655,6 +668,8 @@ export function getData(dataType) {
             return teammateOptions;
         case 'initialPermissions':
             return initialPermissions;
+        case 'pageOptions':
+            return pageOptions;
         default:
             return [];
     }

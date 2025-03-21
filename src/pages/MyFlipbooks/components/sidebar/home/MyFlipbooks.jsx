@@ -4,12 +4,14 @@ import ShareFlipbookDialog from './MyFlipbooks/ShareFlipbookDialog';
 import { useState, useEffect } from 'react';
 import PublishFlipbookDialog from './MyFlipbooks/PublishFlipbookDialog';
 import { getData } from '@/utils/datas';
+import { useNavigate } from 'react-router-dom';
 
 export default function MyFlipbooks({ isSidebarOpen }) {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [imageLoadingStates, setImageLoadingStates] = useState({});
+    const router = useNavigate();
 
     const flipbooks = getData('flipbooks');
     const unpublishedButtons = getData('unpublishedButtons');
@@ -44,6 +46,8 @@ export default function MyFlipbooks({ isSidebarOpen }) {
             setIsShareModalOpen(true);
         } else if (action === 'publish') {
             setIsPublishModalOpen(true);
+        } else if(action === "details"){
+            router("/details/sd2112wdwd1d")
         } else {
             console.error("Invalid action:", action);
         }

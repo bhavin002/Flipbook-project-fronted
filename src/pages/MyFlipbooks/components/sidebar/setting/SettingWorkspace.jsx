@@ -36,7 +36,7 @@ export default function SettingWorkspace() {
                 <CardHeader>
                     <CardTitle className="text-xl font-semibold">Brand your workspace</CardTitle>
                     <CardDescription>
-                        Your logo will be displayed in the top left corner of this workspace, replacing the Flipsnack logo.
+                        Your logo will be displayed in the top left corner of this workspace, replacing the Flipnova logo.
                     </CardDescription>
                 </CardHeader>
 

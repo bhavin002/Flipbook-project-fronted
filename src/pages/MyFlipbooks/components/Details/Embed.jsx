@@ -1,11 +1,8 @@
-import Favicon from "../Sidebar/Branding/Personalization/Favicon";
-import Header from "../Sidebar/Branding/Personalization/Header";
-import Profile from "../Sidebar/Branding/Personalization/Profile";
-import Social from "../Sidebar/Branding/Personalization/Social";
-import SocialThumnail from "../Sidebar/Branding/Personalization/SocialThumnail";
-import Footer from "../Sidebar/Branding/Personalization/Footer";
-import TabPersonalization from "../Sidebar/Branding/Personalization/TabPersonalization";
-import Preview from "../Sidebar/Branding/Personalization/Preview";
+import Customize from "./Embed/Customize";
+import Size from "./Embed/Size";
+import EmbedCode from "./Embed/EmbedCode";
+import DomainRestriction from "./Embed/DomainRestriction";
+import EmbedPreview from "./Embed/EmbedPreview";
 
 export default function Embed() {
     return (
@@ -14,18 +11,15 @@ export default function Embed() {
                 <h1 className="text-2xl font-bold mb-2">Embed New Flipbook</h1>
                 <p className="text-gray-500">Choose your width and height size, responsiveness and the page where your flipbook should start. Copy the embed code and paste it in your website.</p>
             </div>
-            <div className="flex max-lg:flex-wrap gap-4 lg:h-0 flex-grow overflow-auto">
-                <div className="lg:w-[40%] hidden lg:block space-y-4 lg:h-full">
-                    <Favicon />
-                    <Header />
-                    <Profile />
-                    <Social />
-                    <SocialThumnail />
-                    <Footer />
+            <div className="flex max-lg:flex-wrap gap-4">
+                <div className="lg:w-[40%] w-full lg:block space-y-4 lg:h-full">
+                    <Customize />
+                    <Size />
+                    <EmbedCode />
+                    <DomainRestriction />
                 </div>
-                <TabPersonalization />
-                <div className="lg:w-[60%] sticky top-0 h-fit">
-                    <Preview />
+                <div className="lg:w-[60%] w-full sticky top-[-22px] h-fit">
+                    <EmbedPreview />
                 </div>
             </div>
         </div>

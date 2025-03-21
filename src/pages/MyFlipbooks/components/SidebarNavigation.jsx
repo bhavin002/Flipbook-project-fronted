@@ -47,6 +47,7 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
         
         if (pathsToCloseSidebar.includes(currentPath)) {
             setOpen(false);
+            setGlobalSelectedItem(null);
         }
         
         const currentSection = getPathSection(currentPath);

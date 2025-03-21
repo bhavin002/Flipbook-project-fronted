@@ -17,10 +17,10 @@ import { useState } from "react";
 
 export default function DetailsTab() {
     const [copied, setCopied] = useState(false);
-        const handleCopy = () => {
-            setCopied(true)
-            setTimeout(() => setCopied(false), 2000)
-        }
+    const handleCopy = () => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
     return (
         <div className="py-6 max-w-[100vw] overflow-auto space-y-8">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">

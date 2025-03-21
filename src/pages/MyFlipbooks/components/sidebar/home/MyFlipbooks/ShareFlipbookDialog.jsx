@@ -45,7 +45,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                         </Button>
                     </div>
                     <div className="space-y-2 mt-6">
-                        <p className="text-[12px] font-medium text-gray-600">Link to fullscreen mode on Flipsnack without Flipsnack branding</p>
+                        <p className="text-[12px] font-medium text-gray-600">Link to fullscreen mode on Flipnova without Flipnova branding</p>
                         <div className="flex items-center gap-3">
                             <Input
                                 value="https://www.flipsnack.com/65BDD977C6F/d/a5a5f848-2a20-45ee-b4aa-4d21fa7fff08/"
