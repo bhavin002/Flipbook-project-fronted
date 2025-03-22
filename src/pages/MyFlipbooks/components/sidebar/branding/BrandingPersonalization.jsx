@@ -9,8 +9,8 @@ import TabPersonalization from "./Personalization/TabPersonalization";
 export default function BrandingPersonalization() {
     return (
         <>
-            <div className="flex flex-col max-w-[100vw] overflow-auto max-md:p-6 md:m-6 h-full">
-                <div className="p-6 mb-8 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
+            <div className="flex flex-col max-w-[100vw] overflow-auto max-md:p-6 md:m-6 h-full space-y-4">
+                <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                     <h1 className="text-2xl font-bold mb-2">Personalize your profile</h1>
                     <p className="text-gray-500">Add your logo, header image and color, and configure your social and footer links.</p>
                 </div>

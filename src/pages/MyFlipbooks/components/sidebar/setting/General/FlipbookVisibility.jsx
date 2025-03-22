@@ -20,7 +20,7 @@ export default function FlipbookVisibility() {
         setSelectedRadio(value);
     };
     return (
-        <Card className="shadow-sm rounded-lg">
+         <Card>
             <CardHeader>
                 <CardTitle className="text-xl font-semibold">Flipbook visibility</CardTitle>
                 <CardDescription>

@@ -63,12 +63,12 @@ export default function SettingTeammates() {
     };
 
     return (
-        <div className="p-6 max-w-[100vw] overflow-auto space-y-8">
+        <div className="p-6 max-w-[100vw] overflow-auto space-y-4">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Teammates</h1>
                 <p className="text-gray-500">Add or remove teammates from this workspace, and manage roles.</p>
             </div>
-            <Card className="shadow-sm rounded-lg">
+             <Card>
                 <CardHeader>
                     <CardTitle className="text-xl font-semibold">Manage your teammates</CardTitle>
                 </CardHeader>

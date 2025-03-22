@@ -9,8 +9,8 @@ export default function BrandingFonts() {
         { id: 3, name: "Roboto", styles: ["Regular", "Bold",] },
     ];
     return (
-        <div className="flex flex-col max-w-[100vw] overflow-auto p-6 h-full">
-            <div className="p-6 mb-8 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
+        <div className="flex flex-col max-w-[100vw] overflow-auto p-6 h-full space-y-4">
+            <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Brand fonts</h1>
                 <p className="text-gray-500">Upload and manage custom fonts to use in your designs.</p>
             </div>
@@ -20,7 +20,7 @@ export default function BrandingFonts() {
                 </Button>
                 <p className="text-gray-500 text-sm">Accepted font types: TTF and OTF</p>
             </div>
-            <div className="space-y-4 mt-8">
+            <div className="space-y-4">
                 {fonts.map((font) => (
                     <Card key={font.id} className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                         <div className="p-4 flex justify-between items-center border-b">

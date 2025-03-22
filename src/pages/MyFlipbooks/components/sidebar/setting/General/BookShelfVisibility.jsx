@@ -14,7 +14,7 @@ import {
 export default function BookShelfVisibility() {
     const [bookshelfVisibility, setBookshelfVisibility] = useState(false)
     return (
-        <Card className="shadow-sm rounded-lg">
+         <Card>
             <CardHeader>
                 <CardTitle className="text-xl font-semibold">Bookshelf visibility</CardTitle>
                 <CardDescription>

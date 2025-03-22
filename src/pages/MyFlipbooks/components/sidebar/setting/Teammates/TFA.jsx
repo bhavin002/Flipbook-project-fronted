@@ -4,7 +4,7 @@ import { Switch } from '@/components/ui/switch';
 
 export default function TFA() {
     return (
-        <Card className="shadow-sm rounded-lg">
+         <Card>
             <CardHeader>
                 <CardTitle className="text-xl font-semibold">Two-factor authentication</CardTitle>
                 <CardDescription className="flex justify-between">

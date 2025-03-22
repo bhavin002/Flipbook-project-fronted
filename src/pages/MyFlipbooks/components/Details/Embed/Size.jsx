@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 
 export default function Size() {
     return (
-        <Card>
+         <Card>
             <CardHeader>
                 <CardTitle>Choose embed size</CardTitle>
             </CardHeader>

@@ -73,15 +73,13 @@ export default function BrandingColors() {
     };
 
     return (
-        <div className="flex flex-col max-w-[100vw] overflow-auto p-6 h-full" ref={containerRef}>
-            {/* Header Section */}
-            <div className="p-6 mb-8 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
+        <div className="flex flex-col max-w-[100vw] overflow-auto p-6 h-full space-y-4" ref={containerRef}>
+            <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Colors</h1>
                 <p className="text-gray-500">Set your default brand colors for the Design Studio and flipbook backgrounds.</p>
             </div>
 
-            {/* Main Content */}
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col space-y-4">
                 <div className='relative w-fit'>
                     <Button
                         onClick={handleAddColor}
@@ -98,7 +96,6 @@ export default function BrandingColors() {
                         />
                     }
                 </div>
-
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
                     {colors.map((color, index) => (
                         <div

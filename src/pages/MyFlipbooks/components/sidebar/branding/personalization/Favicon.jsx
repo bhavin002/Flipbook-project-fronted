@@ -13,11 +13,11 @@ import {
 } from "@/components/ui/tooltip"
 export default function Favicon() {
     return (
-        <Card>
+         <Card>
             <CardHeader>
                 <CardTitle>Set your favicon</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 ">
                 <div className="flex items-center justify-between">
                     <label className="font-medium flex items-center gap-2">
                         Favicon

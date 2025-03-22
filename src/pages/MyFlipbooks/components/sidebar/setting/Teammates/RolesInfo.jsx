@@ -2,7 +2,7 @@ import { Card, CardContent} from "@/components/ui/card";
 
 export default function RolesInfo() {
     return (
-        <Card className="shadow-sm rounded-lg">
+         <Card>
             <CardContent className="space-y-4 pt-6">
                 <div>
                     <p className='text-sm font-semibold'>

@@ -38,7 +38,7 @@ export default function CustomDomainSettings() {
 
     return (
         <div className="mt-8">
-            <Card className="shadow-sm rounded-lg">
+             <Card>
                 <CardHeader className="pb-0">
                     <div className="flex items-center justify-between w-full">
                         <CardTitle className="text-xl font-semibold">Custom Domain</CardTitle>

@@ -7,7 +7,7 @@ import { Search } from "lucide-react";
 
 export default function Preview() {
     return (
-        <Card>
+         <Card>
             <CardHeader>
                 <div className="flex justify-between items-center">
                     <Button disabled={true}>

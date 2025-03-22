@@ -6,7 +6,7 @@ import { Plus, Trash2 } from 'lucide-react';
 
 export default function Footer() {
     return (
-        <Card>
+         <Card>
             <CardHeader>
                 <CardTitle>Add links to your footer</CardTitle>
             </CardHeader>

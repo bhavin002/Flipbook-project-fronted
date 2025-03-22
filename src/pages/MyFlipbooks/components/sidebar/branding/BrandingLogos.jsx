@@ -23,10 +23,10 @@ export default function BrandingLogos() {
     };
 
     return (
-        <div className="flex flex-col max-w-full overflow-hidden p-4 h-full">
-            <div className="p-4 mb-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg shadow-sm">
-                <h1 className="text-xl font-bold mb-1">Brand Logos</h1>
-                <p className="text-sm text-gray-500">Manage your logos, images and visual brand assets</p>
+        <div className="flex flex-col max-w-full overflow-hidden p-6 h-full space-y-4">
+            <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
+                <h1 className="text-2xl font-bold mb-2">Brand Logos</h1>
+                <p className="text-gray-500">Manage your logos, images and visual brand assets</p>
             </div>
 
             <div className="mb-6">

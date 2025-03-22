@@ -22,12 +22,12 @@ export default function DetailsTab() {
         setTimeout(() => setCopied(false), 2000)
     }
     return (
-        <div className="py-6 max-w-[100vw] overflow-auto space-y-8">
+        <div className="py-6 max-w-[100vw] overflow-auto space-y-4">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Details of New Flipbook</h1>
                 <p className="text-gray-500">Access share, embed and download options, as well as statistics.</p>
             </div>
-            <Card className="shadow-sm rounded-lg">
+             <Card>
                 <CardHeader>
                     <CardTitle className="text-xl font-semibold">Share link</CardTitle>
                 </CardHeader>
@@ -52,7 +52,7 @@ export default function DetailsTab() {
                         </Button>
                     </div>
                     <div className="flex items-center gap-2">
-                        <a className="text-sm font-medium text-purple-600 cursor-pointer">Create trackable links</a>
+                        <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Create trackable links</a>
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
@@ -116,7 +116,7 @@ export default function DetailsTab() {
                             </div>
                         </CardContent>
                     </Card>
-                    <Card className="shadow-sm rounded-lg">
+                     <Card>
                         <CardHeader>
                             <CardTitle className="text-xl font-semibold">Download</CardTitle>
                         </CardHeader>
@@ -212,11 +212,11 @@ export default function DetailsTab() {
                                 <div className="h-[90%] w-full bg-gray-500">
                                 </div>
                                 <div className="flex max-lg:p-4 flex-wrap lg:justify-start justify-center items-center  flex-grow gap-4">
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer">View live</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer">Edit</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer">Customize</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer">Edit link name</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer">SEO</a>
+                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">View live</a>
+                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit</a>
+                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Customize</a>
+                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit link name</a>
+                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">SEO</a>
                                 </div>
                             </div>
                         </TabsContent>
@@ -225,18 +225,18 @@ export default function DetailsTab() {
                                 <div className="h-[90%] md:w-[50%] md:m-auto bg-gray-500">
                                 </div>
                                 <div className="flex p-4 flex-wrap justify-center items-center  flex-grow gap-4">
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer">View live</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer">Edit</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer">Customize</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer">Edit link name</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer">SEO</a>
+                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">View live</a>
+                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit</a>
+                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Customize</a>
+                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit link name</a>
+                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">SEO</a>
                                 </div>
                             </div>
                         </TabsContent>
                     </Tabs>
                 </Card>
             </div>
-            <Card className="shadow-sm rounded-lg">
+             <Card>
                 <CardHeader>
                     <CardTitle className="text-xl font-semibold">Share</CardTitle>
                 </CardHeader>
@@ -288,7 +288,7 @@ export default function DetailsTab() {
                     </div>
                 </CardContent>
             </Card>
-            <Card className="shadow-sm rounded-lg">
+             <Card>
                 <CardHeader>
                     <CardTitle>Order printed copies</CardTitle>
                     <CardDescription>Order high-quality printed copies of your publication from our print partner, Peecho.</CardDescription>

@@ -4,7 +4,7 @@ import EmailPreview from "./SendEmail/EmailPreview";
 
 export default function SendEmail() {
     return (
-        <div className="py-6 max-w-[100vw] overflow-auto space-y-8 h-full flex flex-col">
+        <div className="py-6 max-w-[100vw] overflow-auto space-y-4 h-full flex flex-col">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Send New flipbook by email</h1>
                 <p className="text-gray-500">Personalize your email (texts and colors) and send it using our services.</p>

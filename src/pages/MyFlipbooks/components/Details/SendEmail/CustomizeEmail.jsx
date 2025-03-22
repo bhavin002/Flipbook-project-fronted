@@ -98,7 +98,7 @@ export default function CustomizeEmail() {
                     <p className="text-sm text-gray-500">Email will be sent to 10 people</p>
                     <Button>Send email</Button>
                 </div>
-                <p className="text-sm text-gray-500"> <a className="text-sm font-medium text-purple-600 cursor-pointer">Upgrade </a>to send email via Flipnova or <a className="text-sm font-medium text-purple-600 cursor-pointer">click here </a>to use your email client</p>
+                <p className="text-sm text-gray-500"> <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Upgrade </a>to send email via Flipnova or <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">click here </a>to use your email client</p>
                 <div className="flex items-center">
                     <Switch id="save-emails" />
                     <label htmlFor="save-emails" className="ml-3 text-gray-700">

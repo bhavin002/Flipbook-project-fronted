@@ -11,7 +11,7 @@ import Footer from "./Footer";
 export default function TabPersonalization() {
     return (
         <Tabs className="w-full lg:hidden" defaultValue="favicon">
-            <TabsList className="w-full flex justify-between overflow-auto">
+            <TabsList className="w-full flex justify-between overflow-auto mb-6">
                 <TabsTrigger className="py-2 flex flex-col items-center" value="favicon">
                     <Earth className="w-5 h-5" />
                     <span className="text-xs mt-1">Favicon</span>

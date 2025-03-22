@@ -12,7 +12,7 @@ import {
 
 export default function Customize() {
     return (
-        <Card>
+         <Card>
             <CardHeader>
                 <CardTitle>Customize the look of your embed</CardTitle>
                 <CardDescription>You can edit the following settings in Customize:</CardDescription>

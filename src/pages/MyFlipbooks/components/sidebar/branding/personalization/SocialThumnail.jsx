@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/tooltip"
 export default function SocialThumnail() {
     return (
-        <Card>
+         <Card>
             <CardHeader>
                 <CardTitle>Change your social media thumbnail</CardTitle>
             </CardHeader>

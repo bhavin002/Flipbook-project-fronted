@@ -4,12 +4,12 @@ import { Image } from "lucide-react";
 
 export default function DownloadQR() {
     return (
-        <div className="py-6 max-w-[100vw] overflow-auto space-y-8">
+        <div className="py-6 max-w-[100vw] overflow-auto space-y-4">
             <div className="p-4 md:p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-xl md:text-2xl font-bold mb-2">Generate QR Code</h1>
                 <p className="text-sm md:text-base text-gray-500">Generate a customized QR code for your catalog, download it in different formats and share it with your readers.</p>
             </div>
-            <Card className="shadow-sm rounded-lg">
+             <Card>
                 <CardContent className="flex flex-col md:flex-row pt-6 gap-4">
                     <div className="border mx-auto md:mx-0 min-w-[200px] min-h-[200px]">
                         <img 

@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 export default function Social() {
     return (
-        <Card>
+         <Card>
             <CardHeader>
                 <CardTitle>Social media</CardTitle>
             </CardHeader>

@@ -24,7 +24,7 @@ export default function FilterActivity() {
         return format(date, "MMM d, yyyy")
     }
     return (
-        <Card className="shadow-sm rounded-lg">
+         <Card>
             <CardHeader>
                 <CardTitle>User logs</CardTitle>
                 <CardDescription>

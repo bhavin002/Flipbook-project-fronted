@@ -74,7 +74,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
 
                     {/* Trackable Links Section */}
                     <div className="flex items-center mt-6 gap-2">
-                        <a className="text-sm font-medium text-purple-600 cursor-pointer">Create trackable links</a>
+                        <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Create trackable links</a>
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>

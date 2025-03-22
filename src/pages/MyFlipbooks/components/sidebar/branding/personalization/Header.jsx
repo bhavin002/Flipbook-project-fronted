@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 export default function Header() {
     return (
-        <Card>
+         <Card>
             <CardHeader>
                 <CardTitle>Personalize your header</CardTitle>
             </CardHeader>

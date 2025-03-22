@@ -1,4 +1,4 @@
-import { FileCode, FileText, Image, CirclePlay, Pencil, SlidersHorizontal, ChartPie, Send, BookOpen, Share2, Info, Home, Bot, BarChart2, Diamond, Settings, Users, Eye } from 'lucide-react';
+import { FileCode, FileText, Image, CirclePlay, Pencil, SlidersHorizontal, ChartPie, Send, BookOpen, Share2, Home, Bot, Diamond, Settings, Users, Eye, PieChart } from 'lucide-react';
 
 const defaultRoutes = {
     home: '/my-flipbooks',
@@ -11,7 +11,7 @@ const defaultRoutes = {
 const navItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/my-flipbooks' },
     { id: 'automation', icon: Bot, label: 'Automation', path: '/automation' },
-    { id: 'statistics', icon: BarChart2, label: 'Statistics', path: '/statistics' },
+    { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics' },
     { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings' },
     { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace' },
 ];
@@ -19,7 +19,7 @@ const navItems = [
 const bottomNavItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/my-flipbooks', hasDrawer: true },
     { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', hasDrawer: false },
-    { id: 'statistics', icon: BarChart2, label: 'Statistics', path: '/statistics', hasDrawer: false },
+    { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics', hasDrawer: false },
     { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings', hasDrawer: true },
     { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', hasDrawer: true }
 ];
@@ -645,6 +645,19 @@ const initialPermissions = [
     }
 ];
 
+const flipbooksData = [
+    { id: 1, name: "Annual Report 2024", impressions: 58, percentage: 38.16 },
+    { id: 2, name: "Product Catalog Summer", impressions: 42, percentage: 27.63 },
+    { id: 3, name: "Company Overview", impressions: 22, percentage: 14.47 },
+    { id: 4, name: "Marketing Brochure", impressions: 12, percentage: 7.89 },
+    { id: 5, name: "Sales Presentation Q1", impressions: 8, percentage: 5.26 },
+    { id: 6, name: "Customer Testimonials", impressions: 4, percentage: 2.63 },
+    { id: 7, name: "Training Guide", impressions: 3, percentage: 1.97 },
+    { id: 8, name: "Event Showcase", impressions: 2, percentage: 1.32 },
+    { id: 9, name: "Portfolio Collection", impressions: 1, percentage: 0.66 },
+    { id: 10, name: "Technical Manual", impressions: 1, percentage: 0.66 },
+  ];
+
 export function getData(dataType) {
     switch (dataType) {
         case 'defaultRoutes':
@@ -691,6 +704,8 @@ export function getData(dataType) {
             return pageOptions;
         case 'trackableLinks':
             return trackableLinks;
+        case 'flipbooksData':
+            return flipbooksData;
         default:
             return [];
     }
