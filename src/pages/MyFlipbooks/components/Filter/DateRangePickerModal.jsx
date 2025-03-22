@@ -41,7 +41,7 @@ export function DateRangePickerModal({
             Description
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4">
+        <div className="max-h-[calc(100vh-300px)] overflow-y-auto py-4">
           <Calendar
             initialFocus
             mode="range"

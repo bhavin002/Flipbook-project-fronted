@@ -7,13 +7,13 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
-import { useState } from "react"
-import { Search } from "lucide-react"
+import { useState, useRef } from "react"
+import { Search, X } from "lucide-react"
 
 export default function SelectGroupMember({ options, selectedValues, onChange }) {
     const [open, setOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const searchInputRef = useState(null);
+    const searchInputRef = useRef(null);
 
     const handleSelect = (e) => {
         e.preventDefault();
@@ -26,6 +26,12 @@ export default function SelectGroupMember({ options, selectedValues, onChange })
             const newSelection = selectedValues.filter(item => item !== option.label);
             onChange(newSelection);
         }
+    };
+
+    const clearSelection = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        onChange([]);
     };
 
     const displayContent = () => {
@@ -57,11 +63,22 @@ export default function SelectGroupMember({ options, selectedValues, onChange })
     return (
         <div className="space-y-3">
             <DropdownMenu open={open} onOpenChange={handleOpenChange}>
-                <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="w-full justify-between">
-                        <span className="truncate">{displayContent()}</span>
-                    </Button>
-                </DropdownMenuTrigger>
+                <div className="relative">
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="outline" className="w-full justify-between">
+                            <span className="truncate">{displayContent()}</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    
+                    {selectedValues.length > 0 && (
+                        <div 
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                            onClick={clearSelection}
+                        >
+                            <X className="h-4 w-4 opacity-70 hover:opacity-100" />
+                        </div>
+                    )}
+                </div>
                 <DropdownMenuContent
                     align="start"
                     className="w-full p-0"
@@ -72,13 +89,13 @@ export default function SelectGroupMember({ options, selectedValues, onChange })
                     <div className="flex items-center border-b p-2">
                         <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
                         <input
-                            ref={searchInputRef} 
+                            ref={searchInputRef}
                             className="flex h-8 w-full rounded-md bg-transparent py-2 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
                             placeholder="Search readers..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            onKeyDown={(e) => e.stopPropagation()} 
+                            onKeyDown={(e) => e.stopPropagation()}
                         />
                     </div>
                     

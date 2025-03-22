@@ -5,6 +5,7 @@ import Embed from "./Details/Embed";
 import SendEmail from "./Details/SendEmail";
 import DownloadQR from "./Details/DownloadQR";
 import TrackableLinks from "./Details/TrackableLinks";
+import Statistics from "./Details/Statistics";
 
 export default function Details() {
     return (
@@ -54,6 +55,9 @@ export default function Details() {
                 </TabsContent>
                 <TabsContent value="trackable-links" className="h-full overflow-y-auto">
                     <TrackableLinks/>
+                </TabsContent>
+                <TabsContent value="statistics" className="h-full overflow-y-auto">
+                    <Statistics/>
                 </TabsContent>
             </Tabs>
         </div>

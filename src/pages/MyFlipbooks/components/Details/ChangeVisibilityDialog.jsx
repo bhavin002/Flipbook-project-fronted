@@ -16,7 +16,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useState } from "react";
-import ReaderSelection from "../Sidebar/Home/MyFlipbooks/ReaderSelection";
+import GenericSelection from "@/utils/GenericSelection";
 export default function ChangeVisibilityDialog() {
     const [selectedRadio, setSelectedRadio] = useState("email");
     const [emailInput, setEmailInput] = useState("");
@@ -49,14 +49,23 @@ export default function ChangeVisibilityDialog() {
     const filters = [
         {
             id: 'createdBy',
-            options: [
-                { value: 'bhavinv', label: 'BhavinV' },
-                { value: 'satyamg', label: 'SatyamG' },
-                { value: 'utsavp', label: 'UtsavP' },
-                { value: 'nirav', label: 'Nirav' },
-                { value: 'parth', label: 'Parth' },
-                { value: 'pratik', label: 'Pratik' },
-            ],
+            options: [{
+                name: "Groups",
+                groups: [
+                    { value: 'group1', label: 'Group 1' },
+                    { value: 'group2', label: 'Group 2' },
+                ]
+            }, {
+                name: "Readers",
+                readers: [
+                    { value: 'bhavinv', label: 'BhavinV' },
+                    { value: 'satyamg', label: 'SatyamG' },
+                    { value: 'utsavp', label: 'UtsavP' },
+                    { value: 'nirav', label: 'Nirav' },
+                    { value: 'parth', label: 'Parth' },
+                    { value: 'pratik', label: 'Pratik' },
+                ]
+            }],
             selectedValues: createdByFilter,
             onChange: setCreatedByFilter
         }
@@ -188,7 +197,7 @@ export default function ChangeVisibilityDialog() {
 
                             {selectedRadio === "readers" && (
                                 filters.map((filter) => (
-                                    <ReaderSelection
+                                    <GenericSelection
                                         key={filter.id}
                                         options={filter.options}
                                         selectedValues={filter.selectedValues}

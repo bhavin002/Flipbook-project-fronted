@@ -10,8 +10,8 @@ import { format } from "date-fns"
 import { CalendarIcon, Info } from "lucide-react"
 import { useState } from "react"
 import { DateRangePickerModal } from "../../Filter/DateRangePickerModal"
-import FlipbookStatistics from "./FlipbookStatistics"
 import TopFlipbooks from "./TopFlipbooks"
+import Summary from "./Summary"
 
 export default function StatisticsContent() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -80,8 +80,7 @@ export default function StatisticsContent() {
                 value={displayValue}
                 onApply={handleApplyDateRange}
             />
-
-            <FlipbookStatistics />
+            <Summary />
             <TopFlipbooks/>
         </div>
     )

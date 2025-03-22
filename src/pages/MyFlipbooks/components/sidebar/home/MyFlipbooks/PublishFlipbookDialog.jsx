@@ -16,13 +16,14 @@ import { useState } from 'react'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import ReaderSelection from "./ReaderSelection";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import GenericSelection from "@/utils/GenericSelection";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublishModalOpen }) {
     const [selectedRadio, setSelectedRadio] = useState("email");
@@ -56,14 +57,23 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
     const filters = [
         {
             id: 'createdBy',
-            options: [
-                { value: 'bhavinv', label: 'BhavinV' },
-                { value: 'satyamg', label: 'SatyamG' },
-                { value: 'utsavp', label: 'UtsavP' },
-                { value: 'nirav', label: 'Nirav' },
-                { value: 'parth', label: 'Parth' },
-                { value: 'pratik', label: 'Pratik' },
-            ],
+            options: [{
+                name: "Groups",
+                groups: [
+                    { value: 'group1', label: 'Group 1' },
+                    { value: 'group2', label: 'Group 2' },
+                ]
+            }, {
+                name: "Readers",
+                readers: [
+                    { value: 'bhavinv', label: 'BhavinV' },
+                    { value: 'satyamg', label: 'SatyamG' },
+                    { value: 'utsavp', label: 'UtsavP' },
+                    { value: 'nirav', label: 'Nirav' },
+                    { value: 'parth', label: 'Parth' },
+                    { value: 'pratik', label: 'Pratik' },
+                ]
+            }],
             selectedValues: createdByFilter,
             onChange: setCreatedByFilter
         }
@@ -212,12 +222,32 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
 
                                 {selectedRadio === "readers" && (
                                     filters.map((filter) => (
-                                        <ReaderSelection
-                                            key={filter.id}
-                                            options={filter.options}
-                                            selectedValues={filter.selectedValues}
-                                            onChange={filter.onChange}
-                                        />
+                                        <>
+                                            <GenericSelection
+                                                key={filter.id}
+                                                options={filter.options}
+                                                selectedValues={filter.selectedValues}
+                                                onChange={filter.onChange}
+                                            />
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id="notification"
+                                                />
+                                                <Label htmlFor="notification" className="text-sm font-medium leading-none">
+                                                    Send a notification to selected readers
+                                                </Label>
+                                            </div>
+                                            <div className="flex items-center space-x-2">
+                                                <Checkbox
+                                                    id="track"
+                                                />
+                                                <Label htmlFor="track" className="text-sm font-medium leading-none">
+                                                    Track each reader individually
+                                                </Label>
+                                            </div>
+                                        </>
+
+
                                     ))
                                 )
                                 }
