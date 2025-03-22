@@ -458,6 +458,25 @@ const groups = [
     { id: 15, name: "Business Intelligence", members: 8 },
 ]
 
+const trackableLinks = [
+    { id: 1, name: "megaDeal", created: "Mar 5, 2025", link: "https://www.flipnova.com/AABBCCDD/abcd1234-ef56-7890-ghij-klmnopqrstuv", lastViewed: "Mar 10, 2025" },
+    { id: 2, name: "springSale", created: "Mar 15, 2025", link: "https://www.flipnova.com/A1B2C3D4E5F6/23a67b88-9f1d-4b6d-8c2e-abc123xyz456", lastViewed: "Mar 18, 2025" },
+    { id: 3, name: "discountOffer", created: "Mar 10, 2025", link: "https://www.flipnova.com/FFEEAABBCCDD/7845a1c2-b3d4-5678-e9f0-111213141516", lastViewed: "Mar 12, 2025" },
+    { id: 4, name: "limitedDeal", created: "Feb 25, 2025", link: "https://www.flipnova.com/112233445566/9876abcd-5432-1efg-hijk-987654321000", lastViewed: "Mar 1, 2025" },
+    { id: 5, name: "exclusivePromo", created: "Feb 20, 2025", link: "https://www.flipnova.com/778899AABBCC/11223344-5566-7788-99AA-BBCCDDEEFF00", lastViewed: "Feb 28, 2025" },
+    { id: 6, name: "flashSale", created: "Mar 5, 2025", link: "https://www.flipnova.com/ZXCVCXCVXCVX/aaaa1111-bbbb-cccc-dddd-eeeeffff0000", lastViewed: "Mar 8, 2025" },
+    { id: 7, name: "weekendOffer", created: "Mar 8, 2025", link: "https://www.flipnova.com/ASDFQWERZXCV/11112222-3333-4444-5555-666677778888", lastViewed: "Mar 11, 2025" },
+    { id: 8, name: "newCollection", created: "Feb 10, 2025", link: "https://www.flipnova.com/QWERTYUIOPASD/99887766-5544-3322-1100-AABBCCDDEEFF", lastViewed: "Feb 15, 2025" },
+    { id: 9, name: "springTrends", created: "Mar 2, 2025", link: "https://www.flipnova.com/POIUYTREWQASD/44445555-6666-7777-8888-99990000AAAA", lastViewed: "Mar 6, 2025" },
+    { id: 10, name: "shopNow", created: "Jan 30, 2025", link: "https://www.flipnova.com/MNBVCXZLKJHG/ABCDEF12-3456-7890-GHIJ-KLMNOPQRSTUV", lastViewed: "Feb 5, 2025" },
+    { id: 11, name: "newArrivals", created: "Feb 28, 2025", link: "https://www.flipnova.com/YTREWQASDFGHJ/99887744-6655-3322-1100-AABBCCDDEEFF", lastViewed: "Mar 3, 2025" },
+    { id: 12, name: "hotPicks", created: "Jan 15, 2025", link: "https://www.flipnova.com/ZXCVMNBQWERTY/11113333-5555-7777-9999-BBCCAAFFDD00", lastViewed: "Jan 20, 2025" },
+    { id: 13, name: "topDeals", created: "Feb 5, 2025", link: "https://www.flipnova.com/QAZWSXEDCRFVTG/22224444-6666-8888-AAAA-BBBBCCCCDDDD", lastViewed: "Feb 9, 2025" },
+    { id: 14, name: "cyberOffer", created: "Mar 1, 2025", link: "https://www.flipnova.com/MNBVCXZLKJHGFDS/55557777-9999-BBBB-DDDD-EEEEFFFF0000", lastViewed: "Mar 4, 2025" },
+    { id: 15, name: "festiveSale", created: "Feb 22, 2025", link: "https://www.flipnova.com/ASDFGHJKLPOIUYT/33335555-7777-9999-BBBB-CCCCDDDDFFFF", lastViewed: "Feb 27, 2025" }
+];
+
+
 const historyData = [
     {
         approvedOn: "March 16, 2025 12:48 UTC",
@@ -670,6 +689,8 @@ export function getData(dataType) {
             return initialPermissions;
         case 'pageOptions':
             return pageOptions;
+        case 'trackableLinks':
+            return trackableLinks;
         default:
             return [];
     }

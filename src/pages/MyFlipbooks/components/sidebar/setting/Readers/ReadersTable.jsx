@@ -76,7 +76,7 @@ export default function ReadersTable({
                 </TableHeader>
                 <TableBody>
                     {currentReaders.map((teammate) => (
-                        <TableRow key={teammate.id} className={selectedReaders.includes(teammate.id) ? 'bg-primary/10 hover:bg-primary/10' : ''}>
+                        <TableRow key={teammate.id} className={selectedReaders.includes(teammate.id) ? 'bg-muted/50' : ''}>
                             <TableCell className="w-12">
                                 <Checkbox
                                     checked={selectedReaders.includes(teammate.id)}

@@ -70,7 +70,7 @@ export default function GroupsTable({
                 </TableHeader>
                 <TableBody>
                     {currentGroups.map((group) => (
-                        <TableRow key={group.id} className={selectedGroups.includes(group.id) ? 'bg-primary/10 hover:bg-primary/10' : ''}>
+                        <TableRow key={group.id} className={selectedGroups.includes(group.id) ? 'bg-muted/50' : ''}>
                             <TableCell className="w-12">
                                 <Checkbox
                                     checked={selectedGroups.includes(group.id)}

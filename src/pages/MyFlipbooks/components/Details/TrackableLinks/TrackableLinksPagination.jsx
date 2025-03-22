@@ -1,3 +1,4 @@
+
 import {
     Pagination,
     PaginationContent,
@@ -8,7 +9,7 @@ import {
     PaginationEllipsis
 } from "@/components/ui/pagination";
 
-export default function TeammatesPagination({ currentPage, totalPages, onChangePage }) {
+export default function TrackableLinksPagination({ currentPage, totalPages, onChangePage }) {
     const pageNumbers = [];
 
     pageNumbers.push(1);

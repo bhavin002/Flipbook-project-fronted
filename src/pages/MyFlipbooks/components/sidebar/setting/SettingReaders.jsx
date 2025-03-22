@@ -15,7 +15,7 @@ import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { getData } from '@/utils/datas';
 import ReadersTable from "./Readers/ReadersTable";
-import ReadersPagination from "./Readers/ReadersPagination";
+import TablePagination from "@/utils/TablePagination";
 
 export default function SettingReaders() {
     const [selectedReaders, setSelectedReaders] = useState([]);
@@ -136,7 +136,7 @@ export default function SettingReaders() {
                             onDeleteSelected={deleteSelectedTeammates}
                         />
 
-                        <ReadersPagination
+                        <TablePagination
                             currentPage={currentPage}
                             totalPages={totalPages}
                             onChangePage={changePage}

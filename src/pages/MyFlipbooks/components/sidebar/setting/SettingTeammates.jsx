@@ -5,9 +5,9 @@ import InviteTeammateDialog from "./Teammates/InviteTeammateDialog";
 import { Input } from '@/components/ui/input';
 import { getData } from '@/utils/datas';
 import TeammatesTable from './Teammates/TeammatesTable';
-import TeamPagination from './Teammates/TeammatesPagination';
 import RolesInfo from './Teammates/RolesInfo';
 import TFA from './Teammates/TFA';
+import TablePagination from '@/utils/TablePagination';
 
 export default function SettingTeammates() {
     const [selectedTeammates, setSelectedTeammates] = useState([]);
@@ -113,7 +113,7 @@ export default function SettingTeammates() {
                             onDeleteSelected={deleteSelectedTeammates}
                         />
 
-                        <TeamPagination
+                        <TablePagination
                             currentPage={currentPage}
                             totalPages={totalPages}
                             onChangePage={changePage}

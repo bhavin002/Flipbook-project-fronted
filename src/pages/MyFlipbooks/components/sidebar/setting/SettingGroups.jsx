@@ -5,7 +5,7 @@ import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { getData } from '@/utils/datas';
 import GroupsTable from "./Groups/GroupsTable";
-import GroupsPagination from "./Groups/GroupsPagination";
+import TablePagination from "@/utils/TablePagination";
 
 export default function SettingGroups() {
     const [selectedGroups, setSelectedGroups] = useState([]);
@@ -98,7 +98,7 @@ export default function SettingGroups() {
                             onDeleteSelected={deleteSelectedGroups}
                         />
 
-                        <GroupsPagination
+                        <TablePagination
                             currentPage={currentPage}
                             totalPages={totalPages}
                             onChangePage={changePage}

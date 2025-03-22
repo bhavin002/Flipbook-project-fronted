@@ -78,7 +78,7 @@ export default function TeammatesTable({
                 </TableHeader>
                 <TableBody>
                     {currentTeammates.map((teammate) => (
-                        <TableRow key={teammate.id} className={selectedTeammates.includes(teammate.id) ? 'bg-primary/10 hover:bg-primary/10' : ''}>
+                        <TableRow key={teammate.id} className={selectedTeammates.includes(teammate.id) ? 'bg-muted/50' : ''}>
                             <TableCell className="w-12">
                                 <Checkbox
                                     checked={selectedTeammates.includes(teammate.id)}

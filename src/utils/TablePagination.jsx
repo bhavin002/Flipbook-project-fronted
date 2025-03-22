@@ -9,7 +9,7 @@ import {
     PaginationEllipsis
 } from "@/components/ui/pagination";
 
-export default function GroupsPagination({ currentPage, totalPages, onChangePage }) {
+export default function TablePagination({ currentPage, totalPages, onChangePage }) {
     const pageNumbers = [];
 
     pageNumbers.push(1);
