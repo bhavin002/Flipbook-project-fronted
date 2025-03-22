@@ -42,29 +42,38 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
     };
 
     useEffect(() => {
-        const currentPath = location.pathname.split('/').slice(0, 2).join('/');
+        const currentPath = location.pathname;
+        const currentPathBase = currentPath.split('/').slice(0, 2).join('/');
         const pathsToCloseSidebar = ["/statistics", "/automation", "/details"];
         
-        if (pathsToCloseSidebar.includes(currentPath)) {
+        if (pathsToCloseSidebar.includes(currentPathBase)) {
             setOpen(false);
-            setGlobalSelectedItem(null);
-        }
-        
-        const currentSection = getPathSection(currentPath);
-        
-        if (currentSection) {
-            setActiveSection(currentSection);
             
-            setLastVisitedPaths(prev => ({
-                ...prev,
-                [currentSection]: currentPath
-            }));
+            if (currentPathBase === "/details") {
+                setGlobalSelectedItem(null);
+            } else {
+                const currentSection = getPathSection(currentPath);
+                if (currentSection) {
+                    setGlobalSelectedItem(currentSection);
+                }
+            }
+        } else {
+            const currentSection = getPathSection(currentPath);
             
-            if (currentSection !== selectedItem) {
-                setGlobalSelectedItem(currentSection);
+            if (currentSection) {
+                setActiveSection(currentSection);
+                
+                setLastVisitedPaths(prev => ({
+                    ...prev,
+                    [currentSection]: currentPath
+                }));
+                
+                if (currentSection !== selectedItem) {
+                    setGlobalSelectedItem(currentSection);
+                }
             }
         }
-    }, [location.pathname, setGlobalSelectedItem, selectedItem]);
+    }, [location.pathname]);
 
     useEffect(() => {
         setIsSidebarOpen(open);
