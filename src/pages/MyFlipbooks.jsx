@@ -1,8 +1,8 @@
 import { Sparkles } from 'lucide-react';
-import MyFlipbookDropdown from '../components/Sidebar/Home/MyFlipbooks/MyFlipbookDropdown'
-import ShareFlipbookDialog from '../components/Sidebar/Home/MyFlipbooks/ShareFlipbookDialog'
+import MyFlipbookDropdown from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/MyFlipbookDropdown'
+import ShareFlipbookDialog from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/ShareFlipbookDialog'
 import { useState, useEffect } from 'react';
-import PublishFlipbookDialog from '../components/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog'
+import PublishFlipbookDialog from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog'
 import { getData } from '@/utils/datas';
 import { useNavigate } from 'react-router-dom';
 

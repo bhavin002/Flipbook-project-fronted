@@ -5,9 +5,9 @@ import {
     DrawerContent,
 } from "@/components/ui/drawer";
 import { useNavigate, useLocation } from 'react-router-dom';
-import HomeDrawerPanel from './BottomSidebar/HomeDrawerPanel';
-import BrandingDrawerPanel from './BottomSidebar/BrandingDrawerPanel';
-import SettingsDrawerPanel from './BottomSidebar/SettingsDrawerPanel';
+import HomeDrawerPanel from '../AppLayoutComponents/BottomSidebar/HomeDrawerPanel';
+import BrandingDrawerPanel from '../AppLayoutComponents/BottomSidebar/BrandingDrawerPanel';
+import SettingsDrawerPanel from '../AppLayoutComponents/BottomSidebar/SettingsDrawerPanel';
 import { getData } from '@/utils/datas';
 
 function NavItem({ item, isSelected, onClick }) {

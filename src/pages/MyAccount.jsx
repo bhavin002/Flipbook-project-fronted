@@ -1,8 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserRound, Mail } from 'lucide-react';
 import { useNavigate, useLocation } from "react-router-dom";
-import MyAccountDetails from "../components/MyAccount/MyAccountDetails"
-import EmailPreferences from "../components/MyAccount/EmailPreferences"
+import MyAccountDetails from "../components/AppLayoutComponents/MyAccount/MyAccountDetails"
+import EmailPreferences from "../components/AppLayoutComponents/MyAccount/EmailPreferences"
 
 export default function MyAccount() {
     const navigate = useNavigate();

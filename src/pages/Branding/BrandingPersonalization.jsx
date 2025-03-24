@@ -1,11 +1,11 @@
-import Favicon from "../../components/Sidebar/Branding/Personalization/Favicon"
-import Header from "../../components/Sidebar/Branding/Personalization/Header"
-import Profile from "../../components/Sidebar/Branding/Personalization/Profile"
-import Social from "../../components/Sidebar/Branding/Personalization/Social"
-import SocialThumnail from "../../components/Sidebar/Branding/Personalization/SocialThumnail"
-import Footer from "../../components/Sidebar/Branding/Personalization/Footer"
-import Preview from "../../components/Sidebar/Branding/Personalization/Preview"
-import TabPersonalization from "../../components/Sidebar/Branding/Personalization/TabPersonalization"
+import Favicon from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/Favicon"
+import Header from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/Header"
+import Profile from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/Profile"
+import Social from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/Social"
+import SocialThumnail from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/SocialThumnail"
+import Footer from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/Footer"
+import Preview from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/Preview"
+import TabPersonalization from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/TabPersonalization"
 export default function BrandingPersonalization() {
     return (
         <>

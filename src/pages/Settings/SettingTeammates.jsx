@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Search } from 'lucide-react';
-import InviteTeammateDialog from "../../components/Sidebar/Setting/Teammates/InviteTeammateDialog"
+import InviteTeammateDialog from "../../components/AppLayoutComponents/Sidebar/Setting/Teammates/InviteTeammateDialog"
 import { Input } from '@/components/ui/input';
 import { getData } from '@/utils/datas';
-import TeammatesTable from "../../components/Sidebar/Setting/Teammates/TeammatesTable"
-import RolesInfo from "../../components/Sidebar/Setting/Teammates/RolesInfo"
-import TFA from "../../components/Sidebar/Setting/Teammates/TFA"
+import TeammatesTable from "../../components/AppLayoutComponents/Sidebar/Setting/Teammates/TeammatesTable"
+import RolesInfo from "../../components/AppLayoutComponents/Sidebar/Setting/Teammates/RolesInfo"
+import TFA from "../../components/AppLayoutComponents/Sidebar/Setting/Teammates/TFA"
 import TablePagination from '@/utils/TablePagination';
 
 export default function SettingTeammates() {

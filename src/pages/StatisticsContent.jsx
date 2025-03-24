@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { CalendarIcon, Info } from "lucide-react"
 import { useState } from "react"
-import { DateRangePickerModal } from "../components/Filter/DateRangePickerModal"
-import TopFlipbooks from "../components/Sidebar/Statistics/TopFlipbooks"
-import Summary from "../components/Sidebar/Statistics/Summary"
+import { DateRangePickerModal } from "../components/AppLayoutComponents/Filter/DateRangePickerModal"
+import TopFlipbooks from "../components/AppLayoutComponents/Sidebar/Statistics/TopFlipbooks"
+import Summary from "../components/AppLayoutComponents/Sidebar/Statistics/Summary"
 
 export default function StatisticsContent() {
     const [isModalOpen, setIsModalOpen] = useState(false);

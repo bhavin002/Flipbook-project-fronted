@@ -9,12 +9,12 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import InviteReaderDialog from "../../components/Sidebar/Setting/Readers/InviteReaderDialog"
+import InviteReaderDialog from "../../components/AppLayoutComponents/Sidebar/Setting/Readers/InviteReaderDialog"
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { getData } from '@/utils/datas';
-import ReadersTable from "../../components/Sidebar/Setting/Readers/ReadersTable"
+import ReadersTable from "../../components/AppLayoutComponents/Sidebar/Setting/Readers/ReadersTable"
 import TablePagination from "@/utils/TablePagination";
 import { Label } from "@/components/ui/label";
 

@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import EditBillingDetailsDialog from "../../components/Sidebar/Setting/Invoices/EditBillingDetailsDialog";
+import EditBillingDetailsDialog from "../../components/AppLayoutComponents/Sidebar/Setting/Invoices/EditBillingDetailsDialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default function SettingBillingInvoices() {
