@@ -5,8 +5,22 @@ import { BookUser } from 'lucide-react';
 import { Settings } from 'lucide-react';
 import { Wrench } from 'lucide-react';
 import { LogOut } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 export default function ProfileDropDownCom() {
+
+    const navigate = useNavigate();
+
+    const handleItemClick = (action) => {
+        if(action ==="setting"){
+            navigate("/settings/workspace")
+        }else if(action === "my-account"){
+            navigate("/account/details")
+        }else if(action === "logout"){
+            navigate("/sign-in")
+        }
+    };
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
@@ -34,10 +48,10 @@ export default function ProfileDropDownCom() {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleItemClick("my-account")}>
                         <BookUser /> My account
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleItemClick("setting")}>
                         <Settings /> Settings
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
@@ -46,7 +60,7 @@ export default function ProfileDropDownCom() {
                     <Wrench /> Help and support
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleItemClick("logout")}>
                     <LogOut /> Log out
                 </DropdownMenuItem>
             </DropdownMenuContent>

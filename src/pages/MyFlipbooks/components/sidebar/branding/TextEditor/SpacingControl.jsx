@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Label } from '@/components/ui/label';
 
 export default function SpacingControl({ config, updateConfig }){
     const handleLetterSpacingChange = (vals) => {
@@ -28,7 +29,7 @@ export default function SpacingControl({ config, updateConfig }){
                 <div className="space-y-4">
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                            <label>Letter spacing</label>
+                            <Label>Letter spacing</Label>
                             <span>{config.letterSpacing}</span>
                         </div>
                         <Slider
@@ -41,7 +42,7 @@ export default function SpacingControl({ config, updateConfig }){
                     </div>
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                            <label>Line height</label>
+                            <Label>Line height</Label>
                             <span>{config.lineHeight.toFixed(1)}</span>
                         </div>
                         <Slider

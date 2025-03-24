@@ -78,7 +78,7 @@ export default function Statistics() {
             <OrdersTable />
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-semibold">Form responses</CardTitle>
+                    <CardTitle>Form responses</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Tabs defaultValue="quiz" className="flex flex-col h-full">

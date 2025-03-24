@@ -37,7 +37,7 @@ export default function CustomizeEmail() {
                 </div>
                 <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                        <label className="font-medium flex items-center gap-2">
+                        <Label className="font-medium flex items-center gap-2">
                             Logo
                             <TooltipProvider>
                                 <Tooltip>
@@ -53,7 +53,7 @@ export default function CustomizeEmail() {
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
-                        </label>
+                        </Label>
                         <Button variant="outline"><Trash2 /></Button>
                     </div>
                     <Button variant="outline" size="sm">
@@ -101,9 +101,9 @@ export default function CustomizeEmail() {
                 <p className="text-sm text-gray-500"> <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Upgrade </a>to send email via Flipnova or <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">click here </a>to use your email client</p>
                 <div className="flex items-center">
                     <Switch id="save-emails" />
-                    <label htmlFor="save-emails" className="ml-3 text-gray-700">
+                    <Label htmlFor="save-emails" className="ml-3 text-gray-700">
                     Save these settings for future emails
-                    </label>
+                    </Label>
                 </div>
             </CardContent>
         </Card>

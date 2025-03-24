@@ -37,7 +37,7 @@ export default function OrdersTable() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="text-xl font-semibold">Shopping cart orders</CardTitle>
+                <CardTitle>Shopping cart orders</CardTitle>
             </CardHeader>
             <CardContent>
                 <div className="border rounded-lg overflow-hidden">

@@ -11,6 +11,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Label } from "@/components/ui/label";
 export default function Favicon() {
     return (
          <Card>
@@ -19,7 +20,7 @@ export default function Favicon() {
             </CardHeader>
             <CardContent className="space-y-4 ">
                 <div className="flex items-center justify-between">
-                    <label className="font-medium flex items-center gap-2">
+                    <Label className="font-medium flex items-center gap-2">
                         Favicon
                         <TooltipProvider>
                             <Tooltip>
@@ -35,7 +36,7 @@ export default function Favicon() {
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
-                    </label>
+                    </Label>
                     <Button variant="outline"><Trash2 /></Button>
                 </div>
                 <div className="flex items-center gap-4">

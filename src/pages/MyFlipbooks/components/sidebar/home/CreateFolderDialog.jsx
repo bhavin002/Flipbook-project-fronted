@@ -33,7 +33,7 @@ export default function CreateFolderDialog() {
                 </DialogHeader>
                 <Input placeholder="Folder Name" />
                 <DialogFooter>
-                    <Button type="submit">Create Folder</Button>
+                    <Button>Create Folder</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

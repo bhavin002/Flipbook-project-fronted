@@ -13,7 +13,7 @@ export default function SettingWorkspace() {
             </div>
              <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-semibold">Name your workspace</CardTitle>
+                    <CardTitle>Name your workspace</CardTitle>
                 </CardHeader>
 
                 <CardContent>
@@ -34,7 +34,7 @@ export default function SettingWorkspace() {
             </Card>
              <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-semibold">Brand your workspace</CardTitle>
+                    <CardTitle>Brand your workspace</CardTitle>
                     <CardDescription>
                         Your logo will be displayed in the top left corner of this workspace, replacing the Flipnova logo.
                     </CardDescription>

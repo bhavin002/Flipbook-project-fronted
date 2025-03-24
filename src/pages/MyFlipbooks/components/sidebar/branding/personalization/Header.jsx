@@ -23,18 +23,18 @@ export default function Header() {
             <CardContent className="space-y-4">
                 <div className="flex items-center">
                     <Switch id="show-header" />
-                    <label htmlFor="show-header" className="ml-3 text-gray-700">
+                    <Label htmlFor="show-header" className="ml-3 text-gray-700">
                         Show header
-                    </label>
+                    </Label>
                 </div>
                 <div className="flex items-center">
                     <Switch id="show-search-bar" />
-                    <label htmlFor="show-search-bar" className="ml-3 text-gray-700">
+                    <Label htmlFor="show-search-bar" className="ml-3 text-gray-700">
                         Show search bar
-                    </label>
+                    </Label>
                 </div>
                 <div className="flex items-center justify-between">
-                    <label className="font-medium flex items-center gap-2">
+                    <Label className="font-medium flex items-center gap-2">
                         Logo
                         <TooltipProvider>
                             <Tooltip>
@@ -50,7 +50,7 @@ export default function Header() {
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
-                    </label>
+                    </Label>
                     <Button variant="outline"><Trash2 /></Button>
                 </div>
                 <Button variant="outline" size="sm">

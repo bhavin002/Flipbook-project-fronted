@@ -34,9 +34,9 @@ export default function Size() {
                 </div>
                 <div className="flex items-center">
                     <Switch id="responsive-width" />
-                    <label htmlFor="responsive-width" className="ml-3 text-gray-700">
+                    <Label htmlFor="responsive-width" className="ml-3 text-gray-700">
                         Responsive width
-                    </label>
+                    </Label>
                 </div>
             </CardContent>
         </Card>

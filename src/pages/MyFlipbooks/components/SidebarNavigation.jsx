@@ -28,8 +28,8 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
     const defaultRoutes = getData('defaultRoutes');
     const navItems = getData('navItems');
-    
-    const [lastVisitedPaths, setLastVisitedPaths] = useState({...defaultRoutes});
+
+    const [lastVisitedPaths, setLastVisitedPaths] = useState({ ...defaultRoutes });
     const [activeSection, setActiveSection] = useState(null);
 
     const getPathSection = (path) => {
@@ -37,19 +37,20 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
             id: item.id,
             basePath: item.path.split('/').slice(0, 2).join('/')
         }));
-        
+
         return sections.find(section => path.startsWith(section.basePath))?.id;
     };
 
     useEffect(() => {
         const currentPath = location.pathname;
         const currentPathBase = currentPath.split('/').slice(0, 2).join('/');
-        const pathsToCloseSidebar = ["/statistics", "/automation", "/details"];
-        
-        if (pathsToCloseSidebar.includes(currentPathBase)) {
+        const pathsToCloseSidebarWithSelecteSidebarTab = ["/statistics", "/automation", "/details", "/embed", "/trackable-links", "/stats", "/send-email", "/download-qr", "/account"];
+        const pathsToCloseSidebarWithoutSelecteSidebarTab = ["/details", "/embed", "/trackable-links", "/stats", "/send-email", "/download-qr", "/account"];
+
+        if (pathsToCloseSidebarWithSelecteSidebarTab.includes(currentPathBase)) {
             setOpen(false);
-            
-            if (currentPathBase === "/details") {
+
+            if (pathsToCloseSidebarWithoutSelecteSidebarTab.includes(currentPathBase)) {
                 setGlobalSelectedItem(null);
             } else {
                 const currentSection = getPathSection(currentPath);
@@ -59,15 +60,15 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
             }
         } else {
             const currentSection = getPathSection(currentPath);
-            
+
             if (currentSection) {
                 setActiveSection(currentSection);
-                
+
                 setLastVisitedPaths(prev => ({
                     ...prev,
                     [currentSection]: currentPath
                 }));
-                
+
                 if (currentSection !== selectedItem) {
                     setGlobalSelectedItem(currentSection);
                 }
@@ -82,21 +83,21 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
     const handleItemClick = (itemId) => {
         const currentPath = location.pathname;
         const currentSection = getPathSection(currentPath);
-        
+
         if (itemId === currentSection) {
             const newOpenState = !open;
             setOpen(newOpenState);
             setIsSidebarOpen(newOpenState);
-            
+
             return;
         }
-        
+
         setGlobalSelectedItem(itemId);
-        
+
         const shouldOpenSidebar = ['home', 'branding', 'settings'].includes(itemId);
         setOpen(shouldOpenSidebar);
         setIsSidebarOpen(shouldOpenSidebar);
-        
+
         if (itemId !== activeSection) {
             navigate(defaultRoutes[itemId]);
         } else {

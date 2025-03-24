@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import CustomDomainSettings from "./Setting/CustomDomainSettings";
+import { Label } from "@/components/ui/label";
 
 export default function BrandingSettings() {
   return (
@@ -15,7 +16,7 @@ export default function BrandingSettings() {
        <Card>
         <CardHeader>
           <div className="flex items-center justify-between w-full">
-            <CardTitle className="text-xl font-semibold">Settings</CardTitle>
+            <CardTitle>Settings</CardTitle>
             <Button variant="outline">See my profile</Button>
           </div>
         </CardHeader>
@@ -25,9 +26,9 @@ export default function BrandingSettings() {
             <h3 className="text-base font-medium">Profile privacy</h3>
             <div className="flex items-center">
               <Switch id="profile-privacy" />
-              <label htmlFor="profile-privacy" className="ml-3 text-gray-700">
+              <Label htmlFor="profile-privacy" className="ml-3 text-gray-700">
                 Make my profile private
-              </label>
+              </Label>
             </div>
           </div>
 

@@ -49,7 +49,7 @@ export default function Summary() {
             <Card>
                 <CardHeader>
                     <div className="flex items-center justify-between w-full">
-                        <CardTitle className="text-xl font-semibold">Summary</CardTitle>
+                        <CardTitle>Summary</CardTitle>
                     </div>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

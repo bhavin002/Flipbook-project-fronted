@@ -57,7 +57,7 @@ export default function FlipbookSummary() {
             <Card>
                 <CardHeader>
                     <div className="flex items-center justify-between w-full">
-                        <CardTitle className="text-xl font-semibold">Summary</CardTitle>
+                        <CardTitle>Summary</CardTitle>
                         <button className="text-blue-600 text-sm hover:underline">Download CSV</button>
                     </div>
                 </CardHeader>

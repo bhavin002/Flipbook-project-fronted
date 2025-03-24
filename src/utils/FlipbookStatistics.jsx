@@ -121,7 +121,7 @@ export default function FlipbookStatistics() {
         <>
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-semibold">Flipbook statistics</CardTitle>
+                    <CardTitle>Flipbook statistics</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <Tabs defaultValue="impressions" className="w-full">

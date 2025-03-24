@@ -70,7 +70,7 @@ export default function SettingTeammates() {
             </div>
              <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-semibold">Manage your teammates</CardTitle>
+                    <CardTitle>Manage your teammates</CardTitle>
                 </CardHeader>
 
                 <CardContent>

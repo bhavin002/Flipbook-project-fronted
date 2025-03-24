@@ -29,7 +29,7 @@ export default function DetailsTab() {
             </div>
              <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-semibold">Share link</CardTitle>
+                    <CardTitle>Share link</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-center space-x-2">
@@ -74,7 +74,7 @@ export default function DetailsTab() {
                 <div className="lg:w-[40%] w-full">
                     <Card className="shadow-sm rounded-lg mb-4">
                         <CardHeader>
-                            <CardTitle className="text-xl font-semibold">Details</CardTitle>
+                            <CardTitle>Details</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
@@ -118,7 +118,7 @@ export default function DetailsTab() {
                     </Card>
                      <Card>
                         <CardHeader>
-                            <CardTitle className="text-xl font-semibold">Download</CardTitle>
+                            <CardTitle>Download</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-2 gap-2">
@@ -238,7 +238,7 @@ export default function DetailsTab() {
             </div>
              <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-semibold">Share</CardTitle>
+                    <CardTitle>Share</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-center gap-2 flex-wrap">

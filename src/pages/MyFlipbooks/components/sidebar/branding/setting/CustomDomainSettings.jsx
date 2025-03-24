@@ -12,6 +12,7 @@ import {
     Shield
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { Label } from "@/components/ui/label";
 
 export default function CustomDomainSettings() {
     const [progress, setProgress] = useState(33);
@@ -41,7 +42,7 @@ export default function CustomDomainSettings() {
              <Card>
                 <CardHeader className="pb-0">
                     <div className="flex items-center justify-between w-full">
-                        <CardTitle className="text-xl font-semibold">Custom Domain</CardTitle>
+                        <CardTitle>Custom Domain</CardTitle>
                     </div>
                 </CardHeader>
 
@@ -109,7 +110,7 @@ function DomainConfigStep({ onContinue }) {
             <StepHeader number={1} title="Domain Configuration" />
 
             <div className="space-y-2">
-                <label htmlFor="domain" className="font-medium">Domain Name</label>
+                <Label htmlFor="domain" className="font-medium">Domain Name</Label>
                 <Input
                     id="domain"
                     placeholder="e.g., forms.yourbrand.com"

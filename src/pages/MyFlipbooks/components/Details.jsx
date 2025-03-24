@@ -1,5 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {BookOpenText, Code, Mail, Image, QrCode, ChartPie, Link } from 'lucide-react';
+import { BookOpenText, Code, Mail, Image, QrCode, ChartPie, Link } from 'lucide-react';
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import DetailsTab from "./Details/DetailsTab";
 import Embed from "./Details/Embed";
 import SendEmail from "./Details/SendEmail";
@@ -8,11 +9,27 @@ import TrackableLinks from "./Details/TrackableLinks";
 import Statistics from "./Details/Statistics";
 
 export default function Details() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const location = useLocation();
+    
+    const pathParts = location.pathname.split('/');
+    const defaultTab = pathParts[1] || 'details';
+    
+    const handleTabChange = (value) => {
+        navigate(`/${value}/${id}`);
+    };
+    
     return (
         <div className="p-6 max-md:w-[100vw] h-full overflow-y-hidden">
-            <Tabs defaultValue="details" className="flex flex-col h-full">
+            <Tabs 
+                defaultValue={defaultTab} 
+                value={defaultTab}
+                onValueChange={handleTabChange}
+                className="flex flex-col h-full"
+            >
                 <TabsList className="overflow-x-auto max-md:w-full w-fit justify-start overflow-y-hidden">
-                    <TabsTrigger className="py-2  flex flex-col lg:flex-row lg:items-center lg:gap-2" value="details">
+                    <TabsTrigger className="py-2 flex flex-col lg:flex-row lg:items-center lg:gap-2" value="details">
                         <BookOpenText className="w-5 h-5" />
                         <span className="text-xs mt-1 lg:mt-0">Details</span>
                     </TabsTrigger>
@@ -24,7 +41,7 @@ export default function Details() {
                         <Link className="w-5 h-5" />
                         <span className="text-xs mt-1 lg:mt-0">Trackable links</span>
                     </TabsTrigger>
-                    <TabsTrigger className="py-2 flex flex-col lg:flex-row lg:items-center lg:gap-2" value="statistics">
+                    <TabsTrigger className="py-2 flex flex-col lg:flex-row lg:items-center lg:gap-2" value="stats">
                         <ChartPie className="w-5 h-5" />
                         <span className="text-xs mt-1 lg:mt-0">Statistics</span>
                     </TabsTrigger>
@@ -56,7 +73,7 @@ export default function Details() {
                 <TabsContent value="trackable-links" className="h-full overflow-y-auto">
                     <TrackableLinks/>
                 </TabsContent>
-                <TabsContent value="statistics" className="h-full overflow-y-auto">
+                <TabsContent value="stats" className="h-full overflow-y-auto">
                     <Statistics/>
                 </TabsContent>
             </Tabs>

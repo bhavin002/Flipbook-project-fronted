@@ -15,6 +15,7 @@ import DownloadDialog from "./DownloadDialog";
 import MoveToWorkspaceDialog from "./MoveToWorkspaceDialog";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import PublishFlipbookDialog from "./PublishFlipbookDialog";
+import { useNavigate } from "react-router-dom";
 
 export default function MyFlipbookDropdown({ status }) {
     const [isSaveAsTemplateModalOpen, setIsSaveAsTemplateModalOpen] = useState(false);
@@ -24,6 +25,7 @@ export default function MyFlipbookDropdown({ status }) {
     const [isMoveToWorkspaceModalOpen, setIsMoveToWorkspaceModalOpen] = useState(false);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     const handleItemClick = (action) => {
         if (action === 'saveAsTemplate') {
@@ -40,6 +42,12 @@ export default function MyFlipbookDropdown({ status }) {
             setIsTrashModalOpen(true);
         } else if (action === 'publish') {
             setIsPublishModalOpen(true);
+        }else if (action === "stats"){
+            navigate("/stats/sd2112wdwd1d")
+        }else if (action === "embed"){
+            navigate("/embed/sd2112wdwd1d")
+        }else if (action === "trackableLinks"){
+            navigate("/trackable-links/sd2112wdwd1d")
         } else {
             console.error("Invalid action:", action);
         }
@@ -65,17 +73,17 @@ export default function MyFlipbookDropdown({ status }) {
                 <DropdownMenuItem onClick={() => handleItemClick('share')}>
                     <Share2 className="mr-2 h-4 w-4" /> Sharing options
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('embed')}>
                     <Code className="mr-2 h-4 w-4" /> Embed
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('trackableLinks')}>
                     <Link2 className="mr-2 h-4 w-4" /> Trackable links
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleItemClick('download')}>
                     <Download className="mr-2 h-4 w-4" /> Download
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('stats')}>
                     <ChartPie className="mr-2 h-4 w-4" /> Stats
                 </DropdownMenuItem>
                 <DropdownMenuItem >
@@ -114,17 +122,17 @@ export default function MyFlipbookDropdown({ status }) {
                 <DropdownMenuItem onClick={() => handleItemClick('share')}>
                     <Share2 className="mr-2 h-4 w-4" /> Sharing options
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('embed')}>
                     <Code className="mr-2 h-4 w-4" /> Embed
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('trackableLinks')}>
                     <Link2 className="mr-2 h-4 w-4" /> Trackable links
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleItemClick('download')}>
                     <Download className="mr-2 h-4 w-4" /> Download
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('stats')}>
                     <ChartPie className="mr-2 h-4 w-4" /> Stats
                 </DropdownMenuItem>
                 <DropdownMenuItem >

@@ -48,6 +48,8 @@ export default function MyFlipbooks({ isSidebarOpen }) {
             setIsPublishModalOpen(true);
         } else if(action === "details"){
             router("/details/sd2112wdwd1d")
+        }else if(action === "stats"){
+            router("/stats/sd2112wdwd1d")
         } else {
             console.error("Invalid action:", action);
         }

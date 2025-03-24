@@ -37,6 +37,7 @@ import SettingPermission from "./pages/MyFlipbooks/components/Sidebar/Setting/Se
 import SettingEmailProvider from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingEmailProvider";
 import { useState } from "react";
 import Details from "./pages/MyFlipbooks/components/Details";
+import MyAccount from "./pages/MyFlipbooks/components/MyAccount";
 
 // Route configurations
 const brandingRoutes = [
@@ -115,6 +116,36 @@ export default function App() {
       <Route path="/settings" element={<Navigate to="/settings/workspace" replace />} />
       <Route path="/settings/workspace" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
         <Route index element={<SettingContent />} />
+      </Route>
+
+      {/* flipbook details page routes */}
+
+      <Route path="/details/:id" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
+        <Route index element={<Details />} />
+      </Route>
+      <Route path="/embed/:id" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
+        <Route index element={<Details />} />
+      </Route>
+      <Route path="/trackable-links/:id" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
+        <Route index element={<Details />} />
+      </Route>
+      <Route path="/stats/:id" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
+        <Route index element={<Details />} />
+      </Route>
+      <Route path="/send-email/:id" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
+        <Route index element={<Details />} />
+      </Route>
+      <Route path="/download-qr/:id" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
+        <Route index element={<Details />} />
+      </Route>
+
+      {/* my account page routes */}
+
+      <Route path="/account/details" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
+        <Route index element={<MyAccount />} />
+      </Route>
+      <Route path="/account/email-preferences" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
+        <Route index element={<MyAccount />} />
       </Route>
     </Routes>
   );

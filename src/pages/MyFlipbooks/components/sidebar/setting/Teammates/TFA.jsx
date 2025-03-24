@@ -6,7 +6,7 @@ export default function TFA() {
     return (
          <Card>
             <CardHeader>
-                <CardTitle className="text-xl font-semibold">Two-factor authentication</CardTitle>
+                <CardTitle>Two-factor authentication</CardTitle>
                 <CardDescription className="flex justify-between">
                     All teammates are required to use a two factor authentication process to log in.
                     <div className="flex items-center">

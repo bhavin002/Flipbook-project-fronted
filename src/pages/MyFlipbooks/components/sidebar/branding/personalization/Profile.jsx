@@ -17,14 +17,14 @@ export default function Profile() {
             <CardContent className="space-y-4">
                 <div className="flex items-center">
                     <Switch id="hide-profile-info" />
-                    <label htmlFor="hide-profile-info" className="ml-3 text-gray-700">
+                    <Label htmlFor="hide-profile-info" className="ml-3 text-gray-700">
                         Hide profile information
-                    </label>
+                    </Label>
                 </div>
                 <div className="flex items-center justify-between">
-                    <label className="font-medium flex items-center gap-2">
+                    <Label className="font-medium flex items-center gap-2">
                         Profile Image
-                    </label>
+                    </Label>
                     <Button variant="outline"><Trash2 /></Button>
                 </div>
                 <div className="flex items-center gap-4">

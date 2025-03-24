@@ -65,7 +65,7 @@ export default function TrackableLinks() {
             </div>
              <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-semibold">Manage trackable links</CardTitle>
+                    <CardTitle>Manage trackable links</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <CreateTrackableLinkDialog />

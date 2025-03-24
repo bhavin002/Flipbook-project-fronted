@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Trash2, Plus, Check } from "lucide-react";
 
@@ -15,9 +16,9 @@ export default function DomainRestriction() {
             <CardContent className="space-y-4">
                 <div className="flex items-center">
                     <Switch id="domain-restrictions" />
-                    <label htmlFor="domain-restrictions" className="ml-3 text-gray-700">
+                    <Label htmlFor="domain-restrictions" className="ml-3 text-gray-700">
                         Use domain restrictions
-                    </label>
+                    </Label>
                 </div>
                 <div className="flex items-end gap-4">
                     <div className="w-full">

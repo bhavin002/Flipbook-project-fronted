@@ -65,7 +65,7 @@ export default function SettingGroups() {
             </div>
              <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-semibold">Manage your groups</CardTitle>
+                    <CardTitle>Manage your groups</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <CreateGroupDialog />

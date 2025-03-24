@@ -17,7 +17,7 @@ export function ForgotPasswordForm({
                 <Card className="shadow rounded-xl">
                     <CardHeader className="text-center">
                         <div style={{ "transform": "scale(1)", "margin": "auto" }}><img src="/src/assets/logo.png" width={200} className="my-2" /> </div>
-                        <CardTitle className="text-xl">Forgot Password</CardTitle>
+                        <CardTitle>Forgot Password</CardTitle>
                         <CardDescription>
                             Get a password reset link via email.
                         </CardDescription>

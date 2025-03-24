@@ -14,7 +14,7 @@ export function ResetPasswordForm({
                 <Card className="shadow rounded-xl">
                     <CardHeader className="text-center" >
                         <div style={{ "transform": "scale(1)", "margin": "auto" }}><img src="/src/assets/logo.png" width={200} className="my-2" /> </div>
-                        <CardTitle className="text-xl">Reset Password</CardTitle>
+                        <CardTitle>Reset Password</CardTitle>
                         <CardDescription>
                             Create a new password to continue.
                         </CardDescription>

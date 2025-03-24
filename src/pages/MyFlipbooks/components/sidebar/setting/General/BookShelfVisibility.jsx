@@ -16,7 +16,7 @@ export default function BookShelfVisibility() {
     return (
          <Card>
             <CardHeader>
-                <CardTitle className="text-xl font-semibold">Bookshelf visibility</CardTitle>
+                <CardTitle>Bookshelf visibility</CardTitle>
                 <CardDescription>
                     This will be your preselected visibility option when you publish a bookshelf. You can always change this here or from the visibility sections when publishing.
                 </CardDescription>

@@ -13,7 +13,7 @@ export default function TopFlipbooks() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">Top 10 flipbooks</CardTitle>
+        <CardTitle>Top 10 flipbooks</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="w-full overflow-x-auto">

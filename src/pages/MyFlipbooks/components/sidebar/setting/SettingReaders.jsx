@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { getData } from '@/utils/datas';
 import ReadersTable from "./Readers/ReadersTable";
 import TablePagination from "@/utils/TablePagination";
+import { Label } from "@/components/ui/label";
 
 export default function SettingReaders() {
     const [selectedReaders, setSelectedReaders] = useState([]);
@@ -76,14 +77,14 @@ export default function SettingReaders() {
             </div>
              <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-semibold">Show folders to your readers</CardTitle>
+                    <CardTitle>Show folders to your readers</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="flex items-center gap-3">
                         <Switch id="hide-profile-info" />
-                        <label htmlFor="hide-profile-info" className="text-gray-700">
+                        <Label htmlFor="hide-profile-info" className="text-gray-700">
                             Enable folder view
-                        </label>
+                        </Label>
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
@@ -103,7 +104,7 @@ export default function SettingReaders() {
             </Card>
              <Card>
                 <CardHeader>
-                    <CardTitle className="text-xl font-semibold">Manage your readers</CardTitle>
+                    <CardTitle>Manage your readers</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <InviteReaderDialog />
