@@ -27,7 +27,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
         <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
             <DialogContent className="sm:max-w-[540px] w-[90vw]">
                 <DialogHeader>
-                    <DialogTitle className="text-xl font-semibold">Share Folder</DialogTitle>
+                    <DialogTitle className="text-xl font-semibold">Share</DialogTitle>
                 </DialogHeader>
                 <div className="py-4">
                     <div className="flex items-center gap-2 flex-wrap">
