@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CreateGroupDialog from "./Groups/CreateGroupDialog";
+import CreateGroupDialog from "../../components/Sidebar/Setting/Groups/CreateGroupDialog"
 import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { getData } from '@/utils/datas';
-import GroupsTable from "./Groups/GroupsTable";
+import GroupsTable from "../../components/Sidebar/Setting/Groups/GroupsTable";
 import TablePagination from "@/utils/TablePagination";
 
 export default function SettingGroups() {

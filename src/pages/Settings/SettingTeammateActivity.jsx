@@ -1,5 +1,5 @@
-import ActivityLogsTable from "./TeammateActivity/ActivityLogsTable";
-import FilterActivity from "./TeammateActivity/FilterActivity";
+import ActivityLogsTable from "../../components/Sidebar/Setting/TeammateActivity/ActivityLogsTable"
+import FilterActivity from "../../components/Sidebar/Setting/TeammateActivity/FilterActivity"
 
 
 export default function SettingTeammateActivity() {

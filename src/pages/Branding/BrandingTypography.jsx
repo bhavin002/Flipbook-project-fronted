@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import TextPreview from './TextEditor/TextPreview';
-import FontControls from './TextEditor/FontControls';
-import StyleControls from './TextEditor/StyleControls';
-import TextCaseControl from './TextEditor/TextCaseControl';
-import ColorControl from './TextEditor/ColorControl';
-import AlignmentControl from './TextEditor/AlignmentControl';
-import TextWrapControl from './TextEditor/TextWrapControl';
-import SpacingControl from './TextEditor/SpacingControl';
+import TextPreview from '../../components/Sidebar/Branding/TextEditor/TextPreview'
+import FontControls from '../../components/Sidebar/Branding/TextEditor/FontControls'
+import StyleControls from '../../components/Sidebar/Branding/TextEditor/StyleControls'
+import TextCaseControl from '../../components/Sidebar/Branding/TextEditor/TextCaseControl'
+import ColorControl from '../../components/Sidebar/Branding/TextEditor/ColorControl'
+import AlignmentControl from '../../components/Sidebar/Branding/TextEditor/AlignmentControl'
+import TextWrapControl from '../../components/Sidebar/Branding/TextEditor/TextWrapControl'
+import SpacingControl from '../../components/Sidebar/Branding/TextEditor/SpacingControl'
 
 export default function BrandingTypography() {
     const [editors, setEditors] = useState([

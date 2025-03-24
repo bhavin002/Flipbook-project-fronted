@@ -1,12 +1,12 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpenText, Code, Mail, Image, QrCode, ChartPie, Link } from 'lucide-react';
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import DetailsTab from "./Details/DetailsTab";
-import Embed from "./Details/Embed";
-import SendEmail from "./Details/SendEmail";
-import DownloadQR from "./Details/DownloadQR";
-import TrackableLinks from "./Details/TrackableLinks";
-import Statistics from "./Details/Statistics";
+import DetailsTab from "../components/Details/DetailsTab"
+import Embed from "../components/Details/Embed"
+import SendEmail from "../components/Details/SendEmail"
+import DownloadQR from "../components/Details/DownloadQR"
+import TrackableLinks from "../components/Details/TrackableLinks"
+import Statistics from "../components/Details/Statistics"
 
 export default function Details() {
     const { id } = useParams();

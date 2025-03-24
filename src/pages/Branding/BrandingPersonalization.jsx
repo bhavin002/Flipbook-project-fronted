@@ -1,11 +1,11 @@
-import Favicon from "./Personalization/Favicon";
-import Header from "./Personalization/Header";
-import Profile from "./Personalization/Profile";
-import Social from "./Personalization/Social";
-import SocialThumnail from "./Personalization/SocialThumnail";
-import Footer from "./Personalization/Footer";
-import Preview from "./Personalization/Preview";
-import TabPersonalization from "./Personalization/TabPersonalization";
+import Favicon from "../../components/Sidebar/Branding/Personalization/Favicon"
+import Header from "../../components/Sidebar/Branding/Personalization/Header"
+import Profile from "../../components/Sidebar/Branding/Personalization/Profile"
+import Social from "../../components/Sidebar/Branding/Personalization/Social"
+import SocialThumnail from "../../components/Sidebar/Branding/Personalization/SocialThumnail"
+import Footer from "../../components/Sidebar/Branding/Personalization/Footer"
+import Preview from "../../components/Sidebar/Branding/Personalization/Preview"
+import TabPersonalization from "../../components/Sidebar/Branding/Personalization/TabPersonalization"
 export default function BrandingPersonalization() {
     return (
         <>

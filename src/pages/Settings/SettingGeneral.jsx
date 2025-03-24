@@ -1,5 +1,5 @@
-import FlipbookVisibility from "./General/FlipbookVisibility";
-import BookShelfVisibility from "./General/BookShelfVisibility";
+import FlipbookVisibility from "../../components/Sidebar/Setting/General/FlipbookVisibility"
+import BookShelfVisibility from "../../components/Sidebar/Setting/General/BookShelfVisibility"
 
 export default function SettingGeneral() {
 

@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import SelectLogoDialog from "./Workspace/SelectLogoDialog";
+import SelectLogoDialog from "../../components/Sidebar/Setting/Workspace/SelectLogoDialog";
 
 export default function SettingWorkspace() {
     return (

@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import AppLayout from "./pages/MyFlipbooks/AppLayout";
+import AppLayout from "./layout/AppLayout";
 
 // Auth pages
 import SignUp from "./pages/Auth/SignUp";
@@ -8,36 +8,35 @@ import ForgotPassword from "./pages/Auth/ForgotPassword";
 import ResetPassword from "./pages/Auth/ResetPassowrd";
 
 // MyFlipbooks and main feature pages
-import MyFlipbooks from "./pages/MyFlipbooks/components/Sidebar/Home/MyFlipbooks";
-import AutomationContent from "./pages/MyFlipbooks/components/Sidebar/Automation/AutomationContent";
-import StatisticsContent from "./pages/MyFlipbooks/components/Sidebar/Statistics/StatisticsContent";
+import MyFlipbooks from "./pages/MyFlipbooks";
+import AutomationContent from "./pages/AutomationContent";
+import StatisticsContent from "./pages/StatisticsContent";
 
 // Branding pages
-import BrandingSettings from "./pages/MyFlipbooks/components/Sidebar/Branding/BrandingSettings";
-import BrandingPersonalization from "./pages/MyFlipbooks/components/Sidebar/Branding/BrandingPersonalization";
-import BrandingFonts from "./pages/MyFlipbooks/components/Sidebar/Branding/BrandingFonts";
-import BrandingColors from "./pages/MyFlipbooks/components/Sidebar/Branding/BrandingColors";
-import BrandingTypography from "./pages/MyFlipbooks/components/Sidebar/Branding/BrandingTypography";
-import BrandingLogos from "./pages/MyFlipbooks/components/Sidebar/Branding/BrandingLogos";
+import BrandingSettings from "./pages/Branding/BrandingSettings";
+import BrandingPersonalization from "./pages/Branding/BrandingPersonalization";
+import BrandingFonts from "./pages/Branding/BrandingFonts";
+import BrandingColors from "./pages/Branding/BrandingColors";
+import BrandingTypography from "./pages/Branding/BrandingTypography";
+import BrandingLogos from "./pages/Branding/BrandingLogos";
 
 // Settings pages
-import SettingContent from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingWorkspace";
-import SettingWorkspace from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingWorkspace";
-import SettingGeneral from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingGeneral";
-import SettingBillingSubscription from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingBillingSubscription";
-import SettingBillingInvoices from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingBillingInvoices";
-import SettingTeammates from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingTeammates";
-import SettingReaders from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingReaders";
-import SettingGroups from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingGroups";
-import SettingSingleSignOn from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingSingleSignOn";
-import SettingIntegrations from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingIntegrations";
-import SettingWorkspaceAccess from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingWorkspaceAccess";
-import SettingTeammateActivity from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingTeammateActivity";
-import SettingPermission from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingPermission";
-import SettingEmailProvider from "./pages/MyFlipbooks/components/Sidebar/Setting/SettingEmailProvider";
+import SettingWorkspace from "./pages/Settings/SettingWorkspace";
+import SettingGeneral from "./pages/Settings/SettingGeneral";
+import SettingBillingSubscription from "./pages/Settings/SettingBillingSubscription";
+import SettingBillingInvoices from "./pages/Settings/SettingBillingInvoices";
+import SettingTeammates from "./pages/Settings/SettingTeammates";
+import SettingReaders from "./pages/Settings/SettingReaders";
+import SettingGroups from "./pages/Settings/SettingGroups";
+import SettingSingleSignOn from "./pages/Settings/SettingSingleSignOn";
+import SettingIntegrations from "./pages/Settings/SettingIntegrations";
+import SettingWorkspaceAccess from "./pages/Settings/SettingWorkspaceAccess";
+import SettingTeammateActivity from "./pages/Settings/SettingTeammateActivity";
+import SettingPermission from "./pages/Settings/SettingPermission";
+import SettingEmailProvider from "./pages/Settings/SettingEmailProvider";
 import { useState } from "react";
-import Details from "./pages/MyFlipbooks/components/Details";
-import MyAccount from "./pages/MyFlipbooks/components/MyAccount";
+import Details from "./pages/Details";
+import MyAccount from "./pages/MyAccount";
 
 // Route configurations
 const brandingRoutes = [
@@ -83,10 +82,6 @@ export default function App() {
       <Route path="/my-flipbooks" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
       </Route>
-
-      <Route path="/details/:id" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
-        <Route index element={<Details />} />
-      </Route>
       
       <Route path="/automation" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
         <Route index element={<AutomationContent />} />
@@ -115,7 +110,7 @@ export default function App() {
       {/* Legacy settings route - redirect to workspace */}
       <Route path="/settings" element={<Navigate to="/settings/workspace" replace />} />
       <Route path="/settings/workspace" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
-        <Route index element={<SettingContent />} />
+        <Route index element={<SettingWorkspace />} />
       </Route>
 
       {/* flipbook details page routes */}

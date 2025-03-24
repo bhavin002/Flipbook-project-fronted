@@ -1,17 +1,16 @@
 import { useState } from "react";
-import FilterCom from "./components/Filter/FilterCom"
-import CreateDropDownCom from "./components/CreateDropDownCom";
-import ProfileDropDownCom from "./components/ProfileDropDownCom";
-import SearchInputCom from "./components/SearchInputCom";
-import SidebarNavigation from "./components/SidebarNavigation";
+import FilterCom from "../components/Filter/FilterCom"
+import CreateDropDownCom from "../components/CreateDropDownCom"
+import ProfileDropDownCom from "../components/ProfileDropDownCom"
+import SearchInputCom from "../components/SearchInputCom"
+import SidebarNavigation from "../components/SidebarNavigation"
 import {
     SidebarProvider,
 } from "@/components/ui/sidebar"
-import { AppSidebar } from "./components/AppSidebar";
-import BottomSidebarNavigation from "./components/BottomSidebarNavigation";
+import { AppSidebar } from "../components/AppSidebar"
+import BottomSidebarNavigation from "../components/BottomSidebarNavigation"
 import { Outlet } from "react-router-dom";
 import AppBreadcrumbs from "@/utils/AppBreadcrumb";
-
 
 export default function AppLayout({ setIsSidebarOpen }) {
     const [searchValue, setSearchValue] = useState("");
