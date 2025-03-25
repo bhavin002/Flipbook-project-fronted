@@ -37,6 +37,8 @@ import SettingEmailProvider from "./pages/Settings/SettingEmailProvider";
 import { useState } from "react";
 import Details from "./pages/Details";
 import MyAccount from "./pages/MyAccount";
+import CustomizeAppLayout from "./layout/CustomizeAppLayout";
+import Customize from "./pages/Customize";
 
 // Route configurations
 const brandingRoutes = [
@@ -74,25 +76,25 @@ export default function App() {
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
-      
+
       {/* Default redirect */}
       <Route path="/" element={<Navigate to="/my-flipbooks" replace />} />
-      
+
       {/* Main content routes */}
       <Route path="/my-flipbooks" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
       </Route>
-      
-      <Route path="/automation" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
+
+      <Route path="/automation" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<AutomationContent />} />
       </Route>
-      
-      <Route path="/statistics" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
+
+      <Route path="/statistics" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<StatisticsContent />} />
       </Route>
-      
+
       {/* Branding routes */}
-      <Route path="/branding" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
+      <Route path="/branding" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<Navigate to="profile/settings" replace />} />
         {brandingRoutes.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
@@ -100,16 +102,16 @@ export default function App() {
       </Route>
 
       {/* Settings routes */}
-      <Route path="/settings" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
+      <Route path="/settings" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<Navigate to="workspace" replace />} />
         {settingsRoutes.map((route) => (
           <Route key={route.path} path={route.path} element={route.element} />
         ))}
       </Route>
-      
+
       {/* Legacy settings route - redirect to workspace */}
       <Route path="/settings" element={<Navigate to="/settings/workspace" replace />} />
-      <Route path="/settings/workspace" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen}/>}>
+      <Route path="/settings/workspace" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<SettingWorkspace />} />
       </Route>
 
@@ -135,13 +137,17 @@ export default function App() {
       </Route>
 
       {/* my account page routes */}
-
       <Route path="/account/details" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<MyAccount />} />
       </Route>
       <Route path="/account/email-preferences" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<MyAccount />} />
       </Route>
+
+      <Route path="/customize/:id" element={<CustomizeAppLayout />}>
+        <Route index element={<Customize />} />
+      </Route>
+
     </Routes>
   );
 }
