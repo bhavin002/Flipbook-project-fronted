@@ -1,89 +1,95 @@
+import React, { useState } from 'react'
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
-import { ChevronDown } from "lucide-react"
+import { AlignRight, Eye, Palette, PersonStanding, SlidersHorizontal, TableOfContents } from "lucide-react"
+import Appearance from "@/components/CustomizeLayoutComponents/Appearance"
+import Branding from '@/components/CustomizeLayoutComponents/Branding'
+import MenuControls from '@/components/CustomizeLayoutComponents/MenuControls'
+import TableOfContentsComponent from '@/components/CustomizeLayoutComponents/TableOfContentsComponent'
+import LeadForm from '@/components/CustomizeLayoutComponents/LeadForm'
+import Accessibility from '@/components/CustomizeLayoutComponents/Accessibility'
 
 export default function Customize() {
+    const [activeValues, setActiveValues] = useState([])
+
     const menuItems = [
-        { 
-            value: "google-translate", 
-            icon: "🌐", 
-            label: "Google Translate",
-            description: "Configure translation settings"
+        {
+            value: "appearance",
+            icon: <Eye />,
+            label: "Appearance",
+            component: <Appearance />
         },
-        { 
-            value: "branding", 
-            icon: "🎨", 
+        {
+            value: "branding",
+            icon: <Palette />,
             label: "Branding",
-            description: "Set up your brand's visual identity"
+            component: <Branding />
         },
-        { 
-            value: "menu-controls", 
-            icon: "⚙️", 
+        {
+            value: "menu-controls",
+            icon: <SlidersHorizontal />,
             label: "Menu controls",
-            description: "Configure menu settings and behaviors"
+            component: <MenuControls />
         },
-        { 
-            value: "table-of-contents", 
-            icon: "📋", 
+        {
+            value: "table-of-contents",
+            icon: <TableOfContents />,
             label: "Table of contents",
-            description: "Manage content navigation options"
+            component: <TableOfContentsComponent />
         },
-        { 
-            value: "lead-form", 
-            icon: "📝", 
+        {
+            value: "lead-form",
+            icon: <AlignRight />,
             label: "Lead form",
-            description: "Design and customize lead capture forms"
+            component: <LeadForm />
         },
-        { 
-            value: "google-analytics", 
-            icon: "📊", 
-            label: "Google Analytics",
-            description: "Configure analytics tracking"
-        },
-        { 
-            value: "google-tag-manager", 
-            icon: "🏷️", 
-            label: "Google Tag Manager",
-            description: "Manage tags and tracking codes"
+        {
+            value: "accessibility",
+            icon: <PersonStanding />,
+            label: "Accessibility",
+            component: <Accessibility />
         }
     ]
 
+    const handleValueChange = (values) => {
+        setActiveValues(values)
+    }
+
     return (
-        <div className="flex h-screen">
-            <div className="w-[40%] bg-black">
+        <div className="flex">
+            <div className="w-[40%]">
                 <Accordion 
-                    type="single" 
+                    type="multiple" 
                     collapsible 
-                    className="w-full border-t border-gray-800"
+                    className="w-full p-4"
+                    value={activeValues}
+                    onValueChange={handleValueChange}
                 >
                     {menuItems.map((item) => (
-                        <AccordionItem 
-                            key={item.value} 
-                            value={item.value} 
-                            className="border-b border-gray-800"
+                        <AccordionItem
+                            key={item.value}
+                            value={item.value}
+                            className="border my-4 px-4 rounded-md"
                         >
-                            <AccordionTrigger className="px-4 py-3 hover:bg-gray-900 transition-colors">
-                                <div className="flex items-center justify-between w-full">
-                                    <div className="flex items-center space-x-3">
-                                        <span className="text-xl">{item.icon}</span>
-                                        <span className="text-white">{item.label}</span>
-                                    </div>
-                                    <ChevronDown className="h-4 w-4 text-gray-400 shrink-0" />
+                            <AccordionTrigger className="hover:no-underline">
+                                <div className="flex justify-start items-center gap-2">
+                                    {item.icon}
+                                    {item.label}
                                 </div>
                             </AccordionTrigger>
-                            <AccordionContent className="px-4 py-3 bg-gray-900 text-gray-300">
-                                {item.description}
+                            <AccordionContent className="space-y-4 px-1">
+                                {activeValues.includes(item.value) && item.component}
                             </AccordionContent>
                         </AccordionItem>
                     ))}
                 </Accordion>
             </div>
             <div className="w-[60%] bg-white">
-                {/* Content for the right side */}
+                {/* Right side content area left empty */}
             </div>
         </div>
     )

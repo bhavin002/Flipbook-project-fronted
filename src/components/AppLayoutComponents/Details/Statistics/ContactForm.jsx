@@ -11,8 +11,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import TablePagination from "@/utils/TablePagination";
 import { useState } from "react";
 import { getData } from "@/utils/datas";
-import { Eye } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import ContactFormDetailsDialog from "./ContactFormDetailsDialog";
 
 export default function ContactForm() {

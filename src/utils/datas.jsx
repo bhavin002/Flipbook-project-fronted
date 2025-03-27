@@ -958,6 +958,65 @@ const quizData = [
     }
 ];
 
+const tableOfContents = [
+    {
+      id: 'item-1',
+      type: 'chapter',
+      title: 'Chapter title 1',
+      parentId: null,
+      depth: 0,
+      number: 1,
+    },
+    {
+      id: 'item-2',
+      type: 'subchapter',
+      title: 'Subchapter title 1.1',
+      parentId: 'item-1',
+      depth: 1,
+      number: 1,
+    },
+    {
+      id: 'item-3',
+      type: 'subchapter',
+      title: 'Subchapter title 1.2',
+      parentId: 'item-1',
+      depth: 1,
+      number: 2,
+    },
+    {
+      id: 'item-4',
+      type: 'chapter',
+      title: 'Chapter title 2',
+      parentId: null,
+      depth: 0,
+      number: 2,
+    },
+    {
+      id: 'item-5',
+      type: 'subchapter',
+      title: 'Subchapter title 2.1',
+      parentId: 'item-4',
+      depth: 1,
+      number: 1,
+    },
+    {
+      id: 'item-6',
+      type: 'subchapter',
+      title: 'Subchapter title 2.2',
+      parentId: 'item-4',
+        depth: 1,
+        number: 2,
+    },
+    {
+        id: 'item-7',
+        type: 'subchapter',
+        title: 'Subchapter title 2.3',
+        parentId: 'item-4',
+        depth: 1,
+        number: 3,
+    },
+  ]
+
 
 export function getData(dataType) {
     switch (dataType) {
@@ -1019,6 +1078,8 @@ export function getData(dataType) {
             return questions;
         case 'contactFormData':
             return contactFormData;
+        case 'tableOfContents':
+            return tableOfContents;
         default:
             return [];
     }
