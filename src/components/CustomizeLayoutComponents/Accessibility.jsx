@@ -1,167 +1,105 @@
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Info } from "lucide-react"
+import { Info, Sparkles } from "lucide-react";
+import { Label } from "../ui/label";
+import { Switch } from "../ui/switch";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
-import { useState } from "react"
+} from "@/components/ui/tooltip";
+import { Button } from "../ui/button";
+import AiConfimationDialog from "./Accessibility/AiConfimationDialog";
+import { useState } from "react";
+import ManageAccessibilityContentDialog from "./Accessibility/ManageAccessibilityContentDialog";
 
 export default function Accessibility() {
+    const [aiConfimationTitle, setAiConfimationTitle] = useState("Title");
+    const [aiConfimationDescription, setAiConfimationDescription] = useState("Description");
+    const [aiConfirmationDialog, setAiConfirmationDialog] = useState(false);
+    const [buttonText, setButtonText] = useState({
+        primaryButton: "Primary Button",
+        secondaryButton: "Secondary Button"
+    });
+    const [isAccessibilityActive, setIsAccessibilityActive] = useState(true);
 
-    const checkboxOptions = [
-        { id: "automatic-transition", label: "Automatic transition", isShowTooltip: false },
-        { id: "flip-sounds", label: "Flip sounds", isShowTooltip: true, tooltip: "Note: on mobile devices or when slide effect is selected, flip sounds will always be disabled." },
-        { id: "right-to-left", label: "Right to left orientation", isShowTooltip: false },
-        { id: "shadow", label: "Shadow on pages", isShowTooltip: true, tooltip: "Note: when slide effect is selected, shadow on pages will be disabled." },
-        { id: "animate", label: "Animate interactions", isShowTooltip: true, tooltip: "Make yur interations pop by animating them." },
-        { id: "highlights", label: "Highlights on links", isShowTooltip: true, tooltip: "Make your links pop by highlighting them." }
-    ]
-
-    const [checkedItems, setCheckedItems] = useState({
-        "automatic-transition": false,
-        "flip-sounds": false,
-        "right-to-left": false,
-        "shadow": false,
-        "animate": false,
-        "highlights": false
-    })
-
-    const handleCheckboxChange = (id) => {
-        setCheckedItems(prev => ({
-            ...prev,
-            [id]: !prev[id]
-        }))
+    const handleAIConfirmation = (action) => {
+        if (action === 'extract') {
+            setAiConfimationTitle("Extract flipbook text");
+            setAiConfimationDescription("Existing content will be overwritten and cannot be recovered. Image descriptions are not extracted. Generated content may vary from the original; please check before sharing.");
+            setButtonText({
+                primaryButton: "Extract text",
+                secondaryButton: "Cancel"
+            });
+        }
+        if (action === 'generate') {
+            setAiConfimationTitle("Generate content with AI");
+            setAiConfimationDescription("Existing content will be overwritten and can't be recovered. Generated content may not be perfect; please check before sharing.");
+            setButtonText({
+                primaryButton: "Generate",
+                secondaryButton: "Cancel"
+            });
+        }
+        setAiConfirmationDialog(true);
     }
+
     return (
-        <>
-            <div className="flex flex-col gap-2">
-                <Label>Player skin</Label>
-                <Tabs defaultValue="classic">
-                    <TabsList className="w-full">
-                        <TabsTrigger className="items-center gap-2 w-full" value="classic">
-                            Classic
-                        </TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="modern">
-                            Modern
-                        </TabsTrigger>
-                    </TabsList>
-                </Tabs>
-            </div>
-            <div className="flex flex-col gap-2">
-                <Label>Page transition</Label>
-                <Tabs defaultValue="flip">
-                    <TabsList className="w-full">
-                        <TabsTrigger className="items-center gap-2 w-full" value="flip">
-                            Flip
-                        </TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="slide">
-                            Slide
-                        </TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="scroll">
-                            Scroll
-                        </TabsTrigger>
-                    </TabsList>
-                </Tabs>
-            </div>
-            <div className="flex flex-col gap-2">
-                <div className="flex justify-between">
-                    <Label>Layout style</Label>
-                    <p className="text-primary text-sm cursor-pointer hover:underline">Learn more</p>
-                </div>
-                <Select defaultValue="smart-view">
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select a layout view" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="smart-view">
-                                <div className="flex gap-2">
-                                    Smart view
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
-                                            </TooltipTrigger>
-                                            <TooltipContent
-                                                side="right"
-                                                align="center"
-                                                className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                            >
-                                                <p className="text-sm">Create unique link for each lead to track their interactions in your flipbook</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="single-page-view">
-                                <div className="flex gap-2">
-                                    Single page view
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
-                                            </TooltipTrigger>
-                                            <TooltipContent
-                                                side="right"
-                                                align="center"
-                                                className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                            >
-                                                <p className="text-sm">Create unique link for each lead to track their interactions in your flipbook</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="two-page-view">
-                                Two page view
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
-            {checkboxOptions.map((option) => (
-                <div key={option.id} className="flex items-center gap-2">
-                    <Checkbox
-                        id={option.id}
-                        checked={checkedItems[option.id]}
-                        onCheckedChange={() => handleCheckboxChange(option.id)}
+        <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+                Activating this feature makes your content accessible to people with visual difficulties by enlarging text or having it read aloud. However, text-to-speech functionality requires a separate screen reader. You can still add text manually if needed.
+                <br />
+                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Learn more</a>
+            </p>
+            <div className="flex items-center gap-2">
+                <div className="flex items-center">
+                    <Switch 
+                        id="activate-accessibility" 
+                        checked={isAccessibilityActive}
+                        onCheckedChange={setIsAccessibilityActive}
                     />
-                    <Label htmlFor={option.id} className="text-sm font-medium leading-none">
-                        {option.label}
+                    <Label htmlFor="activate-accessibility" className="ml-3 text-gray-700">
+                        Activate accessibility
                     </Label>
-                    {
-                        option.isShowTooltip && (<TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
-                                </TooltipTrigger>
-                                <TooltipContent
-                                    side="right"
-                                    align="center"
-                                    className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                >
-                                    <p className="text-sm">{option.tooltip}</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>)
-                    }
-                    {option.id === "automatic-transition" && checkedItems["automatic-transition"] && (
-                        <div className="flex items-center gap-2 ml-auto">
-                            <Label htmlFor="delay" className="text-sm font-medium leading-none">
-                                Delay
-                            </Label>
-                            <Input className="w-24" type="number" defaultValue="7" />
-                            <p className="text-sm text-gray-500">sec</p>
-                        </div>
-                    )}
                 </div>
-            ))}
-        </>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                        </TooltipTrigger>
+                        <TooltipContent
+                            side="right"
+                            align="center"
+                            className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                        >
+                            <p className="text-sm">
+                                Increase the size of your content or have it read out loud for those with visual difficulties.
+                            </p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
+            
+            {isAccessibilityActive && (
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" className="w-full" onClick={() => handleAIConfirmation('extract')}>
+                            Extract flipbook text
+                        </Button>
+                        <Button className="w-full" onClick={() => handleAIConfirmation('generate')}>
+                            <Sparkles className="animate-pulse" />Generate AI summary
+                        </Button>
+                    </div>
+                    <ManageAccessibilityContentDialog />
+                </div>
+            )}
+            
+            <AiConfimationDialog
+                isConfirmModalOpen={aiConfirmationDialog}
+                setIsConfirmModalOpen={setAiConfirmationDialog}
+                title={aiConfimationTitle}
+                description={aiConfimationDescription}
+                primaryButton={buttonText.primaryButton}
+                secondaryButton={buttonText.secondaryButton}
+            />
+        </div>
     )
 }

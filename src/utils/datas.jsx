@@ -960,50 +960,50 @@ const quizData = [
 
 const tableOfContents = [
     {
-      id: 'item-1',
-      type: 'chapter',
-      title: 'Chapter title 1',
-      parentId: null,
-      depth: 0,
-      number: 1,
+        id: 'item-1',
+        type: 'chapter',
+        title: 'Chapter title 1',
+        parentId: null,
+        depth: 0,
+        number: 1,
     },
     {
-      id: 'item-2',
-      type: 'subchapter',
-      title: 'Subchapter title 1.1',
-      parentId: 'item-1',
-      depth: 1,
-      number: 1,
+        id: 'item-2',
+        type: 'subchapter',
+        title: 'Subchapter title 1.1',
+        parentId: 'item-1',
+        depth: 1,
+        number: 1,
     },
     {
-      id: 'item-3',
-      type: 'subchapter',
-      title: 'Subchapter title 1.2',
-      parentId: 'item-1',
-      depth: 1,
-      number: 2,
+        id: 'item-3',
+        type: 'subchapter',
+        title: 'Subchapter title 1.2',
+        parentId: 'item-1',
+        depth: 1,
+        number: 2,
     },
     {
-      id: 'item-4',
-      type: 'chapter',
-      title: 'Chapter title 2',
-      parentId: null,
-      depth: 0,
-      number: 2,
+        id: 'item-4',
+        type: 'chapter',
+        title: 'Chapter title 2',
+        parentId: null,
+        depth: 0,
+        number: 2,
     },
     {
-      id: 'item-5',
-      type: 'subchapter',
-      title: 'Subchapter title 2.1',
-      parentId: 'item-4',
-      depth: 1,
-      number: 1,
+        id: 'item-5',
+        type: 'subchapter',
+        title: 'Subchapter title 2.1',
+        parentId: 'item-4',
+        depth: 1,
+        number: 1,
     },
     {
-      id: 'item-6',
-      type: 'subchapter',
-      title: 'Subchapter title 2.2',
-      parentId: 'item-4',
+        id: 'item-6',
+        type: 'subchapter',
+        title: 'Subchapter title 2.2',
+        parentId: 'item-4',
         depth: 1,
         number: 2,
     },
@@ -1015,7 +1015,20 @@ const tableOfContents = [
         depth: 1,
         number: 3,
     },
-  ]
+]
+
+const pagesData = [
+    { id: 1, title: "Home Page Overview", description: "The main landing page with key navigation elements and featured content." },
+    { id: 2, title: "Product Listings", description: "Displays all available products with filtering options and search functionality." },
+    { id: 3, title: "User Account Settings", description: "Allows users to update their profile information and preferences." },
+    { id: 4, title: "Checkout Process", description: "Step-by-step payment and shipping information collection for purchases." },
+    { id: 5, title: "Contact Information", description: "Provides methods to reach customer support and business locations." },
+    { id: 6, title: "About Us Section", description: "Company history, mission statement, and team information." },
+    { id: 7, title: "FAQ Page", description: "Common questions and answers for user assistance." },
+    { id: 8, title: "Privacy Policy", description: "Details on data collection and usage practices." },
+    { id: 9, title: "Terms of Service", description: "Legal agreements for using the platform." },
+    { id: 10, title: "Blog Articles", description: "Educational content and company updates for users." }
+];
 
 
 export function getData(dataType) {
@@ -1080,6 +1093,8 @@ export function getData(dataType) {
             return contactFormData;
         case 'tableOfContents':
             return tableOfContents;
+        case 'pagesData':
+            return pagesData;
         default:
             return [];
     }

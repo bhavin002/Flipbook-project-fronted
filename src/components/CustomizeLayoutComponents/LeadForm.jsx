@@ -1,142 +1,67 @@
-import { Label } from "@/components/ui/label"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Info } from "lucide-react"
+import { Label } from "@/components/ui/label";
+import { Info } from "lucide-react";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
-import { useState } from "react"
+} from "@/components/ui/tooltip";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "../ui/textarea";
+import { Input } from "../ui/input";
+import DynamicForm from "./LeadForm/DynamicForm";
+import { useState } from "react";
 
 export default function LeadForm() {
+    const [addPrivacyPolicy, setAddPrivacyPolicy] = useState(true);
+    const [addGDPR, setAddGDPR] = useState(true);
+    const [allowSkip, setAllowSkip] = useState(true);
 
-    const checkboxOptions = [
-        { id: "automatic-transition", label: "Automatic transition", isShowTooltip: false },
-        { id: "flip-sounds", label: "Flip sounds", isShowTooltip: true, tooltip: "Note: on mobile devices or when slide effect is selected, flip sounds will always be disabled." },
-        { id: "right-to-left", label: "Right to left orientation", isShowTooltip: false },
-        { id: "shadow", label: "Shadow on pages", isShowTooltip: true, tooltip: "Note: when slide effect is selected, shadow on pages will be disabled." },
-        { id: "animate", label: "Animate interactions", isShowTooltip: true, tooltip: "Make yur interations pop by animating them." },
-        { id: "highlights", label: "Highlights on links", isShowTooltip: true, tooltip: "Make your links pop by highlighting them." }
-    ]
-
-    const [checkedItems, setCheckedItems] = useState({
-        "automatic-transition": false,
-        "flip-sounds": false,
-        "right-to-left": false,
-        "shadow": false,
-        "animate": false,
-        "highlights": false
-    })
-
-    const handleCheckboxChange = (id) => {
-        setCheckedItems(prev => ({
-            ...prev,
-            [id]: !prev[id]
-        }))
-    }
     return (
         <>
-            <div className="flex flex-col gap-2">
-                <Label>Player skin</Label>
-                <Tabs defaultValue="classic">
-                    <TabsList className="w-full">
-                        <TabsTrigger className="items-center gap-2 w-full" value="classic">
-                            Classic
-                        </TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="modern">
-                            Modern
-                        </TabsTrigger>
-                    </TabsList>
-                </Tabs>
-            </div>
-            <div className="flex flex-col gap-2">
-                <Label>Page transition</Label>
-                <Tabs defaultValue="flip">
-                    <TabsList className="w-full">
-                        <TabsTrigger className="items-center gap-2 w-full" value="flip">
-                            Flip
-                        </TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="slide">
-                            Slide
-                        </TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="scroll">
-                            Scroll
-                        </TabsTrigger>
-                    </TabsList>
-                </Tabs>
-            </div>
-            <div className="flex flex-col gap-2">
-                <div className="flex justify-between">
-                    <Label>Layout style</Label>
-                    <p className="text-primary text-sm cursor-pointer hover:underline">Learn more</p>
-                </div>
-                <Select defaultValue="smart-view">
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select a layout view" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="smart-view">
-                                <div className="flex gap-2">
-                                    Smart view
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
-                                            </TooltipTrigger>
-                                            <TooltipContent
-                                                side="right"
-                                                align="center"
-                                                className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                            >
-                                                <p className="text-sm">Create unique link for each lead to track their interactions in your flipbook</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="single-page-view">
-                                <div className="flex gap-2">
-                                    Single page view
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
-                                            </TooltipTrigger>
-                                            <TooltipContent
-                                                side="right"
-                                                align="center"
-                                                className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                            >
-                                                <p className="text-sm">Create unique link for each lead to track their interactions in your flipbook</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="two-page-view">
-                                Two page view
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
-            {checkboxOptions.map((option) => (
-                <div key={option.id} className="flex items-center gap-2">
-                    <Checkbox
-                        id={option.id}
-                        checked={checkedItems[option.id]}
-                        onCheckedChange={() => handleCheckboxChange(option.id)}
-                    />
-                    <Label htmlFor={option.id} className="text-sm font-medium leading-none">
-                        {option.label}
+            <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <Checkbox id="lead-form" />
+                    <Label htmlFor="lead-form" className="text-sm font-medium">
+                        Add lead capture form
                     </Label>
-                    {
-                        option.isShowTooltip && (<TooltipProvider>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                            </TooltipTrigger>
+                            <TooltipContent
+                                side="right"
+                                align="center"
+                                className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                            >
+                                <p className="text-sm">
+                                    Collect email leads by adding a lead form in your flipbook.
+                                </p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Textarea
+                        id="title"
+                        placeholder="Fill out this form to keep reading"
+                        className="resize-none"
+                    />
+                </div>
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor="submit-button-text">Submit button text</Label>
+                    <Input type="text" id="submit-button-text" defaultValue="Submit" />
+                </div>
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor="set-on-page">Set on page</Label>
+                    <Input type="number" id="set-on-page" defaultValue={1} />
+                </div>
+                <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-2">
+                        <Label htmlFor="fields">Fields</Label>
+                        <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
@@ -146,22 +71,110 @@ export default function LeadForm() {
                                     align="center"
                                     className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
                                 >
-                                    <p className="text-sm">{option.tooltip}</p>
+                                    <p className="text-sm">
+                                        Customize your lead form with up to 9 custom fields.
+                                    </p>
                                 </TooltipContent>
                             </Tooltip>
-                        </TooltipProvider>)
-                    }
-                    {option.id === "automatic-transition" && checkedItems["automatic-transition"] && (
-                        <div className="flex items-center gap-2 ml-auto">
-                            <Label htmlFor="delay" className="text-sm font-medium leading-none">
-                                Delay
-                            </Label>
-                            <Input className="w-24" type="number" defaultValue="7" />
-                            <p className="text-sm text-gray-500">sec</p>
-                        </div>
-                    )}
+                        </TooltipProvider>
+                    </div>
+                    <DynamicForm />
                 </div>
-            ))}
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        id="policy"
+                        checked={addPrivacyPolicy}
+                        onCheckedChange={() => setAddPrivacyPolicy(!addPrivacyPolicy)}
+                    />
+                    <Label htmlFor="policy" className="text-sm font-medium">
+                        Add a Privacy Policy link
+                    </Label>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                            </TooltipTrigger>
+                            <TooltipContent
+                                side="right"
+                                align="center"
+                                className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                            >
+                                <p className="text-sm">
+                                    Adding a Privacy Policy link makes sure that your users can check how you collect their data and also how you use the data, before submitting their personal information.
+                                    We recommend you add a privacy policy link.
+                                </p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
+                {
+                    addPrivacyPolicy && (
+                        <>
+                            <div className="flex flex-col gap-2">
+                                <Label htmlFor="company-name">Company name</Label>
+                                <Input type="text" id="company-name" placeholder="Your company" />
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <Label htmlFor="privacy-policy">Privacy Policy link</Label>
+                                <Input type="number" id="privacy-policy" placeholder="Add your own Privacy Policy link" />
+                            </div>
+                        </>
+                    )
+                }
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        id="gdpr"
+                        checked={addGDPR}
+                        onCheckedChange={() => setAddGDPR(!addGDPR)}
+                    />
+                    <Label htmlFor="gdpr" className="text-sm font-medium">
+                        Add GDPR compliancy check
+                    </Label>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                            </TooltipTrigger>
+                            <TooltipContent
+                                side="right"
+                                align="center"
+                                className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                            >
+                                <p className="text-sm">
+                                    Follow GDPR rules and make sure your readers consent to using their information.
+                                </p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
+                {
+                    addGDPR && (
+                        <div className="flex flex-col gap-2">
+                            <Label htmlFor="formulate-message">Formulate message</Label>
+                            <Input type="text" id="formulate-message" placeholder="I agree to receive marketing materials." />
+                        </div>
+                    )
+                }
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        id="allow-skip"
+                        checked={allowSkip}
+                        onCheckedChange={() => setAllowSkip(!allowSkip)}
+                    />
+                    <Label htmlFor="allow-skip" className="text-sm font-medium">
+                        Allow users to skip it
+                    </Label>
+                </div>
+                {
+                    allowSkip && (
+                        <div className="flex flex-col gap-2">
+                            <Label htmlFor="skip">Skip</Label>
+                            <Input type="text" id="skip" placeholder="I agree to receive marketing materials." />
+                        </div>
+                    )
+                }
+
+            </div>
         </>
-    )
+    );
 }
