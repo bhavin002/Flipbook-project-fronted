@@ -36,7 +36,7 @@ export default function SelectLogoDialog() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline">
+                <Button variant="outline" className="text-primary">
                     Select logo
                 </Button>
             </DialogTrigger>

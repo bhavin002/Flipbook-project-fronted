@@ -63,7 +63,7 @@ const SortableDropdownOption = ({ fieldId, option, updateDropdownOption, deleteD
                 {...listeners}
                 className="flex items-center justify-center cursor-move"
             >
-                <GripVertical className="h-4 w-4 text-gray-400" />
+                <GripVertical className="h-4 w-4" />
             </div>
             <div className="flex-1">
                 <Input
@@ -103,14 +103,14 @@ const SortableField = ({ field, fieldTypes, updateFieldType, toggleRequired, del
 
     return (
         <div className="space-y-2" style={style}>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-white">
                 <div
                     ref={setNodeRef}
                     {...attributes}
                     {...listeners}
                     className="flex items-center justify-center cursor-move"
                 >
-                    <GripVertical className="h-4 w-4 text-gray-400" />
+                    <GripVertical className="h-4 w-4" />
                 </div>
                 <div className="flex-1">
                     <Input value={field.name} className="w-full" />
@@ -139,11 +139,11 @@ const SortableField = ({ field, fieldTypes, updateFieldType, toggleRequired, del
                     variant="ghost"
                     size="icon"
                     onClick={() => toggleRequired(field.id)}
-                    className={field.required ? "text-primary" : "text-gray-400"}
+                    className={`hover:bg-sidebar hover:text-white ${field.required ? 'text-white' : 'text-gray-400'}`}
                 >
                     <Star className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" onClick={() => deleteField(field.id)} className="hover:text-red-500"><Trash2 /></Button>
+                <Button variant="ghost" onClick={() => deleteField(field.id)} className="hover:text-red-500 hover:bg-sidebar"><Trash2 /></Button>
             </div>
 
             {field.name === "Dropdown field" && dropdownOptions[field.id] && (
@@ -170,11 +170,7 @@ const SortableField = ({ field, fieldTypes, updateFieldType, toggleRequired, del
                             ))}
                         </SortableContext>
                     </DndContext>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-primary"
-                        onClick={() => addDropdownOption(field.id)}
+                    <Button variant="outline" size="sm" className="text-primary" onClick={() => addDropdownOption(field.id)}
                     >
                         <Plus /> Add option
                     </Button>
@@ -375,7 +371,7 @@ export default function DynamicForm() {
 
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline">
+                    <Button variant="outline" className="text-primary">
                         <Plus />Add field
                     </Button>
                 </DropdownMenuTrigger>

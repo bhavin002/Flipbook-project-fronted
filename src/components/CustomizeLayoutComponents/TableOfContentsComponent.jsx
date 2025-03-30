@@ -55,13 +55,14 @@ const SortableItem = ({
       <div 
         ref={setNodeRef} 
         style={style}
-        className="flex items-center gap-2 mb-2 group"
+        className="flex items-center gap-2 mb-2 group text-white"
       >
         {hasChildren && (
           <Button
             variant="ghost"
             size="icon"
             onClick={onToggleCollapse}
+            className="hover:bg-sidebar hover:text-white"
           >
             <ChevronRight className={`w-4 h-4 transition-transform ${!isCollapsed ? 'rotate-90' : ''}`} />
           </Button>
@@ -74,7 +75,7 @@ const SortableItem = ({
           {...listeners} 
           className="cursor-move"
         >
-          <GripVertical className="w-4 h-4 text-gray-500" />
+          <GripVertical className="w-4 h-4" />
         </div>
         
         <Input
@@ -89,19 +90,19 @@ const SortableItem = ({
           placeholder={type === 'chapter' ? 'Chapter title' : 'Subchapter title'}
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
-          className="w-[300px]"
+          className="w-[300px] placeholder:text-[#d8dce3]"
         />
         {canAddChild && (
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8"
+            className="h-8 w-8 hover:bg-sidebar hover:text-white"
             onClick={() => onAddChild(id)}
           >
             <Plus className="w-4 h-4" />
           </Button>
         )}
-        <Button variant="ghost" className="hover:text-red-500"  onClick={onDelete}><Trash2 /></Button>
+        <Button variant="ghost" className="hover:text-red-500 hover:bg-sidebar"  onClick={onDelete}><Trash2 /></Button>
       </div>
     );
   };
@@ -204,10 +205,11 @@ export default function TableOfContentsComponent() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 text-white">
         <Checkbox 
           id="activate"
           checked={isActivated}
+          className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
           onCheckedChange={() => {
             setIsActivated(!isActivated);
             if (!isActivated && items.length === 0) {
@@ -221,7 +223,7 @@ export default function TableOfContentsComponent() {
       </div>
 
       {isActivated && (
-        <div>
+        <div className='text-white'>
           <DndContext 
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -257,7 +259,7 @@ export default function TableOfContentsComponent() {
 
           <Button 
             variant="outline" 
-            className="mt-2 w-full"
+            className="mt-2 w-full text-primary"
             onClick={() => addNewItem()}
           >
             <Plus className="w-4 h-4 mr-2" />

@@ -47,10 +47,11 @@ export default function Branding() {
     }
     return (
         <>
-            <div className="space-y-4">
-                <div className="flex items-center gap-2">
+            <div className="space-y-4 ">
+                <div className="flex items-center gap-2 text-white">
                     <Checkbox
                         id="add-logo"
+                        className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
                     />
                     <Label htmlFor="add-logo" className="text-sm font-medium leading-none">
                         Add your logo
@@ -58,7 +59,7 @@ export default function Branding() {
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                                <Info className="h-4 w-4 cursor-pointer" />
                             </TooltipTrigger>
                             <TooltipContent
                                 side="right"
@@ -72,13 +73,13 @@ export default function Branding() {
                 </div>
                 <SelectLogoDialog />
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 text-white">
                 <Label htmlFor="logo-link" className="text-sm font-medium leading-none">
                     Add a link on your logo
                 </Label>
-                <Input type="text" id="logo-link" placeholder="Logo link" />
+                <Input type="text" id="logo-link" placeholder="Logo link" className="placeholder:text-[#d8dce3]"/>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 text-white">
                 <Label htmlFor="background-color" className="text-sm font-medium leading-none">
                     Background color
                 </Label>
@@ -96,12 +97,12 @@ export default function Branding() {
                 </Select>
             </div>
             {renderBackgroundContent(selectedBackground)}
-            <div className='flex gap-2 items-center'>
+            <div className='flex gap-2 items-center text-white'>
                 <Label>Player accent color</Label>
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                            <Info className="h-4 w-4 cursor-pointer" />
                         </TooltipTrigger>
                         <TooltipContent
                             side="right"
@@ -113,7 +114,7 @@ export default function Branding() {
                     </Tooltip>
                 </TooltipProvider>
             </div>
-            <div className='flex justify-between gap-4'>
+            <div className='flex justify-between gap-4 text-white'>
                 <Input
                     type="text"
                     value={playerAccentColor}

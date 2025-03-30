@@ -20,7 +20,7 @@ export default function ManageAccessibilityContentDialog() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className="w-full" variant="outline" >
+                <Button className="w-full text-primary" variant="outline" >
                     Manage Accessibility content
                 </Button>
             </DialogTrigger>

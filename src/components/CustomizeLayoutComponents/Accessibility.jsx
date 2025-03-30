@@ -43,27 +43,27 @@ export default function Accessibility() {
     }
 
     return (
-        <div className="space-y-4">
-            <p className="text-sm text-gray-600">
+        <div className="space-y-4 text-white">
+            <p className="text-sm">
                 Activating this feature makes your content accessible to people with visual difficulties by enlarging text or having it read aloud. However, text-to-speech functionality requires a separate screen reader. You can still add text manually if needed.
                 <br />
-                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Learn more</a>
+                <a className="text-sm font-medium text-gray-300 cursor-pointer hover:underline">Learn more</a>
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 ">
                 <div className="flex items-center">
                     <Switch 
                         id="activate-accessibility" 
                         checked={isAccessibilityActive}
                         onCheckedChange={setIsAccessibilityActive}
                     />
-                    <Label htmlFor="activate-accessibility" className="ml-3 text-gray-700">
+                    <Label htmlFor="activate-accessibility" className="ml-3">
                         Activate accessibility
                     </Label>
                 </div>
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                            <Info className="h-4 w-4 cursor-pointer" />
                         </TooltipTrigger>
                         <TooltipContent
                             side="right"
@@ -81,10 +81,10 @@ export default function Accessibility() {
             {isAccessibilityActive && (
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
-                        <Button variant="outline" className="w-full" onClick={() => handleAIConfirmation('extract')}>
+                        <Button variant="outline" className="w-full text-primary" onClick={() => handleAIConfirmation('extract')}>
                             Extract flipbook text
                         </Button>
-                        <Button className="w-full" onClick={() => handleAIConfirmation('generate')}>
+                        <Button className="w-full bg-sidebar hover:bg-sidebar hover:border" onClick={() => handleAIConfirmation('generate')}>
                             <Sparkles className="animate-pulse" />Generate AI summary
                         </Button>
                     </div>

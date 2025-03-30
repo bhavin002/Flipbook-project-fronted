@@ -26,14 +26,14 @@ export default function ColorPaletteSelector() {
     ];
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 text-white">
             <div className="flex flex-col gap-2">
                 <div className='flex gap-2 items-center'>
                     <Label>Brand Colors</Label>
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                                <Info className="h-4 w-4 cursor-pointer" />
                             </TooltipTrigger>
                             <TooltipContent
                                 side="right"

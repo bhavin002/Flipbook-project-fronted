@@ -49,11 +49,13 @@ export default function MenuControls() {
         <>
             {checkboxOptions.map((option) => (
                 <>
-                    <div key={option.id} className="flex items-center gap-2">
+                    <div key={option.id} className="flex items-center gap-2 text-white">
                         <Checkbox
                             id={option.id}
                             checked={checkedItems[option.id]}
                             onCheckedChange={() => handleCheckboxChange(option.id)}
+                            className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
+
                         />
                         <Label htmlFor={option.id} className="text-sm font-medium leading-none">
                             {option.label}
@@ -62,7 +64,7 @@ export default function MenuControls() {
                             option.isShowTooltip && (<TooltipProvider>
                                 <Tooltip>
                                     <TooltipTrigger asChild>
-                                        <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                                        <Info className="h-4 w-4 cursor-pointer" />
                                     </TooltipTrigger>
                                     <TooltipContent
                                         side="right"
@@ -77,26 +79,27 @@ export default function MenuControls() {
                     </div>
                     {option.id === "pages-overview" && checkedItems["pages-overview"] && (
                         <Alert>
-                            <AlertDescription className="flex items-center gap-2">
+                            <AlertDescription className="flex items-center gap-2 text-primary">
                                 <CircleCheckBig className="h-5 w-5" /> Every page thumbnail will be visible after publishing.
                             </AlertDescription>
                         </Alert>
                     )}
                     {option.id === "background-audio" && checkedItems["background-audio"] && (
-                        <div className="space-y-4">
+                        <div className="space-y-4 text-white">
                             <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Music2 className="h-5 w-5" />
                                     <p className="text-sm">feed_8rjtifB1740372106515 (1).mp3</p>
                                 </div>
-                                <Button variant="ghost" className="hover:text-red-500"><Trash2 /></Button>
+                                <Button variant="ghost" className="hover:text-red-500 hover:bg-sidebar"><Trash2 /></Button>
                             </div>
-                            <Button variant="outline">Replace audio</Button>
+                            <Button variant="outline" className="text-primary">Replace audio</Button>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Checkbox
                                     id="loop"
+                                    className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
                                 />
                                 <Label htmlFor="loop" className="text-sm font-medium leading-none">
                                     Loop
@@ -104,7 +107,7 @@ export default function MenuControls() {
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                                            <Info className="h-4 w-4 cursor-pointer" />
                                         </TooltipTrigger>
                                         <TooltipContent
                                             side="right"
@@ -119,6 +122,8 @@ export default function MenuControls() {
                             <div className="flex items-center gap-2">
                                 <Checkbox
                                     id="autoplay"
+                                    className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
+
                                 />
                                 <Label htmlFor="autoplay" className="text-sm font-medium leading-none">
                                     Autoplay
@@ -126,7 +131,7 @@ export default function MenuControls() {
                                 <TooltipProvider>
                                     <Tooltip>
                                         <TooltipTrigger asChild>
-                                            <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                                            <Info className="h-4 w-4 cursor-pointer" />
                                         </TooltipTrigger>
                                         <TooltipContent
                                             side="right"

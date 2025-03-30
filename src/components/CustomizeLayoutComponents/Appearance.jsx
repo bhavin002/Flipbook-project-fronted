@@ -40,7 +40,7 @@ export default function Appearance() {
     }
     return (
         <>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 text-white">
                 <Label>Player skin</Label>
                 <Tabs defaultValue="classic">
                     <TabsList className="w-full">
@@ -53,7 +53,7 @@ export default function Appearance() {
                     </TabsList>
                 </Tabs>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 text-white">
                 <Label>Page transition</Label>
                 <Tabs defaultValue="flip">
                     <TabsList className="w-full">
@@ -69,10 +69,10 @@ export default function Appearance() {
                     </TabsList>
                 </Tabs>
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 text-white">
                 <div className="flex justify-between">
                     <Label>Layout style</Label>
-                    <p className="text-primary text-sm cursor-pointer hover:underline">Learn more</p>
+                    <p className="text-sm cursor-pointer text-gray-300 hover:underline">Learn more</p>
                 </div>
                 <Select defaultValue="smart-view">
                     <SelectTrigger>
@@ -86,7 +86,7 @@ export default function Appearance() {
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                                                <Info className="h-4 w-4 cursor-pointer" />
                                             </TooltipTrigger>
                                             <TooltipContent
                                                 side="right"
@@ -126,11 +126,12 @@ export default function Appearance() {
                 </Select>
             </div>
             {checkboxOptions.map((option) => (
-                <div key={option.id} className="flex items-center gap-2">
+                <div key={option.id} className="flex items-center gap-2 text-white">
                     <Checkbox
                         id={option.id}
                         checked={checkedItems[option.id]}
                         onCheckedChange={() => handleCheckboxChange(option.id)}
+                        className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
                     />
                     <Label htmlFor={option.id} className="text-sm font-medium leading-none">
                         {option.label}
@@ -139,7 +140,7 @@ export default function Appearance() {
                         option.isShowTooltip && (<TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                                    <Info className="h-4 w-4 cursor-pointer" />
                                 </TooltipTrigger>
                                 <TooltipContent
                                     side="right"
@@ -157,7 +158,7 @@ export default function Appearance() {
                                 Delay
                             </Label>
                             <Input className="w-24" type="number" defaultValue="7" />
-                            <p className="text-sm text-gray-500">sec</p>
+                            <p className="text-sm">sec</p>
                         </div>
                     )}
                 </div>
