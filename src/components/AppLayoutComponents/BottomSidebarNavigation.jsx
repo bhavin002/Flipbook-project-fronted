@@ -123,7 +123,7 @@ export default function BottomSidebarNavigation() {
                     ))}
                 </nav>
 
-                <DrawerContent className="h-[85vh] max-h-[85vh] rounded-t-xl flex flex-col">
+                <DrawerContent className="max-h-[85vh] rounded-t-xl flex flex-col">
                     {renderDrawerPanel()}
                 </DrawerContent>
             </Drawer>

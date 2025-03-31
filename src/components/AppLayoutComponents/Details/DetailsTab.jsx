@@ -211,7 +211,7 @@ export default function DetailsTab() {
                             <div className="h-full w-full flex flex-col">
                                 <div className="h-[90%] w-full bg-gray-500">
                                 </div>
-                                <div className="flex max-lg:p-4 flex-wrap lg:justify-start justify-center items-center  flex-grow gap-4">
+                                <div className="flex max-lg:p-4 flex-wrap md:justify-start justify-center items-center  flex-grow gap-4">
                                     <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">View live</a>
                                     <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit</a>
                                     <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Customize</a>

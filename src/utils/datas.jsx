@@ -1,4 +1,10 @@
-import { FileCode, FileText, Image, CirclePlay, Pencil, SlidersHorizontal, ChartPie, Send, BookOpen, Share2, Home, Bot, Diamond, Settings, Users, Eye, PieChart } from 'lucide-react';
+import Accessibility from '@/components/CustomizeLayoutComponents/Accessibility';
+import Appearance from '@/components/CustomizeLayoutComponents/Appearance';
+import Branding from '@/components/CustomizeLayoutComponents/Branding';
+import LeadForm from '@/components/CustomizeLayoutComponents/LeadForm';
+import MenuControls from '@/components/CustomizeLayoutComponents/MenuControls';
+import TableOfContentsComponent from '@/components/CustomizeLayoutComponents/TableOfContentsComponent';
+import { FileCode, FileText, Image, CirclePlay, Pencil, SlidersHorizontal, ChartPie, Send, BookOpen, Share2, Home, Bot, Diamond, Settings, Users, Eye, PieChart, TableOfContents, Palette, AlignRight, PersonStanding } from 'lucide-react';
 
 const defaultRoutes = {
     home: '/my-flipbooks',
@@ -1030,6 +1036,44 @@ const pagesData = [
     { id: 10, title: "Blog Articles", description: "Educational content and company updates for users." }
 ];
 
+const customizeMenuItems = [
+    {
+        value: "appearance",
+        icon: <Eye />,
+        label: "Appearance",
+        component: <Appearance />
+    },
+    {
+        value: "branding",
+        icon: <Palette />,
+        label: "Branding",
+        component: <Branding />
+    },
+    {
+        value: "menu-controls",
+        icon: <SlidersHorizontal />,
+        label: "Menu controls",
+        component: <MenuControls />
+    },
+    {
+        value: "table-of-contents",
+        icon: <TableOfContents />,
+        label: "Table of contents",
+        component: <TableOfContentsComponent />
+    },
+    {
+        value: "lead-form",
+        icon: <AlignRight />,
+        label: "Lead form",
+        component: <LeadForm />
+    },
+    {
+        value: "accessibility",
+        icon: <PersonStanding />,
+        label: "Accessibility",
+        component: <Accessibility />
+    }
+];
 
 export function getData(dataType) {
     switch (dataType) {
@@ -1095,6 +1139,8 @@ export function getData(dataType) {
             return tableOfContents;
         case 'pagesData':
             return pagesData;
+        case 'customizeMenuItems':
+            return customizeMenuItems;
         default:
             return [];
     }

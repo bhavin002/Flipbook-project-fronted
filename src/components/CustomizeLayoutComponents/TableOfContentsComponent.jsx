@@ -83,14 +83,14 @@ const SortableItem = ({
           value={number}
           onChange={(e) => onNumberChange(Number(e.target.value))}
           min="1"
-          className="w-16 mr-2"
+          className="w-14 mr-2"
         />
         
         <Input
           placeholder={type === 'chapter' ? 'Chapter title' : 'Subchapter title'}
           value={title}
           onChange={(e) => onTitleChange(e.target.value)}
-          className="w-[300px] placeholder:text-[#d8dce3]"
+          className="md:w-[300px] placeholder:text-[#d8dce3]"
         />
         {canAddChild && (
           <Button

@@ -43,7 +43,7 @@ export default function CustomizeAppLayout() {
                 </div>
             </header>
 
-            <div className="flex-1 max-md:flex mt-[64px] flex overflow-y-auto">
+            <div className="flex-1 max-md:flex mt-[64px] max-lg:mb-[80px] flex overflow-y-auto">
                 <Outlet />
             </div>
             <PublishFlipbookDialog 

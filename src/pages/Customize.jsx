@@ -1,78 +1,40 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
-} from "@/components/ui/accordion"
-import { AlignRight, Eye, Palette, PersonStanding, SlidersHorizontal, TableOfContents, Info, Monitor, Smartphone } from "lucide-react"
-import Appearance from "@/components/CustomizeLayoutComponents/Appearance"
-import Branding from '@/components/CustomizeLayoutComponents/Branding'
-import MenuControls from '@/components/CustomizeLayoutComponents/MenuControls'
-import TableOfContentsComponent from '@/components/CustomizeLayoutComponents/TableOfContentsComponent'
-import LeadForm from '@/components/CustomizeLayoutComponents/LeadForm'
-import Accessibility from '@/components/CustomizeLayoutComponents/Accessibility'
-import { Label } from '@/components/ui/label'
-import { Checkbox } from '@/components/ui/checkbox'
+} from "@/components/ui/accordion";
+import {
+    Info,
+    Monitor,
+    Smartphone
+} from "lucide-react";
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from "@/components/ui/tooltip"
-import { Card } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-
+} from "@/components/ui/tooltip";
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import BottomCustomizePanel from '@/components/CustomizeLayoutComponents/BottomCustomizePanel';
+import { getData } from '@/utils/datas';
 
 export default function Customize() {
-    const [activeValues, setActiveValues] = useState([])
+    const [activeValues, setActiveValues] = useState([]);
 
-    const menuItems = [
-        {
-            value: "appearance",
-            icon: <Eye />,
-            label: "Appearance",
-            component: <Appearance />
-        },
-        {
-            value: "branding",
-            icon: <Palette />,
-            label: "Branding",
-            component: <Branding />
-        },
-        {
-            value: "menu-controls",
-            icon: <SlidersHorizontal />,
-            label: "Menu controls",
-            component: <MenuControls />
-        },
-        {
-            value: "table-of-contents",
-            icon: <TableOfContents />,
-            label: "Table of contents",
-            component: <TableOfContentsComponent />
-        },
-        {
-            value: "lead-form",
-            icon: <AlignRight />,
-            label: "Lead form",
-            component: <LeadForm />
-        },
-        {
-            value: "accessibility",
-            icon: <PersonStanding />,
-            label: "Accessibility",
-            component: <Accessibility />
-        }
-    ]
+    const menuItems = getData('customizeMenuItems');
 
     const handleValueChange = (values) => {
-        setActiveValues(values)
-    }
+        setActiveValues(values);
+    };
 
     return (
-        <div className="flex w-full" >
-            <div className="md:w-[40%] max-md:w-full bg-primary flex flex-col p-4">
+        <div className="flex w-full">
+            <div className="md:w-[40%] max-lg:hidden bg-primary flex flex-col p-4">
                 <Accordion
                     type="multiple"
                     collapsible
@@ -122,7 +84,8 @@ export default function Customize() {
                     </TooltipProvider>
                 </div>
             </div>
-            <Card className="shadow-sm flex-grow rounded-none max-md:hidden">
+
+            <Card className="shadow-sm flex-grow rounded-none max-md:w-full">
                 <Tabs defaultValue="desktop" className="flex flex-col h-full max-lg:min-h-[70vh]">
                     <TabsList className="w-full rounded-none">
                         <TabsTrigger className="items-center gap-2 w-full" value="desktop">
@@ -138,7 +101,7 @@ export default function Customize() {
                         <div className="h-full w-full flex flex-col">
                             <div className="h-[90%] w-full bg-gray-500">
                             </div>
-                            <div className="flex max-lg:p-4 flex-wrap lg:justify-start justify-center items-center  flex-grow gap-4">
+                            <div className="flex max-lg:p-4 flex-wrap md:justify-start justify-center items-center flex-grow gap-4">
                                 <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">View live</a>
                                 <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit</a>
                                 <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Customize</a>
@@ -151,7 +114,7 @@ export default function Customize() {
                         <div className="h-full w-full flex flex-col">
                             <div className="h-[90%] md:w-[50%] md:m-auto bg-gray-500">
                             </div>
-                            <div className="flex p-4 flex-wrap justify-center items-center  flex-grow gap-4">
+                            <div className="flex p-4 flex-wrap justify-center items-center flex-grow gap-4">
                                 <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">View live</a>
                                 <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit</a>
                                 <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Customize</a>
@@ -162,6 +125,7 @@ export default function Customize() {
                     </TabsContent>
                 </Tabs>
             </Card>
+            <BottomCustomizePanel />
         </div>
-    )
+    );
 }
