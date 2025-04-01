@@ -39,6 +39,8 @@ import Details from "./pages/Details";
 import MyAccount from "./pages/MyAccount";
 import CustomizeAppLayout from "./layout/CustomizeAppLayout";
 import Customize from "./pages/Customize";
+import EditorAppLayout from "./layout/EditorAppLayout";
+import Editor from "./pages/Editor";
 
 // Route configurations
 const brandingRoutes = [
@@ -148,6 +150,9 @@ export default function App() {
         <Route index element={<Customize />} />
       </Route>
 
+      <Route path="/editor/:id" element={<EditorAppLayout  setIsSidebarOpen={setIsSidebarOpen}/>}>
+        <Route index element={<Editor />} />
+      </Route>
     </Routes>
   );
 }

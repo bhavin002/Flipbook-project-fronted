@@ -46,12 +46,14 @@ export default function MyFlipbooks({ isSidebarOpen }) {
             setIsShareModalOpen(true);
         } else if (action === 'publish') {
             setIsPublishModalOpen(true);
-        } else if(action === "details"){
+        } else if (action === "details") {
             router("/details/sd2112wdwd1d")
-        }else if(action === "stats"){
+        } else if (action === "stats") {
             router("/stats/sd2112wdwd1d")
-        }else if(action === "customize"){
+        } else if (action === "customize") {
             router("/customize/sd2112wdwd1d")
+        } else if (action === "edit") {
+            router("/editor/sd2112wdwd1d")
         } else {
             console.error("Invalid action:", action);
         }

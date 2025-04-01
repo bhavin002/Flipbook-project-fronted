@@ -4,7 +4,7 @@ import Branding from '@/components/CustomizeLayoutComponents/Branding';
 import LeadForm from '@/components/CustomizeLayoutComponents/LeadForm';
 import MenuControls from '@/components/CustomizeLayoutComponents/MenuControls';
 import TableOfContentsComponent from '@/components/CustomizeLayoutComponents/TableOfContentsComponent';
-import { FileCode, FileText, Image, CirclePlay, Pencil, SlidersHorizontal, ChartPie, Send, BookOpen, Share2, Home, Bot, Diamond, Settings, Users, Eye, PieChart, TableOfContents, Palette, AlignRight, PersonStanding } from 'lucide-react';
+import { FileCode, FileText, Image, CirclePlay, Pencil, SlidersHorizontal, ChartPie, Send, BookOpen, Share2, Home, Bot, Diamond, Settings, Users, Eye, PieChart, TableOfContents, Palette, AlignRight, PersonStanding, LayoutPanelLeft, SquareMousePointer, Type, Upload, Component } from 'lucide-react';
 
 const defaultRoutes = {
     home: '/my-flipbooks',
@@ -20,6 +20,15 @@ const navItems = [
     { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics' },
     { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings' },
     { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace' },
+];
+
+const editorNavItems = [
+    { id: 'templates', icon: LayoutPanelLeft, label: 'Templates' },
+    { id: 'interactions', icon: SquareMousePointer, label: 'Interactions' },
+    { id: 'text', icon: Type, label: 'Text' },
+    { id: 'uploads', icon: Upload, label: 'Uploads' },
+    { id: 'elements', icon: Component, label: 'Elements' },
+    { id: 'automation', icon: Bot, label: 'Automation' }
 ];
 
 const bottomNavItems = [
@@ -567,6 +576,29 @@ const activityOptions = [
     { value: "scheduled-flipbook-publish", label: "Scheduled flipbook for publish" }
 ]
 
+const templatesData = [
+    { value: "all-templates", label: "All templates" },
+    { value: "featured", label: "Featured" },
+    { value: "presentations", label: "Presentations" },
+    { value: "reports", label: "Reports" },
+    { value: "flyers", label: "Flyers" },
+    { value: "magazines", label: "Magazines" },
+    { value: "catalogs", label: "Catalogs" },
+    { value: "brochures", label: "Brochures" },
+    { value: "event-programs", label: "Event Programs" },
+    { value: "guides", label: "Guides" },
+    { value: "menus", label: "Menus" },
+    { value: "covers", label: "Covers" },
+    { value: "portfolios", label: "Portfolios" },
+    { value: "newsletters", label: "Newsletters" },
+    { value: "booklets", label: "Booklets" },
+    { value: "lookbooks", label: "Lookbooks" },
+    { value: "table-of-contents", label: "Table of Contents" },
+    { value: "flipbooks", label: "Flipbooks" },
+    { value: "ebooks", label: "eBooks" },
+    { value: "pitch-decks", label: "Pitch Decks" }
+]
+
 const teammateOptions = [
     { value: "all-teammates", label: "All Teammates" },
     { value: "BhavinV", label: "BhavinV" },
@@ -1075,12 +1107,229 @@ const customizeMenuItems = [
     }
 ];
 
+const templates = [
+    {
+        id: 1,
+        pages: 14,
+        thumbnail: "https://cdn.flipsnack.com/template/4897/thumb/page_1",
+        pageThumbnails: [
+            "https://cdn.flipsnack.com/template/4897/thumb/page_1",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_2",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_3",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_4",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_5",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_6",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_7",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_8",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_9",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_10",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_11",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_12",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_13",
+            "https://cdn.flipsnack.com/template/4897/thumb/page_14",
+        ]
+    },
+    {
+        id: 2,
+        pages: 12,
+        thumbnail: "https://cdn.flipsnack.com/template/4844/thumb/page_1",
+        pageThumbnails: [
+            "https://cdn.flipsnack.com/template/4844/thumb/page_1",
+            "https://cdn.flipsnack.com/template/4844/thumb/page_2",
+            "https://cdn.flipsnack.com/template/4844/thumb/page_3",
+            "https://cdn.flipsnack.com/template/4844/thumb/page_4",
+            "https://cdn.flipsnack.com/template/4844/thumb/page_5",
+            "https://cdn.flipsnack.com/template/4844/thumb/page_6",
+            "https://cdn.flipsnack.com/template/4844/thumb/page_7",
+            "https://cdn.flipsnack.com/template/4844/thumb/page_8",
+            "https://cdn.flipsnack.com/template/4844/thumb/page_9",
+            "https://cdn.flipsnack.com/template/4844/thumb/page_10",
+            "https://cdn.flipsnack.com/template/4844/thumb/page_11",
+            "https://cdn.flipsnack.com/template/4844/thumb/page_12",
+        ]
+    },
+    {
+        id: 3,
+        pages: 12,
+        thumbnail: "https://cdn.flipsnack.com/template/4832/thumb/page_1",
+        pageThumbnails: [
+            "https://cdn.flipsnack.com/template/4832/thumb/page_1",
+            "https://cdn.flipsnack.com/template/4832/thumb/page_2",
+            "https://cdn.flipsnack.com/template/4832/thumb/page_3",
+            "https://cdn.flipsnack.com/template/4832/thumb/page_4",
+            "https://cdn.flipsnack.com/template/4832/thumb/page_5",
+            "https://cdn.flipsnack.com/template/4832/thumb/page_6",
+            "https://cdn.flipsnack.com/template/4832/thumb/page_7",
+            "https://cdn.flipsnack.com/template/4832/thumb/page_8",
+            "https://cdn.flipsnack.com/template/4832/thumb/page_9",
+            "https://cdn.flipsnack.com/template/4832/thumb/page_10",
+            "https://cdn.flipsnack.com/template/4832/thumb/page_11",
+            "https://cdn.flipsnack.com/template/4832/thumb/page_12",
+        ]
+    },
+    {
+        id: 4,
+        pages: 14,
+        thumbnail: "https://cdn.flipsnack.com/template/4815/thumb/page_1",
+        pageThumbnails: [
+            "https://cdn.flipsnack.com/template/4815/thumb/page_1",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_2",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_3",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_4",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_5",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_6",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_7",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_8",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_9",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_10",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_11",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_12",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_13",
+            "https://cdn.flipsnack.com/template/4815/thumb/page_14",
+        ]
+    },
+    {
+        id: 5,
+        pages: 16,
+        thumbnail: "https://cdn.flipsnack.com/template/4811/thumb/page_1",
+        pageThumbnails: [
+            "https://cdn.flipsnack.com/template/4811/thumb/page_1",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_2",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_3",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_4",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_5",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_6",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_7",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_8",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_9",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_10",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_11",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_12",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_13",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_14",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_15",
+            "https://cdn.flipsnack.com/template/4811/thumb/page_16",
+        ]
+    },
+    {
+        id: 6,
+        pages: 14,
+        thumbnail: "https://cdn.flipsnack.com/template/4804/thumb/page_1",
+        pageThumbnails: [
+            "https://cdn.flipsnack.com/template/4804/thumb/page_1",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_2",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_3",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_4",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_5",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_6",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_7",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_8",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_9",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_10",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_11",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_12",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_13",
+            "https://cdn.flipsnack.com/template/4804/thumb/page_14",
+        ]
+    },
+    {
+        id: 7,
+        pages: 18,
+        thumbnail: "https://cdn.flipsnack.com/template/4779/thumb/page_1",
+        pageThumbnails: [
+            "https://cdn.flipsnack.com/template/4779/thumb/page_1",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_2",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_3",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_4",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_5",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_6",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_7",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_8",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_9",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_10",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_11",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_12",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_13",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_14",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_15",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_16",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_17",
+            "https://cdn.flipsnack.com/template/4779/thumb/page_18",
+        ]
+    },
+    {
+        id: 8,
+        pages: 16,
+        thumbnail: "https://cdn.flipsnack.com/template/4774/thumb/page_1",
+        pageThumbnails: [
+            "https://cdn.flipsnack.com/template/4774/thumb/page_1",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_2",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_3",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_4",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_5",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_6",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_7",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_8",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_9",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_10",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_11",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_12",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_13",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_14",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_15",
+            "https://cdn.flipsnack.com/template/4774/thumb/page_16",
+        ]
+    },
+    {
+        id: 9,
+        pages: 14,
+        thumbnail: "https://cdn.flipsnack.com/template/4770/thumb/page_1",
+        pageThumbnails: [
+            "https://cdn.flipsnack.com/template/4770/thumb/page_1",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_2",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_3",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_4",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_5",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_6",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_7",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_8",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_9",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_10",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_11",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_12",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_13",
+            "https://cdn.flipsnack.com/template/4770/thumb/page_14",
+        ]
+    },
+    {
+        id: 10,
+        pages: 12,
+        thumbnail: "https://cdn.flipsnack.com/template/4723/thumb/page_1",
+        pageThumbnails: [
+            "https://cdn.flipsnack.com/template/4723/thumb/page_1",
+            "https://cdn.flipsnack.com/template/4723/thumb/page_2",
+            "https://cdn.flipsnack.com/template/4723/thumb/page_3",
+            "https://cdn.flipsnack.com/template/4723/thumb/page_4",
+            "https://cdn.flipsnack.com/template/4723/thumb/page_5",
+            "https://cdn.flipsnack.com/template/4723/thumb/page_6",
+            "https://cdn.flipsnack.com/template/4723/thumb/page_7",
+            "https://cdn.flipsnack.com/template/4723/thumb/page_8",
+            "https://cdn.flipsnack.com/template/4723/thumb/page_9",
+            "https://cdn.flipsnack.com/template/4723/thumb/page_10",
+            "https://cdn.flipsnack.com/template/4723/thumb/page_11",
+            "https://cdn.flipsnack.com/template/4723/thumb/page_12",
+        ]
+    },
+];
+
 export function getData(dataType) {
     switch (dataType) {
         case 'defaultRoutes':
             return defaultRoutes;
         case 'navItems':
             return navItems;
+        case 'editorNavItems':
+            return editorNavItems;
         case 'bottomNavItems':
             return bottomNavItems;
         case 'settingMenuItems':
@@ -1141,6 +1390,10 @@ export function getData(dataType) {
             return pagesData;
         case 'customizeMenuItems':
             return customizeMenuItems;
+        case 'templatesData':
+            return templatesData;
+        case 'templates':
+            return templates;
         default:
             return [];
     }

@@ -9,14 +9,13 @@ import {
 import { Outlet } from "react-router-dom";
 import AppBreadcrumbs from "@/utils/AppBreadcrumb";
 import CreateDropDownCom from "@/components/AppLayoutComponents/CreateDropDownCom";
-import { AppSidebar } from "@/components/AppLayoutComponents/AppSidebar";
+import { AppSidebar } from "@/utils/AppSidebar";
 import BottomSidebarNavigation from "@/components/AppLayoutComponents/BottomSidebarNavigation";
 
 export default function AppLayout({ setIsSidebarOpen }) {
     const [searchValue, setSearchValue] = useState("");
     const [isFocused, setIsFocused] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-
 
     const handleBlur = (e) => {
         setTimeout(() => {
@@ -65,7 +64,7 @@ export default function AppLayout({ setIsSidebarOpen }) {
                 <div className="flex-1 max-md:flex md:mt-[64px] max-md:mt-[156px] max-md:mb-[80px] overflow-y-auto">
                     <div className="flex flex-1">
                         <div className="hidden relative md:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
-                            <SidebarProvider value={{ selectedItem, setSelectedItem }}>
+                            <SidebarProvider value={{ selectedItem, setSelectedItem, width: "15rem" }}>
                                 <SidebarNavigation setIsSidebarOpen={setIsSidebarOpen} />
                                 <AppSidebar />
                             </SidebarProvider>
