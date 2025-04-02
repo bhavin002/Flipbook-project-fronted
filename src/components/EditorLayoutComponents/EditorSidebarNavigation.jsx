@@ -25,8 +25,11 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
 
     React.useEffect(() => {
         setGlobalSelectedItem('templates');
+    }, []);
+
+    React.useEffect(() => {
         setIsSidebarOpen(open);
-    }, [setGlobalSelectedItem, setIsSidebarOpen, open]);
+    }, [open, setIsSidebarOpen]);
 
     const handleItemClick = (itemId) => {
         if (selectedItem === itemId) {
