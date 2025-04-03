@@ -1322,6 +1322,48 @@ const templates = [
     },
 ];
 
+const textTemplates = [
+    {
+        id: 1,
+        thumbnail: "https://cdn.flipsnack.com/template/4753/thumb/page_1",
+    },
+    {
+        id: 2,
+        thumbnail: "https://cdn.flipsnack.com/template/4752/thumb/page_1",
+    },
+    {
+        id: 3,
+        thumbnail: "https://cdn.flipsnack.com/template/4751/thumb/page_1",
+    },
+    {
+        id: 4,
+        thumbnail: "https://cdn.flipsnack.com/template/4750/thumb/page_1",
+    },  
+    {
+        id: 5,
+        thumbnail: "https://cdn.flipsnack.com/template/4749/thumb/page_1",
+    },
+    {
+        id: 6,
+        thumbnail: "https://cdn.flipsnack.com/template/3763/thumb/page_1",
+    },
+    {
+        id: 7,  
+        thumbnail: "https://cdn.flipsnack.com/template/3762/thumb/page_1",
+    },
+    {
+        id: 8,
+        thumbnail: "https://cdn.flipsnack.com/template/3761/thumb/page_1",
+    },
+    {
+        id: 9,
+        thumbnail: "https://cdn.flipsnack.com/template/3760/thumb/page_1",
+    },
+    {
+        id: 10,
+        thumbnail: "https://cdn.flipsnack.com/template/3757/thumb/page_1",
+    }
+]
 const interactions = [
     {
         title: "Links and tags",
@@ -1380,7 +1422,7 @@ const interactions = [
             },
             {
                 text: 'Pop-up slideshow',
-                icon: `<div className="w-2 h-2 border-t-2 border-l-2 absolute top-0 left-0 rounded-tl-md"></div><div className="w-2 h-2 border-t-2 border-r-2 absolute top-0 right-0 rounded-tr-md"></div><div className="w-2 h-2 border-b-2 border-l-2 absolute bottom-0 left-0 rounded-bl-md"></div><div className="w-2 h-2 border-b-2 border-r-2 absolute bottom-0 right-0 rounded-br-md"></div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-images-icon lucide-images"><path d="M18 22H4a2 2 0 0 1-2-2V6" /><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18" /><circle cx="12" cy="8" r="2" /><rect width="16" height="16" x="6" y="2" rx="2" /></svg>`,
+                icon: `<div class="w-2 h-2 border-t-2 border-l-2 absolute top-0 left-0 rounded-tl-md"> </div><div class="w-2 h-2 border-t-2 border-r-2 absolute top-0 right-0 rounded-tr-md"> </div><div class="w-2 h-2 border-b-2 border-l-2 absolute bottom-0 left-0 rounded-bl-md"> </div><div class="w-2 h-2 border-b-2 border-r-2 absolute bottom-0 right-0 rounded-br-md"> </div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-images-icon lucide-images"><path d="M18 22H4a2 2 0 0 1-2-2V6" /><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18" /><circle cx="12" cy="8" r="2" /><rect width="16" height="16" x="6" y="2" rx="2" /></svg>`,
                 isUpgrade: false
             }
         ]
@@ -1627,6 +1669,8 @@ export function getData(dataType) {
             return templates;
         case 'interactions':
             return interactions;
+        case 'textTemplates':
+            return textTemplates;
         default:
             return [];
     }
