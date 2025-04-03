@@ -8,16 +8,16 @@ export default function TextSidebarPanel() {
             <div className="space-y-2 mb-4">
                 <div className="text-sm font-semibold">Click or drag text to add to page</div>
                 <div className="space-y-2">
-                    <div className="rounded-lg w-full bg-primary p-2">
+                    <div className="rounded-lg w-full bg-primary hover:bg-violet-700 p-2">
                         <p className="text-[42px] font-semibold pl-4">Add heading</p>
                     </div>
-                    <div className="rounded-lg w-full bg-primary p-2">
+                    <div className="rounded-lg w-full bg-primary hover:bg-violet-700 p-2">
                         <p className="text-[24px] pl-4">Add sub heading</p>
                     </div>
-                    <div className="rounded-lg w-full bg-primary p-2">
+                    <div className="rounded-lg w-full bg-primary hover:bg-violet-700 p-2">
                         <p className="text-[16px] pl-4">Add body text</p>
                     </div>
-                    <div className="rounded-lg w-full bg-primary flex items-center gap-2 p-2 pl-4">
+                    <div className="rounded-lg w-full bg-primary hover:bg-violet-700 flex items-center gap-2 p-2 pl-4">
                         <Hash /> <p className="text-[14px] font-semibold">Pagination</p>
                     </div>
                 </div>

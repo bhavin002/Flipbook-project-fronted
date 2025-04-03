@@ -15,7 +15,7 @@ export default function InteractionsSidebarPanel() {
                             <div className="grid grid-cols-3 gap-4">
                                 {section.widget.map((item, itemIndex) => (
                                     <div key={itemIndex} className="cursor-pointer flex flex-col items-center">
-                                        <div className="rounded-lg h-14 w-full bg-primary flex justify-center items-center relative">
+                                        <div className="rounded-lg h-14 w-full bg-primary hover:bg-violet-700 flex justify-center items-center relative">
                                             {item.isUpgrade && (
                                                 <div className="absolute top-1 right-1">
                                                     <Crown className="h-4 w-4 text-amber-400 shrink-0" />
