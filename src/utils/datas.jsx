@@ -2533,6 +2533,124 @@ const svgItems = {
 `,
 }
 
+const folders = [
+    {
+        id: 1,
+        name: "folder 1",
+    },
+    {
+        id: 2,
+        name: "folder 2",
+    },
+    {
+        id: 3,
+        name: "folder 3",
+    },
+    {
+        id: 4,
+        name: "folder 4",
+    },
+    {
+        id: 5,
+        name: "folder 5",
+    },
+    {
+        id: 6,
+        name: "folder 6",
+    },
+    {
+        id: 7,
+        name: "folder 7",
+    },
+    {
+        id: 8,
+        name: "folder 8",
+    },
+    {
+        id: 9,
+        name: "folder 9",
+    },
+    {
+        id: 10,
+        name: "folder 10",
+    },
+    {
+        id: 11,
+        name: "folder 11",
+    },
+    {
+        id: 12,
+        name: "folder 12",
+    },
+    {
+        id: 13,
+        name: "folder 13",
+    },
+    {
+        id: 14,
+        name: "folder 14",
+    },
+    {
+        id: 15,
+        name: "folder 15",
+    },
+    {
+        id: 16,
+        name: "folder 16",
+    },
+    {
+        id: 17,
+        name: "folder 17",
+    },
+    {
+        id: 18,
+        name: "folder 18",
+    },
+    {
+        id: 19,
+        name: "folder 19",
+    },
+    {
+        id: 20,
+        name: "folder 20",
+    }
+]
+
+const library = [
+    {
+        id:1,
+        img:"https://cdn.flipsnack.com/collections/uploads/c73d3737ee40146f20a8e5ef49804638_t"
+    },
+    {
+        id:2,
+        img:"https://cdn.flipsnack.com/collections/uploads/0417f8e82f828042a3e27b3f49804639_t"
+    },
+    {
+        id:3,
+        img:"https://cdn.flipsnack.com/collections/uploads/5a0c38e5a4d3a0fbedda523f49804640_t"
+    },
+    {
+        id:4,
+        img:"https://cdn.flipsnack.com/collections/uploads/7a3c7fe645f87ff4902cb63f49804636_t"
+    },
+    {
+        id:5,
+        img:"https://cdn.flipsnack.com/collections/uploads/110368fc5d5b38d17466948f49804637_t"
+    },
+    {
+        id:6,
+        img:"https://cdn.flipsnack.com/collections/uploads/cdf9c22b5aea6b22cb520c2f49804608_t"
+    },
+    {
+        id:7,
+        img:"https://cdn.flipsnack.com/collections/uploads/a8a5a3294ca03b647c14719f49804606_t"
+    },
+    {
+        id:8,
+        img:"https://cdn.flipsnack.com/collections/uploads/846ee260539bfa4c2260adaf49804607_t"
+    }
+]
+
 export function getData(dataType) {
     switch (dataType) {
         case 'defaultRoutes':
@@ -2611,6 +2729,10 @@ export function getData(dataType) {
             return textTemplates;
         case 'svgItems':
             return svgItems;
+        case 'folders':
+            return folders;
+        case 'library':
+            return library;
         default:
             return [];
     }
