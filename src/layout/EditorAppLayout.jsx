@@ -9,6 +9,7 @@ import ShareDropDownCom from "@/components/EditorLayoutComponents/ShareDropDownC
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/utils/AppSidebar";
 import EditorSidebarNavigation from "@/components/EditorLayoutComponents/EditorSidebarNavigation";
+import BottomEditorPanel from "@/components/EditorLayoutComponents/BottomEditorPanel";
 
 export default function EditorAppLayout({ setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
@@ -80,6 +81,7 @@ export default function EditorAppLayout({ setIsSidebarOpen }) {
                 isPublishModalOpen={isPublishModalOpen}
                 setIsPublishModalOpen={setIsPublishModalOpen}
             />
+            <BottomEditorPanel />
         </div>
     )
 }

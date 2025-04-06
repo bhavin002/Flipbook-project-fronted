@@ -4,6 +4,11 @@ import Branding from '@/components/CustomizeLayoutComponents/Branding';
 import LeadForm from '@/components/CustomizeLayoutComponents/LeadForm';
 import MenuControls from '@/components/CustomizeLayoutComponents/MenuControls';
 import TableOfContentsComponent from '@/components/CustomizeLayoutComponents/TableOfContentsComponent';
+import ElementsSidebarPanel from '@/components/EditorLayoutComponents/Elements/ElementsSidebarPanel';
+import InteractionsSidebarPanel from '@/components/EditorLayoutComponents/Interactions/InteractionsSidebarPanel';
+import TemplateSidebarPanel from '@/components/EditorLayoutComponents/Templates/TemplateSidebarPanel';
+import TextSidebarPanel from '@/components/EditorLayoutComponents/Text/TextSidebarPanel';
+import UploadsSidebarPanel from '@/components/EditorLayoutComponents/Uploads/UploadsSidebarPanel';
 import { FileCode, FileText, Image, CirclePlay, Pencil, SlidersHorizontal, ChartPie, Send, BookOpen, Share2, Home, Bot, Diamond, Settings, Users, Eye, PieChart, TableOfContents, Palette, AlignRight, PersonStanding, LayoutPanelLeft, SquareMousePointer, Type, Upload, Component } from 'lucide-react';
 
 const defaultRoutes = {
@@ -30,6 +35,40 @@ const editorNavItems = [
     { id: 'elements', icon: Component, label: 'Elements' },
     { id: 'automation', icon: Bot, label: 'Automation' }
 ];
+
+const editorBottomNavItems = [
+    {
+        value: "Templates",
+        icon: <LayoutPanelLeft />,
+        label: "Templates",
+        component: <TemplateSidebarPanel />
+    },
+    {
+        value: "interactions",
+        icon: <SquareMousePointer />,
+        label: "Interactions",
+        component: <InteractionsSidebarPanel />
+    },
+    {
+        value: "text",
+        icon: <Type />,
+        label: "Text",
+        component: <TextSidebarPanel />
+    },
+    {
+        value: "uploads",
+        icon: <Upload />,
+        label: "Uploads",
+        component: <UploadsSidebarPanel />
+    },
+    {
+        value: "elements",
+        icon: <Component />,
+        label: "Elements",
+        component: <ElementsSidebarPanel />
+    }
+];
+
 
 const bottomNavItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/my-flipbooks', hasDrawer: true },
@@ -2741,6 +2780,8 @@ export function getData(dataType) {
             return folders;
         case 'library':
             return library;
+        case 'editorBottomNavItems':
+            return editorBottomNavItems;
         default:
             return [];
     }

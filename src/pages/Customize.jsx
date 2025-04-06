@@ -20,7 +20,6 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import BottomCustomizePanel from '@/components/CustomizeLayoutComponents/BottomCustomizePanel';
 import { getData } from '@/utils/datas';
 
 export default function Customize() {
@@ -125,7 +124,6 @@ export default function Customize() {
                     </TabsContent>
                 </Tabs>
             </Card>
-            <BottomCustomizePanel />
         </div>
     );
 }

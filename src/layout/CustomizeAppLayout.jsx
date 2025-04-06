@@ -3,6 +3,7 @@ import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDow
 import { Outlet } from "react-router-dom";
 import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
 import { Button } from "@/components/ui/button";
+import BottomCustomizePanel from "@/components/CustomizeLayoutComponents/BottomCustomizePanel";
 
 export default function CustomizeAppLayout() {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
@@ -50,6 +51,7 @@ export default function CustomizeAppLayout() {
                 isPublishModalOpen={isPublishModalOpen} 
                 setIsPublishModalOpen={setIsPublishModalOpen} 
             />
+            <BottomCustomizePanel />
         </div>
     )
 }
