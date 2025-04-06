@@ -1,21 +1,10 @@
 
 import React, { useState } from 'react';
-import {
-    Info,
-} from "lucide-react";
 import { Button } from '@/components/ui/button';
 import {
     Drawer,
     DrawerContent,
 } from "@/components/ui/drawer";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { getData } from '@/utils/datas';
 
 function NavItem({ item, isSelected, onClick }) {
