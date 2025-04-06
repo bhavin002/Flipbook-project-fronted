@@ -2619,35 +2619,43 @@ const folders = [
 const library = [
     {
         id:1,
-        img:"https://cdn.flipsnack.com/collections/uploads/c73d3737ee40146f20a8e5ef49804638_t"
+        img:"https://cdn.flipsnack.com/collections/uploads/c73d3737ee40146f20a8e5ef49804638_t",
+        mediaType:"JPG",
     },
     {
         id:2,
-        img:"https://cdn.flipsnack.com/collections/uploads/0417f8e82f828042a3e27b3f49804639_t"
+        img:"https://cdn.flipsnack.com/collections/uploads/0417f8e82f828042a3e27b3f49804639_t",
+        mediaType:"PNG",
     },
     {
         id:3,
-        img:"https://cdn.flipsnack.com/collections/uploads/5a0c38e5a4d3a0fbedda523f49804640_t"
+        img:"https://cdn.flipsnack.com/collections/uploads/5a0c38e5a4d3a0fbedda523f49804640_t",
+        mediaType:"JPEG",
     },
     {
         id:4,
-        img:"https://cdn.flipsnack.com/collections/uploads/7a3c7fe645f87ff4902cb63f49804636_t"
+        img:"https://cdn.flipsnack.com/collections/uploads/7a3c7fe645f87ff4902cb63f49804636_t",
+        mediaType:"SVG",
     },
     {
         id:5,
-        img:"https://cdn.flipsnack.com/collections/uploads/110368fc5d5b38d17466948f49804637_t"
+        img:"https://cdn.flipsnack.com/collections/uploads/110368fc5d5b38d17466948f49804637_t",
+        mediaType:"WEBP",
     },
     {
         id:6,
-        img:"https://cdn.flipsnack.com/collections/uploads/cdf9c22b5aea6b22cb520c2f49804608_t"
+        img:"https://cdn.flipsnack.com/collections/uploads/cdf9c22b5aea6b22cb520c2f49804608_t",
+        mediaType:"JPG",
     },
     {
         id:7,
-        img:"https://cdn.flipsnack.com/collections/uploads/a8a5a3294ca03b647c14719f49804606_t"
+        img:"https://cdn.flipsnack.com/collections/uploads/a8a5a3294ca03b647c14719f49804606_t",
+        mediaType:"PNG",
     },
     {
         id:8,
-        img:"https://cdn.flipsnack.com/collections/uploads/846ee260539bfa4c2260adaf49804607_t"
+        img:"https://cdn.flipsnack.com/collections/uploads/846ee260539bfa4c2260adaf49804607_t",
+        mediaType:"JPEG",
     }
 ]
 

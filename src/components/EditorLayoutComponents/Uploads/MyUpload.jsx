@@ -1,18 +1,20 @@
 import * as React from "react"
-import { useState } from "react"
+import { useState} from "react"
 import { ChevronDown, Folder, Trash2, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CreateFolderDialog from "./CreateFolderDialog";
 import { getData } from "@/utils/datas";
 import FolderDropDownCom from "./FolderDropDownCom";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,DropdownMenuGroup } from "@/components/ui/dropdown-menu";
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuGroup } from "@/components/ui/dropdown-menu";
+import LibraryImageDropDownCom from "./LibraryImageDropDownCom";
 
 export default function MyUpload() {
     const [showAllFolders, setShowAllFolders] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState(null);
+    const [hoveredImageIndex, setHoveredImageIndex] = useState(null);
     const [activeDropdownIndex, setActiveDropdownIndex] = useState(null);
+    const [activeImageDropdownIndex, setActiveImageDropdownIndex] = useState(null); // Add this line
     const [isChecked, setIsChecked] = useState(false);
     const folders = getData('folders');
     const library = getData('library');
@@ -25,6 +27,14 @@ export default function MyUpload() {
 
     const handleDropdownClose = () => {
         setActiveDropdownIndex(null);
+    };
+
+    const handleImageDropdownOpen = (index) => { // Add this function
+        setActiveImageDropdownIndex(index);
+    };
+
+    const handleImageDropdownClose = () => { // Add this function
+        setActiveImageDropdownIndex(null);
     };
 
     const getMenuItems = () => {
@@ -44,7 +54,7 @@ export default function MyUpload() {
 
     return (
         <>
-            <Button className="w-full text-primary" variant="outline">Upload media</Button>
+            <Button className="w-full text-black hover:text-primary" variant="outline">Upload media</Button>
             <div className="space-y-2">
                 <div className="flex items-center justify-between w-full">
                     <span className="font-semibold">Folders</span>
@@ -126,12 +136,48 @@ export default function MyUpload() {
                             onCheckedChange={setIsChecked}
                         />
                     </div>
-
                 </div>
-                <div className="overflow-y-auto flex-grow">
-                    <div className="flex flex-wrap justify-between gap-2">
+
+                <div className="overflow-y-auto">
+                    <div className="columns-3 gap-2 space-y-2 p-1 cursor-pointer">
                         {library.map((item, itemIndex) => (
-                            <img src={item.img} key={itemIndex} alt={`Upload ${item.id}`} className="w-[96px] h-auto object-cover rounded-lg" />
+                            <div
+                                key={itemIndex}
+                                className="break-inside-avoid relative group"
+                                onMouseEnter={() => setHoveredImageIndex(itemIndex)}
+                                onMouseLeave={() => {
+                                    // Only reset hover state if dropdown isn't active
+                                    if (activeImageDropdownIndex !== itemIndex) {
+                                        setHoveredImageIndex(null);
+                                    }
+                                }}
+                            >
+                                <img
+                                    src={item.img}
+                                    alt={`Upload ${item.id}`}
+                                    className="w-full rounded-lg"
+                                />
+
+                                {(hoveredImageIndex === itemIndex || activeImageDropdownIndex === itemIndex) && (
+                                    <>
+                                        <div className="absolute left-1 bottom-1 text-center bg-black bg-opacity-70 text-white px-2 py-0.5 rounded-[12px] text-xs font-medium">
+                                            {item.mediaType}
+                                        </div>
+                                        <div className="absolute top-1 left-1.5">
+                                            <Checkbox className="bg-white border-white data-[state=checked]:bg-white data-[state=checked]:text-primary" />
+                                        </div>
+                                        <LibraryImageDropDownCom
+                                            onOpenChange={(open) => {
+                                                if (open) {
+                                                    handleImageDropdownOpen(itemIndex);
+                                                } else {
+                                                    handleImageDropdownClose();
+                                                }
+                                            }}
+                                        />
+                                    </>
+                                )}
+                            </div>
                         ))}
                     </div>
                 </div>
