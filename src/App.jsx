@@ -150,8 +150,8 @@ export default function App() {
         <Route index element={<Customize />} />
       </Route>
 
-      <Route path="/editor/:id" element={<EditorAppLayout  setIsSidebarOpen={setIsSidebarOpen}/>}>
-        <Route index element={<Editor />} />
+      <Route path="/editor/:id" element={<EditorAppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
+        <Route index element={<Editor isSidebarOpen={isSidebarOpen} />} />
       </Route>
     </Routes>
   );
