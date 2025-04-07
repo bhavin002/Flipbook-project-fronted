@@ -161,3 +161,7 @@
   transition: 0.1s;
   background-color: rgba(109, 40, 217, 1);
 }
+
+.hidden-cust[hidden] {
+  display: none !important;
+}

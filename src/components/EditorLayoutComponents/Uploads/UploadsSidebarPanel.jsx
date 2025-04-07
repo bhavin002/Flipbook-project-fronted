@@ -48,21 +48,21 @@ export default function UploadsSidebarPanel() {
                 selectedValues={mediaTypes.selectedValues}
                 onChange={mediaTypes.onChange}
             />
-            <Tabs defaultValue="myUpload" className="flex flex-col space-y-4">
+            <Tabs defaultValue="myUpload" className="flex flex-col space-y-4 flex-grow overflow-y-auto h-0">
                 <TabsList className="w-full">
                     <TabsTrigger className="items-center gap-2 w-full" value="myUpload">
                         <User className="w-5 h-5" />
-                        <span className="text-xs mt-1 lg:mt-0">My uploads</span>
+                        <span className="text-xs">My uploads</span>
                     </TabsTrigger>
                     <TabsTrigger className="items-center gap-2 w-full" value="teamUpload">
                         <Users className="w-5 h-5" />
-                        <span className="text-xs mt-1 lg:mt-0">Team uploads</span>
+                        <span className="text-xs">Team uploads</span>
                     </TabsTrigger>
                 </TabsList>
-                <TabsContent value="myUpload" className="space-y-4">
+                <TabsContent value="myUpload" className="space-y-4 hidden-cust flex-1 flex flex-col overflow-y-auto">
                     <MyUpload />
                 </TabsContent>
-                <TabsContent value="teamUpload" className="space-y-4">
+                <TabsContent value="teamUpload" className="space-y-4 hidden-cust flex-1 flex flex-col  overflow-y-auto">
                     <TeamUpload />
                 </TabsContent>
             </Tabs>

@@ -106,7 +106,7 @@ export default function MyUpload() {
                     )}
                 </div>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2 flex flex-col flex-grow overflow-y-auto h-0">
                 <div className="flex items-center justify-between w-full h-9">
                     <div>
                         <span className="font-semibold">Uploads</span>
@@ -138,7 +138,7 @@ export default function MyUpload() {
                     </div>
                 </div>
 
-                <div className="overflow-y-auto">
+                <div className="overflow-y-auto flex-grow h-0">
                     <div className="columns-3 gap-2 space-y-2 p-1 cursor-pointer">
                         {library.map((item, itemIndex) => (
                             <div
