@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom"
 import { Outlet } from "react-router-dom";
 import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
@@ -10,10 +10,50 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/utils/AppSidebar";
 import EditorSidebarNavigation from "@/components/EditorLayoutComponents/EditorSidebarNavigation";
 import BottomEditorPanel from "@/components/EditorLayoutComponents/BottomEditorPanel";
+import ShapeEditorLayout from "@/pages/widget/ShapeEditorLayout";
 
-export default function EditorAppLayout({ setIsSidebarOpen }) {
+export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [selectedShape, setSelectedShape] = useState([]);
+    const [mainStage, setMainStage] = useState([{
+        "stageref": null,
+        "CANVAS_WIDTH": 1632,
+        "CANVAS_HEIGHT": 1056,
+        "shapes": [
+            {
+                "draggable": true,
+                "x": 434.83008356546094,
+                "y": 283.873247414282,
+                "width": 160,
+                "height": 26,
+                "fill": "#7bc2ff",
+                "opacity": 0.3,
+                "type": "rect",
+                "title": "link-tags",
+                "visible": true,
+                "layer": "Link",
+                "htmlType": "go-to-url",
+                "id": "c786ef1f-37e5-44b6-8a81-0c073efe036b",
+                "name": "shape",
+                "rotation": 0,
+                "scaleX": 2.3635097493036152,
+                "scaleY": 6.473258078064039,
+                "skewX": 0,
+                "skewY": 0
+            }
+        ],
+        "selectedShapes": [],
+        "background": "#fff",
+        "dragRect": {
+            "current": null
+        },
+        "dragImg": {
+            "current": null
+        }
+    }]);
+    const [selectedSubMenu, setSelectedSubMenu] = useState(null);
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -67,13 +107,14 @@ export default function EditorAppLayout({ setIsSidebarOpen }) {
                 <div className="flex flex-1">
                     <div className="hidden relative md:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
                         <SidebarProvider value={{ selectedItem, setSelectedItem, width: "23rem" }}>
-                            <EditorSidebarNavigation setIsSidebarOpen={setIsSidebarOpen} />
-                            <AppSidebar />
+                            <EditorSidebarNavigation mainStage={mainStage} setSelectedShape={setSelectedShape} setSelectedSubMenu={setSelectedSubMenu} selectedIndex={selectedIndex} setSelectedItem={setSelectedItem} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                            <AppSidebar mainStage={mainStage} selectedIndex={selectedIndex} />
+                            <ShapeEditorLayout selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} />
                         </SidebarProvider>
                     </div>
 
                     <div className="flex flex-1 flex-col md:max-h-[calc(100vh-64px)] md:overflow-y-auto">
-                        <Outlet />
+                        <Outlet context={{ isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage }} />
                     </div>
                 </div>
             </div>

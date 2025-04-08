@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 import { getData } from '@/utils/datas';
@@ -19,17 +19,35 @@ function NavItem({ item, isSelected, onClick }) {
     );
 };
 
-export default function SidebarNavigation({ setIsSidebarOpen }) {
+export default function SidebarNavigation({ mainStage, setSelectedShape, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
     const navItems = getData('editorNavItems');
 
-    React.useEffect(() => {
+    useEffect(() => {
         setGlobalSelectedItem('templates');
     }, []);
 
-    React.useEffect(() => {
+    useEffect(() => {
         setIsSidebarOpen(open);
     }, [open, setIsSidebarOpen]);
+
+    useEffect(() => {
+        if (!mainStage[selectedIndex].selectedShapes.length) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            setSelectedSubMenu(null);
+            return;
+        }
+        if (mainStage[selectedIndex].selectedShapes.length === 1 && mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-url") {
+            console.log("mainStage[selectedIndex].selectedShapes", mainStage[selectedIndex].selectedShapes)
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("link-area");
+        }
+    }, [mainStage[selectedIndex].selectedShapes])
 
     const handleItemClick = (itemId) => {
         if (selectedItem === itemId) {

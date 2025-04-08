@@ -6,6 +6,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { v4 as uuid } from "uuid";
 
 export default function StagePageMenu({ rectProps, setSelectedIndex, selectedIndex, mainStage, setMainStage, index }) {
     const onUpStage = () => {
@@ -94,7 +95,7 @@ export default function StagePageMenu({ rectProps, setSelectedIndex, selectedInd
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <ChevronUp
-                                className="w-5 h-5 cursor-pointer hover:text-primary transition-colors duration-200"
+                                className={`w-5 h-5 cursor-pointer hover:text-primary transition-colors duration-200 topbar-icons-custom ${index === 0 ? "disabled" : ""}`}
                                 onClick={() => { onUpStage() }}
                             />
                         </TooltipTrigger>
@@ -108,7 +109,7 @@ export default function StagePageMenu({ rectProps, setSelectedIndex, selectedInd
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <ChevronDown
-                                className="w-5 h-5 cursor-pointer hover:text-primary transition-colors duration-200"
+                                className={`w-5 h-5 cursor-pointer hover:text-primary transition-colors duration-200 topbar-icons-custom ${index === mainStage.length - 1 ? "disabled" : ""}`}
                                 onClick={() => { onDownStage() }}
                             />
                         </TooltipTrigger>

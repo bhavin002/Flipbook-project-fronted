@@ -1377,7 +1377,7 @@ const textTemplates = [
     {
         id: 4,
         thumbnail: "https://cdn.flipsnack.com/template/4750/thumb/page_1",
-    },  
+    },
     {
         id: 5,
         thumbnail: "https://cdn.flipsnack.com/template/4749/thumb/page_1",
@@ -1387,7 +1387,7 @@ const textTemplates = [
         thumbnail: "https://cdn.flipsnack.com/template/3763/thumb/page_1",
     },
     {
-        id: 7,  
+        id: 7,
         thumbnail: "https://cdn.flipsnack.com/template/3762/thumb/page_1",
     },
     {
@@ -1411,7 +1411,18 @@ const interactions = [
             {
                 text: 'Link area',
                 icon: `<div class="w-2 h-2 border-t-2 border-l-2 absolute top-0 left-0 rounded-tl-md"> </div><div class="w-2 h-2 border-t-2 border-r-2 absolute top-0 right-0 rounded-tr-md"> </div><div class="w-2 h-2 border-b-2 border-l-2 absolute bottom-0 left-0 rounded-bl-md"> </div><div class="w-2 h-2 border-b-2 border-r-2 absolute bottom-0 right-0 rounded-br-md"> </div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2" /><path d="M15 7h2a5 5 0 1 1 0 10h-2" /><line x1="8" x2="16" y1="12" y2="12" /></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 160,
+                    height: 26,
+                    fill: "#7bc2ff",
+                    opacity: 0.3,
+                    type: "rect",
+                    title: "link-tags",
+                    visible: true,
+                    layer: "Link",
+                    htmlType: "go-to-url"
+                }
             },
             {
                 text: 'Link button',
@@ -2657,44 +2668,44 @@ const folders = [
 
 const library = [
     {
-        id:1,
-        img:"https://cdn.flipsnack.com/collections/uploads/c73d3737ee40146f20a8e5ef49804638_t",
-        mediaType:"JPG",
+        id: 1,
+        img: "https://cdn.flipsnack.com/collections/uploads/c73d3737ee40146f20a8e5ef49804638_t",
+        mediaType: "JPG",
     },
     {
-        id:2,
-        img:"https://cdn.flipsnack.com/collections/uploads/0417f8e82f828042a3e27b3f49804639_t",
-        mediaType:"PNG",
+        id: 2,
+        img: "https://cdn.flipsnack.com/collections/uploads/0417f8e82f828042a3e27b3f49804639_t",
+        mediaType: "PNG",
     },
     {
-        id:3,
-        img:"https://cdn.flipsnack.com/collections/uploads/5a0c38e5a4d3a0fbedda523f49804640_t",
-        mediaType:"JPEG",
+        id: 3,
+        img: "https://cdn.flipsnack.com/collections/uploads/5a0c38e5a4d3a0fbedda523f49804640_t",
+        mediaType: "JPEG",
     },
     {
-        id:4,
-        img:"https://cdn.flipsnack.com/collections/uploads/7a3c7fe645f87ff4902cb63f49804636_t",
-        mediaType:"SVG",
+        id: 4,
+        img: "https://cdn.flipsnack.com/collections/uploads/7a3c7fe645f87ff4902cb63f49804636_t",
+        mediaType: "SVG",
     },
     {
-        id:5,
-        img:"https://cdn.flipsnack.com/collections/uploads/110368fc5d5b38d17466948f49804637_t",
-        mediaType:"WEBP",
+        id: 5,
+        img: "https://cdn.flipsnack.com/collections/uploads/110368fc5d5b38d17466948f49804637_t",
+        mediaType: "WEBP",
     },
     {
-        id:6,
-        img:"https://cdn.flipsnack.com/collections/uploads/cdf9c22b5aea6b22cb520c2f49804608_t",
-        mediaType:"JPG",
+        id: 6,
+        img: "https://cdn.flipsnack.com/collections/uploads/cdf9c22b5aea6b22cb520c2f49804608_t",
+        mediaType: "JPG",
     },
     {
-        id:7,
-        img:"https://cdn.flipsnack.com/collections/uploads/a8a5a3294ca03b647c14719f49804606_t",
-        mediaType:"PNG",
+        id: 7,
+        img: "https://cdn.flipsnack.com/collections/uploads/a8a5a3294ca03b647c14719f49804606_t",
+        mediaType: "PNG",
     },
     {
-        id:8,
-        img:"https://cdn.flipsnack.com/collections/uploads/846ee260539bfa4c2260adaf49804607_t",
-        mediaType:"JPEG",
+        id: 8,
+        img: "https://cdn.flipsnack.com/collections/uploads/846ee260539bfa4c2260adaf49804607_t",
+        mediaType: "JPEG",
     }
 ]
 

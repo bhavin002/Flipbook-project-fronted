@@ -10,7 +10,7 @@ import UploadsSidebarPanel from '@/components/EditorLayoutComponents/Uploads/Upl
 import ElementsSidebarPanel from '@/components/EditorLayoutComponents/Elements/ElementsSidebarPanel';
 import AutomationSidebarPanel from '@/components/EditorLayoutComponents/Automation/AutomationSidebarPanel';
 
-export function AppSidebar() {
+export function AppSidebar({ mainStage, selectedIndex }) {
     const { selectedItem } = useSidebar();
 
     const renderPanel = () => {
@@ -24,7 +24,7 @@ export function AppSidebar() {
             case 'templates':
                 return <TemplateSidebarPanel />;
             case 'interactions':
-                return <InteractionsSidebarPanel/>;
+                return <InteractionsSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} />;
             case 'text':
                 return <TextSidebarPanel />;
             case 'uploads':
@@ -39,7 +39,7 @@ export function AppSidebar() {
     };
 
     return (
-        <Sidebar className="rounded-tr-xl overflow-hidden">
+        <Sidebar className="overflow-hidden">
             {renderPanel()}
             <SidebarRail />
         </Sidebar>

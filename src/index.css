@@ -165,3 +165,8 @@
 .hidden-cust[hidden] {
   display: none !important;
 }
+
+.topbar-icons-custom.disabled {
+  color: #a8a8a8 !important;
+  cursor: default !important;
+}

@@ -737,6 +737,7 @@ export default function StageComponent({ isCropping, stage, parentRef, mainStage
 
             className="relative"
             onDrop={(e) => {
+                console.log("onDrop",mainStage[selectedIndex]);
                 if (isCropping) return;
                 stage.dragRect.current = mainStage[selectedIndex].dragRect.current;
                 setSelectedIndex(index);
@@ -872,7 +873,6 @@ export default function StageComponent({ isCropping, stage, parentRef, mainStage
                             id={uuid()}
                         >
                             {stage.shapes.map((shape) => {
-
                                 switch (shape.title) {
                                     case 'link-tags':
                                         return <LinkArea onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable setMainStage={setMainStage} selectedIndex={selectedIndex} mainStage={mainStage} mainStageString={mainStageString} setMainStageString={setMainStageString} />;
