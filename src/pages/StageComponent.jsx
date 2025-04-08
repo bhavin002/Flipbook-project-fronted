@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Layer, Rect, Stage, Group, Line, Transformer } from "react-konva";
 import { v4 as uuid } from "uuid";
 import LinkArea from "./widget/LinkArea";
+import StagePageMenu from "./StagePageMenu";
 
 export default function StageComponent({ isCropping, stage, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
@@ -730,115 +731,224 @@ export default function StageComponent({ isCropping, stage, parentRef, mainStage
     };
 
     return (
-        <div onClick={() => { setSelectedIndex(index) }}>
-            {width && height && <Stage
-                width={width}
-                height={height}
-                style={{ width: "100%", height: "100%" }}
-                ref={stage.stageref}
-                className="#c0c0c080"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onClick={handleClick}
-            >
-                <Layer>
-                    <Rect
-                        x={rectProps.x}
-                        y={rectProps.y}
-                        width={rectProps.tempWidth}
-                        height={rectProps.tempHeight}
-                        fill={stage.background}
-                        listening={false}
-                    />
-                    <Group
-                        x={rectProps.x}
-                        y={rectProps.y}
-                        fill={stage.background}
-                        width={rectProps.tempWidth}
-                        height={rectProps.tempHeight}
-                        scaleX={scale.scaleX}
-                        scaleY={scale.scaleY}
-                        zIndex={1}
-                        id={uuid()}
-                    >
-                        {stage.shapes.map((shape) => {
+        <div
+            // minHeight: "90vh"
+            style={{ width: "100%", height: "100%" }}
 
-                            switch (shape.title) {
-                                case 'link-tags':
-                                    return <LinkArea onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable setMainStage={setMainStage} selectedIndex={selectedIndex} mainStage={mainStage} mainStageString={mainStageString} setMainStageString={setMainStageString} />;
-                                default:
-                                    return null;
+            className="relative"
+            onDrop={(e) => {
+                if (isCropping) return;
+                stage.dragRect.current = mainStage[selectedIndex].dragRect.current;
+                setSelectedIndex(index);
+                e.preventDefault();
+                stage.stageref.current.setPointersPositions(e);
+                const pointerPosition = stage.stageref.current.getPointerPosition();
+
+                if (stage.dragRect.current) {
+                    const dropX = (pointerPosition.x - rectProps.x) / scale.scaleX;
+                    const dropY = (pointerPosition.y - rectProps.y) / scale.scaleY;
+
+                    // Check if dropping over a shape-widget
+                    let isOverShapeWidget = false;
+                    let shapeWidget = null;
+                    let shapeWidgetData = [];
+
+                    mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(shape => {
+                        // shape = shape.attrs;
+                        if (shape.attrs.title === 'shape-widget') {
+                            const shapeLeft = shape.attrs.x;
+                            const shapeTop = shape.attrs.y;
+                            const shapeRight = shape.attrs.x + (shape.attrs.width * (shape.attrs.scaleX || 1));
+                            const shapeBottom = shape.attrs.y + (shape.attrs.height * (shape.attrs.scaleY || 1));
+
+                            // Check if drop position is within shape-widget bounds
+                            if (dropX >= shapeLeft && dropX <= shapeRight &&
+                                dropY >= shapeTop && dropY <= shapeBottom) {
+                                isOverShapeWidget = true;
+                                shapeWidget = shape.attrs;
+                                shapeWidgetData = shape.children[0].dataArray;
                             }
-                        })}
-                    </Group>
-                    <Rect
-                        id="boundary"
-                        x={rectProps.x}
-                        y={rectProps.y}
-                        width={rectProps.tempWidth}
-                        height={rectProps.tempHeight}
-                        stroke={isSelected ? "#0362FC" : "#999"}
-                        strokeWidth={2}
-                        // fill={stage.background}
-                        shadowBlur={5}
-                        shadowColor="rgba(0,0,0,0.2)"
-                        listening={false}
-                    />
-                    <Line
-                        name="workspace-background"
-                        points={[
-                            0, 0,
-                            width, 0,
-                            width, height,
-                            0, height,
-                            0, 0,
-                            rectProps.x, rectProps.y,
-                            rectProps.x, rectProps.y + rectProps.tempHeight,
-                            rectProps.x + rectProps.tempWidth, rectProps.y + rectProps.tempHeight,
-                            rectProps.x + rectProps.tempWidth, rectProps.y,
-                            rectProps.x, rectProps.y,
-                        ]}
-                        listening={false}
-                        closed={true}
-                        fill="#c0c0c090"
-                    />
-                    {selecting && (
+                        }
+                    });
+
+                    let newShape = {
+                        x: dropX,
+                        y: dropY,
+                        ...stage.dragRect.current,
+                        id: uuid()
+                    };
+
+                    // If dropping stock-photo or upload-photo over shape-widget, convert to masked-image
+                    if (isOverShapeWidget && shapeWidget?.isMasked &&
+                        (stage.dragRect.current.htmlType === 'stock-photo' ||
+                            stage.dragRect.current.htmlType === 'upload-photo')) {
+                        newShape = {
+                            src: newShape.src,
+                            height: Number(shapeWidget.height),
+                            width: Number(shapeWidget.width),
+                            x: shapeWidget.x,
+                            y: shapeWidget.y,
+                            scaleX: shapeWidget.scaleX,
+                            scaleY: shapeWidget.scaleY,
+                            skewX: shapeWidget.skewX,
+                            skewY: shapeWidget.skewY,
+                            title: 'masked-image',
+                            layer: "masked-image",
+                            htmlType: 'masked-image',
+                            type: "img",
+                            // svgPath: shapeWidget.data[0],
+                            data: shapeWidget.data,
+                            maskData: shapeWidgetData,
+                            maskType: shapeWidget.maskType,
+                            draggable: true,
+                            visible: true,
+                            id: uuid() // Ensure unique ID for new masked-image
+                        };
+
+                        // Update mainStage by removing the shape-widget and adding the new masked-image
+                        mainStage[selectedIndex].selectedShapes = [];
+                        setMainStage(prevState => {
+                            const updatedState = [...prevState];
+                            // Remove the shape-widget that was converted
+                            const updatedShapes = updatedState[index].shapes.filter(
+                                shape => shape.id !== shapeWidget.id
+                            );
+                            // Add the new masked-image
+                            updatedState[index] = {
+                                ...updatedState[index],
+                                shapes: [...updatedShapes, newShape]
+                            };
+                            return updatedState;
+                        });
+                    } else {
+                        // If not converting to masked-image, just add the new shape as before
+                        setMainStage(prevState => {
+                            const updatedState = [...prevState];
+                            updatedState[index] = {
+                                ...updatedState[index],
+                                shapes: [...updatedState[index].shapes, newShape]
+                            };
+                            return updatedState;
+                        });
+                    }
+
+                    stage.dragRect.current = null;
+                }
+            }}
+            onDragOver={(e) => e.preventDefault()}
+        >
+            <div ref={demo}></div>
+            <StagePageMenu setSelectedIndex={setSelectedIndex} selectedIndex={selectedIndex} rectProps={rectProps} mainStage={mainStage} setMainStage={setMainStage} index={index} />
+            <div onClick={() => { setSelectedIndex(index) }}>
+                {width && height && <Stage
+                    width={width}
+                    height={height}
+                    style={{ width: "100%", height: "100%" }}
+                    ref={stage.stageref}
+                    className="#c0c0c080"
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onClick={handleClick}
+                >
+                    <Layer>
                         <Rect
-                            x={selectionRect.x}
-                            y={selectionRect.y}
-                            width={selectionRect.width}
-                            height={selectionRect.height}
-                            fill="rgba(0, 161, 255, 0.3)"
-                            stroke="blue"
+                            x={rectProps.x}
+                            y={rectProps.y}
+                            width={rectProps.tempWidth}
+                            height={rectProps.tempHeight}
+                            fill={stage.background}
+                            listening={false}
+                        />
+                        <Group
+                            x={rectProps.x}
+                            y={rectProps.y}
+                            fill={stage.background}
+                            width={rectProps.tempWidth}
+                            height={rectProps.tempHeight}
+                            scaleX={scale.scaleX}
+                            scaleY={scale.scaleY}
+                            zIndex={1}
+                            id={uuid()}
+                        >
+                            {stage.shapes.map((shape) => {
 
-                            strokeWidth={1}
-                        />
-                    )}
-                    {stage.selectedShapes.length > 0 && (
-                        <Transformer
-                            ref={transformerRef}
-                            onTransformEnd={handleDrag}
-                            onDragMove={(event) => handleDragMove(event, 'transform')}
-                            boundBoxFunc={(oldBox, newBox) => {
-                                const minSize = stage.selectedShapes[0]?.attrs.type === 'text' ? 30 : 50;
-                                if (newBox.width < minSize || newBox.height < (stage.selectedShapes[0]?.attrs.type === 'text' ? 10 : 50)) {
-                                    return oldBox;
+                                switch (shape.title) {
+                                    case 'link-tags':
+                                        return <LinkArea onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable setMainStage={setMainStage} selectedIndex={selectedIndex} mainStage={mainStage} mainStageString={mainStageString} setMainStageString={setMainStageString} />;
+                                    default:
+                                        return null;
                                 }
-                                return newBox;
-                            }}
-                            enabledAnchors={
-                                stage.selectedShapes[0]?.attrs.type === 'text'
-                                    ? ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'middle-left', 'middle-right']
-                                    : undefined
-                            }
-                            rotationSnapTolerance={stage.selectedShapes[0]?.attrs.htmlType === 'tag' ? false : undefined}
-                            keepRatio={false}
-                            flipEnabled={false}
+                            })}
+                        </Group>
+                        <Rect
+                            id="boundary"
+                            x={rectProps.x}
+                            y={rectProps.y}
+                            width={rectProps.tempWidth}
+                            height={rectProps.tempHeight}
+                            stroke={isSelected ? "#7b39ed" : "#999"}
+                            strokeWidth={2}
+                            // fill={stage.background}
+                            shadowBlur={5}
+                            shadowColor="rgba(0,0,0,0.2)"
+                            listening={false}
                         />
-                    )}
-                </Layer>
-            </Stage>}
+                        <Line
+                            name="workspace-background"
+                            points={[
+                                0, 0,
+                                width, 0,
+                                width, height,
+                                0, height,
+                                0, 0,
+                                rectProps.x, rectProps.y,
+                                rectProps.x, rectProps.y + rectProps.tempHeight,
+                                rectProps.x + rectProps.tempWidth, rectProps.y + rectProps.tempHeight,
+                                rectProps.x + rectProps.tempWidth, rectProps.y,
+                                rectProps.x, rectProps.y,
+                            ]}
+                            listening={false}
+                            closed={true}
+                            fill="#c0c0c090"
+                        />
+                        {selecting && (
+                            <Rect
+                                x={selectionRect.x}
+                                y={selectionRect.y}
+                                width={selectionRect.width}
+                                height={selectionRect.height}
+                                fill="rgba(0, 161, 255, 0.3)"
+                                stroke="blue"
+
+                                strokeWidth={1}
+                            />
+                        )}
+                        {stage.selectedShapes.length > 0 && (
+                            <Transformer
+                                ref={transformerRef}
+                                onTransformEnd={handleDrag}
+                                onDragMove={(event) => handleDragMove(event, 'transform')}
+                                boundBoxFunc={(oldBox, newBox) => {
+                                    const minSize = stage.selectedShapes[0]?.attrs.type === 'text' ? 30 : 50;
+                                    if (newBox.width < minSize || newBox.height < (stage.selectedShapes[0]?.attrs.type === 'text' ? 10 : 50)) {
+                                        return oldBox;
+                                    }
+                                    return newBox;
+                                }}
+                                enabledAnchors={
+                                    stage.selectedShapes[0]?.attrs.type === 'text'
+                                        ? ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'middle-left', 'middle-right']
+                                        : undefined
+                                }
+                                rotationSnapTolerance={stage.selectedShapes[0]?.attrs.htmlType === 'tag' ? false : undefined}
+                                keepRatio={false}
+                                flipEnabled={false}
+                            />
+                        )}
+                    </Layer>
+                </Stage>}
+            </div>
         </div>
     )
 }
