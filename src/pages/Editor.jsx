@@ -1,7 +1,7 @@
 import { useOutletContext } from "react-router-dom";
-import StageComponent from "./StageComponent";
+import StageComponent from "../components/EditorLayoutComponents/StageComponent";
 import { useEffect, useRef, useState } from "react";
-import TopToolbar from "./TopToolbar";
+import TopToolbar from "../components/EditorLayoutComponents/TopToolbar";
 
 export default function Editor() {
     const { selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen } = useOutletContext();

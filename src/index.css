@@ -170,3 +170,7 @@
   color: #a8a8a8 !important;
   cursor: default !important;
 }
+
+.blur-icon:hover svg{
+  fill:#7b39ed !important;
+}

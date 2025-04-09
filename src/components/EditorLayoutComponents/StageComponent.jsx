@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Layer, Rect, Stage, Group, Line, Transformer } from "react-konva";
 import { v4 as uuid } from "uuid";
-import LinkArea from "./widget/LinkArea";
+import LinkArea from "../../pages/widget/LinkArea";
 import StagePageMenu from "./StagePageMenu";
 
 export default function StageComponent({ isCropping, stage, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
