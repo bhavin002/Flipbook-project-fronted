@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import LinkArea from "../../pages/widget/LinkArea";
 import StagePageMenu from "./StagePageMenu";
 
-export default function StageComponent({ isCropping, stage, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
+export default function StageComponent({ isCropping, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
     // console.log("stage.selectedShapes.length" , stage.selectedShapes.length);
 
@@ -111,7 +111,7 @@ export default function StageComponent({ isCropping, stage, parentRef, mainStage
         window.addEventListener("resize", updateRectSize);
 
         return () => window.removeEventListener("resize", updateRectSize);
-    }, [width, height, mainStage, isSidebarOpen]);
+    }, [width, height, mainStage, isSidebarOpen,isRightLateralCollapse]);
 
     // Clear Selected Shapes Effect
     useEffect(() => {
@@ -737,7 +737,7 @@ export default function StageComponent({ isCropping, stage, parentRef, mainStage
 
             className="relative"
             onDrop={(e) => {
-                console.log("onDrop",mainStage[selectedIndex]);
+                console.log("onDrop", mainStage[selectedIndex]);
                 if (isCropping) return;
                 stage.dragRect.current = mainStage[selectedIndex].dragRect.current;
                 setSelectedIndex(index);

@@ -2,6 +2,9 @@ import { useOutletContext } from "react-router-dom";
 import StageComponent from "../components/EditorLayoutComponents/StageComponent";
 import { useEffect, useRef, useState } from "react";
 import TopToolbar from "../components/EditorLayoutComponents/TopToolbar";
+import PanelRight from "@/components/EditorLayoutComponents/PanelRight";
+import LateralPanelRightPages from "@/components/EditorLayoutComponents/LateralPanelRightPages";
+import LateralPanelRightLayer from "@/components/EditorLayoutComponents/LateralPanelRightLayer";
 
 export default function Editor() {
     const { selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen } = useOutletContext();
@@ -18,6 +21,9 @@ export default function Editor() {
     const [mainStageString, setMainStageString] = useState("");
     const [isCropping, setIsCropping] = useState(false);
     const [selectedAlignType, setSelectedAlignType] = useState("");
+    const [isRightLateralCollapse, setIsRightLateralCollapse] = useState(false);
+    const [isPageShow, setIsPageShow] = useState(true);
+    const [isExpanded, setIsExpanded] = useState(false);
 
     return (
         <div className="flex w-full flex-col h-full">
@@ -37,7 +43,7 @@ export default function Editor() {
                                 mainStage.map((stage, index) => {
                                     return (
                                         <div ref={(el) => (autoScroll.current[index] = el)} style={{}}>
-                                            <StageComponent isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} />
+                                            <StageComponent isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} />
                                         </div>
                                     )
                                 })
@@ -45,6 +51,9 @@ export default function Editor() {
                         </div>
                     </div>
                 </div>
+                {isRightLateralCollapse && isPageShow && <LateralPanelRightPages mainStage={mainStage} isExpanded={isExpanded} index={selectedIndex} setIsExpanded={setIsExpanded} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} setIsRightLateralCollapse={setIsRightLateralCollapse} setMainStage={setMainStage} />}
+                {isRightLateralCollapse && !isPageShow && <LateralPanelRightLayer mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} setSelectedAlignType={setSelectedAlignType} isExpanded={isExpanded} setIsExpanded={setIsExpanded} setIsRightLateralCollapse={setIsRightLateralCollapse} />}
+                <PanelRight isPageShow={isPageShow} setIsPageShow={setIsPageShow} isRightLateralCollapse={isRightLateralCollapse} setIsRightLateralCollapse={setIsRightLateralCollapse} />
             </div>
         </div>
     )
