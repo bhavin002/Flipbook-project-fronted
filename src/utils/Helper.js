@@ -39,6 +39,7 @@ export const duplicateStage = (mainStage, setMainStage, index, setSelectedIndex)
 }
 
 export const deleteStage = (mainStage, setMainStage, index, selectedIndex, setSelectedIndex) => {
+    if(mainStage.length == 1) return;
     mainStage.length - 1 == index && setSelectedIndex(index - 1);
     mainStage.length - 1 == selectedIndex && setSelectedIndex(selectedIndex - 1);
     if (index < mainStage.length - 1) {

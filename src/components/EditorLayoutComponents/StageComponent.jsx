@@ -4,7 +4,7 @@ import { v4 as uuid } from "uuid";
 import LinkArea from "../../pages/widget/LinkArea";
 import StagePageMenu from "./StagePageMenu";
 
-export default function StageComponent({ isCropping, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
+export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
     // console.log("stage.selectedShapes.length" , stage.selectedShapes.length);
 
@@ -111,7 +111,7 @@ export default function StageComponent({ isCropping, stage, isRightLateralCollap
         window.addEventListener("resize", updateRectSize);
 
         return () => window.removeEventListener("resize", updateRectSize);
-    }, [width, height, mainStage, isSidebarOpen,isRightLateralCollapse]);
+    }, [width, height, mainStage, isSidebarOpen, isRightLateralCollapse, zoomper]);
 
     // Clear Selected Shapes Effect
     useEffect(() => {
