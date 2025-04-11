@@ -30,7 +30,7 @@ export function AppSidebar({ mainStage, selectedIndex }) {
             case 'uploads':
                 return <UploadsSidebarPanel />;
             case 'elements':
-                return <ElementsSidebarPanel />;
+                return <ElementsSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex}/>;
             case 'automation':
                 return <AutomationSidebarPanel />;
             default:

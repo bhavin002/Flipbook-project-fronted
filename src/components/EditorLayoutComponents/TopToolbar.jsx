@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,10 +11,22 @@ import { deleteShape } from "@/utils/Helper";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-export default function TopToolbar({ selectedShape, setMainStage, mainStage, selectedIndex }) {
+export default function TopToolbar({ setSelectedSubMenu, selectedShape, setMainStage, mainStage, selectedIndex }) {
+    console.log("selectedShape?.length TopToolbar", selectedShape?.length);
     const [opacity, setOpacity] = useState(30);
     const selectedShapes = mainStage[selectedIndex]?.selectedShapes.map(e => e.attrs).map(e => e.id);
-
+    const [isMaskingEnabled, setIsMaskingEnabled] = useState(false); // New state for masking toggle
+    useEffect(() => {
+        if (selectedShape && selectedShape.length) {
+            const shape = mainStage[selectedIndex].shapes.find(e => e.id === selectedShape[0].attrs.id);
+            if (shape?.opacity == undefined) {
+                setOpacity(Math.floor((1 * 100)));
+            } else {
+                shape?.opacity && setOpacity(Math.floor(((shape?.opacity || 1) * 100)));
+            }
+            shape && (shape.title == 'shape-widget') && ('isMasked' in shape) && setIsMaskingEnabled(shape.isMasked);
+        }
+    }, [mainStage, selectedShape]);
     const toggleLock = (shape = null, idDraggable = true) => {
         // setIsToggle(true);
         if (shape) {
@@ -131,6 +143,19 @@ export default function TopToolbar({ selectedShape, setMainStage, mainStage, sel
         updatedStage[selectedIndex].shapes = shapes;
         setMainStage(updatedStage);
     };
+    const toggleMasking = () => {
+        setIsMaskingEnabled(!isMaskingEnabled);
+        const updatedStage = [...mainStage];
+        if (selectedShape?.length) {
+            updatedStage[selectedIndex].shapes = mainStage[selectedIndex].shapes.map(shape => {
+                if (selectedShape.some(s => s.attrs.id === shape.id)) {
+                    return { ...shape, isMasked: !isMaskingEnabled }; // Example property
+                }
+                return shape;
+            });
+        }
+        setMainStage(updatedStage);
+    };
     return (
         <div className="flex justify-between items-center px-6 py-[6px] bg-white border-y border-[#d0d0d0]">
             <div className="flex gap-2">
@@ -153,6 +178,29 @@ export default function TopToolbar({ selectedShape, setMainStage, mainStage, sel
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
+                    {selectedShape?.length == 1 &&
+                        <Button variant="ghost" size="sm" onClick={() => {
+                            setSelectedSubMenu("Effect");
+                        }}>
+                            Effect
+                        </Button>
+                    }
+                    {selectedShape?.length == 1 && ('isMasked' in selectedShape[0].attrs) && <div className="flex items-center gap-x-2">
+                        <label className="text-[13px] text-gray-700 font-medium">Use as mask</label>
+                        <button
+                            type="button"
+                            role="switch"
+                            aria-checked={isMaskingEnabled}
+                            onClick={toggleMasking}
+                            className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:ring-offset-2 ${isMaskingEnabled ? 'bg-blue-600' : 'bg-gray-200'
+                                }`}
+                        >
+                            <span
+                                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${isMaskingEnabled ? 'translate-x-5' : 'translate-x-0'
+                                    }`}
+                            />
+                        </button>
+                    </div>}
                 </div>
             </div>
             {selectedShape && selectedShape.length !== 0 && (

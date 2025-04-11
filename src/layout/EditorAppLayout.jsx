@@ -10,7 +10,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/utils/AppSidebar";
 import EditorSidebarNavigation from "@/components/EditorLayoutComponents/EditorSidebarNavigation";
 import BottomEditorPanel from "@/components/EditorLayoutComponents/BottomEditorPanel";
-import ShapeEditorLayout from "@/pages/widget/ShapeEditorLayout";
+import ShapeEditorLayout from "@/components/EditorLayoutComponents/Widget/ShapeEditorLayout";
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
@@ -107,14 +107,14 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 <div className="flex flex-1">
                     <div className="hidden relative md:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
                         <SidebarProvider value={{ selectedItem, setSelectedItem, width: "23rem" }}>
-                            <EditorSidebarNavigation mainStage={mainStage} setSelectedShape={setSelectedShape} setSelectedSubMenu={setSelectedSubMenu} selectedIndex={selectedIndex} setSelectedItem={setSelectedItem} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                            <EditorSidebarNavigation mainStage={mainStage} setSelectedShape={setSelectedShape} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedIndex={selectedIndex} setSelectedItem={setSelectedItem} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
                             <AppSidebar mainStage={mainStage} selectedIndex={selectedIndex} />
-                            <ShapeEditorLayout selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} />
+                            <ShapeEditorLayout mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} />
                         </SidebarProvider>
                     </div>
 
                     <div className="flex flex-1 flex-col md:max-h-[calc(100vh-64px)] md:overflow-y-auto">
-                        <Outlet context={{ isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage }} />
+                        <Outlet context={{ isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, setSelectedSubMenu }} />
                     </div>
                 </div>
             </div>

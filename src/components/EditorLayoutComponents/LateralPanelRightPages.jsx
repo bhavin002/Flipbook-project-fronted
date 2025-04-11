@@ -87,7 +87,7 @@ export default function LateralPanelRightPages({ isSidebarOpen,setCurrentRightPa
                 </div>
 
                 <div className="border-t border-b p-2">
-                    <div className="flex justify-between">
+                    <div className={`flex gap-2 ${isExpanded ? "justify-end" : 'justify-between'}`}>
                         <Button onClick={() => addStage(mainStage, setMainStage, index, setSelectedIndex)}>
                             <Plus />
                         </Button>

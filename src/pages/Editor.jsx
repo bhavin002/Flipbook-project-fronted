@@ -5,13 +5,373 @@ import TopToolbar from "../components/EditorLayoutComponents/TopToolbar";
 import PanelRight from "@/components/EditorLayoutComponents/PanelRight";
 import LateralPanelRightPages from "@/components/EditorLayoutComponents/LateralPanelRightPages";
 import LateralPanelRightLayer from "@/components/EditorLayoutComponents/LateralPanelRightLayer";
-import { Redo, Undo, ZoomIn, ZoomOut } from "lucide-react";
+import { Check, Crop, Redo, Undo, ZoomIn, ZoomOut } from "lucide-react";
 import { v4 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import Konva from 'konva';
+import { EffectEvent } from "@/utils/EffectEvent";
+import { deleteShape } from "@/utils/Helper";
+
+(function (Konva) {
+    'use strict';
+
+    /**
+     * Performs QR decomposition on a 2D transformation matrix.
+     * @param {Array} a - The transformation matrix.
+     * @returns {Object} - The decomposed transformation properties.
+     */
+    function qrDecompose(a) {
+        let angle = Math.atan2(a[1], a[0]),
+            denom = Math.pow(a[0], 2) + Math.pow(a[1], 2),
+            scaleX = Math.sqrt(denom),
+            scaleY = (a[0] * a[3] - a[2] * a[1]) / scaleX;
+        return { rotation: angle / (Math.PI / 180), scaleX, scaleY, x: a[4], y: a[5] };
+    }
+
+    /**
+     * Calculates the coordinates of an object relative to a group.
+     * @param {Konva.Node} object - The object to calculate coordinates for.
+     * @param {Konva.Group} group - The group to which the coordinates are relative.
+     * @returns {Object} - The decomposed transformation properties.
+     */
+    function getGroupCoords(object, group) {
+        let mB = object.getAbsoluteTransform().getMatrix();
+        let mX = group.getAbsoluteTransform().getMatrix();
+
+        let M = mB[0], N = mB[1], O = mB[2], P = mB[3], R = mB[4], S = mB[5],
+            A = mX[0], B = mX[1], C = mX[2], D = mX[3], E = mX[4], F = mX[5],
+            AD = A * D, BC = B * C,
+            G = (C * N - M * D) / (BC - AD),
+            H = (A * N - M * B) / (AD - BC),
+            I = (C * P - O * D) / (BC - AD),
+            J = (A * P - O * B) / (AD - BC),
+            K = (C * (S - F) + D * (E - R)) / (BC - AD),
+            L = (A * (S - F) + B * (E - R)) / (AD - BC);
+
+        let matrix = [G, H, I, J, K, L];
+        return qrDecompose(matrix);
+    }
+
+    /**
+     * Sets the crop transform for the image.
+     * @param {Object} value - The crop transform properties.
+     */
+    Konva.Image.prototype.setCropTransform = function (value) {
+        if (value === false) {
+            delete this._cropElement;
+            return;
+        }
+        if (!this._cropElement) {
+            this._cropElement = new Konva.Shape();
+        }
+        this._cropElement.setAttrs(value);
+        this._cropElement.setAttrs({ offsetX: 0, offsetY: 0 });
+    };
+
+    /**
+     * Gets the crop transform for the image.
+     * @returns {Object} - The crop transform properties.
+     */
+    Konva.Image.prototype.getCropTransform = function () {
+        return this._cropElement && this._cropElement.getAttrs();
+    };
+
+    /**
+     * Sets or gets the crop transform for the image.
+     * @param {Object} value - The crop transform properties.
+     * @returns {Object} - The crop transform properties.
+     */
+    Konva.Image.prototype.cropTransform = function (value) {
+        if (value) {
+            this.setCropTransform(value);
+        } else {
+            return this.getCropTransform();
+        }
+    };
+
+    /**
+     * in this function work as constructer when image load to get data from image
+     * and then set crop data to image
+     * @param {Object} data - The crop transform properties.
+     * @returns {Object} - The crop transform properties.
+     **/
+    Konva.Image.prototype.cropDataManage = function () {
+        this.cropStart();
+        this.cropEnd();
+    };
+
+    Konva.Image.prototype.cropStart = function () {
+        const layer = this.getLayer();
+        if (!layer) return;
+
+        // Clear any existing transformers
+        layer.children.forEach(child => {
+            if (child instanceof Konva.Transformer) {
+                child.detach();
+                child.destroy();
+            }
+        });
+
+        if (this.cropImage) return;
+        if (!this._cropElement) {
+            this.cropTransform({
+                x: 0,
+                y: 0,
+                width: this.width(),
+                height: this.height(),
+                rotation: 0,
+            });
+        }
+
+        // Disable dragging on the main image during cropping
+        this.draggable(false);
+
+        const transform = this.getAbsoluteTransform(),
+            transform2 = this._cropElement.getAbsoluteTransform(),
+            transform0 = layer.getAbsoluteTransform(),
+            options = qrDecompose(transform0.copy().invert().multiply(transform).multiply(transform2).getMatrix());
+
+        // Create the crop image
+        this.cropImage = new Konva.Image({
+            stroke: this.stroke(),
+            strokeWidth: this.strokeWidth(),
+            image: this.image(),
+            opacity: 1, // Fully visible crop image
+            draggable: true,
+        });
+        this.cropImage.isCroppingElement = true;
+
+        this.cropImage.setAttrs(options);
+        this.cropImage.setAttrs({
+            width: this._cropElement.width(),
+            height: this._cropElement.height(),
+        });
+
+        // Add crop image to the layer
+        layer.add(this.cropImage);
+
+        // Create the overlay with a cutout
+        const stage = this.getStage();
+        const stageWidth = stage.width();
+        const stageHeight = stage.height();
+
+        this.cropBackground = new Konva.Rect({
+            x: 0,
+            y: 0,
+            width: layer.width(),
+            height: layer.height(),
+            fill: '#dedede9c', // Semi-transparent gray
+        });
+
+        // Add background rectangle to the layer
+        layer.add(this.cropBackground);
+
+        // Add overlay to the layer and position it
+        // layer.add(this.overlay);
+        // this.overlay.moveToTop(); // Move overlay to the top of the layer
+
+        // Add transformers
+        this.cropImageTransformer = new Konva.Transformer({
+            rotateEnabled: false,
+            borderDash: [5, 5],
+            anchorSize: 21,
+            anchorCornerRadius: 11,
+            enabledAnchors: ['top-left', 'top-right', 'bottom-right', 'bottom-left']
+        }).attachTo(this.cropImage);
+
+        this.transformer = new Konva.Transformer({
+            // resizeEnabled: false,
+            // rotateEnabled: false
+        }).attachTo(this);
+        layer.add(this.cropImageTransformer, this.transformer);
+
+        // Ensure transformers are above everything
+        this.cropBackground.moveToTop(); // Ensure it stays below everything
+        this.cropImage.moveToTop();
+        this.cropImageTransformer.moveToTop();
+        this.transformer.moveToTop();
+        // Bind update functions
+        this.cropUpdateBinded = this.cropUpdate.bind(this);
+        this.resizAndCropUpdateBinded = function () {
+            this.resize();
+            this.cropUpdate();
+        }.bind(this);
+
+        this.resize();
+        this.cropUpdate();
+
+        // Update overlay when crop image is moved or transformed
+        this.cropImage.on('dragmove transform', () => {
+            this.cropBackground.draw(); // Redraw overlay to match new crop position/size
+            layer.batchDraw();
+        });
+
+        this.cropImage.on('dragmove', this.cropUpdateBinded);
+        this.cropImage.on('transform', this.cropUpdateBinded);
+        this.on('dragmove', this.cropUpdateBinded);
+        this.on('transform', this.resizAndCropUpdateBinded);
+
+        // Add click event listener to the overlay
+        // this.overlay.on('click tap', (e) => {
+        //     console.log('Overlay clicked!'); // Debug log to confirm click detection
+        //     this.cropEnd();
+        // });
+        // this.getStage().on('click tap', (e) => {
+        //     // if (e.target !== this.cropImage) {
+        //     console.log("click tap");
+        //     this.cropEnd();
+        //     // }
+        // });
+
+        // Debug: Log the layer children to verify z-index
+        console.log('Layer children after setup:', layer.children.map(child => ({
+            name: child.name(),
+            zIndex: child.zIndex()
+        })));
+
+        layer.batchDraw();
+    };
+
+    /**
+     * Ends the cropping process for the image.
+     */
+    Konva.Image.prototype.cropEnd = function () {
+        if (this.cropImage) {
+            if (this.transformer) {
+                this.transformer.detach();
+                this.transformer.destroy();
+                delete this.transformer;
+            }
+            if (this.cropImageTransformer) {
+                this.cropImageTransformer.detach();
+                this.cropImageTransformer.destroy();
+                delete this.cropImageTransformer;
+            }
+            this.cropImage.off('dragmove', this.cropUpdateBinded);
+            this.cropImage.off('transform', this.cropUpdateBinded);
+            this.off('dragmove', this.cropUpdateBinded);
+            this.off('transform', this.resizAndCropUpdateBinded);
+            if (this.cropImage.getParent()) {
+                this.cropImage.remove();
+            }
+            delete this.cropImage;
+
+            // Remove overlay and its event listener
+            if (this.cropBackground) {
+                this.cropBackground.off('click tap'); // Clean up event listener
+                this.cropBackground.remove();
+                delete this.cropBackground;
+            }
+            if (this.getStage()) {
+                this.getStage().off('click tap'); // Clean up event listener
+            }
+            if (this._cropElement) {
+                this.attrs.cropImage = this._cropElement;
+            }
+            const layer = this.getLayer();
+            if (layer) {
+                layer.batchDraw();
+            }
+            // Re-enable dragging
+            // this.draggable(true);
+        }
+    };
+
+    /**
+     * Updates the crop transform based on the current crop image position and size.
+     */
+    Konva.Image.prototype.cropUpdate = function () {
+        if (this.cropImage) {
+            let options = getGroupCoords(this.cropImage, this);
+            this.cropTransform(options);
+            const layer = this.getLayer();
+            if (layer) {
+                // Re-apply effects after crop update
+                EffectEvent(this.attrs, this); // Assuming attrs contains shape data
+                layer.batchDraw();
+            }
+        }
+    };
+
+    /**
+     * Resets the image to its original size.
+     */
+    Konva.Image.prototype.resize = function () {
+        this.setAttrs({
+            scaleX: 1,
+            scaleY: 1,
+            width: this.width() * this.scaleX(),
+            height: this.height() * this.scaleY(),
+        });
+    };
+
+    /**
+     * Resets the crop transform for the image.
+     */
+    Konva.Image.prototype.cropReset = function () {
+        if (this.cropImage) {
+            this.cropEnd();
+        }
+        this.setCropTransform(false);
+        const layer = this.getLayer();
+        if (layer) {
+            layer.batchDraw();
+        }
+    };
+
+    /**
+     * Custom scene function for rendering the image with cropping.
+     * @param {CanvasRenderingContext2D} context - The canvas rendering context.
+     */
+    Konva.Image.prototype._sceneFunc = function (context) {
+        let width = this.width(),
+            height = this.height(),
+            image = this.image(),
+            cropWidth,
+            cropHeight,
+            params;
+
+        context.save();
+        context.beginPath();
+        context.rect(0, 0, width, height);
+        context.closePath();
+        context.clip();
+        if (this.hasFill() || this.hasStroke()) {
+            context.fillStrokeShape(this);
+        }
+
+        if (image) {
+            if (this._cropElement) {
+                context.save();
+                width = this._cropElement.width();
+                height = this._cropElement.height();
+                let transform = this._cropElement.getAbsoluteTransform();
+                let m = transform.getMatrix();
+                context.transform(m[0], m[1], m[2], m[3], m[4], m[5]);
+            }
+
+            cropWidth = this.cropWidth();
+            cropHeight = this.cropHeight();
+            if (cropWidth && cropHeight) {
+                params = [image, this.cropX(), this.cropY(), cropWidth, cropHeight, 0, 0, width, height];
+            } else {
+                params = [image, 0, 0, width, height];
+            }
+
+            context.drawImage.apply(context, params);
+
+            if (this._cropElement) {
+                context.restore();
+            }
+        }
+        context.strokeShape(this);
+        context.restore();
+    };
+})(Konva);
 
 export default function Editor() {
-    const { selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen } = useOutletContext();
+    const { selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, setSelectedSubMenu } = useOutletContext();
     const autoScroll = useRef([]);
     useEffect(() => {
         autoScroll.current[selectedIndex].scrollIntoView({
@@ -24,6 +384,7 @@ export default function Editor() {
     const [scale, setScale] = useState({ scaleX: 1, scaleY: 1 });
     const [mainStageString, setMainStageString] = useState("");
     const [isCropping, setIsCropping] = useState(false);
+    const allowHtmlTypesForCrop = ['stock-photo', 'upload-photo'];
     const [selectedAlignType, setSelectedAlignType] = useState("");
     const [isRightLateralCollapse, setIsRightLateralCollapse] = useState(false);
     const [currentRightPanel, setCurrentRightPanel] = useState('');
@@ -243,9 +604,67 @@ export default function Editor() {
         };
     }, [mainStage, setMainStage, selectedIndex]);
 
+    const handleCrop = () => {
+        const stage = mainStage[selectedIndex];
+        const selectedShape = stage.selectedShapes[0];
+
+        if (stage.selectedShapes.length === 1 && allowHtmlTypesForCrop.includes(selectedShape.attrs.htmlType)) {
+            if (selectedShape && selectedShape.getParent()) {
+                if (selectedShape?.children?.length) {
+                    selectedShape.children[1].children[1].cropStart();
+                    selectedShape.children[0].visible(false);
+                    selectedShape.children[1]?.children[1].visible(false);
+                }
+                setIsCropping(true);
+            }
+        }
+    };
+
+    const isCropDisabled =
+        mainStage[selectedIndex].selectedShapes.length !== 1 ||
+        !allowHtmlTypesForCrop.includes(mainStage[selectedIndex].selectedShapes[0].attrs.htmlType) ||
+        isCropping;
+
+    const handleCropEnd = () => {
+        let x = [];
+        mainStage[selectedIndex]?.stageref?.current?.children[0]?.children[1]?.children.forEach((selectedShapeData) => {
+            if (allowHtmlTypesForCrop.includes(selectedShapeData.attrs.htmlType) && selectedShapeData?.children?.length) {
+                const imageNode = selectedShapeData.children[1].children[1]; // The image node at index [0]
+                selectedShapeData.children[1].children[1].cropEnd && selectedShapeData.children[1].children[1].cropEnd(); // Ensure crop mode is ended
+
+                // Set the cropped image
+                selectedShapeData.attrs.cropImage = imageNode.attrs.cropImage;
+
+                // Update height and width of selectedShapeData.attrs from the image's attrs
+                selectedShapeData.width(imageNode.attrs.width);
+                selectedShapeData.children[1].width(imageNode.attrs.width);
+                selectedShapeData.height(imageNode.attrs.height);
+                selectedShapeData.children[1].height(imageNode.attrs.height);
+                selectedShapeData.x((selectedShapeData.attrs.x + imageNode.attrs.x * selectedShapeData.attrs.scaleX) || selectedShapeData.attrs.x);
+                // selectedShapeData.children[1].x((selectedShapeData.children[1].attrs.x + imageNode.attrs.x * selectedShapeData.children[1].attrs.scaleX) || selectedShapeData.attrs.x);
+                selectedShapeData.y((selectedShapeData.attrs.y + imageNode.attrs.y * selectedShapeData.attrs.scaleY) || selectedShapeData.attrs.y);
+                // selectedShapeData.children[1].y((selectedShapeData.children[1].attrs.y + imageNode.attrs.y * selectedShapeData.children[1].attrs.scaleY) || selectedShapeData.children[1].attrs.y);
+
+                selectedShapeData.children[1].children[1].x(0);
+                selectedShapeData.children[1].children[1].y(0);
+                selectedShapeData.children[1].x(0);
+                selectedShapeData.children[1].y(0);
+                selectedShapeData.children[0].visible(true);
+                selectedShapeData.children[1].children[1].visible(true);;
+                EffectEvent(selectedShapeData.attrs, selectedShapeData.children[1].children[1]);
+            }
+            x.push(selectedShapeData.attrs);
+        });
+        mainStage[selectedIndex].shapes = x;
+
+        mainStage.forEach(e => (e.selectedShapes = []));
+        setMainStage([...mainStage]);
+        setIsCropping(false);
+    };
+
     return (
         <div className="flex w-full flex-col h-full">
-            <TopToolbar selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
+            <TopToolbar setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
             <div className="flex w-full flex-grow">
                 <div style={{ userSelect: 'none' }} className="flex flex-col overflow-y-auto relative flex-grow w-full overflow-auto" >
                     <div style={{
@@ -274,12 +693,33 @@ export default function Editor() {
                 {isRightLateralCollapse && currentRightPanel == 'Layers' && <LateralPanelRightLayer setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} setSelectedAlignType={setSelectedAlignType} isExpanded={isExpanded} setIsExpanded={setIsExpanded} setIsRightLateralCollapse={setIsRightLateralCollapse} />}
                 <PanelRight currentRightPanel={currentRightPanel} setCurrentRightPanel={setCurrentRightPanel} isRightLateralCollapse={isRightLateralCollapse} setIsRightLateralCollapse={setIsRightLateralCollapse} />
                 <div className="fixed flex items-center bottom-[10px] right-[80px] gap-2">
-                    <div className="flex items-center bg-white rounded-sm border border-gray-200">
+                    {/* <div className="flex items-center bg-white rounded-sm border border-gray-200">
                         <Button size="xs" variant="ghost" onClick={handleUndo} disabled={undoStack.length <= 1}>
                             <Undo className="w-4 h-4" />
                         </Button>
                         <Button size="xs" variant="ghost" onClick={handleRedo} disabled={redoStack.length === 0}>
                             <Redo className="w-4 h-4" />
+                        </Button>
+                    </div> */}
+                    {/* <button
+                        onClick={handleCrop}
+                        disabled={(mainStage[selectedIndex].selectedShapes.length !== 1 || !allowHtmlTypesForCrop.includes(mainStage[selectedIndex].selectedShapes[0].attrs.htmlType)) || isCropping}
+                        className={`w-auto h-full px-2 py-2 text-gray-600 rounded flex items-center justify-center ${isCropDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"}`}
+                    >
+                        <CropIcon fontSize="10" />
+                    </button>
+                    <button
+                        onClick={handleCropEnd}
+                        className={`w-auto h-full px-2 py-2 text-gray-600 rounded flex items-center justify-center ${isCropping ? "hover:bg-gray-100" : "opacity-50 cursor-not-allowed"}`}
+                    >
+                        <CheckIcon fontSize="10" />
+                    </button> */}
+                    <div className="flex items-center bg-white rounded-sm border border-gray-200">
+                        <Button size="xs" variant="ghost" onClick={handleCrop} disabled={(mainStage[selectedIndex].selectedShapes.length !== 1 || !allowHtmlTypesForCrop.includes(mainStage[selectedIndex].selectedShapes[0].attrs.htmlType)) || isCropping}>
+                            <Crop className="w-4 h-4" />
+                        </Button>
+                        <Button size="xs" variant="ghost" onClick={handleCropEnd} disabled={!isCropping}>
+                            <Check className="w-4 h-4" />
                         </Button>
                     </div>
                     <div className="flex items-center bg-white rounded-sm border border-gray-200">

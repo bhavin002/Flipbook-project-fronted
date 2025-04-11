@@ -19,7 +19,7 @@ function NavItem({ item, isSelected, onClick }) {
     );
 };
 
-export default function SidebarNavigation({ mainStage, setSelectedShape, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
+export default function SidebarNavigation({ mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
     const navItems = getData('editorNavItems');
 
@@ -46,15 +46,25 @@ export default function SidebarNavigation({ mainStage, setSelectedShape, setSele
                 setOpen(true);
             }
             setSelectedSubMenu("link-area");
+        } else {
+            setSelectedSubMenu(null);
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
         }
     }, [mainStage[selectedIndex].selectedShapes])
 
     const handleItemClick = (itemId) => {
         if (selectedItem === itemId) {
+            if (selectedSubMenu) {
+                setSelectedSubMenu(null);
+                return;
+            }
             const newOpenState = !open;
             setOpen(newOpenState);
             setIsSidebarOpen(newOpenState);
         } else {
+            if (selectedSubMenu) {
+                setSelectedSubMenu(null);
+            }
             setGlobalSelectedItem(itemId);
             setOpen(true);
             setIsSidebarOpen(true);

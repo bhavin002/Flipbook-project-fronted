@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Layer, Rect, Stage, Group, Line, Transformer } from "react-konva";
 import { v4 as uuid } from "uuid";
-import LinkArea from "../../pages/widget/LinkArea";
+import LinkArea from "./Widget/LinkArea";
 import StagePageMenu from "./StagePageMenu";
+import LinkButton from "./Widget/LinkButton";
+import ShapeMakerForAll from "./Widget/ShapeMakerForAll";
+import MaskedImage from "./Widget/MaskedImage";
 
 export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
@@ -87,17 +90,19 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
             setWidth(parentRef.current?.getBoundingClientRect().width);
             setHeight(parentRef.current?.getBoundingClientRect().height)
             if (!width || !height) return;
-            const size = Math.min(width, height) * 0.8;
+            let newHeight = height;
+            if(height < 300) (newHeight = 300);
+            const size = Math.min(width, newHeight) * (newHeight < 400 ?0.7 : 0.8);
             let tempWidth = 0;
             let tempHeight = 0;
-            height * 0.8 == size ?
+            newHeight * (newHeight< 400 ?0.7 : 0.8) == size ?
                 (tempWidth = mainStage[0].CANVAS_WIDTH * size / mainStage[0].CANVAS_HEIGHT) :
                 (tempHeight = mainStage[0].CANVAS_HEIGHT * size / mainStage[0].CANVAS_WIDTH);
 
             tempWidth == 0 ? tempWidth = size : tempHeight = size;
 
             const x = (width / 2 - tempWidth / 2);
-            const y = (height - tempHeight) / 2;
+            const y = (newHeight - tempHeight) / 2;
             const scaleY = tempHeight / mainStage[0].CANVAS_HEIGHT;
             const scaleX = tempWidth / mainStage[0].CANVAS_WIDTH;
             setRectProps({ x, y, size, tempWidth, tempHeight });
@@ -832,6 +837,23 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                             return updatedState;
                         });
                     }
+                    setTimeout(() => {
+                        stage.stageref.current.children[0].children[1].children.forEach((child) => {
+                            if (child.attrs.id == newShape.id) {
+                                // stage.selectedShapes = [child];
+                                setMainStage(prevState => {
+                                    const updatedState = [...prevState];
+                                    updatedState[index] = {
+                                        ...updatedState[index],
+                                        selectedShapes: [child]
+                                    };
+                                    return updatedState;
+                                });
+                            }
+                        });
+                    }, 100);
+
+
 
                     stage.dragRect.current = null;
                 }
@@ -876,6 +898,16 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                 switch (shape.title) {
                                     case 'link-tags':
                                         return <LinkArea onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable setMainStage={setMainStage} selectedIndex={selectedIndex} mainStage={mainStage} mainStageString={mainStageString} setMainStageString={setMainStageString} />;
+                                    case 'stock-photo':
+                                        return <LinkButton isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                    case 'shape-widget':
+                                        return <ShapeMakerForAll onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                    case 'masked-image':
+                                        return (
+                                            <MaskedImage
+                                                key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape}
+                                            />
+                                        );
                                     default:
                                         return null;
                                 }
@@ -910,7 +942,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                             ]}
                             listening={false}
                             closed={true}
-                            fill="#c0c0c090"
+                            fill="#f3f4f6c4"
                         />
                         {selecting && (
                             <Rect

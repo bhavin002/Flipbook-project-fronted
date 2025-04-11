@@ -6,7 +6,7 @@ import ShapesView from "./ShapesView"
 import GIFsView from "./GIFsView"
 import StickersView from "./StickersView"
 
-export default function ElementsSidebarPanel() {
+export default function ElementsSidebarPanel({ mainStage, selectedIndex }) {
     const [currentView, setCurrentView] = useState(null)
 
     const elements = [
@@ -16,7 +16,7 @@ export default function ElementsSidebarPanel() {
                 {
                     text: 'Stock photos',
                     icon: <Image />,
-                    view: <StockPhotosView onBackClick={() => setCurrentView(null)} />
+                    view: <StockPhotosView mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 },
                 {
                     text: 'Stock videos',
@@ -26,7 +26,7 @@ export default function ElementsSidebarPanel() {
                 {
                     text: 'Shapes',
                     icon: <Shapes />,
-                    view: <ShapesView onBackClick={() => setCurrentView(null)} />
+                    view: <ShapesView mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 },
                 {
                     text: 'GIFs',

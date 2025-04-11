@@ -7,7 +7,7 @@ const API_KEY = `${import.meta.env.VITE_APP_PEXELS_API}`;
 
 const INITIAL_CATEGORIES = [
     "God",
-    "Architecture", 
+    "Architecture",
     "Travel",
     "Fashion",
     "Food",
@@ -16,7 +16,7 @@ const INITIAL_CATEGORIES = [
     "Wedding"
 ];
 
-const StockPhotosView = ({ onBackClick }) => {
+const StockPhotosView = ({ mainStage, selectedIndex, onBackClick }) => {
     const [categories, setCategories] = useState({});
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -152,6 +152,8 @@ const StockPhotosView = ({ onBackClick }) => {
                             title={currentCategory ? `Showing results for "${currentCategory}"` : `Results for "${searchQuery}"`}
                             images={searchResults}
                             lastImageRef={lastImageRef}
+                            mainStage={mainStage}
+                            selectedIndex={selectedIndex}
                         />
                     ) : (
                         Object.keys(categories).map((category) => (
@@ -160,6 +162,8 @@ const StockPhotosView = ({ onBackClick }) => {
                                 title={category}
                                 images={categories[category]}
                                 onViewAll={() => handleCategoryClick(category)}
+                                mainStage={mainStage}
+                                selectedIndex={selectedIndex}
                             />
                         ))
                     )}
@@ -175,7 +179,7 @@ const StockPhotosView = ({ onBackClick }) => {
     );
 };
 
-const Section = ({ title, images, onViewAll, lastImageRef }) => {
+const Section = ({ title, images, onViewAll, lastImageRef, mainStage, selectedIndex }) => {
     return (
         <div className="mt-6">
             <div className="flex justify-between items-center">
@@ -196,6 +200,19 @@ const Section = ({ title, images, onViewAll, lastImageRef }) => {
                                 src={image.src.medium}
                                 alt={image.photographer}
                                 className="rounded-lg w-full h-24 object-cover cursor-pointer"
+                                draggable
+                                onDragStart={(e) => {
+                                    mainStage[selectedIndex].dragRect.current = {
+                                        width: 146,
+                                        height: 146,
+                                        type: "img",
+                                        src: `${image.src.medium}`,
+                                        visible: true,
+                                        title: "stock-photo",
+                                        layer: "Stock Photo",
+                                        htmlType: "stock-photo"
+                                    };
+                                }}
                             />
                         );
                     }
@@ -205,6 +222,17 @@ const Section = ({ title, images, onViewAll, lastImageRef }) => {
                             src={image.src.medium}
                             alt={image.photographer}
                             className="rounded-lg w-full h-24 object-cover cursor-pointer"
+                            draggable
+                            onDragStart={(e) => {
+                                mainStage[selectedIndex].dragRect.current = {
+                                    type: "img",
+                                    src: `${image.src.medium}`,
+                                    visible: true,
+                                    title: "stock-photo",
+                                    layer: "Stock Photo",
+                                    htmlType: "stock-photo"
+                                };
+                            }}
                         />
                     );
                 })}
