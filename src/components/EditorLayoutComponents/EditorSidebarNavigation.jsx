@@ -19,7 +19,7 @@ function NavItem({ item, isSelected, onClick }) {
     );
 };
 
-export default function SidebarNavigation({ mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
+export default function SidebarNavigation({ currentView, setCurrentView, mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
     const navItems = getData('editorNavItems');
 
@@ -56,6 +56,10 @@ export default function SidebarNavigation({ mainStage, setSelectedShape, selecte
         if (selectedItem === itemId) {
             if (selectedSubMenu) {
                 setSelectedSubMenu(null);
+                return;
+            }
+            if (currentView) {
+                setCurrentView(null);
                 return;
             }
             const newOpenState = !open;

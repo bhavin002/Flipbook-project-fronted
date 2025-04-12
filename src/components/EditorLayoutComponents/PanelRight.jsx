@@ -2,7 +2,7 @@ import { BookOpen, Layers } from "lucide-react";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 
-export default function PanelRight({ isRightLateralCollapse, setIsRightLateralCollapse, currentRightPanel, setCurrentRightPanel }) {
+export default function PanelRight({ isCropping, isRightLateralCollapse, setIsRightLateralCollapse, currentRightPanel, setCurrentRightPanel }) {
 
   const elements = [
     {
@@ -16,6 +16,9 @@ export default function PanelRight({ isRightLateralCollapse, setIsRightLateralCo
   ]
 
   const handleRightPanel = (currentRightPanel, elementText) => {
+    if(isCropping){
+      return;
+    }
     setCurrentRightPanel(elementText);
     if (currentRightPanel == elementText) {
       setIsRightLateralCollapse(!isRightLateralCollapse)

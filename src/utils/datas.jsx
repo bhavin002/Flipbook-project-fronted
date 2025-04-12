@@ -1421,7 +1421,7 @@ const interactions = [
                     title: "link-tags",
                     visible: true,
                     layer: "Link",
-                    htmlType: "go-to-url"
+                    htmlType: "go-to-url",
                 }
             },
             {

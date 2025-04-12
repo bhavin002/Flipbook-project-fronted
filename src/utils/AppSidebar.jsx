@@ -10,7 +10,7 @@ import UploadsSidebarPanel from '@/components/EditorLayoutComponents/Uploads/Upl
 import ElementsSidebarPanel from '@/components/EditorLayoutComponents/Elements/ElementsSidebarPanel';
 import AutomationSidebarPanel from '@/components/EditorLayoutComponents/Automation/AutomationSidebarPanel';
 
-export function AppSidebar({ mainStage, selectedIndex }) {
+export function AppSidebar({ currentView, setCurrentView, mainStage, selectedIndex }) {
     const { selectedItem } = useSidebar();
 
     const renderPanel = () => {
@@ -30,7 +30,7 @@ export function AppSidebar({ mainStage, selectedIndex }) {
             case 'uploads':
                 return <UploadsSidebarPanel />;
             case 'elements':
-                return <ElementsSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex}/>;
+                return <ElementsSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} />;
             case 'automation':
                 return <AutomationSidebarPanel />;
             default:

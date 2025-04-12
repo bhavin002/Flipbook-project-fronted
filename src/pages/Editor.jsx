@@ -371,7 +371,7 @@ import { deleteShape } from "@/utils/Helper";
 })(Konva);
 
 export default function Editor() {
-    const { selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, setSelectedSubMenu } = useOutletContext();
+    const { selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu } = useOutletContext();
     const autoScroll = useRef([]);
     useEffect(() => {
         autoScroll.current[selectedIndex].scrollIntoView({
@@ -620,11 +620,6 @@ export default function Editor() {
         }
     };
 
-    const isCropDisabled =
-        mainStage[selectedIndex].selectedShapes.length !== 1 ||
-        !allowHtmlTypesForCrop.includes(mainStage[selectedIndex].selectedShapes[0].attrs.htmlType) ||
-        isCropping;
-
     const handleCropEnd = () => {
         let x = [];
         mainStage[selectedIndex]?.stageref?.current?.children[0]?.children[1]?.children.forEach((selectedShapeData) => {
@@ -664,7 +659,7 @@ export default function Editor() {
 
     return (
         <div className="flex w-full flex-col h-full">
-            <TopToolbar setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
+            <TopToolbar isCropping={isCropping} handleCrop={handleCrop} handleCropEnd={handleCropEnd} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
             <div className="flex w-full flex-grow">
                 <div style={{ userSelect: 'none' }} className="flex flex-col overflow-y-auto relative flex-grow w-full overflow-auto" >
                     <div style={{
@@ -691,35 +686,14 @@ export default function Editor() {
                 </div>
                 {isRightLateralCollapse && currentRightPanel == 'Pages' && <LateralPanelRightPages isSidebarOpen={isSidebarOpen} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} isExpanded={isExpanded} index={selectedIndex} setIsExpanded={setIsExpanded} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} setIsRightLateralCollapse={setIsRightLateralCollapse} setMainStage={setMainStage} />}
                 {isRightLateralCollapse && currentRightPanel == 'Layers' && <LateralPanelRightLayer setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} setSelectedAlignType={setSelectedAlignType} isExpanded={isExpanded} setIsExpanded={setIsExpanded} setIsRightLateralCollapse={setIsRightLateralCollapse} />}
-                <PanelRight currentRightPanel={currentRightPanel} setCurrentRightPanel={setCurrentRightPanel} isRightLateralCollapse={isRightLateralCollapse} setIsRightLateralCollapse={setIsRightLateralCollapse} />
-                <div className="fixed flex items-center bottom-[10px] right-[80px] gap-2">
-                    {/* <div className="flex items-center bg-white rounded-sm border border-gray-200">
+                <PanelRight isCropping={isCropping} currentRightPanel={currentRightPanel} setCurrentRightPanel={setCurrentRightPanel} isRightLateralCollapse={isRightLateralCollapse} setIsRightLateralCollapse={setIsRightLateralCollapse} />
+                {!isCropping && <div className="fixed flex items-center bottom-[10px] right-[80px] gap-2">
+                    <div className="flex items-center bg-white rounded-sm border border-gray-200">
                         <Button size="xs" variant="ghost" onClick={handleUndo} disabled={undoStack.length <= 1}>
                             <Undo className="w-4 h-4" />
                         </Button>
                         <Button size="xs" variant="ghost" onClick={handleRedo} disabled={redoStack.length === 0}>
                             <Redo className="w-4 h-4" />
-                        </Button>
-                    </div> */}
-                    {/* <button
-                        onClick={handleCrop}
-                        disabled={(mainStage[selectedIndex].selectedShapes.length !== 1 || !allowHtmlTypesForCrop.includes(mainStage[selectedIndex].selectedShapes[0].attrs.htmlType)) || isCropping}
-                        className={`w-auto h-full px-2 py-2 text-gray-600 rounded flex items-center justify-center ${isCropDisabled ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-100"}`}
-                    >
-                        <CropIcon fontSize="10" />
-                    </button>
-                    <button
-                        onClick={handleCropEnd}
-                        className={`w-auto h-full px-2 py-2 text-gray-600 rounded flex items-center justify-center ${isCropping ? "hover:bg-gray-100" : "opacity-50 cursor-not-allowed"}`}
-                    >
-                        <CheckIcon fontSize="10" />
-                    </button> */}
-                    <div className="flex items-center bg-white rounded-sm border border-gray-200">
-                        <Button size="xs" variant="ghost" onClick={handleCrop} disabled={(mainStage[selectedIndex].selectedShapes.length !== 1 || !allowHtmlTypesForCrop.includes(mainStage[selectedIndex].selectedShapes[0].attrs.htmlType)) || isCropping}>
-                            <Crop className="w-4 h-4" />
-                        </Button>
-                        <Button size="xs" variant="ghost" onClick={handleCropEnd} disabled={!isCropping}>
-                            <Check className="w-4 h-4" />
                         </Button>
                     </div>
                     <div className="flex items-center bg-white rounded-sm border border-gray-200">
@@ -741,7 +715,7 @@ export default function Editor() {
                             <ZoomIn className="w-4 h-4" />
                         </Button>
                     </div>
-                </div>
+                </div>}
             </div>
         </div>
     )

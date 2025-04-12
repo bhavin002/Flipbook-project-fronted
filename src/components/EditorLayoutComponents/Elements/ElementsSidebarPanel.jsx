@@ -1,13 +1,11 @@
 import { ChartBarBig, ChartNoAxesCombined, ChartPie, Image, ImagePlay, Shapes, Smile, Table, Video } from "lucide-react"
-import { useState } from "react"
 import StockPhotosView from "./StockPhotosView"
 import StockVideosView from "./StockVideosView"
 import ShapesView from "./ShapesView"
 import GIFsView from "./GIFsView"
 import StickersView from "./StickersView"
 
-export default function ElementsSidebarPanel({ mainStage, selectedIndex }) {
-    const [currentView, setCurrentView] = useState(null)
+export default function ElementsSidebarPanel({ mainStage, selectedIndex, currentView, setCurrentView }) {
 
     const elements = [
         {
@@ -63,12 +61,10 @@ export default function ElementsSidebarPanel({ mainStage, selectedIndex }) {
         }
     ]
 
-    // If a graphics view is selected, render that view
     if (currentView) {
         return currentView
     }
 
-    // Main panel view
     return (
         <div className="px-6 pt-6 pb-2 space-y-4 flex flex-col h-[100vh]">
             <div className="h-0 overflow-y-auto flex-grow">
@@ -78,8 +74,8 @@ export default function ElementsSidebarPanel({ mainStage, selectedIndex }) {
                             <div className="mb-2 text-sm font-semibold">{section.title}</div>
                             <div className="grid grid-cols-3 gap-4">
                                 {section.widget.map((item, itemIndex) => (
-                                    <div 
-                                        key={itemIndex} 
+                                    <div
+                                        key={itemIndex}
                                         className="cursor-pointer flex flex-col items-center"
                                         onClick={() => section.title === "Graphics" ? setCurrentView(item.view) : null}
                                     >
