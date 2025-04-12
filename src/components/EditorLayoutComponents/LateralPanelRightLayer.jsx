@@ -1,6 +1,6 @@
 
 import { deleteShape } from '@/utils/Helper';
-import { X, Lock, Unlock, Eye, EyeOff, Copy, Files, Trash2, AlignStartHorizontal, AlignCenterHorizontal, AlignEndHorizontal, AlignStartVertical, AlignCenterVertical, AlignEndVertical, ChevronsLeft, AlignVerticalJustifyCenter, SquareMousePointer } from 'lucide-react';
+import { X, Lock, Unlock, Eye, EyeOff, Copy, Files, Trash2, AlignStartHorizontal, AlignCenterHorizontal, AlignEndHorizontal, AlignStartVertical, AlignCenterVertical, AlignEndVertical, ChevronsLeft, AlignVerticalJustifyCenter, SquareMousePointer, Shapes, Image, MousePointerClick } from 'lucide-react';
 import { ReactSortable } from 'react-sortablejs';
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from "uuid";
@@ -22,7 +22,12 @@ export default function LateralPanelRightLayer({ setCurrentRightPanel, mainStage
     }, [mainStage])
 
     const elementIcons = {
-        "Link": <SquareMousePointer className='w-4 h-4' />
+        "Link": <SquareMousePointer className='w-4 h-4' />,
+        "Shape": <Shapes className='w-4 h-4' />,
+        "Image": <Image className='w-4 h-4' />,
+        "Tag": <MousePointerClick className='w-4 h-4' />,
+        "Interactions": <MousePointerClick className='w-4 h-4' />,
+        "Embed": <MousePointerClick className='w-4 h-4' />,
     }
     const selectLayer = (shape) => {
         if (isToggle) {
@@ -122,7 +127,6 @@ export default function LateralPanelRightLayer({ setCurrentRightPanel, mainStage
         })
         mainStage[selectedIndex].shapes.find((e, index) => {
             if (selectedShapes.includes(e.id)) {
-                // e.id = uuid();
                 e.x += 30;
                 e.y += 30;
             }
@@ -222,10 +226,7 @@ export default function LateralPanelRightLayer({ setCurrentRightPanel, mainStage
                                                     onClick={() => { toggleVisiblity(shape) }}
                                                 />}
                                         </div>
-
-
                                     </div>
-
                                 )
                             })
                         }

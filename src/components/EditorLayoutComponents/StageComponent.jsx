@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Layer, Rect, Stage, Group, Line, Transformer } from "react-konva";
 import { v4 as uuid } from "uuid";
-import LinkArea from "./Widget/LinkArea";
+import LinkArea from "./Widget/Hyperlink";
 import StagePageMenu from "./StagePageMenu";
-import LinkButton from "./Widget/LinkButton";
 import ShapeMakerForAll from "./Widget/ShapeMakerForAll";
 import MaskedImage from "./Widget/MaskedImage";
+import StockPhoto from "./Widget/StockPhoto";
+import LinkButton from "./Widget/LinkButton";
+import Tag from "./Widget/Tag";
+import EmbedCode from "./Widget/EmbedCode";
 
 export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
@@ -90,11 +93,11 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
             setHeight(parentRef.current?.getBoundingClientRect().height)
             if (!width || !height) return;
             let newHeight = height;
-            if(height < 300) (newHeight = 300);
-            const size = Math.min(width, newHeight) * (newHeight < 400 ?0.7 : 0.8);
+            if (height < 300) (newHeight = 300);
+            const size = Math.min(width, newHeight) * (newHeight < 400 ? 0.7 : 0.8);
             let tempWidth = 0;
             let tempHeight = 0;
-            newHeight * (newHeight< 400 ?0.7 : 0.8) == size ?
+            newHeight * (newHeight < 400 ? 0.7 : 0.8) == size ?
                 (tempWidth = mainStage[0].CANVAS_WIDTH * size / mainStage[0].CANVAS_HEIGHT) :
                 (tempHeight = mainStage[0].CANVAS_HEIGHT * size / mainStage[0].CANVAS_WIDTH);
 
@@ -839,7 +842,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                     setTimeout(() => {
                         stage.stageref.current.children[0].children[1].children.forEach((child) => {
                             if (child.attrs.id == newShape.id) {
-                                // stage.selectedShapes = [child];
                                 setMainStage(prevState => {
                                     const updatedState = [...prevState];
                                     updatedState[index] = {
@@ -851,9 +853,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                             }
                         });
                     }, 100);
-
-
-
                     stage.dragRect.current = null;
                 }
             }}
@@ -895,12 +894,20 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                         >
                             {stage.shapes.map((shape) => {
                                 switch (shape.title) {
-                                    case 'link-tags':
+                                    case 'hyperlink':
                                         return <LinkArea onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable setMainStage={setMainStage} selectedIndex={selectedIndex} mainStage={mainStage} mainStageString={mainStageString} setMainStageString={setMainStageString} />;
                                     case 'stock-photo':
-                                        return <LinkButton isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'shape-widget':
                                         return <ShapeMakerForAll onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                    case 'link-button':
+                                        return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                    case 'tag':
+                                        return <Tag onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />;
+                                    case 'caption':
+                                        return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                    case 'embed-code':
+                                        return <EmbedCode onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />;
                                     case 'masked-image':
                                         return (
                                             <MaskedImage

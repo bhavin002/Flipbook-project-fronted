@@ -1,16 +1,20 @@
-import ShapeAction from "@/pages/widgetSidebar/ShapeAction"
-import LinkArea from "../../../pages/widgetSidebar/LinkArea"
+import ShapeAction from "@/components/EditorLayoutComponents/widgetSidebar/ShapeAction"
 import Color from "../WidgetStyler/Color"
 import Effect from "../WidgetStyler/Effect"
 import ShapeStyle from "../WidgetStyler/ShapeStyle"
 import ImageFilter from "../WidgetStyler/ImageFilter"
 import ImageStyle from "../WidgetStyler/ImageStyle"
-import ImageAction from "@/pages/widgetSidebar/ImageAction"
+import ImageAction from "@/components/EditorLayoutComponents/widgetSidebar/ImageAction"
+import Hyperlink from "../widgetSidebar/Hyperlink"
+import Link from "../widgetSidebar/Link"
+import Tag from "../widgetSidebar/Tag"
+import Caption from "../widgetSidebar/Caption"
+import Embed from "../widgetSidebar/Embed"
 
 function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage, selectedIndex) {
-    if (selectedShape?.length && selectedSubMenu === 'link-area') {
+    if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
         return (
-            <LinkArea />
+            <Hyperlink />
         )
     }
     if (selectedSubMenu === 'effect') {
@@ -46,6 +50,26 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
     if(selectedSubMenu === 'image-action'){
         return (
             <ImageAction />
+        )
+    }
+    if(selectedSubMenu === 'link'){
+        return (
+            <Link />
+        )
+    }
+    if(selectedSubMenu === "tag"){
+        return (
+            <Tag />
+        )
+    }
+    if(selectedSubMenu === "caption"){
+        return (
+            <Caption />
+        )
+    }
+    if(selectedSubMenu === "embed"){
+        return (
+            <Embed />
         )
     }
 }

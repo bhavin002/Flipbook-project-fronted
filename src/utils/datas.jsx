@@ -1418,7 +1418,7 @@ const interactions = [
                     fill: "#7bc2ff",
                     opacity: 0.3,
                     type: "rect",
-                    title: "link-tags",
+                    title: "hyperlink",
                     visible: true,
                     layer: "Link",
                     htmlType: "go-to-url",
@@ -1426,33 +1426,102 @@ const interactions = [
             },
             {
                 text: 'Link button',
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link2-icon lucide-link-2"><path d="M9 17H7A5 5 0 0 1 7 7h2" /><path d="M15 7h2a5 5 0 1 1 0 10h-2" /><line x1="8" x2="16" y1="12" y2="12" /></svg>`,
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link-icon lucide-link"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/Link.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Link",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 text: 'Tag',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-dot-icon lucide-circle-dot"><circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="1" /></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    fill: "#41485d",
+                    type: "arc",
+                    title: "tag",
+                    innerRadius: 20,
+                    outerRadius: 36,
+                    angle: 360,
+                    strokeWidth: 0,
+                    visible: true,
+                    layer: "Tag",
+                    htmlType: "link-tag",
+                },
             },
             {
                 text: 'Caption',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus-icon lucide-circle-plus"><circle cx="12" cy="12" r="10" /><path d="M8 12h8" /><path d="M12 8v8" /></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/Plus.svg",
+                    title: "caption",
+                    visible: true,
+                    layer: "Interactions",
+                    htmlType: "square-caption"
+                }
             },
             {
                 text: 'Caption',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-plus-icon lucide-circle-plus"><circle cx="12" cy="12" r="10" /><path d="M8 12h8" /><path d="M12 8v8" /></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/Plus.svg",
+                    title: "caption",
+                    visible: true,
+                    layer: "Interactions",
+                    htmlType: "rounded-caption",
+                    cornerRadius: 50
+                }
             },
             {
                 text: 'Embed code',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code-icon lucide-code"><polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" /></svg>`,
                 isUpgrade: true,
+                attrs: {
+                    width: 300,
+                    height: 300,
+                    fill: "#ebf0fc",
+                    type: "img",
+                    src: "/src/assets/icons/Code.svg",
+                    title: "embed-code",
+                    visible: true,
+                    layer: "Embed",
+                    htmlType: "embed-code",
+                }
             },
             {
                 text: 'Pop-up frame',
                 icon: `<div class="w-2 h-2 border-t-2 border-l-2 absolute top-0 left-0 rounded-tl-md"> </div><div class="w-2 h-2 border-t-2 border-r-2 absolute top-0 right-0 rounded-tr-md"> </div><div class="w-2 h-2 border-b-2 border-l-2 absolute bottom-0 left-0 rounded-bl-md"> </div><div class="w-2 h-2 border-b-2 border-r-2 absolute bottom-0 right-0 rounded-br-md"> </div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-icon lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>`,
                 isUpgrade: true,
+                attrs: {
+                    width: 160,
+                    height: 160,
+                    fill: "#7bc2ff",
+                    opacity: 0.3,
+                    effect: { opacity: 0.3 * 100 },
+                    type: "rect",
+                    title: "hyperlink",
+                    visible: true,
+                    layer: "Link",
+                    htmlType: "popup-frame"
+                }
             },
         ]
     },

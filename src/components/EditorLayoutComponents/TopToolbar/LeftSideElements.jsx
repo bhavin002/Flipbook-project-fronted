@@ -36,7 +36,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
     };
 
     switch (shapeType) {
-        case "link-tags":
+        case "hyperlink":
             return <>
                 <TooltipProvider>
                     <Tooltip>
@@ -52,7 +52,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "link-area" ? setSelectedSubMenu(null) : setSelectedSubMenu("link-area") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "hyperlink" ? setSelectedSubMenu(null) : setSelectedSubMenu("hyperlink") }}>
                     <Link />
                 </Button>}
             </>

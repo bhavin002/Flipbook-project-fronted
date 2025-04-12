@@ -32,7 +32,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 "fill": "#7bc2ff",
                 "opacity": 0.3,
                 "type": "rect",
-                "title": "link-tags",
+                "title": "hyperlink",
                 "visible": true,
                 "layer": "Link",
                 "htmlType": "go-to-url",

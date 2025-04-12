@@ -37,15 +37,38 @@ export default function SidebarNavigation({ currentView, setCurrentView, mainSta
             setSelectedSubMenu(null);
             return;
         }
-        if (mainStage[selectedIndex].selectedShapes.length === 1 && mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-url") {
-            console.log("mainStage[selectedIndex].selectedShapes", mainStage[selectedIndex].selectedShapes)
+        if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-url" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "popup-frame")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
                 setSelectedItem("interactions")
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("link-area");
+            setSelectedSubMenu("hyperlink");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-button-link") {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("link");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "square-caption" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "rounded-caption")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("link");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "embed-code")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("embed");
         } else {
             setSelectedSubMenu(null);
             setSelectedShape(mainStage[selectedIndex].selectedShapes)

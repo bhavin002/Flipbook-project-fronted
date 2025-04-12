@@ -209,7 +209,7 @@ const Section = ({ title, images, onViewAll, lastImageRef, mainStage, selectedIn
                                         src: `${image.src.medium}`,
                                         visible: true,
                                         title: "stock-photo",
-                                        layer: "Stock Photo",
+                                        layer: "Image",
                                         htmlType: "stock-photo"
                                     };
                                 }}
@@ -229,9 +229,9 @@ const Section = ({ title, images, onViewAll, lastImageRef, mainStage, selectedIn
                                     src: `${image.src.medium}`,
                                     visible: true,
                                     title: "stock-photo",
-                                    layer: "Stock Photo",
+                                    layer: "Image",
                                     htmlType: "stock-photo",
-                                    action:"image-action"
+                                    sidebar:"image-action"
                                 };
                             }}
                         />

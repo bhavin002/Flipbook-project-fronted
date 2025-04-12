@@ -25,9 +25,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Square Filled",
+                layer:"Shape"
             },
         }
         ,
@@ -50,9 +50,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Square Outline",
+                layer:"Shape"
             },
         },
         {
@@ -73,9 +73,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Rounded Square Filled",
+                layer:"Shape"
             },
         },
         {
@@ -97,9 +97,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Rounded Square Outline",
+                layer:"Shape"
             },
         },
         {
@@ -120,9 +120,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Triangle Filled",
+                layer:"Shape"
             },
         },
         {
@@ -144,9 +144,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Triangle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -167,9 +167,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Filled",
+                layer:"Shape"
             },
         },
         {
@@ -191,9 +191,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -215,9 +215,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -239,9 +239,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -263,9 +263,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -285,9 +285,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -309,9 +309,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -331,9 +331,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -355,9 +355,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -377,9 +377,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -398,9 +398,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -419,9 +419,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -440,9 +440,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -461,9 +461,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -482,9 +482,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -504,9 +504,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -526,9 +526,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -547,9 +547,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -571,9 +571,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -594,9 +594,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -616,9 +616,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -637,9 +637,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -658,9 +658,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
         {
@@ -679,9 +679,9 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                     return paths && paths.length ? paths : []; // Return the extracted `d` value or null
                 })(),
                 htmlType: "shape-widget",
-                action: "shape-action",
+                sidebar: "shape-action",
                 title: "shape-widget",
-                layer: "Circle Outline",
+                layer:"Shape"
             },
         },
     ];
