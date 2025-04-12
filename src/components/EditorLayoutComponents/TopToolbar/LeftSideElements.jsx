@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Link } from "lucide-react";
+import { BringToFront, FlipHorizontal2, FlipVertical2, Link, SendToBack } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu';
 
 const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSubMenu, setMainStage, mainStage, selectedIndex, handleCrop) => {
     const [isMaskingEnabled, setIsMaskingEnabled] = useState(false);
@@ -29,14 +35,6 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
         setMainStage(updatedStage);
     };
 
-    const toggleLinkTags = () => {
-        if (selectedSubMenu === "link-area") {
-            setSelectedSubMenu(null);
-        } else {
-            setSelectedSubMenu("link-area");
-        }
-    };
-
     switch (shapeType) {
         case "link-tags":
             return <>
@@ -44,7 +42,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => setSelectedSubMenu("color")}
+                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -54,7 +52,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={toggleLinkTags}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "link-area" ? setSelectedSubMenu(null) : setSelectedSubMenu("link-area") }}>
                     <Link />
                 </Button>}
             </>
@@ -71,14 +69,14 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                             Use as mask
                         </Label>
                     </div>}
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => setSelectedSubMenu("shape-style")}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "shape-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("shape-style") }}>
                     Style
                 </Button>}
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => setSelectedSubMenu("color")}
+                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -93,19 +91,31 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
         case 'stock-photo':
             return <>
                 {selectedShape?.length == 1 && <>
-                    <Button variant="ghost" size="sm" onClick={() => setSelectedSubMenu("image-filter")}>
+                    <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter") }}>
                         Filters
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => setSelectedSubMenu("image-style")}>
+                    <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style") }}>
                         Style
                     </Button>
                     <div className="border-r"></div>
                     <Button variant="ghost" size="sm" onClick={handleCrop}>
                         Crop
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => setSelectedSubMenu("image-flip")}>
-                        Flip
-                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <Button variant="ghost" size="sm">
+                            Flip
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            <DropdownMenuItem>
+                                <FlipHorizontal2 /> Flip horizontal
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <FlipVertical2 /> Flip vertical
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </>}
             </>
 

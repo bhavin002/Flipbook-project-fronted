@@ -3,9 +3,9 @@ import LinkArea from "../../../pages/widgetSidebar/LinkArea"
 import Color from "../WidgetStyler/Color"
 import Effect from "../WidgetStyler/Effect"
 import ShapeStyle from "../WidgetStyler/ShapeStyle"
-import Filter from "../WidgetStyler/Filter"
-import Style from "../WidgetStyler/Style"
-import Flip from "../WidgetStyler/Flip"
+import ImageFilter from "../WidgetStyler/ImageFilter"
+import ImageStyle from "../WidgetStyler/ImageStyle"
+import ImageAction from "@/pages/widgetSidebar/ImageAction"
 
 function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage, selectedIndex) {
     if (selectedShape?.length && selectedSubMenu === 'link-area') {
@@ -35,17 +35,17 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
     }
     if(selectedSubMenu === 'image-filter'){
         return (
-            <Filter />
+            <ImageFilter />
         )
     }
     if(selectedSubMenu === 'image-style'){
         return (
-            <Style />
+            <ImageStyle />
         )
     }
-    if(selectedSubMenu === 'image-flip'){
+    if(selectedSubMenu === 'image-action'){
         return (
-            <Flip />
+            <ImageAction />
         )
     }
 }

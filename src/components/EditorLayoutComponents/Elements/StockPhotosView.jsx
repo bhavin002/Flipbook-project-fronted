@@ -230,7 +230,8 @@ const Section = ({ title, images, onViewAll, lastImageRef, mainStage, selectedIn
                                     visible: true,
                                     title: "stock-photo",
                                     layer: "Stock Photo",
-                                    htmlType: "stock-photo"
+                                    htmlType: "stock-photo",
+                                    action:"image-action"
                                 };
                             }}
                         />
