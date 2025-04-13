@@ -1533,16 +1533,53 @@ const interactions = [
                 text: 'Spotlight',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-square-square-icon lucide-square-square"><rect x="3" y="3" width="18" height="18" rx="2" /><rect x="8" y="8" width="8" height="8" rx="1" /></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 160,
+                    height: 160,
+                    fill: "#7bc2ff",
+                    opacity: 0.3,
+                    effect: { opacity: 0.3 * 100 },
+                    type: "rect",
+                    title: "hyperlink",
+                    visible: true,
+                    layer: "Link",
+                    htmlType: "spotlight"
+                }
             },
             {
                 text: 'Slideshow',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-images-icon lucide-images"><path d="M18 22H4a2 2 0 0 1-2-2V6" /><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18" /><circle cx="12" cy="8" r="2" /><rect width="16" height="16" x="6" y="2" rx="2" /></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 300,
+                    height: 200,
+                    fill: "#ebf0fc",
+                    type: "img",
+                    src: "/src/assets/icons/SlideShow.svg",
+                    isImage: false,
+                    title: "slideshow",
+                    visible: true,
+                    layer: "Slideshow",
+                    htmlType: "slideshow",
+                }
+
             },
             {
                 text: 'Pop-up slideshow',
                 icon: `<div class="w-2 h-2 border-t-2 border-l-2 absolute top-0 left-0 rounded-tl-md"> </div><div class="w-2 h-2 border-t-2 border-r-2 absolute top-0 right-0 rounded-tr-md"> </div><div class="w-2 h-2 border-b-2 border-l-2 absolute bottom-0 left-0 rounded-bl-md"> </div><div class="w-2 h-2 border-b-2 border-r-2 absolute bottom-0 right-0 rounded-br-md"> </div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-images-icon lucide-images"><path d="M18 22H4a2 2 0 0 1-2-2V6" /><path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18" /><circle cx="12" cy="8" r="2" /><rect width="16" height="16" x="6" y="2" rx="2" /></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 160,
+                    height: 160,
+                    fill: "#7bc2ff",
+                    opacity: 0.3,
+                    effect: { opacity: 0.3 * 100 },
+                    type: "rect",
+                    title: "hyperlink",
+                    visible: true,
+                    layer: "Link",
+                    htmlType: "popup-slideshow"
+                }
             }
         ]
     },
@@ -1554,16 +1591,49 @@ const interactions = [
                 text: 'Video embed',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square-code-icon lucide-message-square-code"><path d="M10 7.5 8 10l2 2.5"/><path d="m14 7.5 2 2.5-2 2.5"/><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 300,
+                    height: 300,
+                    fill: "#000000",
+                    type: "img",
+                    src: "/src/assets/icons/Play.svg",
+                    title: "video-embed",
+                    visible: true,
+                    layer: "Video widget",
+                    htmlType: "video-embed",
+                }
             },
             {
                 text: 'Video button',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-video-icon lucide-video"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/VideoButton.svg",
+                    title: "video-button",
+                    visible: true,
+                    layer: "Video",
+                    htmlType: "video-button",
+                }
             },
             {
                 text: 'Audio button',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume2-icon lucide-volume-2"><path d="M11 4.702a.705.705 0 0 0-1.203-.498L6.413 7.587A1.4 1.4 0 0 1 5.416 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.416a1.4 1.4 0 0 1 .997.413l3.383 3.384A.705.705 0 0 0 11 19.298z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.364 18.364a9 9 0 0 0 0-12.728"/></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/AudioButton.svg",
+                    title: "audio-button",
+                    visible: true,
+                    layer: "Audio",
+                    htmlType: "audio-button",
+                }
             }
         ]
     },
@@ -1575,16 +1645,49 @@ const interactions = [
                 text: 'Shop area',
                 icon: `<div class="w-2 h-2 border-t-2 border-l-2 absolute top-0 left-0 rounded-tl-md"> </div><div class="w-2 h-2 border-t-2 border-r-2 absolute top-0 right-0 rounded-tr-md"> </div><div class="w-2 h-2 border-b-2 border-l-2 absolute bottom-0 left-0 rounded-bl-md"> </div><div class="w-2 h-2 border-b-2 border-r-2 absolute bottom-0 right-0 rounded-br-md"> </div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart-icon lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 160,
+                    height: 26,
+                    fill: "#7bc2ff",
+                    opacity: 0.3,
+                    type: "rect",
+                    title: "shop-area",
+                    visible: true,
+                    layer: "Shopping area",
+                    htmlType: "shop-area"
+                }
             },
             {
                 text: 'Shop button',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart-icon lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 300,
+                    height: 100,
+                    fill: "#000000",
+                    type: "img",
+                    src: `/src/assets/icons/ShopButton.svg`,
+                    title: "shop-button",
+                    visible: true,
+                    layer: "Shopping button",
+                    htmlType: "shop-button",
+                }
             },
             {
                 text: 'Product tag',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-tag-icon lucide-tag"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    fill: "#41485d",
+                    type: "shape",
+                    strokeWidth: 5,
+                    draggable: true,
+                    visible: true,
+                    data: ["M25.5,3.5C37.8,3.5,47.5,13.2,47.5,25.5S37.8,47.5,25.5,47.5S3.5,37.8,3.5,25.5S13.2,3.5,25.5,3.5 M25.5,0C11.4,0,0,11.4,0,25.5S11.4,51,25.5,51S51,39.6,51,25.5S39.6,0,25.5,0L25.5,0z", "M25.5,9C34.6,9,42,16.4,42,25.5S34.6,42,25.5,42S9,34.6,9,25.5S16.4,9,25.5,9z"],
+                    htmlType: "product-tag",
+                    title: "shape-widget",
+                    layer: "Product Tag",
+                },
             }
         ]
     },
@@ -1596,16 +1699,49 @@ const interactions = [
                 text: 'Quiz',
                 icon: `<div class="w-2 h-2 border-t-2 border-l-2 absolute top-0 left-0 rounded-tl-md"> </div><div class="w-2 h-2 border-t-2 border-r-2 absolute top-0 right-0 rounded-tr-md"> </div><div class="w-2 h-2 border-b-2 border-l-2 absolute bottom-0 left-0 rounded-bl-md"> </div><div class="w-2 h-2 border-b-2 border-r-2 absolute bottom-0 right-0 rounded-br-md"> </div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-todo-icon lucide-list-todo"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="m3 17 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 160,
+                    height: 26,
+                    fill: "#7bc2ff",
+                    opacity: 0.3,
+                    type: "rect",
+                    title: "quiz",
+                    visible: true,
+                    layer: "Quiz",
+                    htmlType: "quiz"
+                }
             },
             {
                 text: 'Question',
                 icon: `<div class="w-2 h-2 border-t-2 border-l-2 absolute top-0 left-0 rounded-tl-md"> </div><div class="w-2 h-2 border-t-2 border-r-2 absolute top-0 right-0 rounded-tr-md"> </div><div class="w-2 h-2 border-b-2 border-l-2 absolute bottom-0 left-0 rounded-bl-md"> </div><div class="w-2 h-2 border-b-2 border-r-2 absolute bottom-0 right-0 rounded-br-md"> </div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-help-icon lucide-circle-help"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 160,
+                    height: 26,
+                    fill: "#7bc2ff",
+                    opacity: 0.3,
+                    type: "rect",
+                    title: "question",
+                    visible: true,
+                    layer: "Question",
+                    htmlType: "question"
+                }
             },
             {
                 text: 'Contact form',
                 icon: `<div class="w-2 h-2 border-t-2 border-l-2 absolute top-0 left-0 rounded-tl-md"> </div><div class="w-2 h-2 border-t-2 border-r-2 absolute top-0 right-0 rounded-tr-md"> </div><div class="w-2 h-2 border-b-2 border-l-2 absolute bottom-0 left-0 rounded-bl-md"> </div><div class="w-2 h-2 border-b-2 border-r-2 absolute bottom-0 right-0 rounded-br-md"> </div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail-icon lucide-mail"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 160,
+                    height: 26,
+                    fill: "#7bc2ff",
+                    opacity: 0.3,
+                    type: "rect",
+                    title: "contact-form",
+                    visible: true,
+                    layer: "Contact form",
+                    htmlType: "contact-form"
+                }
             }
         ]
     },
@@ -1617,26 +1753,83 @@ const interactions = [
                 text: 'Prev page',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left"><path d="m15 18-6-6 6-6"/></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/PrevPage.svg",
+                    title: "page-options",
+                    visible: true,
+                    layer: "Link",
+                    htmlType: "go-to-previous-page"
+                }
             },
             {
                 text: 'Next page',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right-icon lucide-chevron-right"><path d="m9 18 6-6-6-6"/></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    rotation: 180,
+                    src: "/src/assets/icons/NextPage.svg",
+                    title: "page-options",
+                    visible: true,
+                    layer: "Link",
+                    htmlType: "go-to-next-page"
+                }
             },
             {
                 text: 'Go to page',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-up-right-icon lucide-arrow-up-right"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/GoToPage.svg",
+                    title: "go-to-page",
+                    visible: true,
+                    layer: "Link",
+                    htmlType: "go-to-page"
+                }
             },
             {
                 text: 'First page',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-first-icon lucide-chevron-first"><path d="m17 18-6-6 6-6"/><path d="M7 6v12"/></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/GoToFirstPage.svg",
+                    title: "page-options",
+                    visible: true,
+                    layer: "Link",
+                    htmlType: "go-to-first-page"
+                }
             },
             {
                 text: 'Last page',
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-last-icon lucide-chevron-last"><path d="m7 18 6-6-6-6"/><path d="M17 6v12"/></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    rotation: 180,
+                    src: "/src/assets/icons/GoToFirstPage.svg",
+                    title: "page-options",
+                    visible: true,
+                    layer: "Link",
+                    htmlType: "go-to-last-page"
+                }
             }
         ]
     },
@@ -1647,50 +1840,182 @@ const interactions = [
             {
                 icon: `<svg width="100%" height="100%" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin: auto"><path d="M17.9971687 8.09164113c-.162333.01588057-.3253081.02420317-.4884041.02494121-1.7889453.00025143-3.4574423-.90754798-4.4373985-2.41430913v8.22133539C13.0713661 17.2795069 10.3690988 20 7.03568306 20 3.70226735 20 1 17.2795069 1 13.9236086c0-3.3558982 2.70226735-6.07639133 6.03568306-6.07639133.12599409 0 .24915685.0114017.37302744.01924037V10.860828c-.12387059-.0149647-.24561769-.0377681-.37302744-.0377681-1.7013047 0-3.08048466 1.388482-3.08048466 3.1012613 0 1.7127794 1.37917996 3.1012614 3.08048466 3.1012614 1.70162801 0 3.20435524-1.3496758 3.20435524-3.0627806L10.2697672 0h2.8454845C13.3835704 2.56889818 15.4410719 4.57544293 18 4.76377111v3.32787002" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/TikTok.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "TikTok",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg width="100%" height="100%" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin: auto"><path d="M10.3964063 0C4.91515625 0 2.00015625 3.5125 2.00015625 7.3425c0 1.77625.9925 3.99125 2.58125 4.69375.24125.10875.3725.0625.42625-.16125.0475-.17.25625-.98875.3575-1.375.03125-.12375.015-.23125-.085-.3475-.5275-.61-.94625-1.72125-.94625-2.76375 0-2.67125 2.12375-5.265 5.73750005-5.265 3.125 0 5.31125 2.03 5.31125 4.93375 0 3.28125-1.73625 5.55125-3.9925 5.55125-1.24875 0-2.17875005-.98-1.88375005-2.1925.35625-1.44375 1.05500005-2.99625 1.05500005-4.0375 0-.93375-.5275-1.70625-1.60500005-1.70625-1.27125 0-2.3025 1.25875-2.3025 2.94875 0 1.07375.38 1.79875.38 1.79875s-1.2575 5.08-1.49125 6.02875c-.395 1.60625.05375 4.2075.0925 4.43125.02375.12375.1625.1625.24.06125.12375-.1625 1.64375-2.33125 2.07-3.89875.155-.57125.79125-2.8875.79125-2.8875.41875.75625 1.62750005 1.39 2.91500005 1.39 3.83 0 6.5975-3.36625 6.5975-7.54375-.01375-4.005-3.44125-7.00125-7.8525-7.00125z" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/Pinterest.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Pinterest",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg width="100%" height="100%" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin: auto"><path d="M20 10.1594488c0-1.22244093-.9841828-2.21456691-2.1968366-2.21456691-.5975395 0-1.1247803.23031496-1.5114235.62007874-1.4938489-1.08070866-3.5676626-1.78937008-5.8523726-1.87795276l1.0017575-4.73031496 3.2513181.69094489c.0351494.83267716.7205624 1.50590551 1.5641476 1.50590551.8611599 0 1.5641476-.70866142 1.5641476-1.57677166C17.8207381 1.70866142 17.1177504 1 16.2565905 1c-.6151142 0-1.142355.35433071-1.3884007.88582677l-3.6379613-.77952756c-.1054482-.01771653-.2108963 0-.2987698.05314961-.0878735.05314961-.1405975.14173228-.1757469.24803149L9.64850615 6.68700787c-2.33743409.07086615-4.42882249.76181103-5.94024604 1.87795276-.38664324-.37204724-.9314587-.62007874-1.51142355-.62007874C.98418278 7.94488189 0 8.93700787 0 10.1594488c0 .9035433.52724077 1.6653543 1.30052724 2.0196851-.03514938.2125984-.05272408.4429133-.05272408.6732283C1.24780316 16.253937 5.16695958 19 10.0175747 19c4.8506151 0 8.7697715-2.746063 8.7697715-6.1476378 0-.230315-.0175747-.4429134-.0527241-.6555118C19.4551845 11.8425197 20 11.0629921 20 10.1594488zM4.97363796 11.7362205c0-.8681103.7029877-1.5767717 1.56414763-1.5767717.86115993 0 1.56414763.7086614 1.56414763 1.5767717 0 .8681102-.7029877 1.5767716-1.56414763 1.5767716-.86115993 0-1.56414763-.7086614-1.56414763-1.5767716zm8.73462214 4.1633858C12.6362039 16.980315 10.5975395 17.0511811 10 17.0511811c-.59753954 0-2.65377856-.0885827-3.70826011-1.1515748-.15817223-.1594488-.15817223-.4251969 0-.5846457.15817224-.1594488.42179262-.1594488.57996486 0 .66783831.6732284 2.10896309.9212599 3.14586995.9212599 1.0369068 0 2.4604569-.2480315 3.1458699-.9212599.1581723-.1594488.4217927-.1594488.5799649 0 .1230228.1771654.1230228.4251969-.0351494.5846457zm-.2811951-2.5866142c-.8611599 0-1.5641476-.7086614-1.5641476-1.5767716 0-.8681103.7029877-1.5767717 1.5641476-1.5767717.86116 0 1.5641477.7086614 1.5641477 1.5767717 0 .8681102-.7029877 1.5767716-1.5641477 1.5767716z" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/Reddit.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Reddit",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg width="100%" height="100%" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin: auto"><path d="M10 0C4.48625 0 0 4.48625 0 10s4.48625 10 10 10 10-4.48625 10-10S15.51375 0 10 0zm4.5875 14.435c-.1225.17375-.315.26625-.51125.26625-.125 0-.25-.03625-.35875-.11375-2.34375-1.6475-6.2425-1.73875-8.875-1.125-.33375.07875-.6725-.13125-.75-.4675-.0775-.33625.13-.6725.4675-.75125 2.89375-.67 7.21875-.5475 9.875 1.32125.2825.19875.35.5875.1525.87zm1.22-2.43875c-.1225.17-.31375.26-.5075.26-.1275 0-.25375-.0375-.365-.1175C12.21625 10.1875 8.87625 9.7025 4.41875 10.6125c-.33625.06625-.66875-.14875-.7375-.4875-.07-.3375.14875-.66875.48625-.7375 4.82125-.98375 8.47375-.43375 11.49625 1.735.28.2025.345.5925.14375.87375zm1.2325-3.275c-.12125.17875-.31875.27375-.5175.27375-.12125 0-.24375-.035-.35125-.1075-3.44625-2.33875-8.685-2.35-12.07625-1.15-.325.1125-.6825-.05625-.7975-.3825-.115-.325.055-.6825.38125-.7975 3.68875-1.30375 9.405-1.27625 13.19625 1.295.285.19375.3575.5825.165.86875z" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/Spotify.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Spotify",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg width="100%" height="100%" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin: auto"><path d="M19.15 5.25272727c-.5425-.91236363-1.13125-1.08018182-2.33-1.144C15.6225 4.03190909 12.61125 4 10.0025 4c-2.61375 0-5.62625.03190909-6.8225.10754545-1.19625.065-1.78625.23163637-2.33375 1.14518182C.2875 6.16390909 0 7.73336364 0 10.4964545v.0094546c0 2.7512727.2875 4.3325454.84625 5.2342727.5475.9123637 1.13625 1.0778182 2.3325 1.1546364C4.37625 16.961 7.38875 17 10.0025 17c2.60875 0 5.62-.039 6.81875-.104 1.19875-.0768182 1.7875-.2422727 2.33-1.1546364.56375-.9017272.84875-2.483.84875-5.2342727v-.0059091-.0035454c0-2.76427276-.285-4.33372731-.85-5.24490913zM7.5 14.0454545V6.95454545L13.75 10.5 7.5 14.0454545z" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/Youtube.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Youtube",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14.0173188 0C17.2968478 0 19.965 2.66811594 19.965 5.94768116v8.06963764c0 3.2795653-2.6681159 5.9476812-5.9476812 5.9476812H5.94768116C2.66811594 19.965 0 17.2968841 0 14.0173188V5.94768116C0 2.66811594 2.66811594 0 5.94768116 0zm0 2.00847826H5.94768116c-2.17554348 0-3.9392029 1.76362319-3.9392029 3.9392029v8.06963764c0 2.1755435 1.76365942 3.9392029 3.9392029 3.9392029h8.06963764c2.1755435 0 3.9392029-1.7636594 3.9392029-3.9392029V5.94768116c0-2.17557971-1.7636594-3.9392029-3.9392029-3.9392029zM9.9825 4.81884058c2.8472464 0 5.1636594 2.31637681 5.1636594 5.16362319 0 2.84724633-2.316413 5.16365943-5.1636594 5.16365943-2.84724638 0-5.16365942-2.3164493-5.16365942-5.16365943 0-2.84721015 2.31641304-5.16362319 5.16365942-5.16362319zm0 2.00847826c-1.74253623 0-3.15518116 1.4126087-3.15518116 3.15518116 0 1.7425725 1.4126087 3.1551812 3.15518116 3.1551812 1.7425362 0 3.1551812-1.412645 3.1551812-3.1551812 0-1.74257246-1.4126087-3.15518116-3.1551812-3.15518116zm5.1736594-3.20702898c.6833523 0 1.2373189.55396651 1.2373189 1.23731884 0 .68335232-.5539666 1.23731884-1.2373189 1.23731884s-1.2373188-.55396652-1.2373188-1.23731884c0-.68335233.5539665-1.23731884 1.2373188-1.23731884z" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/Instagram.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Instagram",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M10 0c5.6338028 0 10 4.12681288 10 9.70032417 0 5.57351133-4.3661972 9.70032413-10 9.70032413-1.01207243 0-1.98390342-.1327984-2.89537223-.3843107-.17706238-.0482903-.36418511-.0342056-.5331992.040242l-1.98390342.8752626c-.51911469.2273671-1.10462777-.1408469-1.12273642-.7082585l-.05432595-1.7786946c-.00804829-.2193186-.10663984-.4225405-.26961771-.5694237C1.19517103 15.1350007 0 12.6158541 0 9.70032417 0 4.12681288 4.36619718 0 10 0zm5.9224704 7.46814307c.2823356-.44591213-.2663166-.95007404-.684814-.63070454l-3.1397318 2.3902497c-.2122523.16068905-.5045998.16269767-.7188545.00200861L9.05430694 7.48019475c-.69682825-.52424804-1.6940135-.33945563-2.15856566.39971403L3.97226646 12.5318569c-.28233558.4459122.26631654.9500741.68481397.6307046l3.14173424-2.3922583c.21225228-.1606891.50459976-.1626977.71885442-.0020087l2.32476321 1.7495021c.6968282.5242481 1.6940135.3394557 2.1585656-.399714z" fill="#ffffff" fill-rule="evenodd"></path></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/Massenger.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Massenger",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.25 6.875v-2.5c0-.69.56-1.25 1.25-1.25h1.25V0h-2.5C9.17875 0 7.5 1.67875 7.5 3.75v3.125H5V10h2.5v10h3.75V10h2.5L15 6.875h-3.75z" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/Facebook.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Facebook",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg width="24" height="24" viewBox="0 0 24 23" xmlns="http://www.w3.org/2000/svg"><path d="M4.4725 6.25V20H0V6.25h4.4725zm6.25 0v2.62875c.545-.7325 2.19875-2.62875 4.80625-2.62875.305 0 .565.03375.8025.08125.06125.01.12125.02125.18125.035.05.01375.095.03.1425.045 1.92125.50125 3.345 2.2325 3.345 4.31V20h-4.47125v-8.75C14.1025 7.7925 10.7225 12.5 10.7225 12.5V20H6.25V6.25h4.4725zM2.1875 0C3.39562289 0 4.375.97937711 4.375 2.1875c0 1.20812289-.97937711 2.1875-2.1875 2.1875C.97937711 4.375 0 3.39562289 0 2.1875 0 .97937711.97937711 0 2.1875 0z" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/LinkedIn.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "LinkedIn",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg width="24" height="24" viewBox="0 0 24 22" xmlns="http://www.w3.org/2000/svg"><path d="M1.016.667 7.89 9.859.972 17.333H2.53l6.057-6.543 4.894 6.543h5.3l-7.263-9.71 6.44-6.956H16.4l-5.578 6.026L6.314.667H1.016Zm2.29 1.147H5.74l10.749 14.372h-2.434L3.305 1.814Z" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/Twitter.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Twitter",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg width="100%" height="100%" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin: auto"><path d="M19.9082668 14.3927015c-.1385415-.3785499-.4039167-.5795326-.704415-.7473434-.0565874-.0331719-.1092722-.0604899-.1522005-.0800028-.0897593-.0468309-.1814698-.0917106-.2731803-.1385415-.9385697-.4975785-1.672254-1.1258932-2.1795889-1.869334-.1717134-.2517162-.290742-.4780656-.3746473-.663438-.0429284-.1248824-.0409771-.1951288-.0097565-.2595213.0234155-.0487822.0858567-.0995157.1209799-.1248825.1619569-.1073208.3278164-.2146417.4409911-.2868393.2009827-.1307363.3609883-.23415461.4624553-.30440099.3863551-.26927776.6556328-.55611712.8234436-.87612838.2380572-.45074756.2673265-.96588764.0839054-1.4498071-.2536675-.67124313-.8897874-1.08881879-1.6585949-1.08881879-.1600057 0-.3219626.01756159-.4819682.05268478-.0429284.00975644-.0839054.01951288-.1248825.02926932.0078052-.45660143-.0039025-.94442347-.0448796-1.42053778-.1443953-1.67810782-.731733-2.55813878-1.3444375-3.25865123-.2556188-.29269322-.7005125-.72002533-1.367853-1.1024778C12.1928734.26927776 11.1391778 0 9.98986908 0c-1.14540615 0-2.19910175.26927777-3.1298662.80197943-.67124313.38245248-1.11613683.81173588-1.36980429 1.10247781-.61270448.70051245-1.20004222 1.58054341-1.34443754 3.25865123-.04097705.47611431-.0507335.96393635-.04487963 1.42053778-.04097705-.00975644-.08390539-.01951288-.12488244-.02926932-.16000563-.03512319-.32391384-.05268478-.48196818-.05268478-.76880753 0-1.40492747.41757566-1.65859493 1.08881879-.18342109.48391946-.15415177.99905954.08390539 1.4498071.16781078.32001126.43903983.60685062.8234436.87612839.10341827.07219766.26147261.17561597.46245529.30440097.10927214.0702464.26732648.1736646.42342953.2770829.02341546.0156103.10732085.0780515.13659018.1365902.03317189.0663438.03317189.1385414-.01561031.271229-.0819541.1814698-.20098268.4039167-.36879346.649779-.49757848.7278305-1.20979866 1.3444375-2.11714765 1.8361621-.48196818.2556188-.98149795.4253809-1.19223707.9990596-.16000563.4331859-.05463607.9268619.34928058 1.3424862.1326876.1424441.30049838.2692778.5112375.3863551.49562719.2731803.91710543.4078192 1.24882442.4995298.05853864.0175615.19317753.0604899.25171617.1131747.1482979.128785.12683373.3239138.32391384.6088019.11902857.1775672.25561875.2985471.36879346.3765986.4117218.2848881.87612838.3024497 1.367853.3219625.44294241.0175616.94637476.0370745 1.52005348.2263495.23805715.0780515.48587075.230252.77075882.4058679.68685343.4234295 1.62932561 1.0010108 3.20401516 1.0010108 1.5766408 0 2.5230156-.5814838 3.2157229-1.0049134.2848881-.1736646.5307504-.3258651.7610024-.4019653.5736787-.189275 1.077111-.2087879 1.5200534-.2263495.4917247-.0195128.95418-.0370744 1.367853-.3219625.1287851-.0897593.2926933-.2361059.4214783-.4585527.1404927-.2400085.1385414-.4097705.271229-.5248965.0546361-.046831.1736647-.087808.2380572-.1073209.3336703-.0917105.7610024-.2263494 1.266386-.5053836.2243981-.1229312.3980628-.2575701.5366043-.4117218l.0058538-.0058539c.3765986-.4097705.4722118-.8878361.3161087-1.3112656z" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/Snapchat.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Snapchat",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg width="100%" height="100%" viewBox="0 0 24 26" xmlns="http://www.w3.org/2000/svg" style="margin: auto"><path d="M17.0859 3.87197C15.2061 1.98972 12.7059 0.952615 10.042 0.95166C4.55283 0.95166 0.08547 5.41855 0.08356 10.9092C0.082605 12.6644 0.54147 14.3776 1.41288 15.8874L0 21.0481L5.27909 19.6634C6.7335 20.457 8.37128 20.8748 10.0377 20.8753H10.042C15.5302 20.8753 19.9981 16.4079 20 10.9173C20.0009 8.25627 18.9662 5.7547 17.0859 3.87244V3.87197ZM10.042 19.1935H10.0387C8.55367 19.1931 7.09689 18.7939 5.82583 18.0399L5.52357 17.8604L2.39078 18.6822L3.22686 15.6277L3.03013 15.3144C2.20169 13.9966 1.76383 12.4734 1.76479 10.9097C1.7667 6.3463 5.47963 2.63337 10.0454 2.63337C12.2561 2.63432 14.3342 3.49619 15.8969 5.06091C17.4598 6.62516 18.3197 8.7051 18.3188 10.9163C18.3168 15.4802 14.6039 19.1931 10.042 19.1931V19.1935ZM14.5819 12.9948C14.3332 12.8702 13.1099 12.2685 12.8816 12.1855C12.6534 12.1024 12.4877 12.0609 12.322 12.3101C12.1563 12.5594 11.6793 13.1199 11.5342 13.2856C11.389 13.4518 11.2438 13.4723 10.9951 13.3477C10.7463 13.223 9.94461 12.9604 8.99394 12.1129C8.25433 11.453 7.75483 10.6384 7.60972 10.3892C7.46456 10.1399 7.59444 10.0053 7.71856 9.8816C7.83028 9.76988 7.96733 9.59083 8.09194 9.44566C8.21661 9.30049 8.25767 9.19644 8.34072 9.03072C8.42383 8.86455 8.38228 8.71944 8.32022 8.59477C8.25811 8.47016 7.76061 7.24538 7.55289 6.74738C7.35089 6.26227 7.14561 6.32816 6.99328 6.32004C6.84811 6.31288 6.68244 6.31145 6.51628 6.31145C6.35011 6.31145 6.08078 6.37352 5.85256 6.62277C5.62433 6.87199 4.98162 7.4741 4.98162 8.69838C4.98162 9.92266 5.87311 11.1064 5.99772 11.2725C6.12233 11.4387 7.75244 13.9517 10.2483 15.0299C10.8418 15.2863 11.3054 15.4395 11.6669 15.5542C12.2628 15.7437 12.8052 15.717 13.234 15.653C13.712 15.5814 14.7061 15.0509 14.9133 14.4698C15.1206 13.8887 15.1206 13.3902 15.0585 13.2865C14.9964 13.1829 14.8303 13.1204 14.5815 12.9958L14.5819 12.9948Z" fill="#ffffff"></path></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/social/Whatsapp.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Whatsapp",
+                    htmlType: "go-to-button-link"
+                }
             }
         ]
     },
@@ -1699,16 +2024,49 @@ const interactions = [
         isTextShow: false,
         widget: [
             {
-                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-bag-icon lucide-shopping-bag"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`,
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-cart-icon lucide-shopping-cart"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/Cart.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Cart",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shopping-basket-icon lucide-shopping-basket"><path d="m15 11-1 9"/><path d="m19 11-4-7"/><path d="M2 11h20"/><path d="m3.5 11 1.6 7.4a2 2 0 0 0 2 1.6h9.8a2 2 0 0 0 2-1.6l1.7-7.4"/><path d="M4.5 15.5h15"/><path d="m5 11 4-7"/><path d="m9 11 1 9"/></svg>`,
                 isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/Basket.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Basket",
+                    htmlType: "go-to-button-link"
+                }
             },
             {
                 icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card-icon lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>`,
-                isUpgrade: false
+                isUpgrade: false,
+                attrs: {
+                    width: 46,
+                    height: 46,
+                    fill: "#41485d",
+                    type: "img",
+                    src: "/src/assets/icons/CreditCard.svg",
+                    title: "link-button",
+                    visible: true,
+                    layer: "Credit card",
+                    htmlType: "go-to-button-link"
+                }
             }
         ]
     },

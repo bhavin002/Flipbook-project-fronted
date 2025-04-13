@@ -37,7 +37,7 @@ export default function SidebarNavigation({ currentView, setCurrentView, mainSta
             setSelectedSubMenu(null);
             return;
         }
-        if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-url" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "popup-frame")) {
+        if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-url" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "popup-frame" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "spotlight" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "popup-slideshow")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
                 setSelectedItem("interactions")
@@ -53,6 +53,14 @@ export default function SidebarNavigation({ currentView, setCurrentView, mainSta
                 setOpen(true);
             }
             setSelectedSubMenu("link");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "link-tag") {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("tag");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "square-caption" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "rounded-caption")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -60,7 +68,7 @@ export default function SidebarNavigation({ currentView, setCurrentView, mainSta
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("link");
+            setSelectedSubMenu("caption");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "embed-code")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -69,6 +77,94 @@ export default function SidebarNavigation({ currentView, setCurrentView, mainSta
                 setOpen(true);
             }
             setSelectedSubMenu("embed");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "slideshow")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("slideshow");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "video-embed")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("video-embed");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "video-button")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("video-button");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "audio-button")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("audio-button");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "shop-area" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "shop-button")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("shopping-list");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "product-tag")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("product-tag");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "quiz")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("quiz");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "question")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("question");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "contact-form")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("contact-form");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-previous-page" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-next-page" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-first-page" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-last-page")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("page-options");
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-page")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            setSelectedSubMenu("go-to-page");
         } else {
             setSelectedSubMenu(null);
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
