@@ -39,7 +39,7 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
     }
     if(selectedSubMenu === 'image-filter'){
         return (
-            <ImageFilter />
+            <ImageFilter selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
         )
     }
     if(selectedSubMenu === 'image-style'){

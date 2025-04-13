@@ -1,8 +1,96 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FilterSlider } from "@/components/ui/filterSlider";
 import { Label } from "@/components/ui/label";
 
-export default function ImageFilter() {
+const filterPresets = {
+  Normal: {
+    brightness: 0,
+    contrast: 0,
+    saturation: 0,
+    sepia: 0,
+    tint: 0,
+    blur: 0,
+    vignette: 0,
+    grayscale: 0,
+  },
+  Ashby: {
+    brightness: 20,
+    contrast: 15,
+    saturation: 20,
+    sepia: 15,
+    tint: 5,
+    blur: 0,
+    vignette: 30,
+    grayscale: 0,
+  },
+  Brooklyn: {
+    brightness: -15,
+    contrast: 10,
+    saturation: -20,
+    sepia: 20,
+    tint: 8,
+    blur: 3,
+    vignette: 35,
+    grayscale: 0,
+  },
+  Moon: {
+    brightness: -20,
+    contrast: 50,
+    saturation: -100,
+    sepia: 0,
+    tint: 0,
+    blur: 8,
+    vignette: 50,
+    grayscale: 100,
+  },
+  Sutro: {
+    brightness: -30,
+    contrast: 40,
+    saturation: 10,
+    sepia: 30,
+    tint: 10,
+    blur: 5,
+    vignette: 60,
+    grayscale: 0,
+  },
+  Poprocket: {
+    brightness: 30,
+    contrast: 25,
+    saturation: 50,
+    sepia: 0,
+    tint: 15,
+    blur: 0,
+    vignette: 20,
+    grayscale: 0,
+  },
+  Skyline: {
+    brightness: 25,
+    contrast: 20,
+    saturation: 30,
+    sepia: 0,
+    tint: 0,
+    blur: 0,
+    vignette: 15,
+    grayscale: 0,
+  },
+  Rise: {
+    brightness: 35,
+    contrast: -10,
+    saturation: 15,
+    sepia: 25,
+    tint: 8,
+    blur: 6,
+    vignette: 40,
+    grayscale: 0,
+  },
+};
+
+export default function ImageFilter({
+  selectedShape,
+  setMainStage,
+  mainStage,
+  selectedIndex,
+}) {
   const imageFilters = [
     {
       id: 1,
@@ -47,14 +135,57 @@ export default function ImageFilter() {
   ];
 
   const [filters, setFilters] = useState({
-    brightness: Math.floor(Math.random() * 101),
-    contrast: Math.floor(Math.random() * 101),
-    saturation: Math.floor(Math.random() * 101),
-    sepia: Math.floor(Math.random() * 101),
-    tint: Math.floor(Math.random() * 101),
-    blur: Math.floor(Math.random() * 101),
-    vignette: Math.floor(Math.random() * 101),
+    brightness: 0,
+    contrast: 0,
+    saturation: 0,
+    sepia: 0,
+    tint: 0,
+    blur: 0,
+    vignette: 0,
+    grayscale: 0,
   });
+
+  // Load filter settings from selected shape
+  useEffect(() => {
+    if (selectedShape.length && selectedShape[0]) {
+      const effect = selectedShape[0].attrs.effect || {};
+      setFilters({
+        brightness: effect.brightness !== undefined ? effect.brightness : 0,
+        contrast: effect.contrast !== undefined ? effect.contrast : 0,
+        saturation: effect.saturation !== undefined ? effect.saturation : 0,
+        sepia: effect.sepia !== undefined ? effect.sepia : 0,
+        tint: effect.tint !== undefined ? effect.tint : 0,
+        blur: effect.blur !== undefined ? effect.blur : 0,
+        vignette: effect.vignette !== undefined ? effect.vignette : 0,
+        grayscale: effect.grayscale !== undefined ? effect.grayscale : 0,
+      });
+    }
+  }, [selectedShape]);
+
+  // Update mainStage with filter settings
+  useEffect(() => {
+    if (!selectedShape.length || !mainStage[selectedIndex]?.shapes) return;
+
+    const updatedMainStage = [...mainStage];
+    updatedMainStage[selectedIndex].shapes = mainStage[selectedIndex].shapes.map(
+      (element) => {
+        const matchingShape = selectedShape.find(
+          (selShape) => selShape.attrs.id === element.id
+        );
+        if (matchingShape) {
+          return {
+            ...element,
+            effect: {
+              ...filters,
+            },
+          };
+        }
+        return element;
+      }
+    );
+
+    setMainStage(updatedMainStage);
+  }, [filters, selectedShape, selectedIndex]);
 
   const handleFilterChange = (filterName, newValue) => {
     setFilters((prev) => ({
@@ -63,12 +194,20 @@ export default function ImageFilter() {
     }));
   };
 
+  const applyPresetFilter = (filterName) => {
+    setFilters(filterPresets[filterName]);
+  };
+
   return (
     <div className="p-6 space-y-4">
       <Label className="text-lg">Image filter</Label>
       <div className="grid grid-cols-4 gap-2 justify-items-center">
         {imageFilters.map((filter) => (
-          <div key={filter.id} className="text-center cursor-pointer">
+          <div
+            key={filter.id}
+            className="text-center cursor-pointer"
+            onClick={() => applyPresetFilter(filter.filter)}
+          >
             <img
               src={filter.url}
               alt={filter.filter}
@@ -84,7 +223,7 @@ export default function ImageFilter() {
         <Label>Brightness</Label>
         <div className="py-2 px-1 flex gap-2 items-center">
           <FilterSlider
-            min={0}
+            min={-100}
             max={100}
             value={[filters.brightness]}
             onValueChange={(value) => handleFilterChange("brightness", value)}
@@ -99,7 +238,7 @@ export default function ImageFilter() {
         <Label>Contrast</Label>
         <div className="py-2 px-1 flex gap-2 items-center">
           <FilterSlider
-            min={0}
+            min={-100}
             max={100}
             value={[filters.contrast]}
             onValueChange={(value) => handleFilterChange("contrast", value)}
@@ -114,7 +253,7 @@ export default function ImageFilter() {
         <Label>Saturation</Label>
         <div className="py-2 px-1 flex gap-2 items-center">
           <FilterSlider
-            min={0}
+            min={-100}
             max={100}
             value={[filters.saturation]}
             onValueChange={(value) => handleFilterChange("saturation", value)}

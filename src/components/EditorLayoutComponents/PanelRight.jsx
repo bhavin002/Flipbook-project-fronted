@@ -32,7 +32,7 @@ export default function PanelRight({ isCropping, isRightLateralCollapse, setIsRi
     <div className="z-[11]">
       <div className="flex flex-col space-y-2 mt-2">
         {elements.map((element, index) => (
-          <div className="text-center w-[72px]" key={index} onClick={() => handleRightPanel(currentRightPanel, element.text)} >
+          <div className="text-center w-[72px] flex flex-col" key={index} onClick={() => handleRightPanel(currentRightPanel, element.text)} >
             <Button className={`${(currentRightPanel == element.text) ? 'text-primary bg-accent' : 'hover:text-black'}`} size="sm" variant="ghost">
               {element.icon}
             </Button>

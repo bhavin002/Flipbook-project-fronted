@@ -1,70 +1,90 @@
-export const EffectEvent = (shape, ractnode , imgNode) => {
+import Konva from 'konva';
+
+export const EffectEvent = (shape, rectNode, imgNode) => {
     const effect = shape.effect || {};
 
-    if(!imgNode || !ractnode) return;
-    if (ractnode.isCached()) {
-        ractnode.clearCache();
+    if (!imgNode || !rectNode) return;
+
+    if (rectNode.isCached()) {
+        rectNode.clearCache();
     }
     if (imgNode.isCached()) {
         imgNode.clearCache();
     }
 
     let filterArray = [];
-    switch (effect.filterData) {
-        case 'Grayscale':
-            filterArray = [Konva.Filters.Grayscale];
-            break;
-        case 'Sepia':
-            filterArray = [Konva.Filters.Sepia];
-            break;
-        case 'Cold':
-            filterArray = [Konva.Filters.RGB];
-            imgNode.red(100);
-            imgNode.green(150);
-            imgNode.blue(255);
-            break;
-        case 'Warm':
-            filterArray = [Konva.Filters.RGB];
-            imgNode.red(255);
-            imgNode.green(200);
-            imgNode.blue(100);
-            break;
-        case 'Natural':
-            filterArray = [];
-            break;
-        default:
-            filterArray = [];
-            break;
-    }
 
-    if (effect.blurRadius > 0) {
+    const defaultValues = {
+        brightness: 0,
+        contrast: 0,
+        saturation: 0,
+        sepia: 0,
+        tint: 0,
+        blur: 0,
+        vignette: 0,
+        grayscale: 0,
+    };
+
+    const mergedEffect = { ...defaultValues, ...effect };
+
+    if (mergedEffect.blur > 0) {
         filterArray.push(Konva.Filters.Blur);
-        imgNode.blurRadius(effect.blurRadius);
+        imgNode.blurRadius(mergedEffect.blur / 20);
     }
 
-    if (effect.brightness !== 0) {
+    if (mergedEffect.brightness !== 0) {
         filterArray.push(Konva.Filters.Brighten);
-        imgNode.brightness(effect.brightness);
+        imgNode.brightness(mergedEffect.brightness / 200);
     }
 
-    imgNode.stroke(effect.borderColor);
-    imgNode.strokeWidth(effect.borderWidth);
+    if (mergedEffect.contrast !== 0) {
+        filterArray.push(Konva.Filters.Contrast);
+        imgNode.contrast(mergedEffect.contrast);
+    }
 
-    if (effect.shadowEnabled) {
-        ractnode.shadowColor('black');
-        ractnode.shadowBlur(effect.shadowBlur || 0);
-        ractnode.shadowOffset({ x: effect.offsetX || 0, y: effect.offsetY || 0 });
+    if (mergedEffect.saturation !== 0) {
+        filterArray.push(Konva.Filters.HSL);
+        imgNode.saturation(mergedEffect.saturation / 50); // Reverted to /50
+    }
+
+    if (mergedEffect.sepia > 0) {
+        filterArray.push(Konva.Filters.HSL);
+        imgNode.hue(35);
+        imgNode.saturation(mergedEffect.sepia / 100);
+        imgNode.luminance(mergedEffect.sepia / 200);
+    }
+
+    if (mergedEffect.tint > 0) {
+        filterArray.push(Konva.Filters.HSL);
+        imgNode.hue((mergedEffect.tint / 200) * 360);
+    }
+
+    if (mergedEffect.grayscale > 0) {
+        filterArray.push(Konva.Filters.Grayscale);
+    }
+
+    if (mergedEffect.vignette > 0) {
+        const width = shape.width || imgNode.width();
+        const height = shape.height || imgNode.height();
+        rectNode.fillRadialGradientStartPoint({ x: width / 2, y: height / 2 });
+        rectNode.fillRadialGradientEndPoint({ x: width / 2, y: height / 2 });
+        rectNode.fillRadialGradientStartRadius(0);
+        rectNode.fillRadialGradientEndRadius(Math.max(width, height) / 1.5);
+        rectNode.fillRadialGradientColorStops([
+            0,
+            'rgba(0, 0, 0, 0)',
+            1,
+            `rgba(0, 0, 0, ${mergedEffect.vignette / 100})`,
+        ]);
     } else {
-        ractnode.shadowColor('rgba(0, 0, 0, 0)');
-        ractnode.shadowBlur(0);
-        ractnode.shadowOffset({ x: 0, y: 0 });
+        rectNode.fill('rgba(0, 0, 0, 0)');
     }
-
-    imgNode.opacity((effect.opacity || 100) / 100);
 
     if (filterArray.length > 0) {
         imgNode.filters(filterArray);
         imgNode.cache();
+    } else {
+        imgNode.filters([]);
     }
 
     imgNode.getLayer()?.batchDraw();

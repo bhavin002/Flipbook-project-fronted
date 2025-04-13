@@ -2,10 +2,17 @@ import { EffectEvent } from '@/utils/EffectEvent';
 import React, { useEffect, useState, useRef } from 'react';
 import { Group, Image, Rect } from 'react-konva';
 
-export default function StockPhoto({ shape, isCropping, handleDragStart, handleDrag, onSelect, ...props }) {
+export default function StockPhoto({
+    shape,
+    isCropping,
+    handleDragStart,
+    handleDrag,
+    onSelect,
+    ...props
+}) {
     const [loadedImage, setLoadedImage] = useState(null);
     const imageRef = useRef(null);
-    const ractRef = useRef(null);
+    const rectRef = useRef(null);
     const groupRef = useRef();
     const clipGroupRef = useRef();
 
@@ -21,39 +28,48 @@ export default function StockPhoto({ shape, isCropping, handleDragStart, handleD
     }, [shape?.src]);
 
     useEffect(() => {
-        if (!loadedImage || !imageRef.current) return;
+        if (!loadedImage || !imageRef.current || !rectRef.current) return;
         const node = imageRef.current;
-        const ractRefnode = ractRef.current;
+        const rectNode = rectRef.current;
 
         if (shape && shape.cropImage) {
             try {
-                const cropImage = typeof shape.cropImage === 'string' ? JSON.parse(shape.cropImage) : shape.cropImage;
+                const cropImage =
+                    typeof shape.cropImage === 'string'
+                        ? JSON.parse(shape.cropImage)
+                        : shape.cropImage;
                 if (cropImage && cropImage.attrs) {
                     node.cropTransform({ ...cropImage.attrs });
                 }
             } catch (error) {
-                console.error("Error parsing cropImage:", error);
+                console.error('Error parsing cropImage:', error);
             }
         }
-        EffectEvent(shape, ractRefnode, node);
+
+        // Apply opacity
+        if (shape?.effect?.opacity !== undefined) {
+            node.opacity(shape.effect.opacity / 100); // Scale 0-100 to 0-1
+        }
+
+        EffectEvent(shape, rectNode, node);
         node.getLayer()?.batchDraw();
     }, [
         loadedImage,
         isCropping,
         shape,
         shape?.fill,
-        shape?.effect?.filterData,
-        shape?.effect?.blurRadius,
         shape?.effect?.brightness,
-        shape?.effect?.borderWidth,
-        shape?.effect?.borderColor,
-        shape?.effect?.cornerRadius,
-        shape?.effect?.shadowEnabled,
-        shape?.effect?.shadowBlur,
-        shape?.effect?.offsetX,
-        shape?.effect?.offsetY,
+        shape?.effect?.contrast,
+        shape?.effect?.saturation,
+        shape?.effect?.sepia,
+        shape?.effect?.tint,
+        shape?.effect?.blur,
+        shape?.effect?.vignette,
+        shape?.effect?.grayscale,
+        shape?.effect?.hueRotate,
+        shape?.effect?.invert,
+        shape?.effect?.temperature,
         shape?.effect?.opacity,
-        shape?.effect?.color,
     ]);
 
     const handleGroupClick = (e) => {
@@ -65,10 +81,18 @@ export default function StockPhoto({ shape, isCropping, handleDragStart, handleD
 
     const shapeEffect = shape?.effect || {};
     const shapeCornerRadius = shapeEffect.cornerRadius || 0;
-    const topLeftRadius = shapeEffect.individualCorners ? (shapeEffect.topLeftRadius || 0) : shapeCornerRadius;
-    const topRightRadius = shapeEffect.individualCorners ? (shapeEffect.topRightRadius || 0) : shapeCornerRadius;
-    const bottomRightRadius = shapeEffect.individualCorners ? (shapeEffect.bottomRightRadius || 0) : shapeCornerRadius;
-    const bottomLeftRadius = shapeEffect.individualCorners ? (shapeEffect.bottomLeftRadius || 0) : shapeCornerRadius;
+    const topLeftRadius = shapeEffect.individualCorners
+        ? shapeEffect.topLeftRadius || 0
+        : shapeCornerRadius;
+    const topRightRadius = shapeEffect.individualCorners
+        ? shapeEffect.topRightRadius || 0
+        : shapeCornerRadius;
+    const bottomRightRadius = shapeEffect.individualCorners
+        ? shapeEffect.bottomRightRadius || 0
+        : shapeCornerRadius;
+    const bottomLeftRadius = shapeEffect.individualCorners
+        ? shapeEffect.bottomLeftRadius || 0
+        : shapeCornerRadius;
     const shapeWidth = shape?.width || loadedImage?.width || 0;
     const shapeHeight = shape?.height || loadedImage?.height || 0;
 
@@ -86,33 +110,34 @@ export default function StockPhoto({ shape, isCropping, handleDragStart, handleD
             {...shape}
             name="shape"
         >
-            {/* Rectangle with shadow */}
             <Rect
-                ref={ractRef}
-                x={0 + 2}
-                y={0 + 2}
-                width={shapeWidth - 4}
-                height={shapeHeight - 4}
-                cornerRadius={shapeCornerRadius || [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
+                ref={rectRef}
+                x={0}
+                y={0}
+                width={shapeWidth}
+                height={shapeHeight}
+                cornerRadius={[topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
                 fill="#000000"
             />
-
-            {/* Nested Group with clipping */}
             <Group
                 x={0}
                 y={0}
                 width={shapeWidth}
                 height={shapeHeight}
                 ref={clipGroupRef}
-                fill={'#ffffff'}
                 clipFunc={(ctx) => {
                     ctx.beginPath();
                     ctx.moveTo(topLeftRadius, 0);
                     ctx.lineTo(shapeWidth - topRightRadius, 0);
                     ctx.quadraticCurveTo(shapeWidth, 0, shapeWidth, topRightRadius);
                     ctx.lineTo(shapeWidth, shapeHeight - bottomRightRadius);
-                    ctx.quadraticCurveTo(shapeWidth, shapeHeight, shapeWidth - bottomRightRadius, shapeHeight);
-                    ctx.lineTo(bottomLeftRadius, shapeHeight); // Note: customLeftRadius seems to be a typo, should be bottomLeftRadius
+                    ctx.quadraticCurveTo(
+                        shapeWidth,
+                        shapeHeight,
+                        shapeWidth - bottomRightRadius,
+                        shapeHeight
+                    );
+                    ctx.lineTo(bottomLeftRadius, shapeHeight);
                     ctx.quadraticCurveTo(0, shapeHeight, 0, shapeHeight - bottomLeftRadius);
                     ctx.lineTo(0, topLeftRadius);
                     ctx.quadraticCurveTo(0, 0, topLeftRadius, 0);
@@ -136,8 +161,6 @@ export default function StockPhoto({ shape, isCropping, handleDragStart, handleD
                     ref={imageRef}
                     zIndex={1}
                 />
-
-
             </Group>
         </Group>
     );
