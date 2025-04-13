@@ -13,7 +13,7 @@ export function LoginForm({
 
   return (
     (<div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden shadow rounded-xl">
         <CardContent className="grid p-0 md:grid-cols-2" >
           <form className="p-6 md:p-8">
             <div className="flex flex-col gap-6">
@@ -32,7 +32,7 @@ export function LoginForm({
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" placeholder="m@example.com" required />
+                <Input id="email" type="email" placeholder="m@example.com" defaultValue="user@flipnova.com" required />
               </div>
               <div className="grid gap-2">
                 <div className="flex items-center">
@@ -43,9 +43,11 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" placeholder="********" required />
+                <Input id="password" type="password" placeholder="********" defaultValue="user@flipnova" required />
               </div>
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full" onClick={() => {
+                navigate("/")
+              }}>
                 Login
               </Button>
               <div className="text-center text-sm">
