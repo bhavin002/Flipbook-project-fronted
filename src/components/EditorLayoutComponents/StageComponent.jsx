@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Layer, Rect, Stage, Group, Line, Transformer } from "react-konva";
 import { v4 as uuid } from "uuid";
-import LinkArea from "./Widget/Hyperlink";
 import StagePageMenu from "./StagePageMenu";
 import ShapeMakerForAll from "./Widget/ShapeMakerForAll";
 import MaskedImage from "./Widget/MaskedImage";
@@ -9,6 +8,11 @@ import StockPhoto from "./Widget/StockPhoto";
 import LinkButton from "./Widget/LinkButton";
 import Tag from "./Widget/Tag";
 import EmbedCode from "./Widget/EmbedCode";
+import SlideShow from "./Widget/SlideShow";
+import VideoButton from "./Widget/VideoButton";
+import ShopButton from "./Widget/ShopButton";
+import RingShape from "./Widget/RingShape";
+import Hyperlink from "./Widget/Hyperlink";
 
 export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
@@ -895,7 +899,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                             {stage.shapes.map((shape) => {
                                 switch (shape.title) {
                                     case 'hyperlink':
-                                        return <LinkArea onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable setMainStage={setMainStage} selectedIndex={selectedIndex} mainStage={mainStage} mainStageString={mainStageString} setMainStageString={setMainStageString} />;
+                                        return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable setMainStage={setMainStage} selectedIndex={selectedIndex} mainStage={mainStage} mainStageString={mainStageString} setMainStageString={setMainStageString} />;
                                     case 'stock-photo':
                                         return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'shape-widget':
@@ -908,6 +912,30 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                         return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
                                     case 'embed-code':
                                         return <EmbedCode onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />;
+                                    case 'slideshow':
+                                        return <SlideShow onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />;
+                                    case 'video-embed':
+                                        return <VideoButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                    case 'video-button':
+                                        return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                    case 'audio-button':
+                                        return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                    case 'shop-area':
+                                        return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />;
+                                    case 'shop-button':
+                                        return <ShopButton onDragMove={handleShapeDragMove} mainStage={mainStage} handleDragStart={handleDragStart} handleDrag={handleDrag} selectedIndex={selectedIndex} key={shape.id} shape={shape} draggable onSelect={handleSelectShape} />;
+                                    case 'product-tag':
+                                        return <RingShape onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />;
+                                    case 'quiz':
+                                        return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                    case 'question':
+                                        return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                    case 'contact-form':
+                                        return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                    case 'page-options':
+                                        return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                    case 'go-to-page':
+                                        return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
                                     case 'masked-image':
                                         return (
                                             <MaskedImage

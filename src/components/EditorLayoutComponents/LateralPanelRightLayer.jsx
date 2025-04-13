@@ -1,6 +1,6 @@
 
 import { deleteShape } from '@/utils/Helper';
-import { X, Lock, Unlock, Eye, EyeOff, Copy, Files, Trash2, AlignStartHorizontal, AlignCenterHorizontal, AlignEndHorizontal, AlignStartVertical, AlignCenterVertical, AlignEndVertical, ChevronsLeft, AlignVerticalJustifyCenter, SquareMousePointer, Shapes, Image, MousePointerClick } from 'lucide-react';
+import { X, Lock, Unlock, Eye, EyeOff, Copy, Files, Trash2, AlignStartHorizontal, AlignCenterHorizontal, AlignEndHorizontal, AlignStartVertical, AlignCenterVertical, AlignEndVertical, ChevronsLeft, AlignVerticalJustifyCenter, SquareMousePointer, Shapes, Image, MousePointerClick, SquareDashedBottomCode, Youtube, SquarePlay, ShoppingBag, Mail, SquareDot, CircleHelp } from 'lucide-react';
 import { ReactSortable } from 'react-sortablejs';
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from "uuid";
@@ -28,6 +28,31 @@ export default function LateralPanelRightLayer({ setCurrentRightPanel, mainStage
         "Tag": <MousePointerClick className='w-4 h-4' />,
         "Interactions": <MousePointerClick className='w-4 h-4' />,
         "Embed": <MousePointerClick className='w-4 h-4' />,
+        "Slideshow": <SquareDashedBottomCode className='w-4 h-4' />,
+        "Video widget": <Youtube className='w-4 h-4' />,
+        "Video": <SquarePlay className='w-4 h-4' />,
+        "Audio": <SquarePlay className='w-4 h-4' />,
+        "Shopping area": <ShoppingBag className='w-4 h-4' />,
+        "Shopping button": <ShoppingBag className='w-4 h-4' />,
+        "Product Tag": <MousePointerClick className='w-4 h-4' />,
+        "Quiz": <SquareDot className='w-4 h-4' />,
+        "Question": <CircleHelp className='w-4 h-4' />,
+        "Contact form": <Mail className='w-4 h-4' />,
+        "TikTok": <MousePointerClick className='w-4 h-4' />,
+        "Pinterest": <MousePointerClick className='w-4 h-4' />,
+        "Reddit": <MousePointerClick className='w-4 h-4' />,
+        'Spotify': <MousePointerClick className='w-4 h-4' />,
+        "Youtube": <MousePointerClick className='w-4 h-4' />,
+        "Instagram": <MousePointerClick className='w-4 h-4' />,
+        "Massenger": <MousePointerClick className='w-4 h-4' />,
+        "Facebook": <MousePointerClick className='w-4 h-4' />,
+        "LinkedIn": <MousePointerClick className='w-4 h-4' />,
+        "Twitter": <MousePointerClick className='w-4 h-4' />,
+        "Snapchat": <MousePointerClick className='w-4 h-4' />,
+        "Whatsapp": <MousePointerClick className='w-4 h-4' />,
+        "Cart": <MousePointerClick className='w-4 h-4' />,
+        "Basket": <MousePointerClick className='w-4 h-4' />,
+        "Credit card": <MousePointerClick className='w-4 h-4' />,
     }
     const selectLayer = (shape) => {
         if (isToggle) {

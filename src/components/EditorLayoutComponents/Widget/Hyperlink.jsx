@@ -2,7 +2,7 @@ import { EffectEvent } from '@/utils/EffectEvent';
 import React, { useEffect, useRef } from 'react';
 import { Rect } from 'react-konva';
 
-export default function LinkArea({ onDragMove, shape, mainStage, setMainStage, handleDragStart, selectedIndex, mainStageString, setMainStageString, handleDrag, ...props }) {
+export default function Hyperlink({ onDragMove, shape, mainStage, setMainStage, handleDragStart, selectedIndex, mainStageString, setMainStageString, handleDrag, ...props }) {
     const rectRef = useRef(null);
     useEffect(() => {
         if (!rectRef || !rectRef.current) return;

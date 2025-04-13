@@ -10,6 +10,17 @@ import Link from "../widgetSidebar/Link"
 import Tag from "../widgetSidebar/Tag"
 import Caption from "../widgetSidebar/Caption"
 import Embed from "../widgetSidebar/Embed"
+import SlideShow from "../widgetSidebar/SlideShow"
+import VideoWidget from "../widgetSidebar/VideoWidget"
+import Video from "../widgetSidebar/Video"
+import Audio from "../widgetSidebar/Audio"
+import ShoppingList from "../widgetSidebar/ShoppingList"
+import ProductTag from "../widgetSidebar/ProductTag"
+import Quiz from "../widgetSidebar/Quiz"
+import Question from "../widgetSidebar/Question"
+import ContactForm from "../widgetSidebar/ContactForm"
+import PageOptions from "../widgetSidebar/PageOptions"
+import GoToPage from "../widgetSidebar/GoToPage"
 
 function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage, selectedIndex) {
     if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
@@ -72,6 +83,62 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
             <Embed />
         )
     }
+    if(selectedSubMenu === "slideshow"){
+        return (
+            <SlideShow />
+        )
+    }
+    if(selectedSubMenu === "video-embed"){
+        return (
+            <VideoWidget />
+        )
+    }
+    if(selectedSubMenu === "video-button"){
+        return (
+            <Video />
+        )
+    }
+    if(selectedSubMenu === "audio-button"){
+        return (
+            <Audio />
+        )
+    }
+    if(selectedSubMenu === "shopping-list"){
+        return (
+            <ShoppingList />
+        )
+    }
+    if(selectedSubMenu === "product-tag"){
+        return (
+            <ProductTag />
+        )
+    }
+    if(selectedSubMenu === "quiz"){
+        return (
+            <Quiz />
+        )
+    }
+    if(selectedSubMenu === "question"){
+        return (
+            <Question />
+        )
+    }
+    if(selectedSubMenu === "contact-form"){
+        return (
+            <ContactForm />
+        )
+    }
+    if(selectedSubMenu === "page-options"){
+        return (
+            <PageOptions />
+        )
+    }
+    if(selectedSubMenu === "go-to-page"){
+        return (
+            <GoToPage />
+        )
+    }
+
 }
 
 export default function ShapeEditorLayout({ selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex }) {
