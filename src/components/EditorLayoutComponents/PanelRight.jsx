@@ -29,7 +29,7 @@ export default function PanelRight({ isCropping, isRightLateralCollapse, setIsRi
   }
 
   return (
-    <div className="z-[11]">
+    <div className="z-[11] max-lg:hidden">
       <div className="flex flex-col space-y-2 mt-2">
         {elements.map((element, index) => (
           <div className="text-center w-[72px] flex flex-col" key={index} onClick={() => handleRightPanel(currentRightPanel, element.text)} >

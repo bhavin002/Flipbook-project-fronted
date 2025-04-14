@@ -5,7 +5,12 @@ import {
     Drawer,
     DrawerContent,
 } from "@/components/ui/drawer";
-import { getData } from '@/utils/datas';
+import { Component, LayoutPanelLeft, SquareMousePointer, Type, Upload } from 'lucide-react';
+import TemplateSidebarPanel from './Templates/TemplateSidebarPanel';
+import InteractionsSidebarPanel from './Interactions/InteractionsSidebarPanel';
+import TextSidebarPanel from './Text/TextSidebarPanel';
+import UploadsSidebarPanel from './Uploads/UploadsSidebarPanel';
+import ElementsSidebarPanel from './Elements/ElementsSidebarPanel';
 
 function NavItem({ item, isSelected, onClick }) {
     return (
@@ -23,11 +28,42 @@ function NavItem({ item, isSelected, onClick }) {
 }
 
 
-export default function BottomEditorPanel() {
+export default function BottomEditorPanel({ mainStage, selectedIndex, currentView, setCurrentView }) {
     const [selectedItem, setSelectedItem] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-    const menuItems = getData('editorBottomNavItems')
+    const editorBottomNavItems = [
+        {
+            value: "Templates",
+            icon: <LayoutPanelLeft />,
+            label: "Templates",
+            component: <TemplateSidebarPanel />
+        },
+        {
+            value: "interactions",
+            icon: <SquareMousePointer />,
+            label: "Interactions",
+            component: <InteractionsSidebarPanel />
+        },
+        {
+            value: "text",
+            icon: <Type />,
+            label: "Text",
+            component: <TextSidebarPanel />
+        },
+        {
+            value: "uploads",
+            icon: <Upload />,
+            label: "Uploads",
+            component: <UploadsSidebarPanel />
+        },
+        {
+            value: "elements",
+            icon: <Component />,
+            label: "Elements",
+            component: <ElementsSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView}/>
+        }
+    ];
 
     const handleItemClick = (itemValue) => {
         setSelectedItem(itemValue);
@@ -46,7 +82,7 @@ export default function BottomEditorPanel() {
     };
 
     const renderDrawerContent = () => {
-        const item = menuItems.find(item => item.value === selectedItem);
+        const item = editorBottomNavItems.find(item => item.value === selectedItem);
         if (!item) return null;
         return (
             <>
@@ -59,7 +95,7 @@ export default function BottomEditorPanel() {
     return (
         <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
             <nav className="fixed bottom-0 left-0 right-0 lg:hidden flex py-3 items-center justify-around bg-primary lg:h-16 z-10">
-                {menuItems.map(item => (
+                {editorBottomNavItems.map(item => (
                     <NavItem
                         key={item.value}
                         item={item}
