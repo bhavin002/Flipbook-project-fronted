@@ -875,6 +875,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
                     onClick={handleClick}
+                    onTap={handleClick}
                 >
                     <Layer>
                         <Rect
