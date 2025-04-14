@@ -66,25 +66,38 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
     useEffect(() => {
         if (isCropping) return;
         const updateRectSize = () => {
-            setWidth(parentRef.current?.getBoundingClientRect().width);
-            setHeight(parentRef.current?.getBoundingClientRect().height)
-            if (!width || !height) return;
-            let newHeight = height;
-            if (height < 300) (newHeight = 300);
-            const size = Math.min(width, newHeight) * (newHeight < 400 ? 0.7 : 0.8);
-            let tempWidth = 0;
-            let tempHeight = 0;
-            newHeight * (newHeight < 400 ? 0.7 : 0.8) == size ?
-                (tempWidth = mainStage[0].CANVAS_WIDTH * size / mainStage[0].CANVAS_HEIGHT) :
-                (tempHeight = mainStage[0].CANVAS_HEIGHT * size / mainStage[0].CANVAS_WIDTH);
+            const parentWidth = parentRef.current?.getBoundingClientRect().width;
+            const parentHeight = parentRef.current?.getBoundingClientRect().height;
 
-            tempWidth == 0 ? tempWidth = size : tempHeight = size;
+            if (!parentWidth || !parentHeight) return;
 
-            const x = (width / 2 - tempWidth / 2);
+            setWidth(parentWidth);
+            setHeight(parentHeight);
+
+            // Calculate the aspect ratio of the mainStage
+            const stageAspectRatio = mainStage[0].CANVAS_WIDTH / mainStage[0].CANVAS_HEIGHT;
+
+            // Minimum height constraint
+            let newHeight = Math.max(parentHeight, 300);
+
+            // Calculate scaled dimensions based on aspect ratio
+            let tempWidth, tempHeight;
+
+            // Check if width or height is the limiting factor
+            if (parentWidth / newHeight >= stageAspectRatio) {
+                tempHeight = newHeight * (newHeight < 400 ? 0.7 : 0.8);
+                tempWidth = tempHeight * stageAspectRatio;
+            } else {
+                tempWidth = parentWidth * (newHeight < 400 ? 0.8 : 0.8);
+                tempHeight = tempWidth / stageAspectRatio;
+            }
+
+            // Calculate position to center the canvas
+            const x = (parentWidth - tempWidth) / 2;
             const y = (newHeight - tempHeight) / 2;
-            const scaleY = tempHeight / mainStage[0].CANVAS_HEIGHT;
             const scaleX = tempWidth / mainStage[0].CANVAS_WIDTH;
-            setRectProps({ x, y, size, tempWidth, tempHeight });
+            const scaleY = tempHeight / mainStage[0].CANVAS_HEIGHT;
+            setRectProps({ x, y, size: Math.min(tempWidth, tempHeight), tempWidth, tempHeight });
             setScale({ scaleX, scaleY });
         };
         // if (index == 0) {
