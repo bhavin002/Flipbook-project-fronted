@@ -63,33 +63,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
         return () => window.removeEventListener('resize', updateWidth);
     }, [parentRef]);
 
-    // Rect Size and Scale Calculation Effect
-    // useEffect(() => {
-    //     const updateRectSize = () => {
-    //         if (!width || !height) return;
-
-    //         const size = Math.min(width, height) * 0.8;
-    //         let tempWidth = 0;
-    //         let tempHeight = 0;
-    //         height * 0.8 == size ?
-    //             (tempWidth = mainStage[0].CANVAS_WIDTH * size / mainStage[0].CANVAS_HEIGHT) :
-    //             (tempHeight = mainStage[0].CANVAS_HEIGHT * size / mainStage[0].CANVAS_WIDTH);
-
-    //         tempWidth == 0 ? tempWidth = size : tempHeight = size;
-
-    //         const x = (width / 2 - tempWidth / 2);
-    //         const y = (height - tempHeight) / 2;
-    //         const scaleY = tempHeight / mainStage[0].CANVAS_HEIGHT;
-    //         const scaleX = tempWidth / mainStage[0].CANVAS_WIDTH;
-    //         setRectProps({ x, y, size, tempWidth, tempHeight });
-    //         setScale({ scaleX, scaleY });
-    //     };
-
-    //     if (index === 0) {
-    //         setTimeout(updateRectSize, 20);
-    //     }
-    // }, [width, height, toggleLateral, isRightLateralCollapse]);
-
     useEffect(() => {
         if (isCropping) return;
         const updateRectSize = () => {

@@ -96,7 +96,6 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style") }}>
                         Style
                     </Button>
-                    <div className="border-r"></div>
                     <Button variant="ghost" size="sm" onClick={handleCrop}>
                         Crop
                     </Button>

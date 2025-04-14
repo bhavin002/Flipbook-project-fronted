@@ -195,7 +195,7 @@ export default function SidebarNavigation({ currentView, setCurrentView, mainSta
     };
 
     return (
-        <div className="flex h-[calc(100vh-64px)] w-[75px] flex-col items-center bg-primary py-4 z-[11]">
+        <div className="flex h-[calc(100vh-64px)] w-[75px] flex-col items-center bg-primary py-4 z-[11] ">
             <div className="space-y-3 w-full">
                 {navItems.map(item => (
                     <NavItem
