@@ -68,7 +68,8 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         <Label htmlFor="use-as-mask" className="text-xs">
                             Use as mask
                         </Label>
-                    </div>}
+                    </div>
+                    }
                 {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "shape-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("shape-style") }}>
                     Style
                 </Button>}
@@ -369,7 +370,7 @@ export default function LeftSideElements({ selectedSubMenu, setSelectedSubMenu, 
 
     return (
         <>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-none">
                 {renderElements(selectedShape[0].attrs.title, selectedShape, selectedSubMenu, setSelectedSubMenu, setMainStage, mainStage, selectedIndex, handleCrop)}
             </div>
         </>

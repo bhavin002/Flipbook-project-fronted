@@ -4,7 +4,7 @@ import { ReactSortable } from 'react-sortablejs';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 
-export default function LateralPanelRightPages({ isSidebarOpen,setCurrentRightPanel, mainStage, selectedIndex, setSelectedIndex, setIsRightLateralCollapse, setMainStage, index, isExpanded, setIsExpanded }) {
+export default function LateralPanelRightPages({ setIsPageShow,isSidebarOpen,setCurrentRightPanel, mainStage, selectedIndex, setSelectedIndex, setIsRightLateralCollapse, setMainStage, index, isExpanded, setIsExpanded }) {
     const toggleBtn = () => {
         setIsExpanded(!isExpanded);
     }
@@ -43,10 +43,12 @@ export default function LateralPanelRightPages({ isSidebarOpen,setCurrentRightPa
             setCurrentRightPanel('')
 
         }
+        setIsPageShow(false);
+
     }
 
     return (
-        <div className='flex w-[276px] relative border border-gray-200'>
+        <div className='flex w-[276px] relative border border-gray-200 h-full'>
             <div className={`bg-white flex flex-col lateral-panel-right h-[calc(100%-50px)] absolute ${isExpanded ? `right-0 ${isSidebarOpen ? 'w-[60vw]' :'w-[85vw]'} bg-white z-[11] border-r-2 rounded-l-sm transition-all` : 'w-full'}`}>
                 <div className="flex items-center justify-between bg-accent p-1 border-b">
                     <button className={`p-1 hover:bg-gray-100 rounded ${isExpanded ? 'rotate-180' : ''}`} onClick={toggleBtn} aria-label="Expand panel">

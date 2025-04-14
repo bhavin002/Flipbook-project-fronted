@@ -393,6 +393,7 @@ export default function Editor() {
     const [isUndoAction, setIsUndoAction] = useState(false); // Stack for redo
     const [isRedoAction, setIsRedoAction] = useState(false); // Stack for redo
     const [zoomper, setZoomper] = useState(50);
+    const [isPageShow, setIsPageShow] = useState(false);
 
     const scrollRef = useRef(null);
 
@@ -660,7 +661,7 @@ export default function Editor() {
     return (
         <div className="flex w-full flex-col h-full">
             <TopToolbar isCropping={isCropping} handleCrop={handleCrop} handleCropEnd={handleCropEnd} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
-            <div className="flex w-full flex-grow">
+            <div className="flex w-full flex-grow relative">
                 <div style={{ userSelect: 'none' }} className="flex flex-col overflow-y-auto relative flex-grow w-full overflow-auto" >
                     <div style={{
                         position: 'absolute',
@@ -681,14 +682,46 @@ export default function Editor() {
                                     )
                                 })
                             }
+
+
                         </div>
+
+                    </div>
+
+                </div>
+                <div className="absolute lg:hidden bottom-[10px] left-[10px] z-10">
+                    <div className="flex items-center bg-white rounded-sm border border-gray-200">
+                        <Button variant="ghost" onClick={() => setIsPageShow(!isPageShow)}>
+                            <Undo className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" onClick={handleRedo} disabled={redoStack.length === 0}>
+                            <Redo className="w-4 h-4" />
+                        </Button>
                     </div>
                 </div>
-                {isRightLateralCollapse && currentRightPanel == 'Pages' && <LateralPanelRightPages isSidebarOpen={isSidebarOpen} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} isExpanded={isExpanded} index={selectedIndex} setIsExpanded={setIsExpanded} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} setIsRightLateralCollapse={setIsRightLateralCollapse} setMainStage={setMainStage} />}
+                <div className="absolute lg:hidden bottom-[10px] right-[10px] z-10">
+                    <div className="flex items-center bg-white rounded-sm border border-gray-200">
+                        <Button variant="ghost" onClick={handleUndo} disabled={undoStack.length <= 1}>
+                            <Undo className="w-4 h-4" />
+                        </Button>
+                        <Button variant="ghost" onClick={handleRedo} disabled={redoStack.length === 0}>
+                            <Redo className="w-4 h-4" />
+                        </Button>
+                    </div>
+                </div>
+                {isPageShow &&
+                    <div className="absolute lg:hidden top-0 right-0 z-10 bottom-0">
+                        <LateralPanelRightPages setIsPageShow={setIsPageShow} isSidebarOpen={isSidebarOpen} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} isExpanded={isExpanded} index={selectedIndex} setIsExpanded={setIsExpanded} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} setIsRightLateralCollapse={setIsRightLateralCollapse} setMainStage={setMainStage} />
+
+                    </div>
+                }
+                {isRightLateralCollapse && currentRightPanel == 'Pages' && 
+                 <LateralPanelRightPages isSidebarOpen={isSidebarOpen} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} isExpanded={isExpanded} index={selectedIndex} setIsExpanded={setIsExpanded} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} setIsRightLateralCollapse={setIsRightLateralCollapse} setMainStage={setMainStage} />
+                 }
                 {isRightLateralCollapse && currentRightPanel == 'Layers' && <LateralPanelRightLayer setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} setSelectedAlignType={setSelectedAlignType} isExpanded={isExpanded} setIsExpanded={setIsExpanded} setIsRightLateralCollapse={setIsRightLateralCollapse} />}
                 <PanelRight isCropping={isCropping} currentRightPanel={currentRightPanel} setCurrentRightPanel={setCurrentRightPanel} isRightLateralCollapse={isRightLateralCollapse} setIsRightLateralCollapse={setIsRightLateralCollapse} />
-                {!isCropping && <div className="fixed flex items-center bottom-[10px] right-[80px] gap-2">
-                    <div className="flex items-center bg-white rounded-sm border border-gray-200">
+                {!isCropping && <div className="fixed flex items-center bottom-[10px] right-[80px] gap-2 max-lg:hidden">
+                    <div className="flex items-center bg-white rounded-sm border border-gray-200 ">
                         <Button size="xs" variant="ghost" onClick={handleUndo} disabled={undoStack.length <= 1}>
                             <Undo className="w-4 h-4" />
                         </Button>

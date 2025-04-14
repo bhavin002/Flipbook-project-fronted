@@ -43,51 +43,6 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 "scaleY": 6.473258078064039,
                 "skewX": 0,
                 "skewY": 0
-            },
-            {
-                "x": 461.48571428571415,
-                "y": 688.9142857142857,
-                "type": "img",
-                "src": "https://images.pexels.com/photos/794064/pexels-photo-794064.jpeg?auto=compress&cs=tinysrgb&h=350",
-                "visible": true,
-                "title": "stock-photo",
-                "layer": "Image",
-                "htmlType": "stock-photo",
-                "sidebar": "image-action",
-                "id": "30645ba9-6ca2-4d92-b991-ccb3095dd83a"
-            },
-            {
-                "x": 1391.7714285714283,
-                "y": 336.9142857142857,
-                "width": 55,
-                "height": 55,
-                "fill": "#757575",
-                "type": "shape",
-                "isMasked": false,
-                "draggable": true,
-                "visible": true,
-                "data": [
-                    "M5,0 H50 A5,5 0 0 1 55,5 V50 A5,5 0 0 1 50,55 H5 A5,5 0 0 1 0,50 V5 A5,5 0 0 1 5,0 Z"
-                ],
-                "htmlType": "shape-widget",
-                "sidebar": "shape-action",
-                "title": "shape-widget",
-                "layer": "Shape",
-                "id": "173641a1-66e7-45d6-9ebf-908246460fe3"
-            },
-            {
-                "x": -16.22857142857153,
-                "y": 170.9714285714286,
-                "width": 46,
-                "height": 46,
-                "fill": "#41485d",
-                "type": "img",
-                "src": "/src/assets/icons/Link.svg",
-                "title": "link-button",
-                "visible": true,
-                "layer": "Link",
-                "htmlType": "go-to-button-link",
-                "id": "a94a9e81-82ca-4356-a795-ad7efecb4156"
             }
         ],
         "selectedShapes": [],
@@ -100,7 +55,6 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
         }
     }]);
     const [selectedSubMenu, setSelectedSubMenu] = useState(null);
-    console.log("mainStage", mainStage);
 
     return (
         <div className="flex flex-col min-h-screen">
