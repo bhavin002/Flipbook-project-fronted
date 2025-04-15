@@ -11,7 +11,7 @@ import {
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 
-const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSubMenu, setMainStage, mainStage, selectedIndex, handleCrop) => {
+const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSubMenu, setMainStage, mainStage, selectedIndex, handleCrop, isShapeDrawerOpen, setIsShapeDrawerOpen) => {
     const [isMaskingEnabled, setIsMaskingEnabled] = useState(false);
 
     useEffect(() => {
@@ -42,7 +42,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -69,7 +72,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                             Use as mask
                         </Label>
                     </div>
-                    }
+                }
                 {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "shape-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("shape-style") }}>
                     Style
                 </Button>}
@@ -366,12 +369,12 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
     }
 }
 
-export default function LeftSideElements({ selectedSubMenu, setSelectedSubMenu, selectedShape, setMainStage, mainStage, selectedIndex, handleCrop }) {
+export default function LeftSideElements({ selectedSubMenu, setSelectedSubMenu, selectedShape, setMainStage, mainStage, selectedIndex, handleCrop, isShapeDrawerOpen, setIsShapeDrawerOpen }) {
 
     return (
         <>
             <div className="flex gap-2 flex-none">
-                {renderElements(selectedShape[0].attrs.title, selectedShape, selectedSubMenu, setSelectedSubMenu, setMainStage, mainStage, selectedIndex, handleCrop)}
+                {renderElements(selectedShape[0].attrs.title, selectedShape, selectedSubMenu, setSelectedSubMenu, setMainStage, mainStage, selectedIndex, handleCrop, isShapeDrawerOpen, setIsShapeDrawerOpen)}
             </div>
         </>
     )

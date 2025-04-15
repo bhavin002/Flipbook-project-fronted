@@ -19,7 +19,7 @@ function NavItem({ item, isSelected, onClick }) {
     );
 };
 
-export default function SidebarNavigation({ currentView, setCurrentView, mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
+export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, setCurrentView, mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
     const navItems = getData('editorNavItems');
 
@@ -45,6 +45,7 @@ export default function SidebarNavigation({ currentView, setCurrentView, mainSta
                 setOpen(true);
             }
             setSelectedSubMenu("hyperlink");
+            setIsShapeDrawerOpen(true);
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-button-link") {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {

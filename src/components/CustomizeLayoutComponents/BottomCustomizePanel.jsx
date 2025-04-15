@@ -33,7 +33,6 @@ function NavItem({ item, isSelected, onClick }) {
     );
 }
 
-
 export default function BottomCustomizePanel() {
     const [selectedItem, setSelectedItem] = useState(null);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -48,11 +47,6 @@ export default function BottomCustomizePanel() {
             setIsDrawerOpen(!isDrawerOpen);
         } else {
             setIsDrawerOpen(true);
-        }
-
-        // Ensure the item is active in the accordion
-        if (!activeValues.includes(itemValue)) {
-            setActiveValues([...activeValues, itemValue]);
         }
     };
 
@@ -73,7 +67,6 @@ export default function BottomCustomizePanel() {
         );
     };
     
-
     return (
         <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
             <nav className="fixed bottom-0 left-0 right-0 lg:hidden flex py-3 items-center justify-around bg-primary lg:h-16 z-10">
