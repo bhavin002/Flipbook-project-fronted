@@ -68,11 +68,12 @@ export default function VideoButton({ shape, onSelect, handleDragStart, handleDr
             name="shape"
         >
             <Rect
-                fill={shape.fill}
+                fill="#000000"
                 x={0}
                 y={0}
                 width={shape.width}
                 height={shape.height}
+
             />
             <Image
                 image={image}

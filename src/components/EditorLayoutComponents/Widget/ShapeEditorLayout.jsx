@@ -35,7 +35,7 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
     }
     if (selectedSubMenu === 'color') {
         return (
-            <Color />
+            <Color selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
         )
     }
     if(selectedSubMenu === 'shape-style'){

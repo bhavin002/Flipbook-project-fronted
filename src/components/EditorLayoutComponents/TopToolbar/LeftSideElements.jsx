@@ -47,7 +47,11 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
                                 className="w-8 h-8 rounded cursor-pointer"
-                                style={{ backgroundColor: selectedShape[0].attrs.fill }}
+                                style={{
+                                    backgroundColor: selectedShape?.length
+                                        ? selectedShape[0].attrs.fill
+                                        : mainStage[selectedIndex].background,
+                                }}
                             ></div>
                         </TooltipTrigger>
                         <TooltipContent align="center" className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs px-2 py-1 rounded-md">
@@ -288,6 +292,32 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                 {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
                     setIsShapeDrawerOpen(true)
                     selectedSubMenu === "audio-button" ? setSelectedSubMenu(null) : setSelectedSubMenu("audio-button")
+                }}>
+                    Edit
+                </Button>}
+            </>
+        case "shop-area":
+            return <>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
+                                className="w-8 h-8 rounded cursor-pointer"
+                                style={{ backgroundColor: selectedShape[0].attrs.fill }}
+                            ></div>
+                        </TooltipTrigger>
+                        <TooltipContent align="center" className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs px-2 py-1 rounded-md">
+                            <p className="text-xs">Color</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "shopping-list" ? setSelectedSubMenu(null) : setSelectedSubMenu("shopping-list")
                 }}>
                     Edit
                 </Button>}

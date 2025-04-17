@@ -88,7 +88,7 @@ export default function EmbedCode({ shape, onSelect, handleDragStart, handleDrag
                 />
             )}
             <Rect
-                fill={shape.fill}
+                fill="#ebf0fc"
                 x={0}
                 y={0}
                 width={shape.width}
