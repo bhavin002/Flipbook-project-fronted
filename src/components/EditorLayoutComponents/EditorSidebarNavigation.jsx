@@ -19,7 +19,7 @@ function NavItem({ item, isSelected, onClick }) {
     );
 };
 
-export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, setCurrentView, mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
+export default function SidebarNavigation({ windowInnerWidth,currentView, setCurrentView, mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
     const navItems = getData('editorNavItems');
 
@@ -44,8 +44,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("hyperlink");
-            setIsShapeDrawerOpen(true);
+            windowInnerWidth >= 1024 && setSelectedSubMenu("hyperlink");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-button-link") {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -53,7 +52,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("link");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("link");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "link-tag") {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -61,7 +60,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("tag");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("tag");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "square-caption" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "rounded-caption")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -69,7 +68,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("caption");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("caption");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "embed-code")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -77,7 +76,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("embed");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("embed");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "slideshow")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -85,7 +84,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("slideshow");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("slideshow");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "video-embed")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -93,7 +92,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("video-embed");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("video-embed");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "video-button")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -101,7 +100,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("video-button");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("video-button");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "audio-button")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -109,7 +108,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("audio-button");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("audio-button");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "shop-area" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "shop-button")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -117,7 +116,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("shopping-list");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("shopping-list");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "product-tag")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -125,7 +124,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("product-tag");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("product-tag");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "quiz")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -133,7 +132,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("quiz");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("quiz");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "question")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -141,7 +140,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("question");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("question");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "contact-form")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -149,7 +148,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("contact-form");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("contact-form");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-previous-page" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-next-page" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-first-page" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-last-page")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -157,7 +156,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("page-options");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("page-options");
         } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-page")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
@@ -165,7 +164,7 @@ export default function SidebarNavigation({ currentView, setIsShapeDrawerOpen, s
                 setIsSidebarOpen(true);
                 setOpen(true);
             }
-            setSelectedSubMenu("go-to-page");
+            windowInnerWidth >= 1024 && setSelectedSubMenu("go-to-page");
         } else {
             setSelectedSubMenu(null);
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
