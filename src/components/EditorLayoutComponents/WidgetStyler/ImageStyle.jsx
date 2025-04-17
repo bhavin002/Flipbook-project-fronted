@@ -10,16 +10,16 @@ export default function ImageStyle({
   selectedIndex,
 }) {
   const [styles, setStyles] = useState({
-    cornerRadius: 0,
-    isShadowEnabled: true,
-    shadowColor: "#ffffff",
-    shadowOpacity: 60,
-    shadowOffsetX: 0,
-    shadowOffsetY: 0,
-    shadowBlur: 10,
-    isBorderEnabled: true,
-    borderColor: "#ffffff",
-    borderWidth: 10,
+    cornerRadius: selectedShape[0].attrs?.effect?.cornerRadius || 0,
+    isShadowEnabled: selectedShape[0].attrs?.effect?.isShadowEnabled || true,
+    shadowColor: selectedShape[0].attrs.effect?.shadowColor || "#ffffff",
+    shadowOpacity: selectedShape[0].attrs.effect?.shadowOpacity || 60,
+    shadowOffsetX: selectedShape[0].attrs.effect?.shadowOffsetX || 0,
+    shadowOffsetY: selectedShape[0].attrs.effect?.shadowOffsetY || 0,
+    shadowBlur: selectedShape[0].attrs.effect?.shadowBlur || 10,
+    isBorderEnabled: selectedShape[0].attrs?.effect?.isBorderEnabled || true,
+    borderColor: selectedShape[0].attrs.effect?.borderColor || "#ffffff",
+    borderWidth: selectedShape[0].attrs?.effect?.borderWidth || 10,
   });
 
   const shadowColorInputRef = useRef(null);

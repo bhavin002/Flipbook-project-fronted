@@ -87,11 +87,11 @@ export default function ImageFilter({
   ];
 
   const [filters, setFilters] = useState({
-    brightness: 0,
-    contrast: 0,
-    saturation: 0,
-    blur: 0,
-    grayscale: 0,
+    brightness: selectedShape[0].attrs?.effect?.brightness || 0,
+    contrast: selectedShape[0].attrs?.effect?.contrast || 0,
+    saturation: selectedShape[0].attrs?.effect?.saturation || 0,
+    blur: selectedShape[0].attrs?.effect?.blur || 0,
+    grayscale: selectedShape[0].attrs?.effect?.grayscale || 0,
   });
 
   // Load filter settings from selected shape
