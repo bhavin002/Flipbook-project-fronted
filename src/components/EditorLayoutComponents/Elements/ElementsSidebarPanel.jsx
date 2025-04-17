@@ -29,12 +29,12 @@ export default function ElementsSidebarPanel({ setMainStage, mainStage, selected
                 {
                     text: 'GIFs',
                     icon: <ImagePlay />,
-                    view: <GIFsView onBackClick={() => setCurrentView(null)} />
+                    view: <GIFsView setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 },
                 {
                     text: 'Stickers',
                     icon: <Smile />,
-                    view: <StickersView onBackClick={() => setCurrentView(null)} />
+                    view: <StickersView setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 }
             ]
         },

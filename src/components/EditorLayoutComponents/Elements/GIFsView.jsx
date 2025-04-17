@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 
 const API_KEY = `${import.meta.env.VITE_APP_TENOR_API}`;
 
-const GIFsView = ({ onBackClick }) => {
+const GIFsView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) => {
     const [trendingGifs, setTrendingGifs] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -137,12 +137,18 @@ const GIFsView = ({ onBackClick }) => {
                             title={`Results for "${searchQuery}"`}
                             gifs={searchResults}
                             lastGifRef={lastGifRef}
+                            mainStage={mainStage}
+                            selectedIndex={selectedIndex}
+                            setMainStage={setMainStage}
                         />
                     ) : (
                         <Section
                             title="Trending GIFs"
                             gifs={trendingGifs}
                             lastGifRef={lastGifRef}
+                            mainStage={mainStage}
+                            selectedIndex={selectedIndex}
+                            setMainStage={setMainStage}
                         />
                     )}
 
@@ -163,7 +169,7 @@ const GIFsView = ({ onBackClick }) => {
     );
 };
 
-const Section = ({ title, gifs, lastGifRef }) => {
+const Section = ({ setMainStage, title, gifs, lastGifRef, mainStage, selectedIndex }) => {
     return (
         <div className="mt-6">
             <h3 className="text-white font-bold">{title}</h3>
@@ -172,6 +178,17 @@ const Section = ({ title, gifs, lastGifRef }) => {
                     if (index === gifs.length - 1) {
                         return (
                             <img
+                                draggable
+                                onDragStart={(e) => {
+                                    mainStage[selectedIndex].dragRect.current = {
+                                        type: "img",
+                                        src: `${gif.media_formats.gif.url}`,
+                                        visible: true,
+                                        title: "stock-gif",
+                                        layer: "Stock Gif",
+                                        htmlType: "stock-gif",
+                                    };
+                                }}
                                 ref={lastGifRef}
                                 key={gif.id}
                                 src={gif.media_formats.gif.url}
@@ -182,6 +199,17 @@ const Section = ({ title, gifs, lastGifRef }) => {
                     }
                     return (
                         <img
+                            draggable
+                            onDragStart={(e) => {
+                                mainStage[selectedIndex].dragRect.current = {
+                                    type: "img",
+                                    src: `${gif.media_formats.gif.url}`,
+                                    visible: true,
+                                    title: "stock-gif",
+                                    layer: "Stock Gif",
+                                    htmlType: "stock-gif",
+                                };
+                            }}
                             key={gif.id}
                             src={gif.media_formats.gif.url}
                             alt={gif.content_description}
