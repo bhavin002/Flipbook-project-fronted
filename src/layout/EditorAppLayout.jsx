@@ -110,7 +110,7 @@ export default function EditorAppLayout({ windowInnerWidth, isSidebarOpen, setIs
                     <div className="max-lg:hidden  relative lg:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
                         <SidebarProvider value={{ selectedItem, setSelectedItem, width: "23rem" }}>
                             <EditorSidebarNavigation windowInnerWidth={windowInnerWidth} setIsShapeDrawerOpen={setIsShapeDrawerOpen} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} setSelectedShape={setSelectedShape} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedIndex={selectedIndex} setSelectedItem={setSelectedItem} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-                            <AppSidebar currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} selectedIndex={selectedIndex} />
+                            <AppSidebar setMainStage={setMainStage} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} selectedIndex={selectedIndex} />
                             <ShapeEditorLayout mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} />
                         </SidebarProvider>
                     </div>
