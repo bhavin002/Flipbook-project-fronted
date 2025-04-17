@@ -55,7 +55,7 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
     }
     if(selectedSubMenu === 'image-style'){
         return (
-            <ImageStyle />
+            <ImageStyle selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex}  />
         )
     }
     if(selectedSubMenu === 'image-action'){
