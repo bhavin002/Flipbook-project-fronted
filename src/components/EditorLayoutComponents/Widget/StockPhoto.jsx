@@ -12,7 +12,7 @@ export default function StockPhoto({
 }) {
     const [loadedImage, setLoadedImage] = useState(null);
     const imageRef = useRef(null);
-    const rectRef = useRef(null);
+    const ractRef = useRef(null);
     const groupRef = useRef();
     const clipGroupRef = useRef();
 
@@ -27,31 +27,23 @@ export default function StockPhoto({
         }
     }, [shape?.src]);
 
+
     useEffect(() => {
-        if (!loadedImage || !imageRef.current || !rectRef.current) return;
+        if (!loadedImage || !imageRef.current) return;
         const node = imageRef.current;
-        const rectNode = rectRef.current;
+        const ractRefnode = ractRef.current;
 
         if (shape && shape.cropImage) {
             try {
-                const cropImage =
-                    typeof shape.cropImage === 'string'
-                        ? JSON.parse(shape.cropImage)
-                        : shape.cropImage;
+                const cropImage = typeof shape.cropImage === 'string' ? JSON.parse(shape.cropImage) : shape.cropImage;
                 if (cropImage && cropImage.attrs) {
                     node.cropTransform({ ...cropImage.attrs });
                 }
             } catch (error) {
-                console.error('Error parsing cropImage:', error);
+                console.error("Error parsing cropImage:", error);
             }
         }
-
-        // Apply opacity
-        if (shape?.effect?.opacity !== undefined) {
-            node.opacity(shape.effect.opacity / 100); // Scale 0-100 to 0-1
-        }
-
-        EffectEvent(shape, rectNode, node);
+        EffectEvent(shape, ractRefnode, node);
         node.getLayer()?.batchDraw();
     }, [
         loadedImage,
@@ -61,15 +53,19 @@ export default function StockPhoto({
         shape?.effect?.brightness,
         shape?.effect?.contrast,
         shape?.effect?.saturation,
-        shape?.effect?.sepia,
-        shape?.effect?.tint,
         shape?.effect?.blur,
-        shape?.effect?.vignette,
         shape?.effect?.grayscale,
-        shape?.effect?.hueRotate,
-        shape?.effect?.invert,
-        shape?.effect?.temperature,
         shape?.effect?.opacity,
+        shape?.effect?.shadowColor,
+        shape?.effect?.shadowBlur,
+        shape?.effect?.shadowOffsetX,
+        shape?.effect?.shadowOffsetY,
+        shape?.effect?.shadowOpacity,
+        shape?.effect?.isShadowEnabled,
+        shape?.effect?.borderColor,
+        shape?.effect?.borderWidth,
+        shape?.effect?.isBorderEnabled,
+        shape?.effect?.cornerRadius,
     ]);
 
     const handleGroupClick = (e) => {
@@ -79,20 +75,13 @@ export default function StockPhoto({
         }
     };
 
+
     const shapeEffect = shape?.effect || {};
     const shapeCornerRadius = shapeEffect.cornerRadius || 0;
-    const topLeftRadius = shapeEffect.individualCorners
-        ? shapeEffect.topLeftRadius || 0
-        : shapeCornerRadius;
-    const topRightRadius = shapeEffect.individualCorners
-        ? shapeEffect.topRightRadius || 0
-        : shapeCornerRadius;
-    const bottomRightRadius = shapeEffect.individualCorners
-        ? shapeEffect.bottomRightRadius || 0
-        : shapeCornerRadius;
-    const bottomLeftRadius = shapeEffect.individualCorners
-        ? shapeEffect.bottomLeftRadius || 0
-        : shapeCornerRadius;
+    const topLeftRadius = shapeEffect.individualCorners ? (shapeEffect.topLeftRadius || 0) : shapeCornerRadius;
+    const topRightRadius = shapeEffect.individualCorners ? (shapeEffect.topRightRadius || 0) : shapeCornerRadius;
+    const bottomRightRadius = shapeEffect.individualCorners ? (shapeEffect.bottomRightRadius || 0) : shapeCornerRadius;
+    const bottomLeftRadius = shapeEffect.individualCorners ? (shapeEffect.bottomLeftRadius || 0) : shapeCornerRadius;
     const shapeWidth = shape?.width || loadedImage?.width || 0;
     const shapeHeight = shape?.height || loadedImage?.height || 0;
 
@@ -110,34 +99,33 @@ export default function StockPhoto({
             {...shape}
             name="shape"
         >
+            {/* Rectangle with shadow */}
             <Rect
-                ref={rectRef}
-                x={0}
-                y={0}
-                width={shapeWidth}
-                height={shapeHeight}
-                cornerRadius={[topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
+                ref={ractRef}
+                x={0 + 2}
+                y={0 + 2}
+                width={shapeWidth - 4}
+                height={shapeHeight - 4}
+                cornerRadius={shapeCornerRadius || [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
                 fill="#000000"
             />
+
+            {/* Nested Group with clipping */}
             <Group
                 x={0}
                 y={0}
                 width={shapeWidth}
                 height={shapeHeight}
                 ref={clipGroupRef}
+                fill={'#ffffff'}
                 clipFunc={(ctx) => {
                     ctx.beginPath();
                     ctx.moveTo(topLeftRadius, 0);
                     ctx.lineTo(shapeWidth - topRightRadius, 0);
                     ctx.quadraticCurveTo(shapeWidth, 0, shapeWidth, topRightRadius);
                     ctx.lineTo(shapeWidth, shapeHeight - bottomRightRadius);
-                    ctx.quadraticCurveTo(
-                        shapeWidth,
-                        shapeHeight,
-                        shapeWidth - bottomRightRadius,
-                        shapeHeight
-                    );
-                    ctx.lineTo(bottomLeftRadius, shapeHeight);
+                    ctx.quadraticCurveTo(shapeWidth, shapeHeight, shapeWidth - bottomRightRadius, shapeHeight);
+                    ctx.lineTo(bottomLeftRadius, shapeHeight); // Note: customLeftRadius seems to be a typo, should be bottomLeftRadius
                     ctx.quadraticCurveTo(0, shapeHeight, 0, shapeHeight - bottomLeftRadius);
                     ctx.lineTo(0, topLeftRadius);
                     ctx.quadraticCurveTo(0, 0, topLeftRadius, 0);
@@ -154,13 +142,17 @@ export default function StockPhoto({
                 />
                 <Image
                     image={loadedImage}
-                    x={0}
-                    y={0}
+                    x={shape.flipX ? shapeWidth : 0} // Adjust x position for horizontal flip
+                    y={shape.flipY ? shapeHeight : 0} // Adjust y position for vertical flip
                     width={shapeWidth}
                     height={shapeHeight}
+                    scaleX={shape.flipX ? -1 : 1} // Apply horizontal flip
+                    scaleY={shape.flipY ? -1 : 1} // Apply vertical flip
                     ref={imageRef}
                     zIndex={1}
                 />
+
+
             </Group>
         </Group>
     );

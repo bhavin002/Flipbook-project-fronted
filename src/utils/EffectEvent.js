@@ -1,12 +1,12 @@
 import Konva from 'konva';
 
-export const EffectEvent = (shape, rectNode, imgNode) => {
+export const EffectEvent = (shape, ractnode, imgNode) => {
     const effect = shape.effect || {};
 
-    if (!imgNode || !rectNode) return;
+    if (!imgNode || !ractnode) return;
 
-    if (rectNode.isCached()) {
-        rectNode.clearCache();
+    if (ractnode.isCached()) {
+        ractnode.clearCache();
     }
     if (imgNode.isCached()) {
         imgNode.clearCache();
@@ -18,10 +18,7 @@ export const EffectEvent = (shape, rectNode, imgNode) => {
         brightness: 0,
         contrast: 0,
         saturation: 0,
-        sepia: 0,
-        tint: 0,
         blur: 0,
-        vignette: 0,
         grayscale: 0,
     };
 
@@ -44,42 +41,23 @@ export const EffectEvent = (shape, rectNode, imgNode) => {
 
     if (mergedEffect.saturation !== 0) {
         filterArray.push(Konva.Filters.HSL);
-        imgNode.saturation(mergedEffect.saturation / 50); // Reverted to /50
-    }
-
-    if (mergedEffect.sepia > 0) {
-        filterArray.push(Konva.Filters.HSL);
-        imgNode.hue(35);
-        imgNode.saturation(mergedEffect.sepia / 100);
-        imgNode.luminance(mergedEffect.sepia / 200);
-    }
-
-    if (mergedEffect.tint > 0) {
-        filterArray.push(Konva.Filters.HSL);
-        imgNode.hue((mergedEffect.tint / 200) * 360);
+        imgNode.saturation(mergedEffect.saturation / 50);
     }
 
     if (mergedEffect.grayscale > 0) {
         filterArray.push(Konva.Filters.Grayscale);
     }
 
-    if (mergedEffect.vignette > 0) {
-        const width = shape.width || imgNode.width();
-        const height = shape.height || imgNode.height();
-        rectNode.fillRadialGradientStartPoint({ x: width / 2, y: height / 2 });
-        rectNode.fillRadialGradientEndPoint({ x: width / 2, y: height / 2 });
-        rectNode.fillRadialGradientStartRadius(0);
-        rectNode.fillRadialGradientEndRadius(Math.max(width, height) / 1.5);
-        rectNode.fillRadialGradientColorStops([
-            0,
-            'rgba(0, 0, 0, 0)',
-            1,
-            `rgba(0, 0, 0, ${mergedEffect.vignette / 100})`,
-        ]);
+    // ractnode.fill('rgba(0, 0, 0, 0)');
+    if (effect.isShadowEnabled) {
+        ractnode.shadowColor('black');
+        ractnode.shadowBlur(effect.shadowBlur || 0);
+        ractnode.shadowOffset({ x: effect.shadowOffsetX || 0, y: effect.shadowOffsetY || 0 });
     } else {
-        rectNode.fill('rgba(0, 0, 0, 0)');
+        ractnode.shadowColor('rgba(0, 0, 0, 0)');
+        ractnode.shadowBlur(0);
+        ractnode.shadowOffset({ x: 0, y: 0 });
     }
-
     if (filterArray.length > 0) {
         imgNode.filters(filterArray);
         imgNode.cache();
