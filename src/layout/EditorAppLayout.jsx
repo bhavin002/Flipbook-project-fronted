@@ -11,8 +11,9 @@ import { AppSidebar } from "@/utils/AppSidebar";
 import EditorSidebarNavigation from "@/components/EditorLayoutComponents/EditorSidebarNavigation";
 import BottomEditorPanel from "@/components/EditorLayoutComponents/BottomEditorPanel";
 import ShapeEditorLayout from "@/components/EditorLayoutComponents/Widget/ShapeEditorLayout";
+import BottomShapeEditorLayout from "@/components/EditorLayoutComponents/Widget/BottomShapeEditorLayout";
 
-export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
+export default function EditorAppLayout({ windowInnerWidth, isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -43,51 +44,6 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 "scaleY": 6.473258078064039,
                 "skewX": 0,
                 "skewY": 0
-            },
-            {
-                "x": 461.48571428571415,
-                "y": 688.9142857142857,
-                "type": "img",
-                "src": "https://images.pexels.com/photos/794064/pexels-photo-794064.jpeg?auto=compress&cs=tinysrgb&h=350",
-                "visible": true,
-                "title": "stock-photo",
-                "layer": "Image",
-                "htmlType": "stock-photo",
-                "sidebar": "image-action",
-                "id": "30645ba9-6ca2-4d92-b991-ccb3095dd83a"
-            },
-            {
-                "x": 1391.7714285714283,
-                "y": 336.9142857142857,
-                "width": 55,
-                "height": 55,
-                "fill": "#757575",
-                "type": "shape",
-                "isMasked": false,
-                "draggable": true,
-                "visible": true,
-                "data": [
-                    "M5,0 H50 A5,5 0 0 1 55,5 V50 A5,5 0 0 1 50,55 H5 A5,5 0 0 1 0,50 V5 A5,5 0 0 1 5,0 Z"
-                ],
-                "htmlType": "shape-widget",
-                "sidebar": "shape-action",
-                "title": "shape-widget",
-                "layer": "Shape",
-                "id": "173641a1-66e7-45d6-9ebf-908246460fe3"
-            },
-            {
-                "x": -16.22857142857153,
-                "y": 170.9714285714286,
-                "width": 46,
-                "height": 46,
-                "fill": "#41485d",
-                "type": "img",
-                "src": "/src/assets/icons/Link.svg",
-                "title": "link-button",
-                "visible": true,
-                "layer": "Link",
-                "htmlType": "go-to-button-link",
-                "id": "a94a9e81-82ca-4356-a795-ad7efecb4156"
             }
         ],
         "selectedShapes": [],
@@ -100,8 +56,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
         }
     }]);
     const [selectedSubMenu, setSelectedSubMenu] = useState(null);
-    console.log("mainStage", mainStage);
-
+    const [isShapeDrawerOpen, setIsShapeDrawerOpen] = useState(false);
     return (
         <div className="flex flex-col min-h-screen">
             <header className="fixed top-0 left-0 right-0 z-10 bg-white ">
@@ -154,14 +109,14 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 <div className="flex flex-1">
                     <div className="max-lg:hidden  relative lg:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
                         <SidebarProvider value={{ selectedItem, setSelectedItem, width: "23rem" }}>
-                            <EditorSidebarNavigation currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} setSelectedShape={setSelectedShape} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedIndex={selectedIndex} setSelectedItem={setSelectedItem} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-                            <AppSidebar currentView={currentView}  setCurrentView={setCurrentView} mainStage={mainStage} selectedIndex={selectedIndex} />
+                            <EditorSidebarNavigation windowInnerWidth={windowInnerWidth} setIsShapeDrawerOpen={setIsShapeDrawerOpen} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} setSelectedShape={setSelectedShape} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedIndex={selectedIndex} setSelectedItem={setSelectedItem} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                            <AppSidebar currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} selectedIndex={selectedIndex} />
                             <ShapeEditorLayout mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} />
                         </SidebarProvider>
                     </div>
 
                     <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                        <Outlet context={{ isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu }} />
+                        <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu }} />
                     </div>
                 </div>
             </div>
@@ -170,6 +125,11 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 setIsPublishModalOpen={setIsPublishModalOpen}
             />
             <BottomEditorPanel mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} />
+            {
+                windowInnerWidth <= 1024 && <>
+                    <BottomShapeEditorLayout setSelectedSubMenu={setSelectedSubMenu} isShapeDrawerOpen={isShapeDrawerOpen} setIsShapeDrawerOpen={setIsShapeDrawerOpen} mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} />
+                </>
+            }
         </div>
     )
 }

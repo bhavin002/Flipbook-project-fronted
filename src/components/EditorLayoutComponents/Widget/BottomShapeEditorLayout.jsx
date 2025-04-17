@@ -1,0 +1,157 @@
+import ShapeAction from "@/components/EditorLayoutComponents/widgetSidebar/ShapeAction"
+import Color from "../WidgetStyler/Color"
+import Effect from "../WidgetStyler/Effect"
+import ShapeStyle from "../WidgetStyler/ShapeStyle"
+import ImageFilter from "../WidgetStyler/ImageFilter"
+import ImageStyle from "../WidgetStyler/ImageStyle"
+import ImageAction from "@/components/EditorLayoutComponents/widgetSidebar/ImageAction"
+import Hyperlink from "../widgetSidebar/Hyperlink"
+import Link from "../widgetSidebar/Link"
+import Tag from "../widgetSidebar/Tag"
+import Caption from "../widgetSidebar/Caption"
+import Embed from "../widgetSidebar/Embed"
+import SlideShow from "../widgetSidebar/SlideShow"
+import VideoWidget from "../widgetSidebar/VideoWidget"
+import Video from "../widgetSidebar/Video"
+import Audio from "../widgetSidebar/Audio"
+import ShoppingList from "../widgetSidebar/ShoppingList"
+import ProductTag from "../widgetSidebar/ProductTag"
+import Quiz from "../widgetSidebar/Quiz"
+import Question from "../widgetSidebar/Question"
+import ContactForm from "../widgetSidebar/ContactForm"
+import PageOptions from "../widgetSidebar/PageOptions"
+import GoToPage from "../widgetSidebar/GoToPage"
+import { Drawer, DrawerContent } from "@/components/ui/drawer"
+
+function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage, selectedIndex) {
+    console.log("selectedSubMenu: ", selectedSubMenu);
+    if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
+        return (
+            <Hyperlink />
+        )
+    }
+    if (selectedSubMenu === 'effect') {
+        return (
+            <Effect selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
+        )
+    }
+    if (selectedSubMenu === 'color') {
+        return (
+            <Color />
+        )
+    }
+    if (selectedSubMenu === 'shape-style') {
+        return (
+            <ShapeStyle />
+        )
+    }
+    if (selectedSubMenu === 'shape-action') {
+        return (
+            <ShapeAction />
+        )
+    }
+    if (selectedSubMenu === 'image-filter') {
+        return (
+            <ImageFilter selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
+        )
+    }
+    if (selectedSubMenu === 'image-style') {
+        return (
+            <ImageStyle />
+        )
+    }
+    if (selectedSubMenu === 'image-action') {
+        return (
+            <ImageAction />
+        )
+    }
+    if (selectedSubMenu === 'link') {
+        return (
+            <Link />
+        )
+    }
+    if (selectedSubMenu === "tag") {
+        return (
+            <Tag />
+        )
+    }
+    if (selectedSubMenu === "caption") {
+        return (
+            <Caption />
+        )
+    }
+    if (selectedSubMenu === "embed") {
+        return (
+            <Embed />
+        )
+    }
+    if (selectedSubMenu === "slideshow") {
+        return (
+            <SlideShow />
+        )
+    }
+    if (selectedSubMenu === "video-embed") {
+        return (
+            <VideoWidget />
+        )
+    }
+    if (selectedSubMenu === "video-button") {
+        return (
+            <Video />
+        )
+    }
+    if (selectedSubMenu === "audio-button") {
+        return (
+            <Audio />
+        )
+    }
+    if (selectedSubMenu === "shopping-list") {
+        return (
+            <ShoppingList />
+        )
+    }
+    if (selectedSubMenu === "product-tag") {
+        return (
+            <ProductTag />
+        )
+    }
+    if (selectedSubMenu === "quiz") {
+        return (
+            <Quiz />
+        )
+    }
+    if (selectedSubMenu === "question") {
+        return (
+            <Question />
+        )
+    }
+    if (selectedSubMenu === "contact-form") {
+        return (
+            <ContactForm />
+        )
+    }
+    if (selectedSubMenu === "page-options") {
+        return (
+            <PageOptions />
+        )
+    }
+    if (selectedSubMenu === "go-to-page") {
+        return (
+            <GoToPage />
+        )
+    }
+
+}
+
+export default function BottomShapeEditorLayout({ isShapeDrawerOpen, setIsShapeDrawerOpen, selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex,setSelectedSubMenu }) {
+    return (
+        <Drawer open={isShapeDrawerOpen} onOpenChange={()=>{
+            setIsShapeDrawerOpen(false)
+            setSelectedSubMenu(null)
+        }}>
+            <DrawerContent className="max-h-[85vh] rounded-t-xl flex flex-col">
+                {renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage, selectedIndex)}
+            </DrawerContent>
+        </Drawer>
+    )
+}

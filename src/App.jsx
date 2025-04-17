@@ -70,6 +70,13 @@ const settingsRoutes = [
 
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [windowInnerWidth, setWindowInnerWidth] = useState(window.innerWidth);
+  const [windowInnerHeight, setWindowInnerHeight] = useState(window.innerHeight);
+
+  window.addEventListener('resize', () => {
+    setWindowInnerWidth(window.innerWidth);
+    setWindowInnerHeight(window.innerHeight);
+  });
 
   return (
     <Routes>
@@ -150,7 +157,7 @@ export default function App() {
         <Route index element={<Customize />} />
       </Route>
 
-      <Route path="/editor/:id" element={<EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />}>
+      <Route path="/editor/:id" element={<EditorAppLayout windowInnerWidth={windowInnerWidth} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<Editor />} />
       </Route>
     </Routes>

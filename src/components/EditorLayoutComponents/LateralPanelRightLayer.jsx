@@ -7,7 +7,7 @@ import { v4 as uuid } from "uuid";
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 
-export default function LateralPanelRightLayer({ setCurrentRightPanel, mainStage, setMainStage, selectedIndex, setIsRightLateralCollapse, isExpanded, setIsExpanded, setSelectedAlignType }) {
+export default function LateralPanelRightLayer({ setIsPageShow, setCurrentRightPanel, mainStage, setMainStage, selectedIndex, setIsRightLateralCollapse, isExpanded, setIsExpanded, setSelectedAlignType }) {
     const [shapes, setShapes] = useState([]);
     const [isToggle, setIsToggle] = useState(false);
     const selectedShapes = mainStage[selectedIndex]?.selectedShapes.map(e => e.attrs).map(e => e.id);
@@ -184,11 +184,12 @@ export default function LateralPanelRightLayer({ setCurrentRightPanel, mainStage
             setIsRightLateralCollapse(false)
             setCurrentRightPanel(false)
         }
+        setIsPageShow(null);
     }
 
     return (
-        <div className='flex w-[276px] relative border border-gray-200'>
-            <div className={`bg-white flex flex-col lateral-panel-right h-[calc(100%-50px)] absolute ${isExpanded ? ' right-0 w-[65vw] bg-white z-[11] border-r-2 rounded-l-sm transition-all' : 'w-full'}`}>
+        <div className='flex w-[276px] relative max-lg:border-none border border-gray-200 h-full'>
+            <div className={`bg-white flex flex-col lateral-panel-right h-[calc(100%-50px)] border absolute ${isExpanded ? ' right-0 w-[65vw] bg-white z-[11] border-r-2 rounded-l-sm transition-all' : 'w-full'}`}>
                 <div className="flex bg-accent items-center justify-between p-1 border-b">
                     <div className={`p-1 hover:bg-gray-100 rounded`} aria-label="Expand panel">
                         <ChevronsLeft className='w-5 h-5 text-accent' />

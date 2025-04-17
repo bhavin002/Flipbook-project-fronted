@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { BringToFront, Codesandbox, FlipHorizontal2, FlipVertical2, Link, SendToBack } from "lucide-react";
+import { FlipHorizontal2, FlipVertical2, Link } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import {
@@ -11,7 +11,7 @@ import {
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 
-const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSubMenu, setMainStage, mainStage, selectedIndex, handleCrop) => {
+const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSubMenu, setMainStage, mainStage, selectedIndex, handleCrop, setIsShapeDrawerOpen) => {
     const [isMaskingEnabled, setIsMaskingEnabled] = useState(false);
 
     useEffect(() => {
@@ -42,7 +42,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -52,7 +55,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "hyperlink" ? setSelectedSubMenu(null) : setSelectedSubMenu("hyperlink") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "hyperlink" ? setSelectedSubMenu(null) : setSelectedSubMenu("hyperlink")
+                }}>
                     <Link />
                 </Button>}
             </>
@@ -68,15 +74,22 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         <Label htmlFor="use-as-mask" className="text-xs">
                             Use as mask
                         </Label>
-                    </div>}
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "shape-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("shape-style") }}>
+                    </div>
+                }
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "shape-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("shape-style")
+                }}>
                     Style
                 </Button>}
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -90,10 +103,16 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
         case 'stock-photo':
             return <>
                 {selectedShape?.length == 1 && <>
-                    <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter") }}>
+                    <Button variant="ghost" size="sm" onClick={() => {
+                        setIsShapeDrawerOpen(true)
+                        selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
+                    }}>
                         Filters
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style") }}>
+                    <Button variant="ghost" size="sm" onClick={() => {
+                        setIsShapeDrawerOpen(true)
+                        selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style")
+                    }}>
                         Style
                     </Button>
                     <Button variant="ghost" size="sm" onClick={handleCrop}>
@@ -122,7 +141,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -132,7 +154,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "link" ? setSelectedSubMenu(null) : setSelectedSubMenu("link") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "link" ? setSelectedSubMenu(null) : setSelectedSubMenu("link")
+                }}>
                     <Link />
                 </Button>}
             </>
@@ -142,7 +167,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -152,7 +180,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "tag" ? setSelectedSubMenu(null) : setSelectedSubMenu("tag") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "tag" ? setSelectedSubMenu(null) : setSelectedSubMenu("tag")
+                }}>
                     <Link />
                 </Button>}
             </>
@@ -162,7 +193,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -172,25 +206,37 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "caption" ? setSelectedSubMenu(null) : setSelectedSubMenu("caption") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "caption" ? setSelectedSubMenu(null) : setSelectedSubMenu("caption")
+                }}>
                     Edit
                 </Button>}
             </>
         case "embed-code":
             return <>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "embed" ? setSelectedSubMenu(null) : setSelectedSubMenu("embed") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "embed" ? setSelectedSubMenu(null) : setSelectedSubMenu("embed")
+                }}>
                     Add code
                 </Button>}
             </>
         case "slideshow":
             return <>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "slideshow" ? setSelectedSubMenu(null) : setSelectedSubMenu("slideshow") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "slideshow" ? setSelectedSubMenu(null) : setSelectedSubMenu("slideshow")
+                }}>
                     Edit
                 </Button>}
             </>
         case "video-embed":
             return <>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "video-embed" ? setSelectedSubMenu(null) : setSelectedSubMenu("video-embed") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "video-embed" ? setSelectedSubMenu(null) : setSelectedSubMenu("video-embed")
+                }}>
                     Edit
                 </Button>}
             </>
@@ -200,7 +246,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -210,7 +259,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "video-button" ? setSelectedSubMenu(null) : setSelectedSubMenu("video-button") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "video-button" ? setSelectedSubMenu(null) : setSelectedSubMenu("video-button")
+                }}>
                     Edit
                 </Button>}
             </>
@@ -220,7 +272,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -230,7 +285,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "audio-button" ? setSelectedSubMenu(null) : setSelectedSubMenu("audio-button") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "audio-button" ? setSelectedSubMenu(null) : setSelectedSubMenu("audio-button")
+                }}>
                     Edit
                 </Button>}
             </>
@@ -240,7 +298,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -250,7 +311,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "quiz" ? setSelectedSubMenu(null) : setSelectedSubMenu("quiz") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "quiz" ? setSelectedSubMenu(null) : setSelectedSubMenu("quiz")
+                }}>
                     Edit
                 </Button>}
             </>
@@ -260,7 +324,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -270,7 +337,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "question" ? setSelectedSubMenu(null) : setSelectedSubMenu("question") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "question" ? setSelectedSubMenu(null) : setSelectedSubMenu("question")
+                }}>
                     Edit
                 </Button>}
             </>
@@ -280,7 +350,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -290,7 +363,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "contact-form" ? setSelectedSubMenu(null) : setSelectedSubMenu("contact-form") }}>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "contact-form" ? setSelectedSubMenu(null) : setSelectedSubMenu("contact-form")
+                }}>
                     Edit
                 </Button>}
             </>
@@ -300,7 +376,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -313,7 +392,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "page-options" ? setSelectedSubMenu(null) : setSelectedSubMenu("page-options") }}>
+                            {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                                setIsShapeDrawerOpen(true)
+                                selectedSubMenu === "page-options" ? setSelectedSubMenu(null) : setSelectedSubMenu("page-options")
+                            }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="12" viewBox="0 0 12 12">
                                     <path d="M10 2V0H0v10h2v2h10V2h-2zM9 9H1V1h8v8z">
                                     </path>
@@ -333,7 +415,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <div
-                                onClick={() => { selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color") }}
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
                                 className="w-8 h-8 rounded cursor-pointer"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
@@ -346,7 +431,10 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => { selectedSubMenu === "go-to-page" ? setSelectedSubMenu(null) : setSelectedSubMenu("go-to-page") }}>
+                            {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                                setIsShapeDrawerOpen(true)
+                                selectedSubMenu === "go-to-page" ? setSelectedSubMenu(null) : setSelectedSubMenu("go-to-page")
+                            }}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="12" viewBox="0 0 12 12">
                                     <path d="M10 2V0H0v10h2v2h10V2h-2zM9 9H1V1h8v8z">
                                     </path>
@@ -365,12 +453,12 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
     }
 }
 
-export default function LeftSideElements({ selectedSubMenu, setSelectedSubMenu, selectedShape, setMainStage, mainStage, selectedIndex, handleCrop }) {
+export default function LeftSideElements({ selectedSubMenu, setSelectedSubMenu, selectedShape, setMainStage, mainStage, selectedIndex, handleCrop, setIsShapeDrawerOpen }) {
 
     return (
         <>
-            <div className="flex gap-2">
-                {renderElements(selectedShape[0].attrs.title, selectedShape, selectedSubMenu, setSelectedSubMenu, setMainStage, mainStage, selectedIndex, handleCrop)}
+            <div className="flex gap-2 flex-none">
+                {renderElements(selectedShape[0].attrs.title, selectedShape, selectedSubMenu, setSelectedSubMenu, setMainStage, mainStage, selectedIndex, handleCrop, setIsShapeDrawerOpen)}
             </div>
         </>
     )
