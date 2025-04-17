@@ -5,7 +5,7 @@ import ShapesView from "./ShapesView"
 import GIFsView from "./GIFsView"
 import StickersView from "./StickersView"
 
-export default function ElementsSidebarPanel({ mainStage, selectedIndex, currentView, setCurrentView }) {
+export default function ElementsSidebarPanel({ setMainStage, mainStage, selectedIndex, currentView, setCurrentView }) {
 
     const elements = [
         {
@@ -14,12 +14,12 @@ export default function ElementsSidebarPanel({ mainStage, selectedIndex, current
                 {
                     text: 'Stock photos',
                     icon: <Image />,
-                    view: <StockPhotosView mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    view: <StockPhotosView setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 },
                 {
                     text: 'Stock videos',
                     icon: <Video />,
-                    view: <StockVideosView onBackClick={() => setCurrentView(null)} />
+                    view: <StockVideosView setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 },
                 {
                     text: 'Shapes',

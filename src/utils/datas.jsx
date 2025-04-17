@@ -1412,6 +1412,8 @@ const interactions = [
                     innerRadius: 20,
                     outerRadius: 36,
                     angle: 360,
+                    width: 70,
+                    height: 70,
                     strokeWidth: 0,
                     visible: true,
                     layer: "Tag",

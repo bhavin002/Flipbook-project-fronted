@@ -106,6 +106,7 @@ export default function StockPhoto({
                 y={0 + 2}
                 width={shapeWidth - 4}
                 height={shapeHeight - 4}
+                borderWidth={50}
                 cornerRadius={shapeCornerRadius || [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
                 fill="#000000"
             />
