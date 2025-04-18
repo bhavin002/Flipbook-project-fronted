@@ -28,9 +28,8 @@ function NavItem({ item, isSelected, onClick }) {
 }
 
 
-export default function BottomEditorPanel({ mainStage, selectedIndex, currentView, setCurrentView }) {
+export default function BottomEditorPanel({ isEditorDrawerOpen, setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, currentView, setCurrentView }) {
     const [selectedItem, setSelectedItem] = useState(null);
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
     const editorBottomNavItems = [
         {
@@ -43,7 +42,7 @@ export default function BottomEditorPanel({ mainStage, selectedIndex, currentVie
             value: "interactions",
             icon: <SquareMousePointer />,
             label: "Interactions",
-            component: <InteractionsSidebarPanel />
+            component: <InteractionsSidebarPanel setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
         },
         {
             value: "text",
@@ -61,7 +60,7 @@ export default function BottomEditorPanel({ mainStage, selectedIndex, currentVie
             value: "elements",
             icon: <Component />,
             label: "Elements",
-            component: <ElementsSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView}/>
+            component: <ElementsSidebarPanel setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} />
         }
     ];
 
@@ -70,9 +69,9 @@ export default function BottomEditorPanel({ mainStage, selectedIndex, currentVie
 
         // Toggle drawer if clicked on the same item, otherwise open it
         if (selectedItem === itemValue) {
-            setIsDrawerOpen(!isDrawerOpen);
+            setIsEditorDrawerOpen(!isEditorDrawerOpen);
         } else {
-            setIsDrawerOpen(true);
+            setIsEditorDrawerOpen(true);
         }
 
         // Ensure the item is active in the accordion
@@ -93,7 +92,7 @@ export default function BottomEditorPanel({ mainStage, selectedIndex, currentVie
 
 
     return (
-        <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <Drawer open={isEditorDrawerOpen} onOpenChange={setIsEditorDrawerOpen}>
             <nav className="fixed bottom-0 left-0 right-0 lg:hidden flex py-3 items-center justify-around bg-primary lg:h-16 z-10">
                 {editorBottomNavItems.map(item => (
                     <NavItem
