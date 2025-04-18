@@ -5,7 +5,7 @@ import ShapesView from "./ShapesView"
 import GIFsView from "./GIFsView"
 import StickersView from "./StickersView"
 
-export default function ElementsSidebarPanel({ setMainStage, mainStage, selectedIndex, currentView, setCurrentView }) {
+export default function ElementsSidebarPanel({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, currentView, setCurrentView }) {
 
     const elements = [
         {
@@ -14,27 +14,27 @@ export default function ElementsSidebarPanel({ setMainStage, mainStage, selected
                 {
                     text: 'Stock photos',
                     icon: <Image />,
-                    view: <StockPhotosView setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    view: <StockPhotosView setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 },
                 {
                     text: 'Stock videos',
                     icon: <Video />,
-                    view: <StockVideosView setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    view: <StockVideosView setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 },
                 {
                     text: 'Shapes',
                     icon: <Shapes />,
-                    view: <ShapesView setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    view: <ShapesView setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 },
                 {
                     text: 'GIFs',
                     icon: <ImagePlay />,
-                    view: <GIFsView setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    view: <GIFsView setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 },
                 {
                     text: 'Stickers',
                     icon: <Smile />,
-                    view: <StickersView setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    view: <StickersView setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 }
             ]
         },

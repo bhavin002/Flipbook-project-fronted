@@ -60,7 +60,7 @@ export default function BottomEditorPanel({ isEditorDrawerOpen, setIsEditorDrawe
             value: "elements",
             icon: <Component />,
             label: "Elements",
-            component: <ElementsSidebarPanel setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} />
+            component: <ElementsSidebarPanel setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} />
         }
     ];
 

@@ -118,7 +118,7 @@ export default function EditorAppLayout({ windowInnerWidth, isSidebarOpen, setIs
                     </div>
 
                     <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                        <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu }} />
+                        <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, setIsEditorDrawerOpen }} />
                     </div>
                 </div>
             </div>

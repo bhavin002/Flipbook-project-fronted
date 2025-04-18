@@ -17,7 +17,7 @@ const INITIAL_CATEGORIES = [
     "Wedding"
 ];
 
-const StockVideosView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) => {
+const StockVideosView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, onBackClick }) => {
     const [categories, setCategories] = useState({});
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -154,6 +154,7 @@ const StockVideosView = ({ setMainStage, mainStage, selectedIndex, onBackClick }
                             mainStage={mainStage}
                             setMainStage={setMainStage}
                             selectedIndex={selectedIndex}
+                            setIsEditorDrawerOpen={setIsEditorDrawerOpen}
                         />
                     ) : (
                         Object.keys(categories).map((category) => (
@@ -165,6 +166,7 @@ const StockVideosView = ({ setMainStage, mainStage, selectedIndex, onBackClick }
                                 mainStage={mainStage}
                                 setMainStage={setMainStage}
                                 selectedIndex={selectedIndex}
+                                setIsEditorDrawerOpen={setIsEditorDrawerOpen}
                             />
                         ))
                     )}
@@ -180,7 +182,7 @@ const StockVideosView = ({ setMainStage, mainStage, selectedIndex, onBackClick }
     );
 };
 
-const Section = ({ setMainStage, title, videos, onViewAll, lastVideoRef, mainStage, selectedIndex }) => {
+const Section = ({ setIsEditorDrawerOpen, setMainStage, title, videos, onViewAll, lastVideoRef, mainStage, selectedIndex }) => {
     // Function to handle video drag start
     const handleVideoDragStart = (video) => {
         const videoUrl = video.video_files.find(file => file.quality === "sd")?.link || video.video_files[0]?.link;
@@ -223,8 +225,6 @@ const Section = ({ setMainStage, title, videos, onViewAll, lastVideoRef, mainSta
             let group = mainStage[selectedIndex].stageref.current.children[0].children[1];
 
             // Calculate the center of the group
-            const groupX = group.x();
-            const groupY = group.y();
             const groupWidth = group.width();
             const groupHeight = group.height();
             const dropX = (groupWidth / 2) / group.scaleX() - (shape?.attrs.width || 50) / 2;
@@ -324,6 +324,7 @@ const Section = ({ setMainStage, title, videos, onViewAll, lastVideoRef, mainSta
                     }
                 });
             }, 100);
+            setIsEditorDrawerOpen(false);
         }
     };
 

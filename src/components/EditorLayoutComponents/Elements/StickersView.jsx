@@ -6,7 +6,7 @@ import { v4 as uuid } from "uuid";
 
 const API_KEY = `${import.meta.env.VITE_APP_TENOR_API}`;
 
-const StickersView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) => {
+const StickersView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, onBackClick }) => {
     const [trendingStickers, setTrendingStickers] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -144,6 +144,7 @@ const StickersView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) =
                             mainStage={mainStage}
                             selectedIndex={selectedIndex}
                             setMainStage={setMainStage}
+                            setIsEditorDrawerOpen={setIsEditorDrawerOpen}
                         />
                     ) : (
                         <Section
@@ -153,6 +154,7 @@ const StickersView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) =
                             mainStage={mainStage}
                             selectedIndex={selectedIndex}
                             setMainStage={setMainStage}
+                            setIsEditorDrawerOpen={setIsEditorDrawerOpen}
                         />
                     )}
 
@@ -173,7 +175,7 @@ const StickersView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) =
     );
 };
 
-const Section = ({ setMainStage, title, stickers, lastStickerRef, mainStage, selectedIndex }) => {
+const Section = ({ setIsEditorDrawerOpen, setMainStage, title, stickers, lastStickerRef, mainStage, selectedIndex }) => {
     // Function to handle sticker drag start
     const handleStickerDragStart = (sticker) => {
         mainStage[selectedIndex].dragRect.current = {
@@ -214,8 +216,6 @@ const Section = ({ setMainStage, title, stickers, lastStickerRef, mainStage, sel
             let group = mainStage[selectedIndex].stageref.current.children[0].children[1];
 
             // Calculate the center of the group
-            const groupX = group.x();
-            const groupY = group.y();
             const groupWidth = group.width();
             const groupHeight = group.height();
             const dropX = (groupWidth / 2) / group.scaleX() - (shape?.attrs.width || 50) / 2;
@@ -315,6 +315,7 @@ const Section = ({ setMainStage, title, stickers, lastStickerRef, mainStage, sel
                     }
                 });
             }, 100);
+            setIsEditorDrawerOpen(false);
         }
     };
 
