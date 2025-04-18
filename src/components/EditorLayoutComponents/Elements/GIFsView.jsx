@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { ArrowLeft, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { v4 as uuid } from "uuid";
 
 const API_KEY = `${import.meta.env.VITE_APP_TENOR_API}`;
 
@@ -170,6 +171,149 @@ const GIFsView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) => {
 };
 
 const Section = ({ setMainStage, title, gifs, lastGifRef, mainStage, selectedIndex }) => {
+    // Function to handle GIF drag start
+    const handleGifDragStart = (gif) => {
+        mainStage[selectedIndex].dragRect.current = {
+            type: "img",
+            src: `${gif.media_formats.gif.url}`,
+            visible: true,
+            title: "stock-gif",
+            layer: "Stock Gif",
+            htmlType: "stock-gif",
+        };
+    };
+
+    // Function to handle GIF click
+    const handleGifClick = async (gif) => {
+        const dimensions = await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = gif.media_formats.gif.url;
+            img.onload = () => resolve({ width: img.width, height: img.height });
+            img.onerror = () => reject("Error loading image");
+        });
+
+        const shape = {
+            attrs: {
+                width: dimensions.width,
+                height: dimensions.height,
+                type: "img",
+                src: `${gif.media_formats.gif.url}`,
+                visible: true,
+                title: "stock-gif",
+                layer: "Stock Gif",
+                htmlType: "stock-gif",
+            }
+        };
+
+        if (shape?.attrs) {
+            // Get the group from the stage
+            let group = mainStage[selectedIndex].stageref.current.children[0].children[1];
+
+            // Calculate the center of the group
+            const groupX = group.x();
+            const groupY = group.y();
+            const groupWidth = group.width();
+            const groupHeight = group.height();
+            const dropX = (groupWidth / 2) / group.scaleX() - (shape?.attrs.width || 50) / 2;
+            const dropY = (groupHeight / 2) / group.scaleY() - (shape?.attrs.height || 50) / 2;
+
+            let isOverShapeWidget = false;
+            let shapeWidget = null;
+            let shapeWidgetData = [];
+
+            // Check if the drop position overlaps with a shape-widget
+            mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(x => {
+                if (x.attrs.title === 'shape-widget') {
+                    const shapeLeft = x.attrs.x;
+                    const shapeTop = x.attrs.y;
+                    const shapeRight = x.attrs.x + (x.attrs.width * (x.attrs.scaleX || 1));
+                    const shapeBottom = x.attrs.y + (x.attrs.height * (x.attrs.scaleY || 1));
+
+                    // Check if drop position is within shape-widget bounds
+                    if (dropX >= shapeLeft && dropX <= shapeRight && dropY >= shapeTop && dropY <= shapeBottom) {
+                        isOverShapeWidget = true;
+                        shapeWidget = x.attrs;
+                        shapeWidgetData = x.children[0].dataArray;
+                    }
+                }
+            });
+
+            // Create new shape at the center of the group
+            let newShape = {
+                x: dropX,
+                y: dropY,
+                ...shape?.attrs,
+                id: uuid()
+            };
+
+            // Handle masked image case
+            if (isOverShapeWidget && shapeWidget?.isMasked &&
+                (mainStage[selectedIndex].dragRect.current.htmlType === 'stock-photo' || mainStage[selectedIndex].dragRect.current.htmlType === 'upload-photo')) {
+                newShape = {
+                    src: newShape.src,
+                    height: Number(shapeWidget.height),
+                    width: Number(shapeWidget.width),
+                    x: shapeWidget.x,
+                    y: shapeWidget.y,
+                    scaleX: shapeWidget.scaleX,
+                    scaleY: shapeWidget.scaleY,
+                    skewX: shapeWidget.skewX,
+                    skewY: shapeWidget.skewY,
+                    title: 'masked-image',
+                    layer: 'masked-image',
+                    htmlType: 'masked-image',
+                    type: 'img',
+                    data: shapeWidget.data,
+                    maskData: shapeWidgetData,
+                    maskType: shapeWidget.maskType,
+                    draggable: true,
+                    visible: true,
+                    id: uuid()
+                };
+
+                // Update mainStage by removing the shape-widget and adding the new masked-image
+                mainStage[selectedIndex].selectedShapes = [];
+                setMainStage(prevState => {
+                    const updatedState = [...prevState];
+                    const updatedShapes = updatedState[selectedIndex].shapes.filter(
+                        shape => shape.id !== shapeWidget.id
+                    );
+                    updatedState[selectedIndex] = {
+                        ...updatedState[selectedIndex],
+                        shapes: [...updatedShapes, newShape]
+                    };
+                    return updatedState;
+                });
+            } else {
+                // Add the new shape at the center of the group
+                setMainStage(prevState => {
+                    const updatedState = [...prevState];
+                    updatedState[selectedIndex] = {
+                        ...updatedState[selectedIndex],
+                        shapes: [...updatedState[selectedIndex].shapes, newShape]
+                    };
+                    return updatedState;
+                });
+            }
+
+            // Select the newly added shape
+            setTimeout(() => {
+                mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach((child) => {
+                    if (child.attrs.id === newShape.id) {
+                        setMainStage(prevState => {
+                            const updatedState = [...prevState];
+                            updatedState[selectedIndex] = {
+                                ...updatedState[selectedIndex],
+                                selectedShapes: [child]
+                            };
+                            return updatedState;
+                        });
+                    }
+                });
+            }, 100);
+        }
+    };
+
     return (
         <div className="mt-6">
             <h3 className="text-white font-bold">{title}</h3>
@@ -179,16 +323,8 @@ const Section = ({ setMainStage, title, gifs, lastGifRef, mainStage, selectedInd
                         return (
                             <img
                                 draggable
-                                onDragStart={(e) => {
-                                    mainStage[selectedIndex].dragRect.current = {
-                                        type: "img",
-                                        src: `${gif.media_formats.gif.url}`,
-                                        visible: true,
-                                        title: "stock-gif",
-                                        layer: "Stock Gif",
-                                        htmlType: "stock-gif",
-                                    };
-                                }}
+                                onDragStart={() => handleGifDragStart(gif)}
+                                onClick={() => handleGifClick(gif)}
                                 ref={lastGifRef}
                                 key={gif.id}
                                 src={gif.media_formats.gif.url}
@@ -200,16 +336,8 @@ const Section = ({ setMainStage, title, gifs, lastGifRef, mainStage, selectedInd
                     return (
                         <img
                             draggable
-                            onDragStart={(e) => {
-                                mainStage[selectedIndex].dragRect.current = {
-                                    type: "img",
-                                    src: `${gif.media_formats.gif.url}`,
-                                    visible: true,
-                                    title: "stock-gif",
-                                    layer: "Stock Gif",
-                                    htmlType: "stock-gif",
-                                };
-                            }}
+                            onDragStart={() => handleGifDragStart(gif)}
+                            onClick={() => handleGifClick(gif)}
                             key={gif.id}
                             src={gif.media_formats.gif.url}
                             alt={gif.content_description}
