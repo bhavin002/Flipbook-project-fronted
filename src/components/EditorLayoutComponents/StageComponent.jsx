@@ -933,9 +933,9 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                     case 'stock-video':
                                         return <StockVideo onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handelDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'stock-gif':
-                                        return <KonavGif onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                        return <KonavGif onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape}/>
                                     case 'stock-sticker':
-                                        return <KonavGif onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                        return <KonavGif onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape}/>
                                     case 'masked-image':
                                         return (
                                             <MaskedImage
