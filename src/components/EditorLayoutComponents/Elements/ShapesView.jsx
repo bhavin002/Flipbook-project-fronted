@@ -13,6 +13,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             attrs: {
                 width: 55,
                 height: 55,
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 isMasked: false,
@@ -37,6 +39,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             attrs: {
                 width: 55,
                 height: 55,
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 stroke: "#00000000",
                 type: "shape",
@@ -61,6 +65,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             attrs: {
                 width: 55,
                 height: 55,
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 isMasked: false,
@@ -84,6 +90,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             attrs: {
                 width: 55,
                 height: 55,
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 stroke: "#00000000",
                 type: "shape",
@@ -108,6 +116,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             attrs: {
                 width: 55,
                 height: 55,
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 isMasked: false,
@@ -131,6 +141,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             attrs: {
                 width: 55,
                 height: 55,
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 stroke: "#00000000",
                 strokeWidth: 5,
@@ -155,6 +167,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             attrs: {
                 width: 55,
                 height: 55,
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 isMasked: false,
@@ -178,6 +192,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             attrs: {
                 width: 55,
                 height: 55,
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 stroke: "#00000000",
                 type: "shape",
@@ -202,6 +218,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             attrs: {
                 width: 55,
                 height: 55,
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -226,6 +244,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             attrs: {
                 width: 55,
                 height: 55,
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 stroke: "#00000000",
                 type: "shape",
@@ -253,6 +273,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
                 strokeWidth: 5,
                 width: 54,
                 height: 54,
+                scaleX: 5,
+                scaleY: 5,
                 isMasked: false,
                 draggable: true,
                 visible: true,
@@ -272,6 +294,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-22"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 stroke: "#00000000",
                 type: "shape",
@@ -299,6 +323,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
                 strokeWidth: 5,
                 height: 55,
                 width: 55,
+                scaleX: 5,
+                scaleY: 5,
                 isMasked: false,
                 draggable: true,
                 visible: true,
@@ -318,6 +344,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-26"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 stroke: "#00000000",
                 type: "shape",
@@ -345,6 +373,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
                 strokeWidth: 5,
                 height: 55,
                 width: 55,
+                scaleX: 5,
+                scaleY: 5,
                 isMasked: false,
                 draggable: true,
                 visible: true,
@@ -364,6 +394,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-30"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 stroke: "#00000000",
                 type: "shape",
@@ -386,6 +418,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-4"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -407,6 +441,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-8"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -428,6 +464,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-12"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -449,6 +487,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-16"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -470,6 +510,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-24"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -492,6 +534,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             width: "37px",
             svg: svgItems["icon-28"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -514,6 +558,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             height: "29px",
             svg: svgItems["icon-32"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -535,6 +581,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-42"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -556,6 +604,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-43"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -581,6 +631,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             height: "27px",
             svg: svgItems["icon-44"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 stroke: "#00000000",
                 type: "shape",
@@ -604,6 +656,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             height: "27px",
             svg: svgItems["icon-45"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -625,6 +679,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-46"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -646,6 +702,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-47"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -667,6 +725,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
             id: uuid(),
             svg: svgItems["icon-49"],
             attrs: {
+                scaleX: 5,
+                scaleY: 5,
                 fill: "#757575",
                 type: "shape",
                 strokeWidth: 5,
@@ -722,8 +782,8 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
                                                 // Calculate the center of the group
                                                 const groupWidth = group.width();
                                                 const groupHeight = group.height();
-                                                const dropX = (groupWidth / 2) / group.scaleX() - (shape?.attrs.width || 50) / 2;
-                                                const dropY = (groupHeight / 2) / group.scaleY() - (shape?.attrs.height || 50) / 2;
+                                                const dropX = (groupWidth / 2) / group.scaleX() - ((shape?.attrs.width || 50) * (shape?.attrs.scaleX || 1)) / 2;
+                                                const dropY = (groupHeight / 2) / group.scaleY() - ((shape?.attrs.height || 50) * (shape?.attrs.scaleY || 1)) / 2;
 
                                                 let isOverShapeWidget = false;
                                                 let shapeWidget = null;
@@ -819,7 +879,7 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
                                                         }
                                                     });
                                                 }, 100);
-                                                
+
                                                 setIsEditorDrawerOpen(false);
                                             }
                                         }}
