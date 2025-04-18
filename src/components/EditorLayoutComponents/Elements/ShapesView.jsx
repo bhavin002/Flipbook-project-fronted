@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { getData } from '@/utils/datas';
 import { v4 as uuid } from "uuid";
 
-const ShapesView = ({ setMainStage,mainStage, selectedIndex, onBackClick }) => {
+const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, onBackClick }) => {
     const svgItems = getData("svgItems");
     const shapes = [
         {
@@ -720,8 +720,6 @@ const ShapesView = ({ setMainStage,mainStage, selectedIndex, onBackClick }) => {
                                                 let group = mainStage[selectedIndex].stageref.current.children[0].children[1];
 
                                                 // Calculate the center of the group
-                                                const groupX = group.x();
-                                                const groupY = group.y();
                                                 const groupWidth = group.width();
                                                 const groupHeight = group.height();
                                                 const dropX = (groupWidth / 2) / group.scaleX() - (shape?.attrs.width || 50) / 2;
@@ -821,9 +819,10 @@ const ShapesView = ({ setMainStage,mainStage, selectedIndex, onBackClick }) => {
                                                         }
                                                     });
                                                 }, 100);
+                                                
+                                                setIsEditorDrawerOpen(false);
                                             }
                                         }}
-
                                         dangerouslySetInnerHTML={{ __html: shape.svg }}
                                     ></div>
                                 </div>

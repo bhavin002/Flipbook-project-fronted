@@ -1,14 +1,12 @@
 import * as React from "react"
 import { useState } from "react"
-import { Search, User, Users } from "lucide-react";
+import { User, Users } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
 import MyUpload from "./MyUpload";
 import TeamUpload from "./TeamUpload";
 import MediaFilterDropDownCom from "./MediaFilterDropDownCom";
 
 export default function UploadsSidebarPanel() {
-    const [searchQuery, setSearchQuery] = useState("");
     const [createdByFilter, setCreatedByFilter] = useState([]);
     const mediaTypes = {
         id: 'createdBy',

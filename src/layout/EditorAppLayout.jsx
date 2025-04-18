@@ -57,6 +57,8 @@ export default function EditorAppLayout({ windowInnerWidth, isSidebarOpen, setIs
     }]);
     const [selectedSubMenu, setSelectedSubMenu] = useState(null);
     const [isShapeDrawerOpen, setIsShapeDrawerOpen] = useState(false);
+    const [isEditorDrawerOpen, setIsEditorDrawerOpen] = useState(false);
+
     return (
         <div className="flex flex-col min-h-screen">
             <header className="fixed top-0 left-0 right-0 z-10 bg-white ">
@@ -110,13 +112,13 @@ export default function EditorAppLayout({ windowInnerWidth, isSidebarOpen, setIs
                     <div className="max-lg:hidden  relative lg:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
                         <SidebarProvider value={{ selectedItem, setSelectedItem, width: "23rem" }}>
                             <EditorSidebarNavigation windowInnerWidth={windowInnerWidth} setIsShapeDrawerOpen={setIsShapeDrawerOpen} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} setSelectedShape={setSelectedShape} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedIndex={selectedIndex} setSelectedItem={setSelectedItem} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-                            <AppSidebar setMainStage={setMainStage} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} selectedIndex={selectedIndex} />
+                            <AppSidebar setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} selectedIndex={selectedIndex} />
                             <ShapeEditorLayout mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} />
                         </SidebarProvider>
                     </div>
 
                     <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                        <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu }} />
+                        <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, setIsEditorDrawerOpen }} />
                     </div>
                 </div>
             </div>
@@ -124,7 +126,7 @@ export default function EditorAppLayout({ windowInnerWidth, isSidebarOpen, setIs
                 isPublishModalOpen={isPublishModalOpen}
                 setIsPublishModalOpen={setIsPublishModalOpen}
             />
-            <BottomEditorPanel mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} />
+            <BottomEditorPanel isEditorDrawerOpen={isEditorDrawerOpen} setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} />
             {
                 windowInnerWidth <= 1024 && <>
                     <BottomShapeEditorLayout setSelectedSubMenu={setSelectedSubMenu} isShapeDrawerOpen={isShapeDrawerOpen} setIsShapeDrawerOpen={setIsShapeDrawerOpen} mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} />

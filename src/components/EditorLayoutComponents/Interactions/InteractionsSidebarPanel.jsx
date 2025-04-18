@@ -2,7 +2,7 @@ import { getData } from "@/utils/datas";
 import { Crown } from "lucide-react";
 import { v4 as uuid } from "uuid";
 
-export default function InteractionsSidebarPanel({ setMainStage, mainStage, selectedIndex }) {
+export default function InteractionsSidebarPanel({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex }) {
 
     const elements = getData('interactions');
 
@@ -25,12 +25,10 @@ export default function InteractionsSidebarPanel({ setMainStage, mainStage, sele
                                                 let group = mainStage[selectedIndex].stageref.current.children[0].children[1];
 
                                                 // Calculate the center of the group
-                                                const groupX = group.x();
-                                                const groupY = group.y();
                                                 const groupWidth = group.width();
                                                 const groupHeight = group.height();
-                                                const dropX = (groupWidth / 2 ) / group.scaleX() - (item.attrs.width  || 50) / 2;
-                                                const dropY = (groupHeight / 2 ) / group.scaleY() - (item.attrs.height || 50) / 2;
+                                                const dropX = (groupWidth / 2) / group.scaleX() - (item.attrs.width || 50) / 2;
+                                                const dropY = (groupHeight / 2) / group.scaleY() - (item.attrs.height || 50) / 2;
 
                                                 let isOverShapeWidget = false;
                                                 let shapeWidget = null;
@@ -126,6 +124,7 @@ export default function InteractionsSidebarPanel({ setMainStage, mainStage, sele
                                                         }
                                                     });
                                                 }, 100);
+                                                setIsEditorDrawerOpen(false);
                                             }
                                         }}
 

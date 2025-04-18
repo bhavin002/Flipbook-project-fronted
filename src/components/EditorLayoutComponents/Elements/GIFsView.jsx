@@ -6,7 +6,7 @@ import { v4 as uuid } from "uuid";
 
 const API_KEY = `${import.meta.env.VITE_APP_TENOR_API}`;
 
-const GIFsView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) => {
+const GIFsView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, onBackClick }) => {
     const [trendingGifs, setTrendingGifs] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -141,6 +141,7 @@ const GIFsView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) => {
                             mainStage={mainStage}
                             selectedIndex={selectedIndex}
                             setMainStage={setMainStage}
+                            setIsEditorDrawerOpen={setIsEditorDrawerOpen}
                         />
                     ) : (
                         <Section
@@ -150,6 +151,7 @@ const GIFsView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) => {
                             mainStage={mainStage}
                             selectedIndex={selectedIndex}
                             setMainStage={setMainStage}
+                            setIsEditorDrawerOpen={setIsEditorDrawerOpen}
                         />
                     )}
 
@@ -170,7 +172,7 @@ const GIFsView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) => {
     );
 };
 
-const Section = ({ setMainStage, title, gifs, lastGifRef, mainStage, selectedIndex }) => {
+const Section = ({ setIsEditorDrawerOpen, setMainStage, title, gifs, lastGifRef, mainStage, selectedIndex }) => {
     // Function to handle GIF drag start
     const handleGifDragStart = (gif) => {
         mainStage[selectedIndex].dragRect.current = {
@@ -210,8 +212,6 @@ const Section = ({ setMainStage, title, gifs, lastGifRef, mainStage, selectedInd
             let group = mainStage[selectedIndex].stageref.current.children[0].children[1];
 
             // Calculate the center of the group
-            const groupX = group.x();
-            const groupY = group.y();
             const groupWidth = group.width();
             const groupHeight = group.height();
             const dropX = (groupWidth / 2) / group.scaleX() - (shape?.attrs.width || 50) / 2;
@@ -311,6 +311,7 @@ const Section = ({ setMainStage, title, gifs, lastGifRef, mainStage, selectedInd
                     }
                 });
             }, 100);
+            setIsEditorDrawerOpen(false);
         }
     };
 

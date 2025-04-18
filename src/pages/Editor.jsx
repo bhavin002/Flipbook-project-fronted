@@ -371,7 +371,7 @@ import { deleteShape } from "@/utils/Helper";
 })(Konva);
 
 export default function Editor() {
-    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu } = useOutletContext();
+    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, setIsEditorDrawerOpen } = useOutletContext();
     const autoScroll = useRef([]);
     useEffect(() => {
         autoScroll.current[selectedIndex].scrollIntoView({

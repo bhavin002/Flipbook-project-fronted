@@ -17,13 +17,12 @@ const INITIAL_CATEGORIES = [
     "Wedding"
 ];
 
-const StockPhotosView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) => {
+const StockPhotosView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, onBackClick }) => {
     const [categories, setCategories] = useState({});
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [currentCategory, setCurrentCategory] = useState(null);
     const [page, setPage] = useState(1);
-    console.log("page ????", page)
     const [hasMore, setHasMore] = useState(true);
     const observer = useRef();
 
@@ -156,6 +155,7 @@ const StockPhotosView = ({ setMainStage, mainStage, selectedIndex, onBackClick }
                             mainStage={mainStage}
                             setMainStage={setMainStage}
                             selectedIndex={selectedIndex}
+                            setIsEditorDrawerOpen={setIsEditorDrawerOpen}
                         />
                     ) : (
                         Object.keys(categories).map((category) => (
@@ -167,6 +167,7 @@ const StockPhotosView = ({ setMainStage, mainStage, selectedIndex, onBackClick }
                                 mainStage={mainStage}
                                 setMainStage={setMainStage}
                                 selectedIndex={selectedIndex}
+                                setIsEditorDrawerOpen={setIsEditorDrawerOpen}
                             />
                         ))
                     )}
@@ -182,7 +183,7 @@ const StockPhotosView = ({ setMainStage, mainStage, selectedIndex, onBackClick }
     );
 };
 
-const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainStage, selectedIndex }) => {
+const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainStage, selectedIndex, setIsEditorDrawerOpen }) => {
     // Extracted reusable function to handle the image selection logic
     const handleImageSelect = async (image, isDragStart = false) => {
         const dimensions = await new Promise((resolve, reject) => {
@@ -315,6 +316,8 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
                     }
                 });
             }, 100);
+
+            setIsEditorDrawerOpen(false);
         }
     };
 
