@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 
 const API_KEY = `${import.meta.env.VITE_APP_TENOR_API}`;
 
-const StickersView = ({ onBackClick }) => {
+const StickersView = ({ setMainStage, mainStage, selectedIndex,onBackClick }) => {
     const [trendingStickers, setTrendingStickers] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -44,8 +44,8 @@ const StickersView = ({ onBackClick }) => {
             }
 
             const newStickers = data.results.filter(
-                sticker => !currentStickers.some(existing => existing.id === sticker.id) && 
-                sticker.flags.every(e => e == "sticker")
+                sticker => !currentStickers.some(existing => existing.id === sticker.id) &&
+                    sticker.flags.every(e => e == "sticker")
             );
 
             if (query) {
@@ -140,12 +140,18 @@ const StickersView = ({ onBackClick }) => {
                             title={`Results for "${searchQuery}"`}
                             stickers={searchResults}
                             lastStickerRef={lastStickerRef}
+                            mainStage={mainStage}
+                            selectedIndex={selectedIndex}
+                            setMainStage={setMainStage}
                         />
                     ) : (
                         <Section
                             title="Trending Stickers"
                             stickers={trendingStickers}
                             lastStickerRef={lastStickerRef}
+                            mainStage={mainStage}
+                            selectedIndex={selectedIndex}
+                            setMainStage={setMainStage}
                         />
                     )}
 
@@ -166,7 +172,7 @@ const StickersView = ({ onBackClick }) => {
     );
 };
 
-const Section = ({ title, stickers, lastStickerRef }) => {
+const Section = ({ setMainStage, title, stickers, lastStickerRef, mainStage, selectedIndex }) => {
     return (
         <div className="mt-6">
             <h3 className="text-white font-bold">{title}</h3>
@@ -175,6 +181,17 @@ const Section = ({ title, stickers, lastStickerRef }) => {
                     if (index === stickers.length - 1) {
                         return (
                             <img
+                                draggable
+                                onDragStart={(e) => {
+                                    mainStage[selectedIndex].dragRect.current = {
+                                        type: "sticker",
+                                        src: sticker.media_formats?.tinygif_transparent ? sticker.media_formats?.tinygif_transparent.url : sticker.media_formats?.gif?.url, // Use direct URL from the response
+                                        visible: true,
+                                        title: "stock-sticker",
+                                        layer: "Stock Sticker",
+                                        htmlType: "stock-sticker",
+                                    };
+                                }}
                                 ref={lastStickerRef}
                                 key={sticker.id}
                                 src={sticker.media_formats?.tinygif_transparent?.url || sticker.media_formats?.gif?.url}
@@ -185,6 +202,17 @@ const Section = ({ title, stickers, lastStickerRef }) => {
                     }
                     return (
                         <img
+                            draggable
+                            onDragStart={(e) => {
+                                mainStage[selectedIndex].dragRect.current = {
+                                    type: "sticker",
+                                    src: sticker.media_formats?.tinygif_transparent ? sticker.media_formats?.tinygif_transparent.url : sticker.media_formats?.gif?.url, // Use direct URL from the response
+                                    visible: true,
+                                    title: "stock-sticker",
+                                    layer: "Stock Sticker",
+                                    htmlType: "stock-sticker",
+                                };
+                            }}
                             key={sticker.id}
                             src={sticker.media_formats?.tinygif_transparent?.url || sticker.media_formats?.gif?.url}
                             alt={sticker.content_description}

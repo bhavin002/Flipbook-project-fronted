@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { useRef, useState } from "react";
 
-export default function Color() {
+export default function Color({ selectedShape, mainStage, selectedIndex, setMainStage }) {
     const [isNewColorAdded, setIsNewColorAdded] = useState(false);
     const colorInputRef = useRef(null);
     const handleAddColor = () => {
@@ -27,10 +27,33 @@ export default function Color() {
         '#55B1F3', '#E36A5E', '#4CAEA2', '#6BC16A', '#B1CE56', '#F9DD64',
         '#FACC40', '#F9A940', '#F37D4B'
     ];
+
+    const updateShapeColor = (color) => {
+        if (selectedShape.length) {
+            mainStage[selectedIndex].shapes.forEach(element => {
+                selectedShape.forEach(selShape => {
+                    if (selShape.attrs.id === element.id) {
+                        element.fill = color;
+                        selShape.attrs.fill = color;
+                    }
+                })
+            });
+        } else {
+            mainStage[selectedIndex].background = color;
+        }
+
+        setMainStage([...mainStage]);
+    };
+
+    const handleHexInputChange = (e) => {
+        updateShapeColor(e.target.value);
+    };
+
     return (
         <div className="p-6 space-y-4">
             <Input
                 type="text"
+                onChange={handleHexInputChange}
                 placeholder="paste a hex color here"
                 className="placeholder:text-[#d8dce3]" />
             <div className="space-y-2">
@@ -56,6 +79,7 @@ export default function Color() {
                             key={index}
                             className="w-8 h-8 rounded cursor-pointer hover:scale-110 transition-transform duration-200"
                             style={{ backgroundColor: color }}
+                            onClick={() => updateShapeColor(color)}
                         />
                     ))}
                 </div>
@@ -68,6 +92,7 @@ export default function Color() {
                             key={index}
                             className="w-8 h-8 rounded cursor-pointer hover:scale-110 transition-transform duration-200"
                             style={{ backgroundColor: color }}
+                            onClick={() => updateShapeColor(color)}
                         />
                     ))}
                 </div>
@@ -81,6 +106,7 @@ export default function Color() {
                             key={index}
                             className="w-8 h-8 rounded cursor-pointer hover:scale-110 transition-transform duration-200"
                             style={{ backgroundColor: color }}
+                            onClick={() => updateShapeColor(color)}
                         />
                     ))}
                 </div>
@@ -93,6 +119,7 @@ export default function Color() {
                             key={index}
                             className="w-8 h-8 rounded cursor-pointer hover:scale-110 transition-transform duration-200"
                             style={{ backgroundColor: color }}
+                            onClick={() => updateShapeColor(color)}
                         />
                     ))}
                 </div>

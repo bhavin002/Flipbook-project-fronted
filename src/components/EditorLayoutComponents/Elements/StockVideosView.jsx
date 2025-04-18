@@ -7,7 +7,7 @@ const API_KEY = `${import.meta.env.VITE_APP_PEXELS_API}`;
 
 const INITIAL_CATEGORIES = [
     "God",
-    "Architecture", 
+    "Architecture",
     "Travel",
     "Fashion",
     "Food",
@@ -16,7 +16,7 @@ const INITIAL_CATEGORIES = [
     "Wedding"
 ];
 
-const StockVideosView = ({ onBackClick }) => {
+const StockVideosView = ({ setMainStage, mainStage, selectedIndex, onBackClick }) => {
     const [categories, setCategories] = useState({});
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -150,6 +150,9 @@ const StockVideosView = ({ onBackClick }) => {
                             title={currentCategory ? `Showing results for "${currentCategory}"` : `Results for "${searchQuery}"`}
                             videos={searchResults}
                             lastVideoRef={lastVideoRef}
+                            mainStage={mainStage}
+                            setMainStage={setMainStage}
+                            selectedIndex={selectedIndex}
                         />
                     ) : (
                         Object.keys(categories).map((category) => (
@@ -158,6 +161,9 @@ const StockVideosView = ({ onBackClick }) => {
                                 title={category}
                                 videos={categories[category]}
                                 onViewAll={() => handleCategoryClick(category)}
+                                mainStage={mainStage}
+                                setMainStage={setMainStage}
+                                selectedIndex={selectedIndex}
                             />
                         ))
                     )}
@@ -173,7 +179,7 @@ const StockVideosView = ({ onBackClick }) => {
     );
 };
 
-const Section = ({ title, videos, onViewAll, lastVideoRef }) => {
+const Section = ({ setMainStage, title, videos, onViewAll, lastVideoRef, mainStage, selectedIndex }) => {
     return (
         <div className="mt-6">
             <div className="flex justify-between items-center">
@@ -187,35 +193,73 @@ const Section = ({ title, videos, onViewAll, lastVideoRef }) => {
             <div className="grid grid-cols-3 gap-2 mt-2">
                 {videos.map((video, index) => {
                     const videoUrl = video.video_files.find(file => file.quality === "sd")?.link || video.video_files[0]?.link;
-                    
+
                     if (index === videos.length - 1) {
                         return (
-                            <div key={video.id} ref={lastVideoRef} className="relative">
+                            <div
+                                key={video.id}
+                                ref={lastVideoRef}
+                                className="relative"
+                                draggable
+                                onDragStart={(e) => {
+                                    mainStage[selectedIndex].dragRect.current = {
+                                        width: 500,
+                                        height: 300,
+                                        type: "img",
+                                        visible: true,
+                                        bgImage: `${video.image}`,
+                                        iconSrc: "/src/assets/icons/PlayVideo.svg",
+                                        src: videoUrl,
+                                        fill: "#ebf0fc",
+                                        title: "stock-video",
+                                        layer: "Stock Video",
+                                        htmlType: "stock-video",
+                                    };
+                                }}
+                            >
                                 <img
+                                    id={video.id}
                                     src={video.image}
                                     alt={video.user.name}
                                     className="rounded-lg w-full h-24 object-cover cursor-pointer"
                                 />
                                 <div className="absolute inset-0 flex items-center justify-center">
                                     <svg className="w-8 h-8" viewBox="0 0 24 24">
-                                        <circle cx="12" cy="12" r="10" fill="rgba(0,0,0,0.5)"/>
-                                        <path d="M10 8l6 4-6 4V8z" fill="white"/>
+                                        <circle cx="12" cy="12" r="10" fill="rgba(0,0,0,0.5)" />
+                                        <path d="M10 8l6 4-6 4V8z" fill="white" />
                                     </svg>
                                 </div>
                             </div>
                         );
                     }
                     return (
-                        <div key={video.id} className="relative">
+                        <div key={video.id} className="relative"
+                            draggable
+                            onDragStart={(e) => {
+                                mainStage[selectedIndex].dragRect.current = {
+                                    width: 500,
+                                    height: 300,
+                                    type: "img",
+                                    visible: true,
+                                    bgImage: `${video.image}`,
+                                    iconSrc: "/src/assets/icons/PlayVideo.svg",
+                                    src: videoUrl,
+                                    fill: "#ebf0fc",
+                                    title: "stock-video",
+                                    layer: "Stock Video",
+                                    htmlType: "stock-video",
+                                };
+                            }}>
                             <img
                                 src={video.image}
                                 alt={video.user.name}
+
                                 className="rounded-lg w-full h-24 object-cover cursor-pointer"
                             />
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <svg className="w-8 h-8" viewBox="0 0 24 24">
-                                    <circle cx="12" cy="12" r="10" fill="rgba(0,0,0,0.5)"/>
-                                    <path d="M10 8l6 4-6 4V8z" fill="white"/>
+                                    <circle cx="12" cy="12" r="10" fill="rgba(0,0,0,0.5)" />
+                                    <path d="M10 8l6 4-6 4V8z" fill="white" />
                                 </svg>
                             </div>
                         </div>

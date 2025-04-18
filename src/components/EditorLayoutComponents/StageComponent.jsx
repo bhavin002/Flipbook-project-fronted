@@ -13,6 +13,8 @@ import VideoButton from "./Widget/VideoButton";
 import ShopButton from "./Widget/ShopButton";
 import RingShape from "./Widget/RingShape";
 import Hyperlink from "./Widget/Hyperlink";
+import StockVideo from "./Widget/StockVideo";
+import KonavGif from "./Widget/KonvaGif";
 
 export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
@@ -728,7 +730,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
     };
 
     const handleShapeDragEnd = (pointerPosition) => {
-        
+
         if (stage.dragRect.current) {
             const dropX = (pointerPosition.x - rectProps.x) / scale.scaleX;
             const dropY = (pointerPosition.y - rectProps.y) / scale.scaleY;
@@ -928,6 +930,12 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                         return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
                                     case 'go-to-page':
                                         return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                    case 'stock-video':
+                                        return <StockVideo onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handelDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                    case 'stock-gif':
+                                        return <KonavGif onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                    case 'stock-sticker':
+                                        return <KonavGif onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
                                     case 'masked-image':
                                         return (
                                             <MaskedImage

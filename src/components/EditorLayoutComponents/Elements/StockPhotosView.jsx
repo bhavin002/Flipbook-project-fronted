@@ -216,8 +216,6 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
             let group = mainStage[selectedIndex].stageref.current.children[0].children[1];
 
             // Calculate the center of the group
-            const groupX = group.x();
-            const groupY = group.y();
             const groupWidth = group.width();
             const groupHeight = group.height();
             const dropX = (groupWidth / 2) / group.scaleX() - (item.attrs.width || 50) / 2;
@@ -341,7 +339,7 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
                                 alt={image.photographer}
                                 className="rounded-lg w-full h-24 object-cover cursor-pointer"
                                 draggable
-                                onDragStart={(e) => handleImageSelect(image, true)}
+                                onDragStart={() => handleImageSelect(image, true)}
                                 onClick={() => handleImageSelect(image, false)}
                             />
                         );
@@ -353,7 +351,7 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
                             alt={image.photographer}
                             className="rounded-lg w-full h-24 object-cover cursor-pointer"
                             draggable
-                            onDragStart={(e) => handleImageSelect(image, true)}
+                            onDragStart={() => handleImageSelect(image, true)}
                             onClick={() => handleImageSelect(image, false)}
                         />
                     );
