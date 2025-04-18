@@ -848,7 +848,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                 stage.dragRect.current = mainStage[selectedIndex].dragRect.current;
                 setSelectedIndex(index);
                 e.preventDefault();
-                debugger
+                
                 stage.stageref.current.setPointersPositions(e);
                 const pointerPosition = stage.stageref.current.getPointerPosition();
                 handleShapeDragEnd(pointerPosition);

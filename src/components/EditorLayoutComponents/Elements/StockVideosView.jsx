@@ -380,7 +380,7 @@ const Section = ({ setIsEditorDrawerOpen, setMainStage, title, videos, onViewAll
                                 alt={video.user.name}
                                 className="rounded-lg w-full h-24 object-cover cursor-pointer"
                             />
-                            <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="absolute inset-0 flex items-center justify-center cursor-pointer">
                                 <svg className="w-8 h-8" viewBox="0 0 24 24">
                                     <circle cx="12" cy="12" r="10" fill="rgba(0,0,0,0.5)" />
                                     <path d="M10 8l6 4-6 4V8z" fill="white" />
