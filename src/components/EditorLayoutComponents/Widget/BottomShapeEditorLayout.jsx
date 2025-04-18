@@ -22,6 +22,7 @@ import ContactForm from "../widgetSidebar/ContactForm"
 import PageOptions from "../widgetSidebar/PageOptions"
 import GoToPage from "../widgetSidebar/GoToPage"
 import { Drawer, DrawerContent } from "@/components/ui/drawer"
+import StockVideo from "../widgetSidebar/StockVideo"
 
 function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage, selectedIndex) {
     console.log("selectedSubMenu: ", selectedSubMenu);
@@ -138,6 +139,11 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
     if (selectedSubMenu === "go-to-page") {
         return (
             <GoToPage />
+        )
+    }
+    if(selectedSubMenu === "stock-video"){
+        return (
+            <StockVideo />
         )
     }
 

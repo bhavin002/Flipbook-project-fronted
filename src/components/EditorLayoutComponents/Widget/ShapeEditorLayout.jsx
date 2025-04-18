@@ -21,6 +21,7 @@ import Question from "../widgetSidebar/Question"
 import ContactForm from "../widgetSidebar/ContactForm"
 import PageOptions from "../widgetSidebar/PageOptions"
 import GoToPage from "../widgetSidebar/GoToPage"
+import StockVideo from "../widgetSidebar/StockVideo"
 
 function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage, selectedIndex) {
     if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
@@ -38,104 +39,109 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
             <Color selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
         )
     }
-    if(selectedSubMenu === 'shape-style'){
+    if (selectedSubMenu === 'shape-style') {
         return (
             <ShapeStyle />
         )
     }
-    if(selectedSubMenu === 'shape-action'){
+    if (selectedSubMenu === 'shape-action') {
         return (
             <ShapeAction />
         )
     }
-    if(selectedSubMenu === 'image-filter'){
+    if (selectedSubMenu === 'image-filter') {
         return (
             <ImageFilter selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
         )
     }
-    if(selectedSubMenu === 'image-style'){
+    if (selectedSubMenu === 'image-style') {
         return (
-            <ImageStyle selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex}  />
+            <ImageStyle selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
         )
     }
-    if(selectedSubMenu === 'image-action'){
+    if (selectedSubMenu === 'image-action') {
         return (
             <ImageAction />
         )
     }
-    if(selectedSubMenu === 'link'){
+    if (selectedSubMenu === 'link') {
         return (
             <Link />
         )
     }
-    if(selectedSubMenu === "tag"){
+    if (selectedSubMenu === "tag") {
         return (
             <Tag />
         )
     }
-    if(selectedSubMenu === "caption"){
+    if (selectedSubMenu === "caption") {
         return (
             <Caption />
         )
     }
-    if(selectedSubMenu === "embed"){
+    if (selectedSubMenu === "embed") {
         return (
             <Embed />
         )
     }
-    if(selectedSubMenu === "slideshow"){
+    if (selectedSubMenu === "slideshow") {
         return (
             <SlideShow />
         )
     }
-    if(selectedSubMenu === "video-embed"){
+    if (selectedSubMenu === "video-embed") {
         return (
             <VideoWidget />
         )
     }
-    if(selectedSubMenu === "video-button"){
+    if (selectedSubMenu === "video-button") {
         return (
             <Video />
         )
     }
-    if(selectedSubMenu === "audio-button"){
+    if (selectedSubMenu === "audio-button") {
         return (
             <Audio />
         )
     }
-    if(selectedSubMenu === "shopping-list"){
+    if (selectedSubMenu === "shopping-list") {
         return (
             <ShoppingList />
         )
     }
-    if(selectedSubMenu === "product-tag"){
+    if (selectedSubMenu === "product-tag") {
         return (
             <ProductTag />
         )
     }
-    if(selectedSubMenu === "quiz"){
+    if (selectedSubMenu === "quiz") {
         return (
             <Quiz />
         )
     }
-    if(selectedSubMenu === "question"){
+    if (selectedSubMenu === "question") {
         return (
             <Question />
         )
     }
-    if(selectedSubMenu === "contact-form"){
+    if (selectedSubMenu === "contact-form") {
         return (
             <ContactForm />
         )
     }
-    if(selectedSubMenu === "page-options"){
+    if (selectedSubMenu === "page-options") {
         return (
             <PageOptions />
         )
     }
-    if(selectedSubMenu === "go-to-page"){
+    if (selectedSubMenu === "go-to-page") {
         return (
             <GoToPage />
+        )
+    }
+    if (selectedSubMenu === "stock-video") {
+        return (
+            <StockVideo />
         )
     }
 
