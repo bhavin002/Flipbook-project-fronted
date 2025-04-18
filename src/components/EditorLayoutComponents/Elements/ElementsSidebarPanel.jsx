@@ -24,7 +24,7 @@ export default function ElementsSidebarPanel({ setMainStage, mainStage, selected
                 {
                     text: 'Shapes',
                     icon: <Shapes />,
-                    view: <ShapesView mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    view: <ShapesView setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
                 },
                 {
                     text: 'GIFs',

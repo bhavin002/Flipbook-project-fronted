@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { getData } from '@/utils/datas';
 import { v4 as uuid } from "uuid";
 
-const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
+const ShapesView = ({ setMainStage,mainStage, selectedIndex, onBackClick }) => {
     const svgItems = getData("svgItems");
     const shapes = [
         {
@@ -27,7 +27,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         }
         ,
@@ -52,7 +52,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -75,7 +75,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -99,7 +99,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -122,7 +122,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -146,7 +146,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -169,7 +169,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -193,7 +193,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -217,7 +217,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -241,7 +241,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -265,7 +265,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -287,7 +287,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -311,7 +311,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -333,7 +333,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -357,7 +357,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -379,7 +379,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -400,7 +400,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -421,7 +421,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -442,7 +442,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -463,7 +463,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -484,7 +484,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -506,7 +506,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -528,7 +528,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -549,7 +549,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -573,7 +573,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -596,7 +596,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -618,7 +618,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -639,7 +639,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -660,7 +660,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
         {
@@ -681,7 +681,7 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                 htmlType: "shape-widget",
                 sidebar: "shape-action",
                 title: "shape-widget",
-                layer:"Shape"
+                layer: "Shape"
             },
         },
     ];
@@ -714,6 +714,116 @@ const ShapesView = ({ mainStage, selectedIndex, onBackClick }) => {
                                         onDragStart={(e) => {
                                             mainStage[selectedIndex].dragRect.current = shape?.attrs;
                                         }}
+                                        onClick={() => {
+                                            if (shape?.attrs) {
+                                                // Get the group from the stage
+                                                let group = mainStage[selectedIndex].stageref.current.children[0].children[1];
+
+                                                // Calculate the center of the group
+                                                const groupX = group.x();
+                                                const groupY = group.y();
+                                                const groupWidth = group.width();
+                                                const groupHeight = group.height();
+                                                const dropX = (groupWidth / 2) / group.scaleX() - (shape?.attrs.width || 50) / 2;
+                                                const dropY = (groupHeight / 2) / group.scaleY() - (shape?.attrs.height || 50) / 2;
+
+                                                let isOverShapeWidget = false;
+                                                let shapeWidget = null;
+                                                let shapeWidgetData = [];
+
+                                                // Check if the drop position overlaps with a shape-widget
+                                                mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(x => {
+                                                    if (x.attrs.title === 'shape-widget') {
+                                                        const shapeLeft = x.attrs.x;
+                                                        const shapeTop = x.attrs.y;
+                                                        const shapeRight = x.attrs.x + (x.attrs.width * (x.attrs.scaleX || 1));
+                                                        const shapeBottom = x.attrs.y + (x.attrs.height * (x.attrs.scaleY || 1));
+
+                                                        // Check if drop position is within shape-widget bounds
+                                                        if (dropX >= shapeLeft && dropX <= shapeRight && dropY >= shapeTop && dropY <= shapeBottom) {
+                                                            isOverShapeWidget = true;
+                                                            shapeWidget = x.attrs;
+                                                            shapeWidgetData = x.children[0].dataArray;
+                                                        }
+                                                    }
+                                                });
+
+                                                // Create new shape at the center of the group
+                                                let newShape = {
+                                                    x: dropX,
+                                                    y: dropY,
+                                                    ...shape?.attrs,
+                                                    id: uuid()
+                                                };
+
+                                                // Handle masked image case
+                                                if (isOverShapeWidget && shapeWidget?.isMasked &&
+                                                    (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'upload-photo')) {
+                                                    newShape = {
+                                                        src: newShape.src,
+                                                        height: Number(shapeWidget.height),
+                                                        width: Number(shapeWidget.width),
+                                                        x: shapeWidget.x,
+                                                        y: shapeWidget.y,
+                                                        scaleX: shapeWidget.scaleX,
+                                                        scaleY: shapeWidget.scaleY,
+                                                        skewX: shapeWidget.skewX,
+                                                        skewY: shapeWidget.skewY,
+                                                        title: 'masked-image',
+                                                        layer: 'masked-image',
+                                                        htmlType: 'masked-image',
+                                                        type: 'img',
+                                                        data: shapeWidget.data,
+                                                        maskData: shapeWidgetData,
+                                                        maskType: shapeWidget.maskType,
+                                                        draggable: true,
+                                                        visible: true,
+                                                        id: uuid()
+                                                    };
+
+                                                    // Update mainStage by removing the shape-widget and adding the new masked-image
+                                                    mainStage[selectedIndex].selectedShapes = [];
+                                                    setMainStage(prevState => {
+                                                        const updatedState = [...prevState];
+                                                        const updatedShapes = updatedState[selectedIndex].shapes.filter(
+                                                            shape => shape.id !== shapeWidget.id
+                                                        );
+                                                        updatedState[selectedIndex] = {
+                                                            ...updatedState[selectedIndex],
+                                                            shapes: [...updatedShapes, newShape]
+                                                        };
+                                                        return updatedState;
+                                                    });
+                                                } else {
+                                                    // Add the new shape at the center of the group
+                                                    setMainStage(prevState => {
+                                                        const updatedState = [...prevState];
+                                                        updatedState[selectedIndex] = {
+                                                            ...updatedState[selectedIndex],
+                                                            shapes: [...updatedState[selectedIndex].shapes, newShape]
+                                                        };
+                                                        return updatedState;
+                                                    });
+                                                }
+
+                                                // Select the newly added shape
+                                                setTimeout(() => {
+                                                    mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach((child) => {
+                                                        if (child.attrs.id === newShape.id) {
+                                                            setMainStage(prevState => {
+                                                                const updatedState = [...prevState];
+                                                                updatedState[selectedIndex] = {
+                                                                    ...updatedState[selectedIndex],
+                                                                    selectedShapes: [child]
+                                                                };
+                                                                return updatedState;
+                                                            });
+                                                        }
+                                                    });
+                                                }, 100);
+                                            }
+                                        }}
+
                                         dangerouslySetInnerHTML={{ __html: shape.svg }}
                                     ></div>
                                 </div>
