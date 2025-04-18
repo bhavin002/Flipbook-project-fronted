@@ -177,8 +177,18 @@ const StickersView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selected
 
 const Section = ({ setIsEditorDrawerOpen, setMainStage, title, stickers, lastStickerRef, mainStage, selectedIndex }) => {
     // Function to handle sticker drag start
-    const handleStickerDragStart = (sticker) => {
+
+
+    const handleStickerDragStart = async (sticker) => {
+        const dimensions = await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = sticker.media_formats?.tinygif_transparent ? sticker.media_formats?.tinygif_transparent.url : sticker.media_formats?.gif?.url;
+            img.onload = () => resolve({ width: img.width, height: img.height });
+            img.onerror = () => reject("Error loading image");
+        });
         mainStage[selectedIndex].dragRect.current = {
+            width: dimensions.width,
+            height: dimensions.height,
             type: "sticker",
             src: sticker.media_formats?.tinygif_transparent ? sticker.media_formats?.tinygif_transparent.url : sticker.media_formats?.gif?.url,
             visible: true,

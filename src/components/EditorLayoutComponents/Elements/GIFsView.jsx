@@ -174,8 +174,16 @@ const GIFsView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedInde
 
 const Section = ({ setIsEditorDrawerOpen, setMainStage, title, gifs, lastGifRef, mainStage, selectedIndex }) => {
     // Function to handle GIF drag start
-    const handleGifDragStart = (gif) => {
+    const handleGifDragStart = async (gif) => {
+        const dimensions = await new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = gif.media_formats.gif.url;
+            img.onload = () => resolve({ width: img.width, height: img.height });
+            img.onerror = () => reject("Error loading image");
+        });
         mainStage[selectedIndex].dragRect.current = {
+            width: dimensions.width,
+            height: dimensions.height,
             type: "img",
             src: `${gif.media_formats.gif.url}`,
             visible: true,
