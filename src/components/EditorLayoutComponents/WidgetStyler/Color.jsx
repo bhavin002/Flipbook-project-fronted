@@ -50,7 +50,7 @@ export default function Color({ selectedShape, mainStage, selectedIndex, setMain
     };
 
     return (
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-2">
             <Input
                 type="text"
                 onChange={handleHexInputChange}
