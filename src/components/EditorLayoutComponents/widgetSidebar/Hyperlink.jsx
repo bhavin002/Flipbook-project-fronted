@@ -10,11 +10,17 @@ import Spotlight from "./Hyperlink/Spotlight";
 import PhoneNumber from "./Hyperlink/PhoneNumber";
 import PhotoSlideshow from "./Hyperlink/PhotoSlideshow";
 import Chart from "./Hyperlink/Chart";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export default function Hyperlink() {
+export default function Hyperlink({ action }) {
     const hyperlinks = getData("hyperlinks") || [];
-    const [selectedAction, setSelectedAction] = useState("send-email");
+    const [selectedAction, setSelectedAction] = useState(action || "send-email");
+
+    useEffect(() => {
+        if (action) {
+            setSelectedAction(action);
+        }
+    }, [action]);
 
     const renderDynamicContent = () => {
         switch (selectedAction) {

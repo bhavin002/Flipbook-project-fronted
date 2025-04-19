@@ -1561,7 +1561,7 @@ const interactions = [
                     title: "hyperlink",
                     visible: true,
                     layer: "Link",
-                    htmlType: "popup-slideshow"
+                    htmlType: "photo-slideshow"
                 }
             }
         ]

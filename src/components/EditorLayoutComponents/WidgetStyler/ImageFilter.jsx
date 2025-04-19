@@ -48,6 +48,9 @@ const filterPresets = {
 };
 
 export default function ImageFilter({
+  windowInnerWidth,
+  setIsShapeDrawerOpen,
+  setSelectedSubMenu,
   selectedShape,
   setMainStage,
   mainStage,
@@ -144,6 +147,11 @@ export default function ImageFilter({
 
   const applyPresetFilter = (filterName) => {
     setFilters(filterPresets[filterName]);
+    if (windowInnerWidth > 1024) return;
+    setTimeout(() => {
+      setIsShapeDrawerOpen(false);
+      setSelectedSubMenu(null);
+    }, 0);
   };
 
   return (

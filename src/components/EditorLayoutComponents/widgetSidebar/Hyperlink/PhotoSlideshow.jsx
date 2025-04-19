@@ -6,63 +6,63 @@ import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Trash2, GripVertical } from "lucide-react";
 import { useState } from "react";
-import { 
-  DndContext, 
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    useSortable,
+    verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 
 // Sortable image item component
 function SortableImageItem({ image, onDelete }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging
-  } = useSortable({ id: image.id });
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: image.id });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+    };
 
-  return (
-    <div 
-      ref={setNodeRef} 
-      style={style} 
-      className={`flex items-center justify-between ${isDragging ? 'bg-gray-50' : ''}`}
-    >
-      <div className="flex gap-2 items-center">
-        <button 
-          className="cursor-grab focus:outline-none" 
-          {...attributes} 
-          {...listeners}
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={`flex items-center justify-between ${isDragging ? 'bg-gray-50' : ''}`}
         >
-          <GripVertical className="h-4 w-4 text-gray-400" />
-        </button>
-        <img src={image.url} className="w-[50px] h-[40px] object-cover rounded-sm" alt={image.name} />
-        <p className="text-sm truncate">{image.name}</p>
-      </div>
-      <Button variant="ghost" onClick={() => onDelete(image.id)}>
-        <Trash2 className="h-4 w-4" />
-      </Button>
-    </div>
-  );
+            <div className="flex gap-2 items-center">
+                <button
+                    className="cursor-grab focus:outline-none"
+                    {...attributes}
+                    {...listeners}
+                >
+                    <GripVertical className="h-4 w-4 text-gray-400" />
+                </button>
+                <img src={image.url} className="w-[50px] h-[40px] object-cover rounded-sm" alt={image.name} />
+                <p className="text-sm truncate">{image.name}</p>
+            </div>
+            <Button variant="ghost" onClick={() => onDelete(image.id)}>
+                <Trash2 className="h-4 w-4" />
+            </Button>
+        </div>
+    );
 }
 
 export default function PhotoSlideshow() {
@@ -76,9 +76,9 @@ export default function PhotoSlideshow() {
 
     // Sample images - in a real app these would come from file uploads
     const sampleImages = [
-      { id: '1', name: 'Image 1.jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
-      { id: '2', name: 'Image 2.jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
-      { id: '3', name: 'Image 3.jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
+        { id: '1', name: 'Image 1.jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
+        { id: '2', name: 'Image 2.jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
+        { id: '3', name: 'Image 3.jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
     ];
 
     const handleUploadImage = () => {
@@ -88,11 +88,11 @@ export default function PhotoSlideshow() {
             // In a real implementation, this would handle adding new images
             const newId = (Math.max(...imagesUploaded.map(img => parseInt(img.id))) + 1).toString();
             setImagesUploaded([
-                ...imagesUploaded, 
-                { 
-                    id: newId, 
-                    name: `Image ${newId}.jpg`, 
-                    url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' 
+                ...imagesUploaded,
+                {
+                    id: newId,
+                    name: `Image ${newId}.jpg`,
+                    url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t'
                 }
             ]);
         }
@@ -112,12 +112,12 @@ export default function PhotoSlideshow() {
 
     function handleDragEnd(event) {
         const { active, over } = event;
-        
+
         if (active.id !== over.id) {
             setImagesUploaded((items) => {
                 const oldIndex = items.findIndex(item => item.id === active.id);
                 const newIndex = items.findIndex(item => item.id === over.id);
-                
+
                 return arrayMove(items, oldIndex, newIndex);
             });
         }
@@ -131,6 +131,7 @@ export default function PhotoSlideshow() {
                     type="text"
                     id="photo-slideshow-tooltip"
                     placeholder="Photo slideshow"
+                    defaultValue="Click to view photo slideshow"
                     className="placeholder:text-[#d8dce3]" />
             </div>
             {imagesUploaded.length > 0 && (
@@ -190,13 +191,13 @@ export default function PhotoSlideshow() {
                                         <div className="border rounded flex items-center justify-between px-2 py-1">
                                             <span>{slideDuration}</span>
                                             <div className="flex flex-col">
-                                                <button 
+                                                <button
                                                     className="h-3 flex items-center justify-center"
                                                     onClick={() => setSlideDuration([Math.min(slideDuration[0] + 1, 10)])}
                                                 >
                                                     <span className="text-xs">▲</span>
                                                 </button>
-                                                <button 
+                                                <button
                                                     className="h-3 flex items-center justify-center"
                                                     onClick={() => setSlideDuration([Math.max(slideDuration[0] - 1, 0)])}
                                                 >
@@ -277,21 +278,21 @@ export default function PhotoSlideshow() {
                             Image preview
                         </Label>
                         <div className="space-y-2">
-                            <DndContext 
+                            <DndContext
                                 sensors={sensors}
                                 collisionDetection={closestCenter}
                                 onDragEnd={handleDragEnd}
                                 modifiers={[restrictToVerticalAxis]}
                             >
-                                <SortableContext 
+                                <SortableContext
                                     items={imagesUploaded.map(img => img.id)}
                                     strategy={verticalListSortingStrategy}
                                 >
                                     {imagesUploaded.map((image) => (
-                                        <SortableImageItem 
-                                            key={image.id} 
-                                            image={image} 
-                                            onDelete={handleDeleteImage} 
+                                        <SortableImageItem
+                                            key={image.id}
+                                            image={image}
+                                            onDelete={handleDeleteImage}
                                         />
                                     ))}
                                 </SortableContext>
