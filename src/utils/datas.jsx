@@ -599,6 +599,26 @@ const templatesData = [
     { value: "pitch-decks", label: "Pitch Decks" }
 ]
 
+const hyperlinks = [
+    { value: "send-email", label: "Send email" },
+    { value: "download-pdf", label: "Download PDF" },
+    { value: "go-to-profile", label: "Go to profile" },
+    { value: "go-to-url", label: "Go to URL" },
+    { value: "go-to-previous-page", label: "Go to previous page" },
+    { value: "go-to-next-page", label: "Go to next page" },
+    { value: "go-to-first-page", label: "Go to first page" },
+    { value: "go-to-last-page", label: "Go to last page" },
+    { value: "go-to-page", label: "Go to page" },
+    { value: "popup-frame", label: "Popup frame" },
+    { value: "spotlight", label: "Spotlight" },
+    { value: "phone-number", label: "Phone number" },
+    { value: "photo-slideshow", label: "Photo slideshow" },
+    { value: "line-chart", label: "Line chart" },
+    { value: "bar-chart", label: "Bar chart" },
+    { value: "pie-chart", label: "Pie chart" },
+]
+
+
 const teammateOptions = [
     { value: "all-teammates", label: "All Teammates" },
     { value: "BhavinV", label: "BhavinV" },
@@ -1541,7 +1561,7 @@ const interactions = [
                     title: "hyperlink",
                     visible: true,
                     layer: "Link",
-                    htmlType: "popup-slideshow"
+                    htmlType: "photo-slideshow"
                 }
             }
         ]
@@ -3099,6 +3119,42 @@ const library = [
     }
 ]
 
+const currency = [
+    { value: "inr", label: "INR (Indian Rupees)" },
+    { value: "usd", label: "USD (United States dollar)" },
+    { value: "eur", label: "EUR (Euro)" },
+    { value: "aud", label: "AUD (Australian dollar)" },
+    { value: "cad", label: "CAD (Canadian dollar)" },
+    { value: "jod", label: "JOD (Jordanian dinar)" },
+    { value: "kyd", label: "KYD (Kuwaiti dinar)" },
+    { value: "chf", label: "CHF (Swiss franc)" },
+    { value: "bgn", label: "BGN (Bulgarian Lev)" },
+    { value: "hrk", label: "HRK (Croatian Kuna)" },
+    { value: "czk", label: "CZK (Czech Koruna)" },
+    { value: "dkk", label: "DKK (Danish Krone)" },
+    { value: "huf", label: "HUF (Hungarian Forint)" },
+    { value: "nok", label: "NOK (Norwegian krone)" },
+    { value: "pln", label: "PLN (Polish Zloty)" },
+    { value: "ron", label: "RON (Romanian Leu)" },
+    { value: "rub", label: "RUB (Russian Ruble)" },
+    { value: "rsd", label: "RSD (Serbian Dinar)" },
+    { value: "sek", label: "SEK (Swedish Krona)" },
+    { value: "try", label: "TRY (Turkish Lira)" },
+    { value: "uah", label: "UAH (Ukranian Hryvnia)" },
+    { value: "mxn", label: "MXN (Mexican Peso)" },
+    { value: "ars", label: "ARS (Argentine Peso)" },
+    { value: "clp", label: "CLP (Chilean Peso)" },
+    { value: "php", label: "PHP (Philippine Peso)" },
+    { value: "brl", label: "BRL (Brazilian Real)" },
+    { value: "kes", label: "KES (Kenyan Shilling)" },
+    { value: "thb", label: "THB (Thai Baht)" },
+    { value: "cop", label: "COP (Colombian Peso)" },
+    { value: "gtq", label: "GTQ (Guatemalan Quetzal)" },
+    { value: "nis", label: "NIS (Israeli Shekel)" },
+    { value: "nzd", label: "NZD (New Zealand Dollar)" },
+    { value: "hkd", label: "HKD (Hong Kong Dollar)" }
+];
+
 export function getData(dataType) {
     switch (dataType) {
         case 'defaultRoutes':
@@ -3181,8 +3237,10 @@ export function getData(dataType) {
             return folders;
         case 'library':
             return library;
-        case 'editorBottomNavItems':
-            return editorBottomNavItems;
+        case 'hyperlinks':
+            return hyperlinks;
+        case 'currency':
+            return currency;
         default:
             return [];
     }

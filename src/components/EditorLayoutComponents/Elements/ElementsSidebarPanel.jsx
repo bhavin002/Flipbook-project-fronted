@@ -6,7 +6,6 @@ import GIFsView from "./GIFsView"
 import StickersView from "./StickersView"
 
 export default function ElementsSidebarPanel({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, currentView, setCurrentView }) {
-    console.log("selectedIndex ElementsSidebarPanel ????", selectedIndex)
     const elements = [
         {
             title: "Graphics",
@@ -14,27 +13,27 @@ export default function ElementsSidebarPanel({ setIsEditorDrawerOpen, setMainSta
                 {
                     text: 'Stock photos',
                     icon: <Image />,
-                    view: <StockPhotosView setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    component: StockPhotosView
                 },
                 {
                     text: 'Stock videos',
                     icon: <Video />,
-                    view: <StockVideosView setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    component: StockVideosView
                 },
                 {
                     text: 'Shapes',
                     icon: <Shapes />,
-                    view: <ShapesView setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    component: ShapesView
                 },
                 {
                     text: 'GIFs',
                     icon: <ImagePlay />,
-                    view: <GIFsView setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    component: GIFsView
                 },
                 {
                     text: 'Stickers',
                     icon: <Smile />,
-                    view: <StickersView setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} onBackClick={() => setCurrentView(null)} />
+                    component: StickersView
                 }
             ]
         },
@@ -62,7 +61,16 @@ export default function ElementsSidebarPanel({ setIsEditorDrawerOpen, setMainSta
     ]
 
     if (currentView) {
-        return currentView
+        const ViewComponent = currentView.component;
+        return (
+            <ViewComponent 
+                setIsEditorDrawerOpen={setIsEditorDrawerOpen} 
+                setMainStage={setMainStage} 
+                mainStage={mainStage} 
+                selectedIndex={selectedIndex} 
+                onBackClick={() => setCurrentView(null)} 
+            />
+        );
     }
 
     return (
@@ -77,7 +85,7 @@ export default function ElementsSidebarPanel({ setIsEditorDrawerOpen, setMainSta
                                     <div
                                         key={itemIndex}
                                         className="cursor-pointer flex flex-col items-center"
-                                        onClick={() => section.title === "Graphics" ? setCurrentView(item.view) : null}
+                                        onClick={() => section.title === "Graphics" ? setCurrentView(item) : null}
                                     >
                                         <div className="rounded-lg h-14 w-full bg-primary hover:bg-violet-700 flex justify-center items-center">
                                             <div className="w-10 h-8 relative flex justify-center items-center">

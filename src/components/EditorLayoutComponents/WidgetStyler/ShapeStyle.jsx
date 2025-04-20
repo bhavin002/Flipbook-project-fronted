@@ -17,7 +17,7 @@ export default function ShapeStyle() {
     };
 
     return (
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-2">
             <Label className="text-lg">Shape style</Label>
             <div>
                 <Label className="text-xs">Corner roundness</Label>

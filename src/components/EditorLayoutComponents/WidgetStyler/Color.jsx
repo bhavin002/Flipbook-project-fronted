@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { useRef, useState } from "react";
 
-export default function Color({ selectedShape, mainStage, selectedIndex, setMainStage }) {
+export default function Color({ windowInnerWidth, setIsShapeDrawerOpen, setSelectedSubMenu, selectedShape, mainStage, selectedIndex, setMainStage }) {
     const [isNewColorAdded, setIsNewColorAdded] = useState(false);
     const colorInputRef = useRef(null);
     const handleAddColor = () => {
@@ -43,6 +43,9 @@ export default function Color({ selectedShape, mainStage, selectedIndex, setMain
         }
 
         setMainStage([...mainStage]);
+        if (windowInnerWidth > 1024) return;
+        setIsShapeDrawerOpen(false);
+        setSelectedSubMenu(null);
     };
 
     const handleHexInputChange = (e) => {
@@ -50,7 +53,7 @@ export default function Color({ selectedShape, mainStage, selectedIndex, setMain
     };
 
     return (
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-2">
             <Input
                 type="text"
                 onChange={handleHexInputChange}

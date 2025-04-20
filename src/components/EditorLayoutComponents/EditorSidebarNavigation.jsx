@@ -37,7 +37,7 @@ export default function SidebarNavigation({ windowInnerWidth,currentView, setCur
             setSelectedSubMenu(null);
             return;
         }
-        if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-url" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "popup-frame" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "spotlight" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "popup-slideshow")) {
+        if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "go-to-url" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "popup-frame" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "spotlight" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "photo-slideshow")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
                 setSelectedItem("interactions")

@@ -23,29 +23,7 @@ export default function EditorAppLayout({ windowInnerWidth, isSidebarOpen, setIs
         "stageref": null,
         "CANVAS_WIDTH": 1632,
         "CANVAS_HEIGHT": 1056,
-        "shapes": [
-            {
-                "draggable": true,
-                "x": 434.83008356546094,
-                "y": 283.873247414282,
-                "width": 160,
-                "height": 26,
-                "fill": "#7bc2ff",
-                "opacity": 0.3,
-                "type": "rect",
-                "title": "hyperlink",
-                "visible": true,
-                "layer": "Link",
-                "htmlType": "go-to-url",
-                "id": "c786ef1f-37e5-44b6-8a81-0c073efe036b",
-                "name": "shape",
-                "rotation": 0,
-                "scaleX": 2.3635097493036152,
-                "scaleY": 6.473258078064039,
-                "skewX": 0,
-                "skewY": 0
-            }
-        ],
+        "shapes": [],
         "selectedShapes": [],
         "background": "#fff",
         "dragRect": {
@@ -113,7 +91,7 @@ export default function EditorAppLayout({ windowInnerWidth, isSidebarOpen, setIs
                         <SidebarProvider value={{ selectedItem, setSelectedItem, width: "23rem" }}>
                             <EditorSidebarNavigation windowInnerWidth={windowInnerWidth} setIsShapeDrawerOpen={setIsShapeDrawerOpen} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} setSelectedShape={setSelectedShape} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedIndex={selectedIndex} setSelectedItem={setSelectedItem} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
                             <AppSidebar setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} selectedIndex={selectedIndex} />
-                            <ShapeEditorLayout mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} />
+                            <ShapeEditorLayout windowInnerWidth={windowInnerWidth} setIsShapeDrawerOpen={setIsShapeDrawerOpen} mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} setSelectedSubMenu={setSelectedSubMenu} />
                         </SidebarProvider>
                     </div>
 
@@ -129,7 +107,7 @@ export default function EditorAppLayout({ windowInnerWidth, isSidebarOpen, setIs
             <BottomEditorPanel isEditorDrawerOpen={isEditorDrawerOpen} setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} />
             {
                 windowInnerWidth <= 1024 && <>
-                    <BottomShapeEditorLayout setSelectedSubMenu={setSelectedSubMenu} isShapeDrawerOpen={isShapeDrawerOpen} setIsShapeDrawerOpen={setIsShapeDrawerOpen} mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} />
+                    <BottomShapeEditorLayout windowInnerWidth={windowInnerWidth} setIsEditorDrawerOpen={setIsEditorDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} isShapeDrawerOpen={isShapeDrawerOpen} setIsShapeDrawerOpen={setIsShapeDrawerOpen} mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} />
                 </>
             }
         </div>

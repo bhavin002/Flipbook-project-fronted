@@ -23,10 +23,10 @@ import PageOptions from "../widgetSidebar/PageOptions"
 import GoToPage from "../widgetSidebar/GoToPage"
 import StockVideo from "../widgetSidebar/StockVideo"
 
-function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage, selectedIndex) {
+function renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex) {
     if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
         return (
-            <Hyperlink />
+            <Hyperlink action={selectedShape[0].attrs.htmlType} />
         )
     }
     if (selectedSubMenu === 'effect') {
@@ -36,7 +36,7 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
     }
     if (selectedSubMenu === 'color') {
         return (
-            <Color selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
+            <Color windowInnerWidth={windowInnerWidth} setIsShapeDrawerOpen={setIsShapeDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
         )
     }
     if (selectedSubMenu === 'shape-style') {
@@ -51,7 +51,7 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
     }
     if (selectedSubMenu === 'image-filter') {
         return (
-            <ImageFilter selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
+            <ImageFilter windowInnerWidth={windowInnerWidth} setIsShapeDrawerOpen={setIsShapeDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
         )
     }
     if (selectedSubMenu === 'image-style') {
@@ -131,7 +131,7 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
     }
     if (selectedSubMenu === "page-options") {
         return (
-            <PageOptions />
+            <PageOptions action={selectedShape[0].attrs.htmlType} />
         )
     }
     if (selectedSubMenu === "go-to-page") {
@@ -147,10 +147,10 @@ function renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage
 
 }
 
-export default function ShapeEditorLayout({ selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex }) {
+export default function ShapeEditorLayout({ windowInnerWidth, setIsShapeDrawerOpen, selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex, setSelectedSubMenu }) {
     return (
         <div className={`absolute right-0 h-full dark-theme top-0 bg-sidebar z-[11] text-white transition-all`} style={{ width: (selectedSubMenu) ? '23rem' : "0px", position: "absolute", overflowX: 'hidden' }}>
-            {renderComponent(selectedShape, selectedSubMenu, mainStage, setMainStage, selectedIndex)}
+            {renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex)}
         </div>
     )
 

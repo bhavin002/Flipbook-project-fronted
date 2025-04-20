@@ -48,6 +48,9 @@ const filterPresets = {
 };
 
 export default function ImageFilter({
+  windowInnerWidth,
+  setIsShapeDrawerOpen,
+  setSelectedSubMenu,
   selectedShape,
   setMainStage,
   mainStage,
@@ -144,10 +147,15 @@ export default function ImageFilter({
 
   const applyPresetFilter = (filterName) => {
     setFilters(filterPresets[filterName]);
+    if (windowInnerWidth > 1024) return;
+    setTimeout(() => {
+      setIsShapeDrawerOpen(false);
+      setSelectedSubMenu(null);
+    }, 0);
   };
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="p-6 space-y-2">
       <Label className="text-lg">Image filter</Label>
       <div className="grid grid-cols-4 gap-2 justify-items-center">
         {imageFilters.map((filter) => (

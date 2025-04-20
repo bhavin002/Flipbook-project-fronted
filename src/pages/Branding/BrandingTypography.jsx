@@ -95,7 +95,7 @@ export default function BrandingTypography() {
     };
 
     return (
-        <div className="flex flex-col max-w-full p-6 space-y-4">
+        <div className="flex flex-col max-w-full p-6 space-y-2">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Typography</h1>
                 <p className="text-gray-500">Set custom default text styles for easy access when you design publications</p>
