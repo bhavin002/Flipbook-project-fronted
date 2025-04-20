@@ -105,7 +105,7 @@ export default function Appearance() {
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger asChild>
-                                                <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                                                <Info className="h-4 w-4 cursor-pointer" />
                                             </TooltipTrigger>
                                             <TooltipContent
                                                 side="right"

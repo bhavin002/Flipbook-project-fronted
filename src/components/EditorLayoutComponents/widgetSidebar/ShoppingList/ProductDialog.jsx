@@ -9,6 +9,7 @@ import { Plus, Trash2 } from "lucide-react";
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
     SelectTrigger,
     SelectValue,
@@ -23,6 +24,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function ProductDialog() {
     const [onSale, setIsSale] = useState(false);
@@ -45,7 +47,7 @@ export default function ProductDialog() {
                     </DialogDescription>
                 </DialogHeader>
                 <div className="max-h-[calc(100vh-150px)] overflow-y-auto">
-                    <div className="space-y-2">
+                    <div className="space-y-2 px-1">
                         <div className="flex gap-4">
                             <div className="w-[60%]">
                                 <Label htmlFor="product-title" className="text-xs">Product title</Label>
@@ -75,7 +77,7 @@ export default function ProductDialog() {
                         </div>
                     </div>
                     <Separator className="my-5" />
-                    <div className="space-y-6">
+                    <div className="space-y-6 px-1" >
                         <div className="flex gap-4">
                             <div className="w-[50%]">
                                 <Label htmlFor="product-price" className="text-xs">price</Label>
@@ -136,7 +138,7 @@ export default function ProductDialog() {
                         </div>
                     </div>
                     <Separator className="my-5" />
-                    <div className="space-y-4">
+                    <div className="space-y-4 px-1">
                         <Label htmlFor="product-title" className="text-md">Images (3/3)</Label>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
@@ -178,11 +180,11 @@ export default function ProductDialog() {
                     <div className="space-y-4">
                         <Accordion type="single" collapsible className="w-full">
                             <AccordionItem value="item-1">
-                                <AccordionTrigger className="text-md pt-0" iconClassName="text-black">
+                                <AccordionTrigger className="text-md pt-0 pl-14" iconClassName="text-black">
                                     Advanced options
                                 </AccordionTrigger>
                                 <AccordionContent>
-                                    <div className="space-y-4">
+                                    <div className="space-y-4 px-1">
                                         <div className="flex justify-between">
                                             <Label className="text-sm">Quantity options</Label>
                                             <Switch />
@@ -253,7 +255,7 @@ export default function ProductDialog() {
                                         </div>
                                     </div>
                                     <Separator className="my-5" />
-                                    <div className="space-y-4">
+                                    <div className="space-y-4 px-1">
                                         <div className="flex justify-between">
                                             <Label className="text-sm">Customizable product</Label>
                                             <Switch />
@@ -286,6 +288,89 @@ export default function ProductDialog() {
                                                 id="personalization-instructions"
                                                 defaultValue="Write your message"
                                             />
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <Checkbox
+                                                id="personalization-required"
+                                            />
+                                            <Label htmlFor="personalization-required" className="text-sm font-medium leading-none">
+                                                Make personalization required.
+                                            </Label>
+                                        </div>
+                                        <p className="text-sm">
+                                            Activate paid personalization to let customers add custom text for an additional fee.
+                                        </p>
+                                        <div>
+                                            <div className="flex gap-4">
+                                                <div className="w-[40%]">
+                                                    <Label className="text-xs">Select pricing method</Label>
+                                                    <Select defaultValue="flat-fee">
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder="Select a layout view" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectGroup>
+                                                                <SelectItem value="flat-fee">
+                                                                    <div className="flex gap-1">
+                                                                        Flat fee
+                                                                        <TooltipProvider>
+                                                                            <Tooltip>
+                                                                                <TooltipTrigger asChild>
+                                                                                    <Info className="h-4 w-4 cursor-pointer" />
+                                                                                </TooltipTrigger>
+                                                                                <TooltipContent
+                                                                                    side="right"
+                                                                                    align="center"
+                                                                                    className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                                                                                >
+                                                                                    <p className="text-sm">Same price for any text length of the custom text</p>
+                                                                                </TooltipContent>
+                                                                            </Tooltip>
+                                                                        </TooltipProvider>
+                                                                    </div>
+                                                                </SelectItem>
+                                                                <SelectItem value="per-character">
+                                                                    <div className="flex gap-1">
+                                                                        Per character
+                                                                        <TooltipProvider>
+                                                                            <Tooltip>
+                                                                                <TooltipTrigger asChild>
+                                                                                    <Info className="h-4 w-4 cursor-pointer" />
+                                                                                </TooltipTrigger>
+                                                                                <TooltipContent
+                                                                                    side="right"
+                                                                                    align="center"
+                                                                                    className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                                                                                >
+                                                                                    <p className="text-sm">Set a price per character, spaces are ignored </p>
+                                                                                </TooltipContent>
+                                                                            </Tooltip>
+                                                                        </TooltipProvider>
+                                                                    </div>
+                                                                </SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+                                                <div className="w-[30%]">
+                                                    <Label htmlFor="paid-personalization-price" className="text-xs">Price (USD)</Label>
+                                                    <Input
+                                                        type="number"
+                                                        id="paid-personalization-price"
+                                                        defaultValue={2.5}
+                                                        min={0}
+                                                    />
+                                                </div>
+                                                <div className="w-[30%]">
+                                                    <Label htmlFor="paid-personalization-character-limit" className="text-xs">Character limit</Label>
+                                                    <Input
+                                                        type="number"
+                                                        id="paid-personalization-character-limit"
+                                                        defaultValue={20}
+                                                        min={0}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </AccordionContent>
