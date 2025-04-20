@@ -3119,6 +3119,42 @@ const library = [
     }
 ]
 
+const currency = [
+    { value: "inr", label: "INR (Indian Rupees)" },
+    { value: "usd", label: "USD (United States dollar)" },
+    { value: "eur", label: "EUR (Euro)" },
+    { value: "aud", label: "AUD (Australian dollar)" },
+    { value: "cad", label: "CAD (Canadian dollar)" },
+    { value: "jod", label: "JOD (Jordanian dinar)" },
+    { value: "kyd", label: "KYD (Kuwaiti dinar)" },
+    { value: "chf", label: "CHF (Swiss franc)" },
+    { value: "bgn", label: "BGN (Bulgarian Lev)" },
+    { value: "hrk", label: "HRK (Croatian Kuna)" },
+    { value: "czk", label: "CZK (Czech Koruna)" },
+    { value: "dkk", label: "DKK (Danish Krone)" },
+    { value: "huf", label: "HUF (Hungarian Forint)" },
+    { value: "nok", label: "NOK (Norwegian krone)" },
+    { value: "pln", label: "PLN (Polish Zloty)" },
+    { value: "ron", label: "RON (Romanian Leu)" },
+    { value: "rub", label: "RUB (Russian Ruble)" },
+    { value: "rsd", label: "RSD (Serbian Dinar)" },
+    { value: "sek", label: "SEK (Swedish Krona)" },
+    { value: "try", label: "TRY (Turkish Lira)" },
+    { value: "uah", label: "UAH (Ukranian Hryvnia)" },
+    { value: "mxn", label: "MXN (Mexican Peso)" },
+    { value: "ars", label: "ARS (Argentine Peso)" },
+    { value: "clp", label: "CLP (Chilean Peso)" },
+    { value: "php", label: "PHP (Philippine Peso)" },
+    { value: "brl", label: "BRL (Brazilian Real)" },
+    { value: "kes", label: "KES (Kenyan Shilling)" },
+    { value: "thb", label: "THB (Thai Baht)" },
+    { value: "cop", label: "COP (Colombian Peso)" },
+    { value: "gtq", label: "GTQ (Guatemalan Quetzal)" },
+    { value: "nis", label: "NIS (Israeli Shekel)" },
+    { value: "nzd", label: "NZD (New Zealand Dollar)" },
+    { value: "hkd", label: "HKD (Hong Kong Dollar)" }
+];
+
 export function getData(dataType) {
     switch (dataType) {
         case 'defaultRoutes':
@@ -3203,6 +3239,8 @@ export function getData(dataType) {
             return library;
         case 'hyperlinks':
             return hyperlinks;
+        case 'currency':
+            return currency;
         default:
             return [];
     }
