@@ -6,7 +6,7 @@ import GIFsView from "./GIFsView"
 import StickersView from "./StickersView"
 
 export default function ElementsSidebarPanel({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, currentView, setCurrentView }) {
-
+    console.log("selectedIndex ElementsSidebarPanel ????", selectedIndex)
     const elements = [
         {
             title: "Graphics",

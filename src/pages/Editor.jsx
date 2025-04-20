@@ -384,7 +384,7 @@ export default function Editor() {
     const [scale, setScale] = useState({ scaleX: 1, scaleY: 1 });
     const [mainStageString, setMainStageString] = useState("");
     const [isCropping, setIsCropping] = useState(false);
-    const allowHtmlTypesForCrop = ['stock-photo', 'upload-photo','stock-gif' , 'stock-sticker'];
+    const allowHtmlTypesForCrop = ['stock-photo', 'upload-photo', 'stock-gif', 'stock-sticker', 'masked-image'];
     const [selectedAlignType, setSelectedAlignType] = useState("");
     const [isRightLateralCollapse, setIsRightLateralCollapse] = useState(false);
     const [currentRightPanel, setCurrentRightPanel] = useState('');
@@ -624,31 +624,71 @@ export default function Editor() {
     const handleCropEnd = () => {
         let x = [];
         mainStage[selectedIndex]?.stageref?.current?.children[0]?.children[1]?.children.forEach((selectedShapeData) => {
-            if (allowHtmlTypesForCrop.includes(selectedShapeData.attrs.htmlType) && selectedShapeData?.children?.length) {
-                const imageNode = selectedShapeData.children[1].children[1]; // The image node at index [0]
-                selectedShapeData.children[1].children[1].cropEnd && selectedShapeData.children[1].children[1].cropEnd(); // Ensure crop mode is ended
+            if (
+                allowHtmlTypesForCrop.includes(selectedShapeData.attrs.htmlType) &&
+                selectedShapeData?.children?.length
+            ) {
+                debugger;
 
-                // Set the cropped image
+                const container = selectedShapeData.children[1];
+                const imageNode = container.children[1];
+
+                // End crop mode if it's active
+                if (imageNode.cropEnd) imageNode.cropEnd();
+
+                // Store the cropped image
                 selectedShapeData.attrs.cropImage = imageNode.attrs.cropImage;
 
-                // Update height and width of selectedShapeData.attrs from the image's attrs
-                selectedShapeData.width(imageNode.attrs.width);
-                selectedShapeData.children[1].width(imageNode.attrs.width);
-                selectedShapeData.height(imageNode.attrs.height);
-                selectedShapeData.children[1].height(imageNode.attrs.height);
-                selectedShapeData.x((selectedShapeData.attrs.x + imageNode.attrs.x * selectedShapeData.attrs.scaleX) || selectedShapeData.attrs.x);
-                // selectedShapeData.children[1].x((selectedShapeData.children[1].attrs.x + imageNode.attrs.x * selectedShapeData.children[1].attrs.scaleX) || selectedShapeData.attrs.x);
-                selectedShapeData.y((selectedShapeData.attrs.y + imageNode.attrs.y * selectedShapeData.attrs.scaleY) || selectedShapeData.attrs.y);
-                // selectedShapeData.children[1].y((selectedShapeData.children[1].attrs.y + imageNode.attrs.y * selectedShapeData.children[1].attrs.scaleY) || selectedShapeData.children[1].attrs.y);
+                // Calculate old scales
+                const oldX = selectedShapeData.attrs.scaleX || 1;
+                const oldY = selectedShapeData.attrs.scaleY || 1;
+                const oldScaleX = oldX;
+                const oldScaleY = oldY;
 
-                selectedShapeData.children[1].children[1].x(0);
-                selectedShapeData.children[1].children[1].y(0);
-                selectedShapeData.children[1].x(0);
-                selectedShapeData.children[1].y(0);
+                // Adjust position based on inner image
+                const newX = selectedShapeData.attrs.x + (imageNode.attrs.x * oldX);
+                const newY = selectedShapeData.attrs.y + (imageNode.attrs.y * oldY);
+                selectedShapeData.x(newX || selectedShapeData.attrs.x);
+                selectedShapeData.y(newY || selectedShapeData.attrs.y);
+
+                // Scale adjustments based on image dimensions
+                const scaleFactorX = (imageNode.attrs.width / selectedShapeData.attrs.width) * oldX;
+                const scaleFactorY = (imageNode.attrs.height / selectedShapeData.attrs.height) * oldY;
+                selectedShapeData.scaleX(scaleFactorX);
+                selectedShapeData.scaleY(scaleFactorY);
+
+                // Update image node dimensions
+                imageNode.width(selectedShapeData.width());
+                imageNode.height(selectedShapeData.height());
+
+                // Recalculate crop image values
+                const cropImg = selectedShapeData.attrs.cropImage;
+                if (cropImg) {
+                    cropImg.x(((cropImg.x() || 0) * oldX) / (selectedShapeData.attrs.scaleX || 1) || 0);
+                    cropImg.y(((cropImg.y() || 0) * oldY) / (selectedShapeData.attrs.scaleY || 1) || 0);
+
+                    cropImg.scaleX((cropImg.scaleX() || 1) * oldScaleX / (selectedShapeData.attrs.scaleX || 1));
+                    cropImg.scaleY((cropImg.scaleY() || 1) * oldScaleY / (selectedShapeData.attrs.scaleY || 1));
+
+                    cropImg.width(cropImg.width() * (cropImg.scaleX() || 1));
+                    cropImg.height(cropImg.height() * (cropImg.scaleY() || 1));
+
+                    cropImg.scaleX(1);
+                    cropImg.scaleY(1);
+                }
+
+                // Reset positions and visibility
+                imageNode.x(0);
+                imageNode.y(0);
+                container.x(0);
+                container.y(0);
                 selectedShapeData.children[0].visible(true);
-                selectedShapeData.children[1].children[1].visible(true);;
-                EffectEvent(selectedShapeData.attrs, selectedShapeData.children[1].children[1]);
+                imageNode.visible(true);
+
+                EffectEvent(selectedShapeData.attrs, imageNode);
             }
+
+
             x.push(selectedShapeData.attrs);
         });
         mainStage[selectedIndex].shapes = x;

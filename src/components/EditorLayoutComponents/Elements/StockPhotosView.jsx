@@ -18,6 +18,7 @@ const INITIAL_CATEGORIES = [
 ];
 
 const StockPhotosView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, onBackClick }) => {
+    console.log("StockPhotosView - selectedIndex", selectedIndex);
     const [categories, setCategories] = useState({});
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -185,7 +186,10 @@ const StockPhotosView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selec
 
 const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainStage, selectedIndex, setIsEditorDrawerOpen }) => {
     // Extracted reusable function to handle the image selection logic
+    console.log("selectedIndex" , selectedIndex);
+    
     const handleImageSelect = async (image, isDragStart = false) => {
+        console.log("handleImageSelect",selectedIndex);
         const dimensions = await new Promise((resolve, reject) => {
             const img = new Image();
             img.src = image.src.medium;

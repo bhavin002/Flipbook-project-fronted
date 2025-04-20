@@ -1,6 +1,8 @@
 import Konva from 'konva';
 
 export const EffectEvent = (shape, ractnode, imgNode) => {
+    console.log("shape EffectEvent", shape, ractnode, imgNode);
+    
     const effect = shape.effect || {};
 
     if (!imgNode || !ractnode) return;
@@ -59,8 +61,8 @@ export const EffectEvent = (shape, ractnode, imgNode) => {
         ractnode.shadowOffset({ x: 0, y: 0 });
     }
     if (filterArray.length > 0) {
-        imgNode.filters(filterArray);
         imgNode.cache();
+        imgNode.filters(filterArray);
     } else {
         imgNode.filters([]);
     }
