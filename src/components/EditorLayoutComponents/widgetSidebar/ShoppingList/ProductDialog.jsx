@@ -1,22 +1,20 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { getData } from "@/utils/datas";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, GripVertical } from "lucide-react";
 import {
     Select,
     SelectContent,
-    SelectGroup,
     SelectItem,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch";
 import { useState } from "react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Info } from "lucide-react";
 import {
     Tooltip,
@@ -24,11 +22,102 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Checkbox } from "@/components/ui/checkbox";
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    useSortable,
+    verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { CSS } from '@dnd-kit/utilities';
+import AdvancedOptions from "./AdvancedOptions";
+
+// Sortable image item component
+function SortableImageItem({ image, onDelete }) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: image.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+    };
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={style}
+            className={`flex items-center justify-between ${isDragging ? 'bg-gray-50' : ''}`}
+        >
+            <div className="flex gap-2 items-center">
+                <button
+                    className="cursor-grab focus:outline-none"
+                    {...attributes}
+                    {...listeners}
+                >
+                    <GripVertical className="h-4 w-4 text-gray-400" />
+                </button>
+                <img src={image.url} className="w-[50px] h-[40px] object-cover rounded-sm" alt={image.name} />
+                <p className="text-sm truncate">{image.name}</p>
+            </div>
+            <Button variant="ghost" onClick={() => onDelete(image.id)}>
+                <Trash2 className="h-4 w-4" />
+            </Button>
+        </div>
+    );
+}
 
 export default function ProductDialog() {
     const [onSale, setIsSale] = useState(false);
     const currencyData = getData("currency") || [];
+
+    // Added for image handling
+    const [productImages, setProductImages] = useState([
+        { id: '1', name: '152 (4).jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
+        { id: '2', name: '152 (4).jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
+        { id: '3', name: '152 (4).jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
+    ]);
+
+    const handleDeleteImage = (id) => {
+        setProductImages(productImages.filter(image => image.id !== id));
+    };
+
+    // DnD setup
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    function handleDragEnd(event) {
+        const { active, over } = event;
+
+        if (active.id !== over.id) {
+            setProductImages((items) => {
+                const oldIndex = items.findIndex(item => item.id === active.id);
+                const newIndex = items.findIndex(item => item.id === over.id);
+
+                return arrayMove(items, oldIndex, newIndex);
+            });
+        }
+    }
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -77,7 +166,8 @@ export default function ProductDialog() {
                         </div>
                     </div>
                     <Separator className="my-5" />
-                    <div className="space-y-6 px-1" >
+                    <div className="space-y-4 px-1" >
+                        <Label className="text-md font-semibold">Pricing</Label>
                         <div className="flex gap-4">
                             <div className="w-[50%]">
                                 <Label htmlFor="product-price" className="text-xs">price</Label>
@@ -139,245 +229,46 @@ export default function ProductDialog() {
                     </div>
                     <Separator className="my-5" />
                     <div className="space-y-4 px-1">
-                        <Label htmlFor="product-title" className="text-md">Images (3/3)</Label>
+                        <Label className="text-md font-semibold">Images ({productImages.length}/3)</Label>
                         <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <div className="flex gap-2 items-center ">
-                                    <img src="https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t" className="w-[50px] h-[40px] object-cover rounded-sm" alt="Spotlight" />
-                                    <p className="text-sm truncate">152 (4).jpg</p>
-                                </div>
-                                <Button variant="ghost">
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <div className="flex gap-2 items-center ">
-                                    <img src="https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t" className="w-[50px] h-[40px] object-cover rounded-sm" alt="Spotlight" />
-                                    <p className="text-sm truncate">152 (4).jpg</p>
-                                </div>
-                                <Button variant="ghost">
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
-                            </div>
-                            <div className="flex items-center justify-between">
-                                <div className="flex gap-2 items-center ">
-                                    <img src="https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t" className="w-[50px] h-[40px] object-cover rounded-sm" alt="Spotlight" />
-                                    <p className="text-sm truncate">152 (4).jpg</p>
-                                </div>
-                                <Button variant="ghost">
-                                    <Trash2 className="h-4 w-4" />
-                                </Button>
-                            </div>
+                            <DndContext
+                                sensors={sensors}
+                                collisionDetection={closestCenter}
+                                onDragEnd={handleDragEnd}
+                                modifiers={[restrictToVerticalAxis]}
+                            >
+                                <SortableContext
+                                    items={productImages.map(img => img.id)}
+                                    strategy={verticalListSortingStrategy}
+                                >
+                                    {productImages.map((image) => (
+                                        <SortableImageItem
+                                            key={image.id}
+                                            image={image}
+                                            onDelete={handleDeleteImage}
+                                        />
+                                    ))}
+                                </SortableContext>
+                            </DndContext>
                         </div>
                         <Button
                             variant="outline"
-                            disabled
+                            disabled={productImages.length >= 3}
                         >
                             Upload images
                         </Button>
                     </div>
                     <Separator className="my-5" />
-                    <div className="space-y-4">
-                        <Accordion type="single" collapsible className="w-full">
-                            <AccordionItem value="item-1">
-                                <AccordionTrigger className="text-md pt-0 pl-14" iconClassName="text-black">
-                                    Advanced options
-                                </AccordionTrigger>
-                                <AccordionContent>
-                                    <div className="space-y-4 px-1">
-                                        <div className="flex justify-between">
-                                            <Label className="text-sm">Quantity options</Label>
-                                            <Switch />
-                                        </div>
-                                        <p className="text-sm">
-                                            Set limits on product quantities with minimum and maximum options.
-                                            Minimum is least amount that can be bought. Maximum is most.
-                                        </p>
-                                        <div className='flex gap-2 items-center'>
-                                            <Switch id="min-max-quantity" />
-                                            <Label htmlFor="min-max-quantity" className="ml-3 text-gray-700">
-                                                Enable min/max quantity
-                                            </Label>
-                                            <TooltipProvider>
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <Info className="h-4 w-4 cursor-pointer" />
-                                                    </TooltipTrigger>
-                                                    <TooltipContent
-                                                        side="right"
-                                                        align="center"
-                                                        className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                                    >
-                                                        <p className="text-sm">The currency you select will apply to all products added in your catalog. If you change it, it will also change for all products.</p>
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>
-                                        </div>
-                                        <div className="flex gap-4">
-                                            <div className="w-[50%]">
-                                                <Label htmlFor="minimum-quantity" className="text-xs">Minimum</Label>
-                                                <Input
-                                                    type="number"
-                                                    id="minimum-quantity"
-                                                    defaultValue={4}
-                                                    min={0}
-                                                />
-                                            </div>
-                                            <div className="w-[50%]">
-                                                <Label htmlFor="maximum-quantity" className="text-xs">Maximum</Label>
-                                                <Input
-                                                    type="number"
-                                                    id="maximum-quantity"
-                                                    defaultValue={20}
-                                                    min={0}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className='flex gap-2 items-center'>
-                                            <Switch id="min-max-quantity" />
-                                            <Label htmlFor="min-max-quantity" className="ml-3 text-gray-700">
-                                                Restrict to MOQ multiples
-                                            </Label>
-                                            <TooltipProvider>
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <Info className="h-4 w-4 cursor-pointer" />
-                                                    </TooltipTrigger>
-                                                    <TooltipContent
-                                                        side="right"
-                                                        align="center"
-                                                        className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                                    >
-                                                        <p className="text-sm">Enforce orders for this product to be multiples of the Minimum Order Quantity (MOQ). E.g. If the MOQ is 100, acceptable order quantities include 100, 200,300, etc.</p>
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>
-                                        </div>
-                                    </div>
-                                    <Separator className="my-5" />
-                                    <div className="space-y-4 px-1">
-                                        <div className="flex justify-between">
-                                            <Label className="text-sm">Customizable product</Label>
-                                            <Switch />
-                                        </div>
-                                        <p className="text-sm">
-                                            Do you sell customizable products like mugs, street name cards, etc.? Use this option.
-                                        </p>
-                                        <div className="space-y-1">
-                                            <div className='flex gap-2 items-center'>
-                                                <Label htmlFor="personalization-instructions" className="text-xs">
-                                                    Personalization instructions for buyers
-                                                </Label>
-                                                <TooltipProvider>
-                                                    <Tooltip>
-                                                        <TooltipTrigger asChild>
-                                                            <Info className="h-4 w-4 cursor-pointer" />
-                                                        </TooltipTrigger>
-                                                        <TooltipContent
-                                                            side="right"
-                                                            align="center"
-                                                            className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                                        >
-                                                            <p className="text-sm">Provide details for how customers should customize this product (e.g., name, message, or other instructions).</p>
-                                                        </TooltipContent>
-                                                    </Tooltip>
-                                                </TooltipProvider>
-                                            </div>
-                                            <Input
-                                                type="text"
-                                                id="personalization-instructions"
-                                                defaultValue="Write your message"
-                                            />
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <Checkbox
-                                                id="personalization-required"
-                                            />
-                                            <Label htmlFor="personalization-required" className="text-sm font-medium leading-none">
-                                                Make personalization required.
-                                            </Label>
-                                        </div>
-                                        <p className="text-sm">
-                                            Activate paid personalization to let customers add custom text for an additional fee.
-                                        </p>
-                                        <div>
-                                            <div className="flex gap-4">
-                                                <div className="w-[40%]">
-                                                    <Label className="text-xs">Select pricing method</Label>
-                                                    <Select defaultValue="flat-fee">
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Select a layout view" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectGroup>
-                                                                <SelectItem value="flat-fee">
-                                                                    <div className="flex gap-1">
-                                                                        Flat fee
-                                                                        <TooltipProvider>
-                                                                            <Tooltip>
-                                                                                <TooltipTrigger asChild>
-                                                                                    <Info className="h-4 w-4 cursor-pointer" />
-                                                                                </TooltipTrigger>
-                                                                                <TooltipContent
-                                                                                    side="right"
-                                                                                    align="center"
-                                                                                    className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                                                                >
-                                                                                    <p className="text-sm">Same price for any text length of the custom text</p>
-                                                                                </TooltipContent>
-                                                                            </Tooltip>
-                                                                        </TooltipProvider>
-                                                                    </div>
-                                                                </SelectItem>
-                                                                <SelectItem value="per-character">
-                                                                    <div className="flex gap-1">
-                                                                        Per character
-                                                                        <TooltipProvider>
-                                                                            <Tooltip>
-                                                                                <TooltipTrigger asChild>
-                                                                                    <Info className="h-4 w-4 cursor-pointer" />
-                                                                                </TooltipTrigger>
-                                                                                <TooltipContent
-                                                                                    side="right"
-                                                                                    align="center"
-                                                                                    className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                                                                >
-                                                                                    <p className="text-sm">Set a price per character, spaces are ignored </p>
-                                                                                </TooltipContent>
-                                                                            </Tooltip>
-                                                                        </TooltipProvider>
-                                                                    </div>
-                                                                </SelectItem>
-                                                            </SelectGroup>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </div>
-                                                <div className="w-[30%]">
-                                                    <Label htmlFor="paid-personalization-price" className="text-xs">Price (USD)</Label>
-                                                    <Input
-                                                        type="number"
-                                                        id="paid-personalization-price"
-                                                        defaultValue={2.5}
-                                                        min={0}
-                                                    />
-                                                </div>
-                                                <div className="w-[30%]">
-                                                    <Label htmlFor="paid-personalization-character-limit" className="text-xs">Character limit</Label>
-                                                    <Input
-                                                        type="number"
-                                                        id="paid-personalization-character-limit"
-                                                        defaultValue={20}
-                                                        min={0}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </AccordionContent>
-                            </AccordionItem>
-                        </Accordion>
-                    </div>
+                    <AdvancedOptions />
                 </div>
+                <DialogFooter>
+                    <Button variant="outline">
+                        Cancle
+                    </Button>
+                    <Button>
+                        Save product
+                    </Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     )

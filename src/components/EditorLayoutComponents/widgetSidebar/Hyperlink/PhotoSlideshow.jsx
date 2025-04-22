@@ -45,7 +45,7 @@ function SortableImageItem({ image, onDelete }) {
         <div
             ref={setNodeRef}
             style={style}
-            className={`flex items-center justify-between ${isDragging ? 'bg-gray-50' : ''}`}
+            className={`flex items-center justify-between`}
         >
             <div className="flex gap-2 items-center">
                 <button

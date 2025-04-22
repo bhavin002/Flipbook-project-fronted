@@ -52,7 +52,7 @@ export default function MaskInputEmail({
 
   return (
     <div className={`w-full ${className}`}>
-      <div className={`flex flex-wrap items-start gap-2 p-2 min-h-20 rounded-md border ${isFocused ? 'border-primary' : 'border-input'} bg-transparent`}>
+      <div className={`flex flex-wrap items-start gap-2 p-2 rounded-md border ${isFocused ? 'border-primary' : 'border-input'} bg-transparent`}>
         {keywords.map((keyword, index) => (
           <span
             key={index}

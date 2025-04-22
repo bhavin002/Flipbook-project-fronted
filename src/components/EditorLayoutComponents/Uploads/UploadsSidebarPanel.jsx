@@ -24,22 +24,6 @@ export default function UploadsSidebarPanel() {
 
     return (
         <div className="px-6 pt-6 pb-2 space-y-4 flex flex-col h-[100vh]">
-            {/* <div className="relative">
-                <div className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground">
-                    <Search className="h-4 w-4" />
-                </div>
-                <Input
-                    id="search"
-                    autoComplete="off"
-                    type="search"
-                    placeholder="Search uploads"
-                    className="w-full rounded-lg bg-background text-black pl-8"
-                    value={searchQuery}
-                    onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                    }}
-                />
-            </div> */}
             <MediaFilterDropDownCom
                 key={mediaTypes.id}
                 options={mediaTypes.options}
