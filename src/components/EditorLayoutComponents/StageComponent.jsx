@@ -15,6 +15,7 @@ import RingShape from "./Widget/RingShape";
 import Hyperlink from "./Widget/Hyperlink";
 import StockVideo from "./Widget/StockVideo";
 import KonavGif from "./Widget/KonvaGif";
+import MaskedKonvaGif from "./Widget/MaskedKonvaGif";
 
 export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
@@ -847,7 +848,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                 stage.dragRect.current = mainStage[selectedIndex].dragRect.current;
                 setSelectedIndex(index);
                 e.preventDefault();
-                
+
                 stage.stageref.current.setPointersPositions(e);
                 const pointerPosition = stage.stageref.current.getPointerPosition();
 
@@ -872,7 +873,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                 isOverShapeWidget = true;
                                 targetShape = shape.attrs;
                                 shapeWidgetData = shape.children[0].dataArray;
-                            } else if (shape.attrs.isMasked && shape.attrs.title === 'masked-image') {
+                            } else if (shape.attrs.isMasked && (shape.attrs.title === 'masked-image' || shape.attrs.title === 'masked-gif' || shape.attrs.title === 'masked-sticker')) {
                                 isOverMaskedImage = true;
                                 targetShape = shape.attrs;
                             }
@@ -883,38 +884,53 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                     let newShape = null;
 
                     // Handle the drop
-                    if (isOverMaskedImage && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'upload-photo')) {
+                    if (isOverMaskedImage && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'upload-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker')) {
                         // Replace the existing masked-image
+                        mainStage[selectedIndex].selectedShapes = [];
+                        const htmlType = stage.dragRect.current.htmlType;
+                        const typeMapping = {
+                            'upload-photo': 'masked-image',
+                            'stock-gif': 'masked-gif',
+                            'stock-photo': 'masked-image',
+                            'stock-sticker': 'masked-sticker'
+                        };
+                        const shapeType = typeMapping[htmlType] || 'masked-sticker'; // Default to 'masked-sticker' for unknown types
                         setMainStage(prevState => {
                             const updatedState = [...prevState];
-                            const updatedShapes = updatedState[index].shapes.map(shape => {
-                                if (shape.id === targetShape.id) {
-                                    return {
-                                        ...shape,
-                                        src: stage.dragRect.current.src,
-                                        htmlType: 'masked-image',
-                                        type: 'img',
-                                        cropImage: {
-                                            width: shape.width,
-                                            height: shape.height,
-                                            x: 0,
-                                            y: 0,
-                                            scaleY: 1,
-                                            scaleX: 1,
-                                        },
-                                    };
-                                }
-                                return shape;
+                            const updatedShapes = updatedState[index].shapes.map((shape, idx) => {
+                                if (shape.id !== targetShape.id) return shape;
+                                const shapeNode = updatedState[index].stageref.current.children[0].children[1].children[idx].attrs;
+                                return {
+                                    ...shape,
+                                    title: shapeType,
+                                    layer: shapeType,
+                                    htmlType: shapeType,
+                                    x: shapeNode.x,
+                                    y: shapeNode.y,
+                                    scaleX: shapeNode.scaleX,
+                                    scaleY: shapeNode.scaleY,
+                                    width: shapeNode.width,
+                                    height: shapeNode.height,
+                                    src: stage.dragRect.current.src,
+                                    type: 'img',
+                                };
                             });
-
                             updatedState[index] = {
                                 ...updatedState[index],
                                 shapes: updatedShapes,
                             };
                             return updatedState;
                         });
-                    } else if (isOverShapeWidget && targetShape?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'upload-photo')) {
+                    } else if (isOverShapeWidget && targetShape?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'upload-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker')) {
                         // Create a new masked-image
+                        const htmlType = stage.dragRect.current.htmlType;
+                        const typeMapping = {
+                            'upload-photo': 'masked-image',
+                            'stock-gif': 'masked-gif',
+                            'stock-photo': 'masked-image',
+                            'stock-sticker': 'masked-sticker'
+                        };
+                        const shapeType = typeMapping[htmlType] || 'masked-sticker'; // Default to 'masked-sticker' for unknown types
                         newShape = {
                             src: stage.dragRect.current.src,
                             height: Number(targetShape.height),
@@ -925,9 +941,9 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                             scaleY: targetShape.scaleY,
                             skewX: targetShape.skewX,
                             skewY: targetShape.skewY,
-                            title: 'masked-image',
-                            layer: 'masked-image',
-                            htmlType: 'masked-image',
+                            title: shapeType,
+                            layer: shapeType,
+                            htmlType: shapeType,
                             type: 'img',
                             isMasked: true,
                             data: targetShape.data,
@@ -1073,6 +1089,18 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                     case 'masked-image':
                                         return (
                                             <MaskedImage
+                                                isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape}
+                                            />
+                                        );
+                                    case 'masked-gif':
+                                        return (
+                                            <MaskedKonvaGif
+                                                isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape}
+                                            />
+                                        );
+                                    case 'masked-sticker':
+                                        return (
+                                            <MaskedKonvaGif
                                                 isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape}
                                             />
                                         );

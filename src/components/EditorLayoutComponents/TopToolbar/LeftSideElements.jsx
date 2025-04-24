@@ -17,7 +17,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
     useEffect(() => {
         if (selectedShape && selectedShape.length) {
             const shape = mainStage[selectedIndex].shapes.find(e => e.id === selectedShape[0].attrs.id);
-            shape && (shape.title == 'shape-widget' || shape.title == 'masked-image') && ('isMasked' in shape) && setIsMaskingEnabled(shape.isMasked);
+            shape && (shape.title == 'shape-widget' || shape.title == 'masked-image' || shape.title == 'stock-gif' || shape.title == 'masked-gif' || shape.title == 'stock-sticker' || shape.title == 'masked-sticker') && ('isMasked' in shape) && setIsMaskingEnabled(shape.isMasked);
         }
     }, [mainStage, selectedShape]);
 
@@ -168,6 +168,100 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     </DropdownMenu>
                 </>}
 
+            </>
+        case 'masked-gif':
+            return <>
+                {selectedShape?.length == 1 && ('isMasked' in selectedShape[0].attrs) &&
+                    <div className="flex items-center gap-2">
+                        <Switch
+                            id="use-as-mask"
+                            checked={isMaskingEnabled}
+                            onCheckedChange={toggleMasking}
+                        />
+                        <Label htmlFor="use-as-mask" className="text-xs">
+                            Use as mask
+                        </Label>
+                    </div>
+                }
+                {selectedShape?.length == 1 && <>
+                    {/* <Button variant="ghost" size="sm" onClick={() => {
+                        setIsShapeDrawerOpen(true)
+                        selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
+                    }}>
+                        Filters
+                    </Button> */}
+                    {/* <Button variant="ghost" size="sm" onClick={() => {
+                        setIsShapeDrawerOpen(true)
+                        selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style")
+                    }}>
+                        Style
+                    </Button> */}
+                    <Button variant="ghost" size="sm" onClick={handleCrop}>
+                        Crop
+                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <Button variant="ghost" size="sm">
+                                Flip
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            <DropdownMenuItem onClick={() => handleFlip("horizontal")}>
+                                <FlipHorizontal2 /> Flip horizontal
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleFlip("vertical")}>
+                                <FlipVertical2 /> Flip vertical
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </>}
+            </>
+        case 'masked-sticker':
+            return <>
+                {selectedShape?.length == 1 && ('isMasked' in selectedShape[0].attrs) &&
+                    <div className="flex items-center gap-2">
+                        <Switch
+                            id="use-as-mask"
+                            checked={isMaskingEnabled}
+                            onCheckedChange={toggleMasking}
+                        />
+                        <Label htmlFor="use-as-mask" className="text-xs">
+                            Use as mask
+                        </Label>
+                    </div>
+                }
+                {selectedShape?.length == 1 && <>
+                    {/* <Button variant="ghost" size="sm" onClick={() => {
+                        setIsShapeDrawerOpen(true)
+                        selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
+                    }}>
+                        Filters
+                    </Button> */}
+                    {/* <Button variant="ghost" size="sm" onClick={() => {
+                        setIsShapeDrawerOpen(true)
+                        selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style")
+                    }}>
+                        Style
+                    </Button> */}
+                    <Button variant="ghost" size="sm" onClick={handleCrop}>
+                        Crop
+                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <Button variant="ghost" size="sm">
+                                Flip
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            <DropdownMenuItem onClick={() => handleFlip("horizontal")}>
+                                <FlipHorizontal2 /> Flip horizontal
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleFlip("vertical")}>
+                                <FlipVertical2 /> Flip vertical
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </>}
             </>
         case 'stock-photo':
             return <>

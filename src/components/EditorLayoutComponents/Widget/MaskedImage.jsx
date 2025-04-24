@@ -143,7 +143,6 @@ const MaskedImage = ({
       {/* Shadow Rectangle */}
       <Rect
         ref={rectRef}
-
         x={0 + 2}
         y={0 + 2}
         width={shapeWidth - 4}
@@ -156,7 +155,6 @@ const MaskedImage = ({
         clipFunc={shape.maskData ? getClipFunc : null}
         x={0}
         y={0}
-
         width={shapeWidth}
         height={shapeHeight}
         fill={shape.fill || 'white'}
