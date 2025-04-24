@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 
 export default function VideoWidget() {
     return (
-        <div className="p-6 space-y-2">
+        <div className="p-6 space-y-2 w-full">
             <Label className="text-lg">Video Widget</Label>
             <div className="space-y-2">
                 <div>

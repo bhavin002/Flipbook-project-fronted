@@ -24,7 +24,7 @@ export default function ShopSettings() {
                     </DialogDescription>
                 </DialogHeader>
                 <div className="max-h-[calc(100vh-150px)] overflow-y-auto">
-                    <Tabs defaultValue="general">
+                    <Tabs defaultValue="general" className="h-full flex flex-col items-start">
                         <TabsList>
                             <TabsTrigger value="general">
                                 General
@@ -33,12 +33,14 @@ export default function ShopSettings() {
                                 Order options
                             </TabsTrigger>
                         </TabsList>
+                        <div className="flex-grow overflow-y-auto">
                         <TabsContent value="general" className="my-4 px-2">
                             <GeneralSettings />
                         </TabsContent>
                         <TabsContent value="order-options" className="my-4 px-2">
                             <OrderOptions />
                         </TabsContent>
+                        </div>
                     </Tabs>
                 </div>
                 <DialogFooter>

@@ -169,7 +169,7 @@ export default function Audio() {
     };
 
     return (
-        <div className="p-6 space-y-2">
+        <div className="p-6 space-y-2 w-full">
             <Label className="text-lg">Audio</Label>
             <p className="text-sm">Upload an mp3 file from computer and easily edit your music.</p>
             <div className="space-y-4">

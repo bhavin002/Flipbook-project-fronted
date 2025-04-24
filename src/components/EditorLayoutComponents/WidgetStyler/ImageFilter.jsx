@@ -155,7 +155,7 @@ export default function ImageFilter({
   };
 
   return (
-    <div className="p-6 space-y-2">
+    <div className="p-6 space-y-2 w-full">
       <Label className="text-lg">Image filter</Label>
       <div className="grid grid-cols-4 gap-2 justify-items-center">
         {imageFilters.map((filter) => (

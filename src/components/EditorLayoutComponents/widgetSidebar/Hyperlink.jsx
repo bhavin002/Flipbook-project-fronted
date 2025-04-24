@@ -52,7 +52,7 @@ export default function Hyperlink({ action }) {
     }
 
     return (
-        <div className="p-6 space-y-2">
+        <div className="p-6 space-y-2 w-full">
             <Label className="text-lg">Hyperlink</Label>
             <div className="space-y-2">
                 <div>
