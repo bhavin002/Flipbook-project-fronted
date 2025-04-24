@@ -1,59 +1,71 @@
+import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { CircleArrowDown, MailPlus, PhoneOutgoing } from "lucide-react";
+import { CircleArrowDown, Info, MailPlus, PhoneOutgoing, Trash2 } from "lucide-react";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function OrderOptions() {
     return (
         <>
             <div className="space-y-4">
-                <div className="flex justify-between">
-                    <div className="flex gap-2 items-center">
-                        <MailPlus className="h-5 w-5" />  <span className="text-sm font-semibold">Send order via email</span>
-                    </div>
-                    <Switch
-                    />
+                <div className="flex gap-2 items-center">
+                    <MailPlus className="h-5 w-5" />  <span className="text-sm font-semibold">Send order via email</span>
                 </div>
                 <p className="text-sm text-gray-500">
                     Your customers can send their orders directly via email through Flipsnack.
                 </p>
-            </div>
-            <Separator className="my-4" />
-            <div className="space-y-4">
-                <div className="flex justify-between">
-                    <div className="flex gap-2 items-center">
-                        <PhoneOutgoing className="h-5 w-5" />  <span className="text-sm font-semibold">WhatsApp checkout</span>
+                <div className="space-y-2">
+                    <div>
+                        <Label htmlFor="button-label" className="text-xs">
+                            Button label
+                        </Label>
+                        <Input
+                            type="text"
+                            id="button-label"
+                            defaultValue="Send order"
+                            placeholder="Send order"
+                        />
                     </div>
-                    <Switch
-                    />
-                </div>
-                <p className="text-sm text-gray-500">
-                    Your customers can send their orders to you via WhatsApp.
-                </p>
-            </div>
-            <Separator className="my-4" />
-            <div className="space-y-4">
-                <div className="flex justify-between">
-                    <div className="flex gap-2 items-center">
-                        <CircleArrowDown className="h-5 w-5" />  <span className="text-sm font-semibold">PDF Download</span>
+                    <div>
+                        <div className='flex gap-2 items-center'>
+                            <Label htmlFor="min-max-quantity" className="text-xs">
+                                Logo
+                            </Label>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Info className="h-3 w-3 cursor-pointer" />
+                                    </TooltipTrigger>
+                                    <TooltipContent
+                                        side="right"
+                                        align="center"
+                                        className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                                    >
+                                        <p className="text-sm">Recommended: 5:1 ratio, 1MB size.</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
+                        <div className="border flex justify-between p-2 rounded-sm my-2 items-center">
+                            <img src="/src/assets/book_logo.png" className="max-w-[142px] max-h-[40px]" alt="Logo" />
+                            <div className="flex gap-1 items-center">
+                                <Button variant="ghost">
+                                    Replace
+                                </Button>
+                                <Button variant="ghost">
+                                    <Trash2 />
+                                </Button>
+                            </div>
+                        </div>
                     </div>
-                    <Switch
-                    />
                 </div>
-                <p className="text-sm text-gray-500">
-                    Make your PDF order list look professional by adding your company information in the text boxes below.
-                </p>
-            </div>
-            <Separator className="my-4" />
-            <div className="space-y-4">
-                <div className="flex justify-between">
-                    <div className="flex gap-2 items-center">
-                        <CircleArrowDown className="h-5 w-5" />  <span className="text-sm font-semibold">CSV Download</span>
-                    </div>
-                    <Switch
-                    />
-                </div>
-                <p className="text-sm text-gray-500">
-                    Enable the option to download the order as a CSV file.                </p>
             </div>
         </>
     )
