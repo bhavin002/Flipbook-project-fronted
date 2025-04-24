@@ -1,5 +1,5 @@
 import { Label } from "@/components/ui/label";
-import { Info, MailPlus, Trash2 } from "lucide-react";
+import { Info } from "lucide-react";
 import {
     Tooltip,
     TooltipContent,
