@@ -9,7 +9,9 @@ import { useRef, useState } from "react";
 import { Switch } from "@/components/ui/switch";
 
 
-export default function ProductCustomize() {
+export default function ProductCustomize({
+    setIsProductDialogOpen
+}) {
     const [buttonColor, setButtonColor] = useState("#ffffff");
     const [labelColor, setLabelColor] = useState("#000000");
     const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
@@ -43,7 +45,7 @@ export default function ProductCustomize() {
                         <p className="text-sm font-semibold">Product 1</p>
                         <p className="text-sm text-gray-50">ABC123</p>
                         <p className="text-sm text-gray-50">1200 INR</p>
-                        <Button size="sm" variant="outline" className="w-full text-black hover:text-primary">
+                        <Button size="sm" variant="outline" className="w-full text-black hover:text-primary" onClick={() => setIsProductDialogOpen(true)}>
                             <Pencil /> Edit product
                         </Button>
                     </div>
@@ -157,7 +159,7 @@ export default function ProductCustomize() {
                         <p className="text-sm font-semibold">Product 1</p>
                         <p className="text-sm text-gray-50">ABC123</p>
                         <p className="text-sm text-gray-50">1200 INR</p>
-                        <Button size="sm" variant="outline" className="w-full text-black hover:text-primary">
+                        <Button size="sm" variant="outline" className="w-full text-black hover:text-primary" onClick={() => setIsProductDialogOpen(true)}>
                             <Pencil /> Edit product
                         </Button>
                     </div>

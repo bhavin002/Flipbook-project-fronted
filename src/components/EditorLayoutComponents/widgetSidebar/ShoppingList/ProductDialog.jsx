@@ -82,7 +82,10 @@ function SortableImageItem({ image, onDelete }) {
     );
 }
 
-export default function ProductDialog() {
+export default function ProductDialog({
+    isProductDialogOpen,
+    setIsProductDialogOpen
+}) {
     const [onSale, setIsSale] = useState(false);
     const currencyData = getData("currency") || [];
 
@@ -119,15 +122,7 @@ export default function ProductDialog() {
     }
 
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button
-                    className="w-full text-black hover:text-primary"
-                    variant="outline"
-                >
-                    <Plus /> Add product
-                </Button>
-            </DialogTrigger>
+        <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
             <DialogContent className="sm:max-w-[640px] w-[90vw]">
                 <DialogHeader>
                     <DialogTitle>Product details</DialogTitle>
@@ -262,7 +257,7 @@ export default function ProductDialog() {
                     <AdvancedOptions />
                 </div>
                 <DialogFooter>
-                    <Button variant="outline">
+                    <Button variant="outline" onClick={() => setIsProductDialogOpen(false)}>
                         Cancle
                     </Button>
                     <Button>
