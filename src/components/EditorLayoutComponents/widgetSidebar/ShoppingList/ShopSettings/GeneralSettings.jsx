@@ -34,7 +34,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import CustomerDetailsFields from "./CustomerDetailsFields";
+import CustomerDetailsFields from "@/utils/CustomerDetailsFields";
 
 function SortableEmailField({ field, onDelete, onKeyChange }) {
     const {

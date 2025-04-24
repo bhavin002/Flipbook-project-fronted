@@ -1,4 +1,4 @@
-import { Info, Pencil, ShoppingCart } from "lucide-react";
+import { Info, Pencil } from "lucide-react";
 import {
     Dialog,
     DialogContent,
