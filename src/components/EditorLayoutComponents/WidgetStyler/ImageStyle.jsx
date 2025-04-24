@@ -92,7 +92,7 @@ export default function ImageStyle({
   };
 
   return (
-    <div className="p-6 space-y-2">
+    <div className="p-6 space-y-2 w-full">
       <Label className="text-lg">Image style</Label>
       <div>
         <Label className="text-xs">Corner roundness</Label>

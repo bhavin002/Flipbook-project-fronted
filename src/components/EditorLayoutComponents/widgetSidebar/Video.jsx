@@ -14,7 +14,7 @@ export default function Video() {
         { value: "full-screen", label: "Open in full screen" },
     ];
     return (
-        <div className="p-6 space-y-2">
+        <div className="p-6 space-y-2 w-full">
             <Label className="text-lg">Video</Label>
             <div className="space-y-2">
                 <div>

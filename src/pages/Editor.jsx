@@ -384,7 +384,7 @@ export default function Editor() {
     const [scale, setScale] = useState({ scaleX: 1, scaleY: 1 });
     const [mainStageString, setMainStageString] = useState("");
     const [isCropping, setIsCropping] = useState(false);
-    const allowHtmlTypesForCrop = ['stock-photo', 'upload-photo', 'stock-gif', 'stock-sticker', 'masked-image'];
+    const allowHtmlTypesForCrop = ['stock-photo', 'upload-photo', 'stock-gif', 'stock-sticker', 'masked-image', 'masked-gif', 'masked-sticker'];
     const [selectedAlignType, setSelectedAlignType] = useState("");
     const [isRightLateralCollapse, setIsRightLateralCollapse] = useState(false);
     const [currentRightPanel, setCurrentRightPanel] = useState('');

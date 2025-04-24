@@ -18,7 +18,7 @@ export default function ContactFormDialog() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[640px] w-[90vw]">
                 <DialogHeader>
-                    <DialogTitle>Shop settings</DialogTitle>
+                    <DialogTitle>Contact Form</DialogTitle>
                     <DialogDescription className="sr-only">
                         Description
                     </DialogDescription>

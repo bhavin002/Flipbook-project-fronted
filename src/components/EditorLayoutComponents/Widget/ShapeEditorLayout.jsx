@@ -149,7 +149,7 @@ function renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, 
 
 export default function ShapeEditorLayout({ windowInnerWidth, setIsShapeDrawerOpen, selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex, setSelectedSubMenu }) {
     return (
-        <div className={`absolute right-0 h-full dark-theme top-0 bg-sidebar z-[11] text-white transition-all`} style={{ width: (selectedSubMenu) ? '23rem' : "0px", position: "absolute", overflowX: 'hidden' }}>
+        <div className={`absolute right-0 h-full dark-theme top-0 bg-sidebar z-[11] text-white transition-all flex`} style={{ width: (selectedSubMenu) ? '23rem' : "0px", position: "absolute", overflowX: 'hidden' }}>
             {renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex)}
         </div>
     )
