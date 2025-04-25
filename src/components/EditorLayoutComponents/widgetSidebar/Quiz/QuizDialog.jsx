@@ -24,7 +24,7 @@ export default function QuizDialog() {
                         Description
                     </DialogDescription>
                 </DialogHeader>
-                <div className="max-h-[calc(100vh-150px)] overflow-y-auto">
+                <div className="h-[calc(100vh-150px)] overflow-y-auto">
                     <Tabs defaultValue="general">
                         <TabsList>
                             <TabsTrigger value="general">
