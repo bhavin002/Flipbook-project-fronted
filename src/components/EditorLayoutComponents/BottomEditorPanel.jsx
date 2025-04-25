@@ -73,11 +73,6 @@ export default function BottomEditorPanel({ isEditorDrawerOpen, setIsEditorDrawe
         } else {
             setIsEditorDrawerOpen(true);
         }
-
-        // Ensure the item is active in the accordion
-        if (!activeValues.includes(itemValue)) {
-            setActiveValues([...activeValues, itemValue]);
-        }
     };
 
     const renderDrawerContent = () => {

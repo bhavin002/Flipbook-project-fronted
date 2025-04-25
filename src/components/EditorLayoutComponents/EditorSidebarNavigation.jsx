@@ -19,7 +19,7 @@ function NavItem({ item, isSelected, onClick }) {
     );
 };
 
-export default function SidebarNavigation({ windowInnerWidth,currentView, setCurrentView, mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
+export default function SidebarNavigation({ windowInnerWidth, currentView, setCurrentView, mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
     const navItems = getData('editorNavItems');
 
@@ -165,6 +165,14 @@ export default function SidebarNavigation({ windowInnerWidth,currentView, setCur
                 setOpen(true);
             }
             windowInnerWidth >= 1024 && setSelectedSubMenu("go-to-page");
+        } else if (mainStage[selectedIndex].selectedShapes.every(e => e.attrs.htmlType === "text")) {
+            setSelectedShape(mainStage[selectedIndex].selectedShapes)
+            if (!isSidebarOpen) {
+                setSelectedItem("interactions")
+                setIsSidebarOpen(true);
+                setOpen(true);
+            }
+            windowInnerWidth >= 1024 && setSelectedSubMenu("text");
         } else {
             setSelectedSubMenu(null);
             setSelectedShape(mainStage[selectedIndex].selectedShapes)

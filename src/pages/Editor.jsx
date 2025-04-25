@@ -728,13 +728,12 @@ export default function Editor() {
                 <div className="absolute lg:hidden bottom-[10px] left-[10px] z-10">
                     <div className="flex items-center bg-white rounded-sm border border-gray-200">
                         <Button className="flex items-center border-r" variant="ghost" onClick={() => {
-                            console.log('isPageShow page', isPageShow)
                             setIsPageShow("Pages")
                         }}>
                             <BookOpen className="w-4 h-4" /> Pages
                         </Button>
                         <Button className="flex items-center" variant="ghost" onClick={() => {
-                            console.log('isPageShow layer', isPageShow)
+                            setIsExpanded(false)
                             setIsPageShow("Layers")
                         }}>
                             <Layers className="w-4 h-4" /> Layers

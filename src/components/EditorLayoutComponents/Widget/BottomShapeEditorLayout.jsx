@@ -23,6 +23,7 @@ import PageOptions from "../widgetSidebar/PageOptions"
 import GoToPage from "../widgetSidebar/GoToPage"
 import { Drawer, DrawerContent } from "@/components/ui/drawer"
 import StockVideo from "../widgetSidebar/StockVideo"
+import Text from "../widgetSidebar/Text"
 
 function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, setIsShapeDrawerOpen) {
     if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
@@ -143,6 +144,11 @@ function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSe
     if (selectedSubMenu === "stock-video") {
         return (
             <StockVideo />
+        )
+    }
+    if (selectedSubMenu === "text") {
+        return (
+            <Text selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
         )
     }
 

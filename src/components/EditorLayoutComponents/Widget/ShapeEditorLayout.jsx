@@ -22,6 +22,7 @@ import ContactForm from "../widgetSidebar/ContactForm"
 import PageOptions from "../widgetSidebar/PageOptions"
 import GoToPage from "../widgetSidebar/GoToPage"
 import StockVideo from "../widgetSidebar/StockVideo"
+import Text from "../widgetSidebar/Text"
 
 function renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex) {
     if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
@@ -142,6 +143,11 @@ function renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, 
     if (selectedSubMenu === "stock-video") {
         return (
             <StockVideo />
+        )
+    }
+    if(selectedSubMenu === "text"){
+        return (
+            <Text selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
 

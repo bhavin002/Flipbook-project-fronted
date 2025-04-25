@@ -16,6 +16,7 @@ import Hyperlink from "./Widget/Hyperlink";
 import StockVideo from "./Widget/StockVideo";
 import KonavGif from "./Widget/KonvaGif";
 import MaskedKonvaGif from "./Widget/MaskedKonvaGif";
+import KonvaText from "./Widget/KonvaText";
 
 export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
@@ -998,6 +999,16 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                                 isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape}
                                             />
                                         );
+                                    case 'text':
+                                        return <KonvaText onDragMove={handleShapeDragMove}
+                                            demo={demo}
+                                            handleDragStart={handleDragStart}
+                                            handleDrag={handleDrag}
+                                            scale={scale}
+                                            key={shape.id}
+                                            shape={shape}
+                                            onChange={handleUpdateShape}
+                                        />;
                                     default:
                                         return null;
                                 }

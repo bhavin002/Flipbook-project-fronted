@@ -42,9 +42,9 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
         updatedStage[selectedIndex].shapes = mainStage[selectedIndex].shapes.map((shape) => {
             if (selectedShape[0].attrs.id === shape.id) {
                 if (type === "horizontal") {
-                    return { ...shape, flipX: !shape.flipX }; // Toggle flipX
+                    return { ...shape, flipX: !shape.flipX };
                 } else if (type === "vertical") {
-                    return { ...shape, flipY: !shape.flipY }; // Toggle flipY
+                    return { ...shape, flipY: !shape.flipY };
                 }
             }
             return shape;
@@ -136,18 +136,6 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     </div>
                 }
                 {selectedShape?.length == 1 && <>
-                    {/* <Button variant="ghost" size="sm" onClick={() => {
-                        setIsShapeDrawerOpen(true)
-                        selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
-                    }}>
-                        Filters
-                    </Button> */}
-                    {/* <Button variant="ghost" size="sm" onClick={() => {
-                        setIsShapeDrawerOpen(true)
-                        selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style")
-                    }}>
-                        Style
-                    </Button> */}
                     <Button variant="ghost" size="sm" onClick={handleCrop}>
                         Crop
                     </Button>
@@ -231,18 +219,6 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     </div>
                 }
                 {selectedShape?.length == 1 && <>
-                    {/* <Button variant="ghost" size="sm" onClick={() => {
-                        setIsShapeDrawerOpen(true)
-                        selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
-                    }}>
-                        Filters
-                    </Button> */}
-                    {/* <Button variant="ghost" size="sm" onClick={() => {
-                        setIsShapeDrawerOpen(true)
-                        selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style")
-                    }}>
-                        Style
-                    </Button> */}
                     <Button variant="ghost" size="sm" onClick={handleCrop}>
                         Crop
                     </Button>
@@ -301,12 +277,6 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
         case 'stock-sticker':
             return <>
                 {selectedShape?.length == 1 && <>
-                    {/* <Button variant="ghost" size="sm" onClick={() => {
-                        setIsShapeDrawerOpen(true)
-                        selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
-                    }}>
-                        Filters
-                    </Button> */}
                     <Button variant="ghost" size="sm" onClick={() => {
                         setIsShapeDrawerOpen(true)
                         selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style")
@@ -336,12 +306,6 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
         case 'stock-gif':
             return <>
                 {selectedShape?.length == 1 && <>
-                    {/* <Button variant="ghost" size="sm" onClick={() => {
-                        setIsShapeDrawerOpen(true)
-                        selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
-                    }}>
-                        Filters
-                    </Button> */}
                     <Button variant="ghost" size="sm" onClick={() => {
                         setIsShapeDrawerOpen(true)
                         selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style")
@@ -714,7 +678,32 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-
+            </>
+        case 'text':
+            return <>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div
+                                onClick={() => {
+                                    setIsShapeDrawerOpen(true)
+                                    selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                }}
+                                className="w-8 h-8 rounded cursor-pointer"
+                                style={{ backgroundColor: selectedShape[0].attrs.fill }}
+                            ></div>
+                        </TooltipTrigger>
+                        <TooltipContent align="center" className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs px-2 py-1 rounded-md">
+                            <p className="text-xs">Color</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                    setIsShapeDrawerOpen(true)
+                    selectedSubMenu === "text" ? setSelectedSubMenu(null) : setSelectedSubMenu("text")
+                }}>
+                    Edit
+                </Button>}
             </>
         default:
             return null;
