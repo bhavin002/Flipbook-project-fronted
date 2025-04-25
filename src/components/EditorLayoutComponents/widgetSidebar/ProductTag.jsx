@@ -116,7 +116,7 @@ export default function ProductTag() {
         }
     }
     return (
-        <div className="p-6 space-y-2 w-full">
+        <div className="p-6 space-y-2 w-full overflow-y-auto">
             <Label className="text-lg">Product Tag</Label>
             <div className="space-y-2">
                 <div>

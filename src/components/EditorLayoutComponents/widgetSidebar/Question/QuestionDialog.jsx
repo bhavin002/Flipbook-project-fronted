@@ -41,7 +41,7 @@ export default function QuestionDialog() {
                         Description
                     </DialogDescription>
                 </DialogHeader>
-                <div className="max-h-[calc(100vh-150px)] overflow-y-auto px-1 py-2">
+                <div className="lg:max-h-[calc(100vh-150px)] max-lg:max-h-[calc(100vh-300px)] overflow-y-auto px-1 py-2">
                     <div>
                         <Label htmlFor="question-tooltip" className="text-xs">
                             Tooltip

@@ -22,7 +22,7 @@ export default function Embed() {
     };
 
     return (
-        <div className="p-6 space-y-2 w-full">
+        <div className="p-6 space-y-2 w-full overflow-y-auto">
             <Label className="text-lg">Embed</Label>
             <div className="space-y-2">
                 <div>

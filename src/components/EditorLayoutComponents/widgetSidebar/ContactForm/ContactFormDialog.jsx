@@ -23,9 +23,9 @@ export default function ContactFormDialog() {
                         Description
                     </DialogDescription>
                 </DialogHeader>
-                <div className="max-h-[calc(100vh-150px)] overflow-y-auto">
-                    <Tabs defaultValue="details">
-                        <TabsList>
+                <div className="lg:max-h-[calc(100vh-150px)] max-lg:max-h-[calc(100vh-300px)] overflow-y-auto">
+                    <Tabs defaultValue="details" className="flex flex-col h-full align-items-start">
+                        <TabsList className="justify-start w-fit">
                             <TabsTrigger value="details">
                                 Details
                             </TabsTrigger>
@@ -33,12 +33,14 @@ export default function ContactFormDialog() {
                                 Settings
                             </TabsTrigger>
                         </TabsList>
-                        <TabsContent value="details" className="my-4 px-2">
-                            <Details />
-                        </TabsContent>
-                        <TabsContent value="settings" className="my-4 px-2">
-                            <Settings />
-                        </TabsContent>
+                        <div className="flex-grow overflow-y-auto">
+                            <TabsContent value="details" className="my-4 px-2">
+                                <Details />
+                            </TabsContent>
+                            <TabsContent value="settings" className="my-4 px-2">
+                                <Settings />
+                            </TabsContent>
+                        </div>
                     </Tabs>
                 </div>
                 <DialogFooter>

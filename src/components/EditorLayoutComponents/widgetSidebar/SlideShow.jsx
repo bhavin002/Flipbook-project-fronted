@@ -123,7 +123,7 @@ export default function SlideShow() {
     }
 
     return (
-        <div className="p-6 space-y-2 w-full">
+        <div className="p-6 space-y-2 w-full overflow-y-auto">
             <Label className="text-lg">SlideShow</Label>
             {imagesUploaded.length > 0 && (
                 <>

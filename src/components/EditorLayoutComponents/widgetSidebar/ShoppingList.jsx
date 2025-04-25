@@ -12,9 +12,9 @@ export default function ShoppingList() {
 
     return (
         <>
-            <div className="p-6 space-y-2 w-full flex flex-col">
+            <div className="p-6 space-y-2 w-full overflow-y-auto flex flex-col">
                 <Label className="text-lg">Shopping List</Label>
-                <div className="space-y-2 flex flex-col flex-grow overflow-y-auto h-0">
+                <div className="space-y-2 flex flex-col flex-grow overflow-y-auto">
                     {/* <Button
                         className="w-full text-black hover:text-primary"
                         variant="outline"

@@ -10,7 +10,7 @@ export default function Link() {
         { value: "same-tab", label: "Same tab" },
     ];
     return (
-        <div className="p-6 space-y-2 w-full">
+        <div className="p-6 space-y-2 w-full overflow-y-auto">
             <Label className="text-lg">Link</Label>
             <div className="space-y-2">
                 <div>

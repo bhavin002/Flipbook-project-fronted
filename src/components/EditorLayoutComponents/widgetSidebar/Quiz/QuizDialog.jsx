@@ -24,22 +24,24 @@ export default function QuizDialog() {
                         Description
                     </DialogDescription>
                 </DialogHeader>
-                <div className="h-[calc(100vh-150px)] overflow-y-auto">
-                    <Tabs defaultValue="general">
-                        <TabsList>
-                            <TabsTrigger value="general">
+                <div className="lg:h-[calc(100vh-150px)] max-lg:max-h-[calc(100vh-300px)]  overflow-y-auto">
+                    <Tabs defaultValue="question" className="flex flex-col h-full align-items-start">
+                        <TabsList className="justify-start w-fit">
+                            <TabsTrigger value="question">
                                 Questions
                             </TabsTrigger>
-                            <TabsTrigger value="order-options">
+                            <TabsTrigger value="settings">
                                 Settings
                             </TabsTrigger>
                         </TabsList>
-                        <TabsContent value="general" className="my-4 px-2">
-                            <QuizQuestions />
-                        </TabsContent>
-                        <TabsContent value="order-options" className="my-4 px-2">
-                            <QuizSettings />
-                        </TabsContent>
+                        <div className="flex-grow overflow-y-auto">
+                            <TabsContent value="question" className="my-4 px-2">
+                                <QuizQuestions />
+                            </TabsContent>
+                            <TabsContent value="settings" className="my-4 px-2">
+                                <QuizSettings />
+                            </TabsContent>
+                        </div>
                     </Tabs>
                 </div>
                 <DialogFooter>

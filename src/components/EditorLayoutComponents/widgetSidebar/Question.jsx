@@ -5,7 +5,7 @@ import QuestionDialog from "./Question/QuestionDialog";
 
 export default function Question() {
     return (
-        <div className="p-6 space-y-2 w-full">
+        <div className="p-6 space-y-2 w-full overflow-y-auto">
             <Label className="text-lg">Question</Label>
             <p className="text-sm">Ask a question to gather feedback and insights.</p>
             <div>

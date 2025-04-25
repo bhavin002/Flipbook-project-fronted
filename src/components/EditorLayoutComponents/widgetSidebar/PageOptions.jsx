@@ -10,7 +10,7 @@ export default function PageOptions({ action }) {
         "go-to-last-page": "Go to last page"
     }
     return (
-        <div className="p-6 space-y-2 w-full">
+        <div className="p-6 space-y-2 w-full overflow-y-auto">
             <Label className="text-lg">Page Options</Label>
             <div className="space-y-2">
                 <div>

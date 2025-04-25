@@ -23,7 +23,7 @@ export default function ShopSettings() {
                         Description
                     </DialogDescription>
                 </DialogHeader>
-                <div className="max-h-[calc(100vh-150px)] overflow-y-auto">
+                <div className="lg:max-h-[calc(100vh-150px)] max-lg:max-h-[calc(100vh-300px)] overflow-y-auto">
                     <Tabs defaultValue="general" className="h-full flex flex-col items-start">
                         <TabsList>
                             <TabsTrigger value="general">

@@ -53,7 +53,7 @@ export default function Color({ windowInnerWidth, setIsShapeDrawerOpen, setSelec
     };
 
     return (
-        <div className="p-6 space-y-2 w-full">
+        <div className="p-6 space-y-2 w-full overflow-y-auto">
             <Input
                 type="text"
                 onChange={handleHexInputChange}

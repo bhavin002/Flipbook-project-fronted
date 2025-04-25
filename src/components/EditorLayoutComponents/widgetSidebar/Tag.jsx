@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 
 export default function Tag() {
     return (
-        <div className="p-6 space-y-2 w-full">
+        <div className="p-6 space-y-2 w-full overflow-y-auto">
             <Label className="text-lg">Tag</Label>
             <div className="space-y-2">
                 <div>
