@@ -3,8 +3,9 @@ import { ChevronsLeft, Copy, File, PanelLeft, Plus, Trash2, X } from 'lucide-rea
 import { ReactSortable } from 'react-sortablejs';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
+import { v4 as uuid } from "uuid";
 
-export default function LateralPanelRightPages({ setIsPageShow,isSidebarOpen,setCurrentRightPanel, mainStage, selectedIndex, setSelectedIndex, setIsRightLateralCollapse, setMainStage, index, isExpanded, setIsExpanded }) {
+export default function LateralPanelRightPages({ setIsPageShow, isSidebarOpen, setCurrentRightPanel, mainStage, selectedIndex, setSelectedIndex, setIsRightLateralCollapse, setMainStage, index, isExpanded, setIsExpanded }) {
     const toggleBtn = () => {
         setIsExpanded(!isExpanded);
     }
@@ -24,7 +25,10 @@ export default function LateralPanelRightPages({ setIsPageShow,isSidebarOpen,set
     const handleDragStart = () => {
         mainStage.forEach(element => {
             const temp = JSON.parse(JSON.stringify(element));
-            element.shapes = JSON.parse(temp.stageref.current).children[0].children[1].children.map(e => e.attrs)
+            temp.shapes = element.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)))
+            temp.shapes.forEach(element => { element.id = uuid() })
+            temp.stageref.current = JSON.parse(temp.stageref.current);
+            temp.selectedShapes = [];
         });
         setMainStage(mainStage)
     };
@@ -48,14 +52,14 @@ export default function LateralPanelRightPages({ setIsPageShow,isSidebarOpen,set
 
     return (
         <div className='flex w-[276px] relative max-lg:border-none border border-gray-200 h-full'>
-            <div className={`bg-white flex flex-col lateral-panel-right h-[calc(100%-50px)] border absolute ${isExpanded ? `right-0 ${isSidebarOpen ? 'w-[60vw]' :'w-[85vw]'} bg-white z-[11] border-r-2 rounded-l-sm transition-all` : 'w-full'}`}>
+            <div className={`bg-white flex flex-col lateral-panel-right h-[calc(100%-50px)] border absolute ${isExpanded ? `right-0 ${isSidebarOpen ? 'w-[60vw]' : 'w-[85vw]'} bg-white z-[11] border-r-2 rounded-l-sm transition-all` : 'w-full'}`}>
                 <div className="flex items-center justify-between bg-accent p-1 border-b">
                     <button className={`p-1 hover:bg-gray-100 rounded ${isExpanded ? 'rotate-180' : ''}`} onClick={toggleBtn} aria-label="Expand panel">
                         <ChevronsLeft className='w-5 h-5' />
                     </button>
                     <Label className="font-medium text-xs">Pages</Label>
                     <button className="p-1 hover:bg-gray-100 rounded" onClick={() => closePanel(isExpanded)} aria-label="Close panel">
-                        <X className='w-5 h-5'/>
+                        <X className='w-5 h-5' />
                     </button>
                 </div>
 
@@ -78,7 +82,7 @@ export default function LateralPanelRightPages({ setIsPageShow,isSidebarOpen,set
                                 <div className="flex flex-col items-center cursor-move" onClick={() => setSelectedIndex(index)}
                                 >
                                     <div className="w-24 h-32 bg-accent flex items-center justify-center">
-                                        {index === 0 ? <PanelLeft /> : <File className='w-5 h-5'/>}
+                                        {index === 0 ? <PanelLeft /> : <File className='w-5 h-5' />}
                                     </div>
                                     <span className="mt-1 text-[11px] font-medium">{index + 1}</span>
                                 </div>

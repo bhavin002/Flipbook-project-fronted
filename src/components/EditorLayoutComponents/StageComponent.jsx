@@ -596,7 +596,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
     const handleClick = (e) => {
         if (isCropping) return;
         if (selectionRect.visible) return;
-
         const clickedOnEmpty = e.target === e.target.getStage();
         if (clickedOnEmpty) {
             setMainStage(prevState => {
@@ -729,113 +728,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
         // Call handleDragMove with 'drag' type
         handleDragMove(e, 'drag');
     };
-
-    const handleShapeDragEnd = (pointerPosition) => {
-
-        if (stage.dragRect.current) {
-            const dropX = (pointerPosition.x - rectProps.x) / scale.scaleX;
-            const dropY = (pointerPosition.y - rectProps.y) / scale.scaleY;
-
-            // Check if dropping over a shape-widget
-            let isOverShapeWidget = false;
-            let shapeWidget = null;
-            let shapeWidgetData = [];
-
-            mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(shape => {
-                // shape = shape.attrs;
-                if (shape.attrs.title === 'shape-widget') {
-                    const shapeLeft = shape.attrs.x;
-                    const shapeTop = shape.attrs.y;
-                    const shapeRight = shape.attrs.x + (shape.attrs.width * (shape.attrs.scaleX || 1));
-                    const shapeBottom = shape.attrs.y + (shape.attrs.height * (shape.attrs.scaleY || 1));
-
-                    // Check if drop position is within shape-widget bounds
-                    if (dropX >= shapeLeft && dropX <= shapeRight &&
-                        dropY >= shapeTop && dropY <= shapeBottom) {
-                        isOverShapeWidget = true;
-                        shapeWidget = shape.attrs;
-                        shapeWidgetData = shape.children[0].dataArray;
-                    }
-                }
-            });
-
-            let newShape = {
-                x: dropX,
-                y: dropY,
-                ...stage.dragRect.current,
-                id: uuid()
-            };
-
-            // If dropping stock-photo or upload-photo over shape-widget, convert to masked-image
-            if (isOverShapeWidget && shapeWidget?.isMasked &&
-                (stage.dragRect.current.htmlType === 'stock-photo' ||
-                    stage.dragRect.current.htmlType === 'upload-photo')) {
-                newShape = {
-                    src: newShape.src,
-                    height: Number(shapeWidget.height),
-                    width: Number(shapeWidget.width),
-                    x: shapeWidget.x,
-                    y: shapeWidget.y,
-                    scaleX: shapeWidget.scaleX,
-                    scaleY: shapeWidget.scaleY,
-                    skewX: shapeWidget.skewX,
-                    skewY: shapeWidget.skewY,
-                    title: 'masked-image',
-                    layer: "masked-image",
-                    htmlType: 'masked-image',
-                    type: "img",
-                    // svgPath: shapeWidget.data[0],
-                    data: shapeWidget.data,
-                    maskData: shapeWidgetData,
-                    maskType: shapeWidget.maskType,
-                    draggable: true,
-                    visible: true,
-                    id: uuid() // Ensure unique ID for new masked-image
-                };
-
-                // Update mainStage by removing the shape-widget and adding the new masked-image
-                mainStage[selectedIndex].selectedShapes = [];
-                setMainStage(prevState => {
-                    const updatedState = [...prevState];
-                    // Remove the shape-widget that was converted
-                    const updatedShapes = updatedState[index].shapes.filter(
-                        shape => shape.id !== shapeWidget.id
-                    );
-                    // Add the new masked-image
-                    updatedState[index] = {
-                        ...updatedState[index],
-                        shapes: [...updatedShapes, newShape]
-                    };
-                    return updatedState;
-                });
-            } else {
-                // If not converting to masked-image, just add the new shape as before
-                setMainStage(prevState => {
-                    const updatedState = [...prevState];
-                    updatedState[index] = {
-                        ...updatedState[index],
-                        shapes: [...updatedState[index].shapes, newShape]
-                    };
-                    return updatedState;
-                });
-            }
-            setTimeout(() => {
-                stage.stageref.current.children[0].children[1].children.forEach((child) => {
-                    if (child.attrs.id == newShape.id) {
-                        setMainStage(prevState => {
-                            const updatedState = [...prevState];
-                            updatedState[index] = {
-                                ...updatedState[index],
-                                selectedShapes: [child]
-                            };
-                            return updatedState;
-                        });
-                    }
-                });
-            }, 100);
-            stage.dragRect.current = null;
-        }
-    }
 
     return (
         <div
@@ -1007,7 +899,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
         >
             <div ref={demo}></div>
             <StagePageMenu setSelectedIndex={setSelectedIndex} selectedIndex={selectedIndex} rectProps={rectProps} mainStage={mainStage} setMainStage={setMainStage} index={index} />
-            <div onClick={() => { setSelectedIndex(index) }}>
+            <div onClick={() => setSelectedIndex(index)}>
                 {width && height && <Stage
                     width={width}
                     height={height}
@@ -1018,7 +910,9 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
                     onClick={handleClick}
-                    onTap={handleClick}
+                    onTap={(event) => {
+                        handleClick(event);
+                    }}
                 >
                     <Layer>
                         <Rect
