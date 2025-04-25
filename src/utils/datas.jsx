@@ -3155,6 +3155,81 @@ const currency = [
     { value: "hkd", label: "HKD (Hong Kong Dollar)" }
 ];
 
+const textElements = [
+    {
+        text: 'Text',
+        title: "Add heading",
+        isUpgrade: false,
+        size: 42,
+        attrs: {
+            fill: "#000",
+            fontSize: 84,
+            text: 'Add heading',
+            type: "text",
+            title: "text",
+            visible: true,
+            layer: "Text",
+            width: 300,
+            fontFamily: 'Arial',
+            htmlType: "text"
+        }
+    },
+    {
+        text: 'Text',
+        title: "Add sub heading",
+        isUpgrade: false,
+        size: 24,
+        attrs: {
+            fill: "#000",
+            fontSize: 48,
+            text: 'Add sub heading',
+            type: "text",
+            title: "text",
+            visible: true,
+            layer: "Text",
+            width: 300,
+            fontFamily: 'Arial',
+            htmlType: "text"
+        }
+    },
+    {
+        text: 'Text',
+        title: "Add body text",
+        isUpgrade: false,
+        size: 16,
+        attrs: {
+            fill: "#000",
+            fontSize: 32,
+            text: 'Add body text',
+            type: "text",
+            title: "text",
+            visible: true,
+            layer: "Text",
+            width: 200,
+            fontFamily: 'Arial',
+            htmlType: "text"
+        }
+    },
+    {
+        text: 'Text',
+        title: "# Pagination",
+        isUpgrade: false,
+        size: 16,
+        attrs: {
+            fill: "#000",
+            fontSize: 32,
+            text: '1',
+            type: "text",
+            title: "text",
+            visible: true,
+            layer: "Text",
+            width: 40,
+            fontFamily: 'Arial',
+            htmlType: "text"
+        }
+    }
+]
+
 export function getData(dataType) {
     switch (dataType) {
         case 'defaultRoutes':
@@ -3241,6 +3316,8 @@ export function getData(dataType) {
             return hyperlinks;
         case 'currency':
             return currency;
+        case 'textElements':
+            return textElements;
         default:
             return [];
     }
