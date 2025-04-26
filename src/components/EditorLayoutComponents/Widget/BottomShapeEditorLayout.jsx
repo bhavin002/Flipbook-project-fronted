@@ -48,7 +48,7 @@ function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSe
     }
     if (selectedSubMenu === 'shape-action') {
         return (
-            <ShapeAction />
+            <ImageAction />
         )
     }
     if (selectedSubMenu === 'image-filter') {
