@@ -10,6 +10,11 @@ export default function ImageStyle({
   selectedIndex,
 }) {
   const [styles, setStyles] = useState({
+    individualCorners: selectedShape[0].attrs?.effect?.individualCorners || false,
+    topLeftRadius: selectedShape[0].attrs?.effect?.topLeftRadius || 0,
+    topRightRadius: selectedShape[0].attrs?.effect?.topRightRadius || 0,
+    bottomRightRadius: selectedShape[0].attrs?.effect?.bottomRightRadius || 0,
+    bottomLeftRadius: selectedShape[0].attrs?.effect?.bottomLeftRadius || 0,
     cornerRadius: selectedShape[0].attrs?.effect?.cornerRadius || 0,
     isShadowEnabled: selectedShape[0].attrs?.effect?.isShadowEnabled || true,
     shadowColor: selectedShape[0].attrs.effect?.shadowColor || "#ffffff",
@@ -32,7 +37,12 @@ export default function ImageStyle({
     if (selectedShape.length && selectedShape[0]) {
       const effect = selectedShape[0].attrs.effect || {};
       setStyles({
-        cornerRadius: effect.cornerRadius !== undefined ? effect.cornerRadius : 0,
+        individualCorners: effect.individualCorners !== undefined ? effect.individualCorners : false,
+        topLeftRadius: effect.topLeftRadius !== undefined ? effect.topLeftRadius : 0,
+        topRightRadius: effect.topRightRadius !== undefined ? effect.topRightRadius : 0,
+        bottomRightRadius: effect.bottomRightRadius !== undefined ? effect.bottomRightRadius : 0,
+        bottomLeftRadius: effect.bottomLeftRadius !== undefined ? effect.bottomLeftRadius : 0,
+        cornerRadius: !effect.individualCorners ? effect.cornerRadius !== undefined ? effect.cornerRadius : 0 : 0,
         isShadowEnabled: effect.isShadowEnabled !== undefined ? effect.isShadowEnabled : true,
         shadowColor: effect.shadowColor || "#ffffff",
         shadowOpacity: effect.shadowOpacity !== undefined ? effect.shadowOpacity : 60,
@@ -95,6 +105,80 @@ export default function ImageStyle({
     <div className="p-6 space-y-2 w-full overflow-y-auto">
       <Label className="text-lg">Image style</Label>
       <div>
+        <label className="text-sm font-medium flex items-center">
+          Corner Radius
+          <input
+            type="checkbox"
+            checked={styles.individualCorners}
+            onChange={(e) => handleStyleChange("individualCorners", e.target.checked)}
+            className="ml-2"
+          />
+          <span className="ml-2">Individual Corners</span>
+        </label>
+        {!styles.individualCorners ? (
+          <div className="flex items-center">
+            <input
+              type="range"
+              min="0"
+              max="50"
+              value={styles.cornerRadius}
+              onChange={(e) => handleStyleChange("cornerRadius", Number(e.target.value))}
+              className="w-full mr-2"
+            />
+            <span className="text-sm">{styles.cornerRadius}</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-2 mt-2">
+            <div>
+              <label className="text-sm">Top Left</label>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                value={styles.topLeftRadius}
+                onChange={(e) => handleStyleChange("topLeftRadius", Number(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-sm">{styles.topLeftRadius}</span>
+            </div>
+            <div>
+              <label className="text-sm">Top Right</label>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                value={styles.topRightRadius}
+                onChange={(e) => handleStyleChange("topRightRadius", Number(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-sm">{styles.topRightRadius}</span>
+            </div>
+            <div>
+              <label className="text-sm">Bottom Right</label>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                value={styles.bottomRightRadius}
+                onChange={(e) => handleStyleChange("bottomRightRadius", Number(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-sm">{styles.bottomRightRadius}</span>
+            </div>
+            <div>
+              <label className="text-sm">Bottom Left</label>
+              <input
+                type="range"
+                min="0"
+                max="50"
+                value={styles.bottomLeftRadius}
+                onChange={(e) => handleStyleChange("bottomLeftRadius", Number(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-sm">{styles.bottomLeftRadius}</span>
+            </div>
+          </div>
+        )}
         <Label className="text-xs">Corner roundness</Label>
         <Input
           type="number"
