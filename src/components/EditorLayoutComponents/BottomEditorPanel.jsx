@@ -48,7 +48,7 @@ export default function BottomEditorPanel({ isEditorDrawerOpen, setIsEditorDrawe
             value: "text",
             icon: <Type />,
             label: "Text",
-            component: <TextSidebarPanel />
+            component: <TextSidebarPanel setIsEditorDrawerOpen={setIsEditorDrawerOpen} mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage}/>
         },
         {
             value: "uploads",

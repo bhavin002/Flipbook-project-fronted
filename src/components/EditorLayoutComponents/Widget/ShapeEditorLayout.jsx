@@ -77,7 +77,7 @@ function renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, 
     }
     if (selectedSubMenu === "caption") {
         return (
-            <Caption />
+            <Caption selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
         )
     }
     if (selectedSubMenu === "embed") {

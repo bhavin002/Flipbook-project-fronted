@@ -948,7 +948,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                     case 'tag':
                                         return <Tag onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />;
                                     case 'caption':
-                                        return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'embed-code':
                                         return <EmbedCode onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />;
                                     case 'slideshow':
