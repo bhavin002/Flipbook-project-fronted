@@ -74,16 +74,31 @@ export default function StockPhoto({
             onSelect(e.currentTarget);
         }
     };
-
-
-    const shapeEffect = shape?.effect || {};
-    const shapeCornerRadius = shapeEffect.cornerRadius || 0;
-    const topLeftRadius = shapeEffect.individualCorners ? (shapeEffect.topLeftRadius || 0) : shapeCornerRadius;
-    const topRightRadius = shapeEffect.individualCorners ? (shapeEffect.topRightRadius || 0) : shapeCornerRadius;
-    const bottomRightRadius = shapeEffect.individualCorners ? (shapeEffect.bottomRightRadius || 0) : shapeCornerRadius;
-    const bottomLeftRadius = shapeEffect.individualCorners ? (shapeEffect.bottomLeftRadius || 0) : shapeCornerRadius;
+    
+    
     const shapeWidth = shape?.width || loadedImage?.width || 0;
     const shapeHeight = shape?.height || loadedImage?.height || 0;
+    const shapeEffect = shape?.effect || {};
+    const shapeCornerRadius = shapeEffect.cornerRadius || 0;
+    const maxRadius = Math.min(shapeWidth / 2, shapeHeight / 2); // Cap radius to half the smallest dimension
+    
+    // Limit each corner radius to prevent overextension
+    const topLeftRadius = Math.min(
+      shapeEffect.individualCorners ? (shapeEffect.topLeftRadius || 0) : shapeCornerRadius,
+      maxRadius
+    );
+    const topRightRadius = Math.min(
+      shapeEffect.individualCorners ? (shapeEffect.topRightRadius || 0) : shapeCornerRadius,
+      maxRadius
+    );
+    const bottomRightRadius = Math.min(
+      shapeEffect.individualCorners ? (shapeEffect.bottomRightRadius || 0) : shapeCornerRadius,
+      maxRadius
+    );
+    const bottomLeftRadius = Math.min(
+      shapeEffect.individualCorners ? (shapeEffect.bottomLeftRadius || 0) : shapeCornerRadius,
+      maxRadius
+    );
 
     if (!loadedImage) return null;
 
@@ -125,12 +140,12 @@ export default function StockPhoto({
                     ctx.quadraticCurveTo(shapeWidth, 0, shapeWidth, topRightRadius);
                     ctx.lineTo(shapeWidth, shapeHeight - bottomRightRadius);
                     ctx.quadraticCurveTo(shapeWidth, shapeHeight, shapeWidth - bottomRightRadius, shapeHeight);
-                    ctx.lineTo(bottomLeftRadius, shapeHeight); // Note: customLeftRadius seems to be a typo, should be bottomLeftRadius
+                    ctx.lineTo(bottomLeftRadius, shapeHeight);
                     ctx.quadraticCurveTo(0, shapeHeight, 0, shapeHeight - bottomLeftRadius);
                     ctx.lineTo(0, topLeftRadius);
                     ctx.quadraticCurveTo(0, 0, topLeftRadius, 0);
                     ctx.closePath();
-                }}
+                  }}
             >
                 <Rect
                     x={0}
