@@ -618,6 +618,21 @@ const hyperlinks = [
     { value: "pie-chart", label: "Pie chart" },
 ]
 
+const imageActions = [
+    { value: "open-link", label: "Open a link" },
+    { value: "go-to-page", label: "Go to a page" },
+    { value: "open-overlay", label: "Open an overlay" },
+    { value: "spotlight", label: "Spotlight" },
+    { value: "popup-frame", label: "Popup frame" }
+]
+
+const pageOption = [
+    { value: "go-to-page", label: "Go to a page" },
+    { value: "go-to-next-page", label: "Go to next page" },
+    { value: "go-to-previous-page", label: "Go to previous page" },
+    { value: "go-to-first-page", label: "Go to first page" },
+    { value: "go-to-last-page", label: "Go to last page" },
+]
 
 const teammateOptions = [
     { value: "all-teammates", label: "All Teammates" },
@@ -3318,6 +3333,10 @@ export function getData(dataType) {
             return currency;
         case 'textElements':
             return textElements;
+        case 'imageActions':
+            return imageActions;
+        case 'pageOption':
+            return pageOption;
         default:
             return [];
     }

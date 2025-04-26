@@ -196,7 +196,7 @@ const Section = ({ setIsEditorDrawerOpen, setMainStage, title, videos, onViewAll
             src: videoUrl,
             fill: "#ebf0fc",
             title: "stock-video",
-            layer: "Stock Video",
+            layer: "Video widget",
             htmlType: "stock-video",
         };
     };
@@ -215,7 +215,7 @@ const Section = ({ setIsEditorDrawerOpen, setMainStage, title, videos, onViewAll
                 src: videoUrl,
                 fill: "#ebf0fc",
                 title: "stock-video",
-                layer: "Stock Video",
+                layer: "Video widget",
                 htmlType: "stock-video",
             }
         };
