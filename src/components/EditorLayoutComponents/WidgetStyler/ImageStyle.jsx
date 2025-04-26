@@ -140,7 +140,7 @@ export default function ImageStyle({
               </div>
               <FilterSlider
                 min={0}
-                max={50}
+                max={100}
                 value={[styles.topLeftRadius]}
                 onValueChange={(values) => handleStyleChange("topLeftRadius", values[0])}
                 className="w-full"
@@ -153,7 +153,7 @@ export default function ImageStyle({
               </div>
               <FilterSlider
                 min={0}
-                max={50}
+                max={100}
                 value={[styles.topRightRadius]}
                 onValueChange={(values) => handleStyleChange("topRightRadius", values[0])}
                 className="w-full"
@@ -166,7 +166,7 @@ export default function ImageStyle({
               </div>
               <FilterSlider
                 min={0}
-                max={50}
+                max={100}
                 value={[styles.bottomRightRadius]}
                 onValueChange={(values) => handleStyleChange("bottomRightRadius", values[0])}
                 className="w-full"
@@ -179,7 +179,7 @@ export default function ImageStyle({
               </div>
               <FilterSlider
                 min={0}
-                max={50}
+                max={100}
                 value={[styles.bottomLeftRadius]}
                 onValueChange={(values) => handleStyleChange("bottomLeftRadius", values[0])}
                 className="w-full"
@@ -325,7 +325,7 @@ export default function ImageStyle({
               value={styles.borderWidth}
               onChange={(e) => handleStyleChange("borderWidth", parseInt(e.target.value) || 0)}
               min={0}
-              max={50}
+              max={100}
               className="w-24"
               disabled={!styles.isBorderEnabled}
             />

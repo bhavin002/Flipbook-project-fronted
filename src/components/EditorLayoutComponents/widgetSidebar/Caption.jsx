@@ -132,7 +132,7 @@ export default function Caption({ selectedShape,
                                 </div>
                                 <FilterSlider
                                     min={0}
-                                    max={50}
+                                    max={100}
                                     value={[topLeftRadius]}
                                     onValueChange={(values) => setTopLeftRadius(values[0])}
                                     className="w-full"
@@ -145,7 +145,7 @@ export default function Caption({ selectedShape,
                                 </div>
                                 <FilterSlider
                                     min={0}
-                                    max={50}
+                                    max={100}
                                     value={[topRightRadius]}
                                     onValueChange={(values) => setTopRightRadius(values[0])}
                                     className="w-full"
@@ -158,7 +158,7 @@ export default function Caption({ selectedShape,
                                 </div>
                                 <FilterSlider
                                     min={0}
-                                    max={50}
+                                    max={100}
                                     value={[bottomRightRadius]}
                                     onValueChange={(values) => setBottomRightRadius(values[0])}
                                     className="w-full"
@@ -171,7 +171,7 @@ export default function Caption({ selectedShape,
                                 </div>
                                 <FilterSlider
                                     min={0}
-                                    max={50}
+                                    max={100}
                                     value={[bottomLeftRadius]}
                                     onValueChange={(values) => setBottomLeftRadius(values[0])}
                                     className="w-full"
