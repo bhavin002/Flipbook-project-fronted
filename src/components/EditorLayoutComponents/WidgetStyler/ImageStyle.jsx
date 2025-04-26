@@ -1,4 +1,5 @@
 import { Checkbox } from "@/components/ui/checkbox";
+import { FilterSlider } from "@/components/ui/filterSlider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRef, useState, useEffect } from "react";
@@ -102,232 +103,233 @@ export default function ImageStyle({
   };
 
   return (
-    <div className="p-6 space-y-2 w-full overflow-y-auto">
+    <div className="p-6 space-y-4 w-full overflow-y-auto">
       <Label className="text-lg">Image style</Label>
-      <div>
-        <label className="text-sm font-medium flex items-center">
-          Corner Radius
-          <input
-            type="checkbox"
-            checked={styles.individualCorners}
-            onChange={(e) => handleStyleChange("individualCorners", e.target.checked)}
-            className="ml-2"
-          />
-          <span className="ml-2">Individual Corners</span>
-        </label>
-        {!styles.individualCorners ? (
-          <div className="flex items-center">
-            <input
-              type="range"
-              min="0"
-              max="50"
-              value={styles.cornerRadius}
-              onChange={(e) => handleStyleChange("cornerRadius", Number(e.target.value))}
-              className="w-full mr-2"
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <Label className="text-sm font-medium leading-none">
+            Corner roundness
+          </Label>
+          <div className="flex items-center gap-1">
+            <Checkbox
+              id="individual-corners"
+              checked={styles.individualCorners}
+              onCheckedChange={(checked) => handleStyleChange("individualCorners", checked)}
+              className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
             />
-            <span className="text-sm">{styles.cornerRadius}</span>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-2 mt-2">
-            <div>
-              <label className="text-sm">Top Left</label>
-              <input
-                type="range"
-                min="0"
-                max="50"
-                value={styles.topLeftRadius}
-                onChange={(e) => handleStyleChange("topLeftRadius", Number(e.target.value))}
-                className="w-full"
-              />
-              <span className="text-sm">{styles.topLeftRadius}</span>
-            </div>
-            <div>
-              <label className="text-sm">Top Right</label>
-              <input
-                type="range"
-                min="0"
-                max="50"
-                value={styles.topRightRadius}
-                onChange={(e) => handleStyleChange("topRightRadius", Number(e.target.value))}
-                className="w-full"
-              />
-              <span className="text-sm">{styles.topRightRadius}</span>
-            </div>
-            <div>
-              <label className="text-sm">Bottom Right</label>
-              <input
-                type="range"
-                min="0"
-                max="50"
-                value={styles.bottomRightRadius}
-                onChange={(e) => handleStyleChange("bottomRightRadius", Number(e.target.value))}
-                className="w-full"
-              />
-              <span className="text-sm">{styles.bottomRightRadius}</span>
-            </div>
-            <div>
-              <label className="text-sm">Bottom Left</label>
-              <input
-                type="range"
-                min="0"
-                max="50"
-                value={styles.bottomLeftRadius}
-                onChange={(e) => handleStyleChange("bottomLeftRadius", Number(e.target.value))}
-                className="w-full"
-              />
-              <span className="text-sm">{styles.bottomLeftRadius}</span>
-            </div>
-          </div>
-        )}
-        <Label className="text-xs">Corner roundness</Label>
-        <Input
-          type="number"
-          value={styles.cornerRadius}
-          onChange={(e) => handleStyleChange("cornerRadius", parseInt(e.target.value) || 0)}
-          min={0}
-          max={100}
-          className="text-white"
-        />
-      </div>
-      <div className="flex items-center gap-1">
-        <Checkbox
-          id="shadow"
-          className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
-          checked={styles.isShadowEnabled}
-          onCheckedChange={(checked) => handleStyleChange("isShadowEnabled", checked)}
-        />
-        <Label htmlFor="shadow" className="text-sm font-medium leading-none">
-          Shadow
-        </Label>
-      </div>
-      <div className="space-y-2">
-        <div>
-          <Label className="text-xs">Color</Label>
-          <div className="relative">
-            <Input
-              type="text"
-              value={styles.shadowColor}
-              onChange={(e) => handleStyleChange("shadowColor", e.target.value)}
-              className="pr-12"
-              disabled={!styles.isShadowEnabled}
-            />
-            <div
-              className={`absolute right-1 top-1/2 -translate-y-1/2 w German: w-7 h-7 rounded ${styles.isShadowEnabled ? "cursor-pointer" : "cursor-not-allowed"
-                }`}
-              style={{ backgroundColor: styles.shadowColor }}
-              onClick={handleShadowColorClick}
-            />
-            {isShadowColorPickerOpen && styles.isShadowEnabled && (
-              <input
-                ref={shadowColorInputRef}
-                type="color"
-                value={styles.shadowColor}
-                onChange={(e) => handleStyleChange("shadowColor", e.target.value)}
-                onBlur={() => setIsShadowColorPickerOpen(false)}
-                className="opacity-0 absolute w-1 h-1 right-3 top-1/2 -translate-y-1/2"
-              />
-            )}
+            <Label htmlFor="individual-corners" className="text-sm font-medium leading-none">Individual Corners</Label>
           </div>
         </div>
-        <div className="flex gap-4">
-          <div>
-            <Label className="text-xs">Opacity:</Label>
-            <Input
-              type="number"
-              value={styles.shadowOpacity}
-              onChange={(e) => handleStyleChange("shadowOpacity", parseInt(e.target.value) || 0)}
-              min={0}
-              max={100}
-              disabled={!styles.isShadowEnabled}
-            />
-          </div>
-          <div>
-            <Label className="text-xs">X</Label>
-            <Input
-              type="number"
-              value={styles.shadowOffsetX}
-              onChange={(e) => handleStyleChange("shadowOffsetX", parseInt(e.target.value) || 0)}
-              min={-100}
-              max={100}
-              disabled={!styles.isShadowEnabled}
-            />
-          </div>
-          <div>
-            <Label className="text-xs">Y</Label>
-            <Input
-              type="number"
-              value={styles.shadowOffsetY}
-              onChange={(e) => handleStyleChange("shadowOffsetY", parseInt(e.target.value) || 0)}
-              min={-100}
-              max={100}
-              disabled={!styles.isShadowEnabled}
-            />
-          </div>
-        </div>
-        <div>
-          <Label className="text-xs">Blur:</Label>
-          <Input
-            type="number"
-            value={styles.shadowBlur}
-            onChange={(e) => handleStyleChange("shadowBlur", parseInt(e.target.value) || 0)}
+
+        {!styles.individualCorners && (
+          <FilterSlider
             min={0}
             max={100}
-            className="w-24"
-            disabled={!styles.isShadowEnabled}
+            value={[styles.cornerRadius]}
+            onValueChange={(values) => handleStyleChange("cornerRadius", values[0])}
+            className="w-full"
           />
-        </div>
-      </div>
-      <div className="flex items-center gap-1">
-        <Checkbox
-          id="border"
-          className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
-          checked={styles.isBorderEnabled}
-          onCheckedChange={(checked) => handleStyleChange("isBorderEnabled", checked)}
-        />
-        <Label htmlFor="border" className="text-sm font-medium leading-none">
-          Border
-        </Label>
-      </div>
-      <div className="space-y-2">
-        <div>
-          <Label className="text-xs">Color</Label>
-          <div className="relative">
-            <Input
-              type="text"
-              value={styles.borderColor}
-              onChange={(e) => handleStyleChange("borderColor", e.target.value)}
-              className="pr-12"
-              disabled={!styles.isBorderEnabled}
-            />
-            <div
-              className={`absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded ${styles.isBorderEnabled ? "cursor-pointer" : "cursor-not-allowed"
-                }`}
-              style={{ backgroundColor: styles.borderColor }}
-              onClick={handleBorderColorClick}
-            />
-            {isBorderColorPickerOpen && styles.isBorderEnabled && (
-              <input
-                ref={borderColorInputRef}
-                type="color"
-                value={styles.borderColor}
-                onChange={(e) => handleStyleChange("borderColor", e.target.value)}
-                onBlur={() => setIsBorderColorPickerOpen(false)}
-                className="opacity-0 absolute w-1 h-1 right-3 top-1/2 -translate-y-1/2"
+        )}
+
+        {
+          styles.individualCorners && (<div className="space-y-4">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <Label className="text-xs">Top Left</Label>
+                <span className="text-xs">{styles.topLeftRadius}</span>
+              </div>
+              <FilterSlider
+                min={0}
+                max={50}
+                value={[styles.topLeftRadius]}
+                onValueChange={(values) => handleStyleChange("topLeftRadius", values[0])}
+                className="w-full"
               />
-            )}
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <Label className="text-xs">Top Right</Label>
+                <span className="text-xs">{styles.topRightRadius}</span>
+              </div>
+              <FilterSlider
+                min={0}
+                max={50}
+                value={[styles.topRightRadius]}
+                onValueChange={(values) => handleStyleChange("topRightRadius", values[0])}
+                className="w-full"
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <Label className="text-xs">Bottom Right</Label>
+                <span className="text-xs">{styles.bottomRightRadius}</span>
+              </div>
+              <FilterSlider
+                min={0}
+                max={50}
+                value={[styles.bottomRightRadius]}
+                onValueChange={(values) => handleStyleChange("bottomRightRadius", values[0])}
+                className="w-full"
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <Label className="text-xs">Bottom Left</Label>
+                <span className="text-xs">{styles.bottomLeftRadius}</span>
+              </div>
+              <FilterSlider
+                min={0}
+                max={50}
+                value={[styles.bottomLeftRadius]}
+                onValueChange={(values) => handleStyleChange("bottomLeftRadius", values[0])}
+                className="w-full"
+              />
+            </div>
+          </div>)
+        }
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center gap-1">
+          <Checkbox
+            id="shadow"
+            className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
+            checked={styles.isShadowEnabled}
+            onCheckedChange={(checked) => handleStyleChange("isShadowEnabled", checked)}
+          />
+          <Label htmlFor="shadow" className="text-sm font-medium leading-none">
+            Shadow
+          </Label>
+        </div>
+        <div className="space-y-2">
+          <div>
+            <Label className="text-xs">Color</Label>
+            <div className="relative">
+              <Input
+                type="text"
+                value={styles.shadowColor}
+                onChange={(e) => handleStyleChange("shadowColor", e.target.value)}
+                className="pr-12"
+                disabled={!styles.isShadowEnabled}
+              />
+              <div
+                className={`absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded ${styles.isShadowEnabled ? "cursor-pointer" : "cursor-not-allowed"
+                  }`}
+                style={{ backgroundColor: styles.shadowColor }}
+                onClick={handleShadowColorClick}
+              />
+              {isShadowColorPickerOpen && styles.isShadowEnabled && (
+                <input
+                  ref={shadowColorInputRef}
+                  type="color"
+                  value={styles.shadowColor}
+                  onChange={(e) => handleStyleChange("shadowColor", e.target.value)}
+                  onBlur={() => setIsShadowColorPickerOpen(false)}
+                  className="opacity-0 absolute w-1 h-1 right-3 top-1/2 -translate-y-1/2"
+                />
+              )}
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div>
+              <Label className="text-xs">Opacity:</Label>
+              <Input
+                type="number"
+                value={styles.shadowOpacity}
+                onChange={(e) => handleStyleChange("shadowOpacity", parseInt(e.target.value) || 0)}
+                min={0}
+                max={100}
+                disabled={!styles.isShadowEnabled}
+              />
+            </div>
+            <div>
+              <Label className="text-xs">X</Label>
+              <Input
+                type="number"
+                value={styles.shadowOffsetX}
+                onChange={(e) => handleStyleChange("shadowOffsetX", parseInt(e.target.value) || 0)}
+                min={-100}
+                max={100}
+                disabled={!styles.isShadowEnabled}
+              />
+            </div>
+            <div>
+              <Label className="text-xs">Y</Label>
+              <Input
+                type="number"
+                value={styles.shadowOffsetY}
+                onChange={(e) => handleStyleChange("shadowOffsetY", parseInt(e.target.value) || 0)}
+                min={-100}
+                max={100}
+                disabled={!styles.isShadowEnabled}
+              />
+            </div>
+          </div>
+          <div>
+            <Label className="text-xs">Blur:</Label>
+            <Input
+              type="number"
+              value={styles.shadowBlur}
+              onChange={(e) => handleStyleChange("shadowBlur", parseInt(e.target.value) || 0)}
+              min={0}
+              max={100}
+              className="w-24"
+              disabled={!styles.isShadowEnabled}
+            />
           </div>
         </div>
-        <div>
-          <Label className="text-xs">Width:</Label>
-          <Input
-            type="number"
-            value={styles.borderWidth}
-            onChange={(e) => handleStyleChange("borderWidth", parseInt(e.target.value) || 0)}
-            min={0}
-            max={50}
-            className="w-24"
-            disabled={!styles.isBorderEnabled}
+        <div className="flex items-center gap-1">
+          <Checkbox
+            id="border"
+            className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
+            checked={styles.isBorderEnabled}
+            onCheckedChange={(checked) => handleStyleChange("isBorderEnabled", checked)}
           />
+          <Label htmlFor="border" className="text-sm font-medium leading-none">
+            Border
+          </Label>
+        </div>
+        <div className="space-y-2">
+          <div>
+            <Label className="text-xs">Color</Label>
+            <div className="relative">
+              <Input
+                type="text"
+                value={styles.borderColor}
+                onChange={(e) => handleStyleChange("borderColor", e.target.value)}
+                className="pr-12"
+                disabled={!styles.isBorderEnabled}
+              />
+              <div
+                className={`absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded ${styles.isBorderEnabled ? "cursor-pointer" : "cursor-not-allowed"
+                  }`}
+                style={{ backgroundColor: styles.borderColor }}
+                onClick={handleBorderColorClick}
+              />
+              {isBorderColorPickerOpen && styles.isBorderEnabled && (
+                <input
+                  ref={borderColorInputRef}
+                  type="color"
+                  value={styles.borderColor}
+                  onChange={(e) => handleStyleChange("borderColor", e.target.value)}
+                  onBlur={() => setIsBorderColorPickerOpen(false)}
+                  className="opacity-0 absolute w-1 h-1 right-3 top-1/2 -translate-y-1/2"
+                />
+              )}
+            </div>
+          </div>
+          <div>
+            <Label className="text-xs">Width:</Label>
+            <Input
+              type="number"
+              value={styles.borderWidth}
+              onChange={(e) => handleStyleChange("borderWidth", parseInt(e.target.value) || 0)}
+              min={0}
+              max={50}
+              className="w-24"
+              disabled={!styles.isBorderEnabled}
+            />
+          </div>
         </div>
       </div>
     </div>

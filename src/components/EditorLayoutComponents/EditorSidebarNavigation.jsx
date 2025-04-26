@@ -61,7 +61,7 @@ export default function SidebarNavigation({ windowInnerWidth, currentView, setCu
                 setOpen(true);
             }
             windowInnerWidth >= 1024 && setSelectedSubMenu("tag");
-        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "square-caption" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "rounded-caption")) {
+        } else if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "square-caption")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
                 setSelectedItem("interactions")
