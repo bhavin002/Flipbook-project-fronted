@@ -41,6 +41,7 @@ import CustomizeAppLayout from "./layout/CustomizeAppLayout";
 import Customize from "./pages/Customize";
 import EditorAppLayout from "./layout/EditorAppLayout";
 import Editor from "./pages/Editor";
+import ConfirmAccount from "./pages/ConfirmAccount";
 
 // Route configurations
 const brandingRoutes = [
@@ -71,26 +72,24 @@ const settingsRoutes = [
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [windowInnerWidth, setWindowInnerWidth] = useState(window.innerWidth);
-  const [windowInnerHeight, setWindowInnerHeight] = useState(window.innerHeight);
 
   window.addEventListener('resize', () => {
     setWindowInnerWidth(window.innerWidth);
-    setWindowInnerHeight(window.innerHeight);
   });
 
   return (
     <Routes>
       {/* Auth routes */}
-      <Route path="/sign-up" element={<SignUp />} />
-      <Route path="/sign-in" element={<SignIn />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/auth/sign-up" element={<SignUp />} />
+      <Route path="/auth/sign-in" element={<SignIn />} />
+      <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+      <Route path="/auth/reset-password" element={<ResetPassword />} />
 
       {/* Default redirect */}
-      <Route path="/" element={<Navigate to="/my-flipbooks" replace />} />
+      <Route path="/" element={<Navigate to="/myflipbooks" replace />} />
 
       {/* Main content routes */}
-      <Route path="/my-flipbooks" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
+      <Route path="/myflipbooks" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
       </Route>
 
@@ -146,6 +145,9 @@ export default function App() {
       </Route>
 
       {/* my account page routes */}
+      <Route path="/account/confirm-account">
+        <Route index element={<ConfirmAccount />} />
+      </Route>
       <Route path="/account/details" element={<AppLayout setIsSidebarOpen={setIsSidebarOpen} />}>
         <Route index element={<MyAccount />} />
       </Route>

@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/breadcrumb";
 
 const breadcrumbNameConfig = {
-    'my-flipbooks': 'My Flipbooks',
+    'myflipbooks': 'My Flipbooks',
     'logos': 'Brand Logos',
     'text-styles': 'Typography Styles',
     'invoice': 'Invoices',
@@ -29,11 +29,11 @@ export default function DynamicBreadcrumb() {
         const generateBreadcrumbs = () => {
             const pathSegments = location.pathname.split('/').filter(segment => segment);
             if (pathSegments.length === 0) {
-                setBreadcrumbs([{ label: 'Home', path: '/my-flipbooks' }]);
+                setBreadcrumbs([{ label: 'Home', path: '/myflipbooks' }]);
                 return;
             }
 
-            const breadcrumbItems = [{ label: 'Home', path: '/my-flipbooks' }];
+            const breadcrumbItems = [{ label: 'Home', path: '/myflipbooks' }];
 
             pathSegments.forEach((segment) => {
                 console.log("segment", segment);
@@ -54,7 +54,7 @@ export default function DynamicBreadcrumb() {
 
     const handleHomeClick = (e) => {
         e.preventDefault();
-        navigate('/my-flipbooks');
+        navigate('/myflipbooks');
     };
 
     if (breadcrumbs.length <= 1) {

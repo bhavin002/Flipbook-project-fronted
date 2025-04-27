@@ -104,11 +104,9 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
             setRectProps({ x, y, size: Math.min(tempWidth, tempHeight), tempWidth, tempHeight });
             setScale({ scaleX, scaleY });
         };
-        // if (index == 0) {
         setTimeout(() => {
             updateRectSize();
         }, 20)
-        // }
         window.addEventListener("resize", updateRectSize);
 
         return () => window.removeEventListener("resize", updateRectSize);
@@ -305,10 +303,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
             if (stage.selectedShapes.map((data) => data.attrs.id).includes(guideItem.attrs.id)) {
                 return;
             }
-
-            // if (guideItem === skipShape) {
-            //     return;
-            // }
             const box = guideItem.getClientRect();
             vertical.push(box.x, box.x + box.width, box.x + box.width / 2);
             horizontal.push(box.y, box.y + box.height, box.y + box.height / 2);
@@ -607,7 +601,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                 };
                 return updatedState;
             });
-            // setSelectedShapes([]);
             return;
         }
 
@@ -623,7 +616,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                 };
                 return updatedState;
             });
-            // setSelectedShapes([e.target]);
         } else if (metaPressed && isSelected) {
             setMainStage(prevState => {
                 const updatedState = [...prevState];
@@ -633,7 +625,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                 };
                 return updatedState;
             });
-            // setSelectedShapes(selectedShapes.filter(shape => shape !== e.target));
         } else if (metaPressed && !isSelected) {
             setMainStage(prevState => {
                 const updatedState = [...prevState];
@@ -643,7 +634,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                 };
                 return updatedState;
             });
-            // setSelectedShapes([...selectedShapes, e.target]);
         }
 
     };
@@ -673,12 +663,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
             };
             return updatedState;
         });
-
-        // setShapes((prevShapes) =>
-        //   prevShapes.map((shape) =>
-        //     shape.id === updatedShape.id ? updatedShape : shape
-        //   )
-        // );
     };
 
     const generateMainStageString = (stages) => {
@@ -732,7 +716,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
 
     return (
         <div
-            // minHeight: "90vh"
             style={{ width: "100%", height: "100%" }}
 
             className="relative"

@@ -1,0 +1,147 @@
+import { useEffect, useState } from "react";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
+import { Loader } from "@/components/ui/loader";
+import { toast } from "sonner";
+import { UnverifiedAccountApi, VerifyAccountApi } from "@/service/auth.service";
+import LoadingButton from "@/utils/LoadingButton";
+
+export default function ConfirmAccount() {
+  const [otp, setOtp] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isVerifyLoading, setIsVerifyLoading] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const confirmAccount = async () => {
+      try {
+        setIsLoading(true);
+        const UnverifiedUserToken = localStorage.getItem("unverified_user_token");
+        if (!UnverifiedUserToken) {
+          navigate("/auth/sign-up");
+          return;
+        }
+        const response = await UnverifiedAccountApi(UnverifiedUserToken);
+        if (!response.success) {
+          navigate("/auth/sign-up");
+        }
+      } catch (error) {
+        toast.error("Account Confirmation failed", {
+          description: error.message || "Oops! Something went wrong.",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    confirmAccount();
+  }, [])
+
+  const handleVerify = async () => {
+    try {
+      setIsVerifyLoading(true);
+      await VerifyAccountApi({ otp });
+      navigate("/myflipbooks");
+    } catch (error) {
+      toast.error("Account Confirmation failed", {
+        description: error.message || "Oops! Something went wrong.",
+      });
+    } finally {
+      setIsVerifyLoading(false);
+    }
+  };
+
+
+  return (
+    <>
+      {isLoading && <Loader />}
+      <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
+        <div className="w-full max-w-sm">
+          <div className="flex flex-col gap-6">
+            <Card className="shadow rounded-xl">
+              <CardHeader className="text-center space-y-4">
+                <div style={{ "transform": "scale(1)", "margin": "auto" }}>
+                  <img
+                    src="/src/assets/logo.png"
+                    alt="Flipsnack logo"
+                    width={200}
+                    className="my-2"
+                  />
+                </div>
+                <CardTitle>Check your email</CardTitle>
+                <CardDescription>
+                  Excited to have you here! We've sent you a six-digit confirmation code to{" "}
+                  <span className="font-medium">demo001@yopmail.com</span>. Please enter the code
+                  below to confirm your email address. Keep in mind that the code is active for 15 minutes.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  handleVerify();
+                }}>
+                  <div className="grid gap-6">
+                    <div className="grid gap-4">
+                      <div className="flex justify-center">
+                        <InputOTP
+                          maxLength={6}
+                          value={otp}
+                          onChange={setOtp}
+                        >
+                          <InputOTPGroup>
+                            <InputOTPSlot index={0} />
+                            <InputOTPSlot index={1} />
+                            <InputOTPSlot index={2} />
+                            <InputOTPSlot index={3} />
+                            <InputOTPSlot index={4} />
+                            <InputOTPSlot index={5} />
+                          </InputOTPGroup>
+                        </InputOTP>
+                      </div>
+                      <Button
+                        type="submit"
+                        className="w-full gap-1"
+                        disabled={isVerifyLoading}
+                      >
+                        {isVerifyLoading ? (
+                          <LoadingButton />
+                        ) : (
+                          'Verify'
+                        )}
+                      </Button>
+                    </div>
+
+                    <div className="text-center text-sm">
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Having trouble? <a href="#" className="text-primary hover:underline">Contact our support team for help.</a>
+                      </p>
+                      <a
+                        onClick={() => {
+                          navigate("/auth/sign-in");
+                        }}
+                        className="text-primary cursor-pointer font-medium"
+                      >
+                        Back to login
+                      </a>
+                    </div>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

@@ -42,13 +42,11 @@ export default function StagePageMenu({ rectProps, setSelectedIndex, selectedInd
     const onDownStage = () => {
         if (index !== mainStage.length - 1) {
             const mainStageCurr = JSON.parse(JSON.stringify(mainStage[index]));
-            // mainStageCurr.shapes = JSON.parse(mainStageCurr.stageref.current).children[0].children[1].children.map(e => e.attrs)
             mainStageCurr.shapes = mainStage[index].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)))
             mainStageCurr.shapes.forEach(element => { element.id = uuid() })
             mainStageCurr.stageref.current = JSON.parse(mainStageCurr.stageref.current);
             mainStageCurr.selectedShapes = [];
             const mainStageNext = JSON.parse(JSON.stringify(mainStage[index + 1]));
-            // mainStageNext.shapes = JSON.parse(mainStageNext.stageref.current).children[0].children[1].children.map(e => e.attrs)
             mainStageNext.shapes = mainStage[index + 1].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)))
             mainStageNext.shapes.forEach(element => { element.id = uuid() })
             mainStageNext.stageref.current = JSON.parse(mainStageNext.stageref.current);
@@ -56,7 +54,6 @@ export default function StagePageMenu({ rectProps, setSelectedIndex, selectedInd
             const current = mainStageCurr;
             mainStage[index] = mainStageNext;
             mainStage[index + 1] = current;
-            // setMainStage([...mainStage])
             setSelectedIndex(index + 1)
             setMainStage(prevState => {
                 const updatedState = [...prevState];
@@ -64,13 +61,10 @@ export default function StagePageMenu({ rectProps, setSelectedIndex, selectedInd
                     ...mainStageNext
                 };
                 updatedState[index + 1] = {
-                    // ...updatedState[index],
-                    // selectedShapes: []
                     ...mainStageCurr
                 };
                 return updatedState;
             });
-            // setSelectedShapes([])
         }
     }
     return (

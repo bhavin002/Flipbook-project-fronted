@@ -3,10 +3,6 @@ import { v4 as uuid } from "uuid";
 
 export const addStage = (mainStage, setMainStage, index, setSelectedIndex) => {
     const temp = JSON.parse(JSON.stringify(mainStage[index]));
-    // mainStage.forEach(element => {
-    // const temp = JSON.parse(JSON.stringify(element));
-    // element.shapes = JSON.parse(temp.stageref.current).children[0].children[1].children.map(e => e.attrs)
-    // });
     const stage = {
         stageref: { current: JSON.parse(temp.stageref.current) },
         CANVAS_WIDTH: mainStage[0].CANVAS_WIDTH,
@@ -24,8 +20,6 @@ export const addStage = (mainStage, setMainStage, index, setSelectedIndex) => {
 
 export const duplicateStage = (mainStage, setMainStage, index, setSelectedIndex) => {
     const temp = JSON.parse(JSON.stringify(mainStage[index]));
-    // mainStage[index].stageref.current.children[0].children[1].children.map(e => e.attrs)
-    // temp.shapes = JSON.parse(temp.stageref.current).children[0].children[1].children.map(e => e.attrs)
     temp.shapes = mainStage[index].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)))
     temp.shapes.forEach(element => { element.id = uuid() })
     temp.stageref.current = JSON.parse(temp.stageref.current);

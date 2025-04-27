@@ -64,7 +64,11 @@ export default {
     		animation: {
     			'fade-in': 'fadeIn 0.5s ease-in-out forwards',
     			'accordion-down': 'accordion-down 0.2s ease-out',
-    			'accordion-up': 'accordion-up 0.2s ease-out'
+    			'accordion-up': 'accordion-up 0.2s ease-out',
+    			'dots': 'dots 1.5s ease-in-out infinite',
+    			"dot-1": "dot-1 1.5s ease-in-out infinite",
+    			"dot-2": "dot-2 1.5s ease-in-out infinite",
+    			"dot-3": "dot-3 1.5s ease-in-out infinite"
     		},
     		keyframes: {
     			fadeIn: {
@@ -90,6 +94,32 @@ export default {
     				to: {
     					height: '0'
     				}
+    			},
+    			dots: {
+    				'0%, 20%': {
+    					opacity: '0'
+    				},
+    				'40%': {
+    					opacity: '0.3'
+    				},
+    				'60%': {
+    					opacity: '0.6'
+    				},
+    				'80%, 100%': {
+    					opacity: '1'
+    				}
+    			},
+    			"dot-1": {
+    				"0%, 40%, 100%": { transform: "translateY(0)" },
+    				"20%": { transform: "translateY(-4px)" }
+    			},
+    			"dot-2": {
+    				"0%, 60%, 100%": { transform: "translateY(0)" },
+    				"40%": { transform: "translateY(-4px)" }
+    			},
+    			"dot-3": {
+    				"0%, 80%, 100%": { transform: "translateY(0)" },
+    				"60%": { transform: "translateY(-4px)" }
     			}
     		}
     	}

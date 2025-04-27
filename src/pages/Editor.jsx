@@ -167,10 +167,6 @@ import { deleteShape } from "@/utils/Helper";
         // Add background rectangle to the layer
         layer.add(this.cropBackground);
 
-        // Add overlay to the layer and position it
-        // layer.add(this.overlay);
-        // this.overlay.moveToTop(); // Move overlay to the top of the layer
-
         // Add transformers
         this.cropImageTransformer = new Konva.Transformer({
             rotateEnabled: false,
@@ -181,8 +177,6 @@ import { deleteShape } from "@/utils/Helper";
         }).attachTo(this.cropImage);
 
         this.transformer = new Konva.Transformer({
-            // resizeEnabled: false,
-            // rotateEnabled: false
         }).attachTo(this);
         layer.add(this.cropImageTransformer, this.transformer);
 
@@ -211,18 +205,6 @@ import { deleteShape } from "@/utils/Helper";
         this.cropImage.on('transform', this.cropUpdateBinded);
         this.on('dragmove', this.cropUpdateBinded);
         this.on('transform', this.resizAndCropUpdateBinded);
-
-        // Add click event listener to the overlay
-        // this.overlay.on('click tap', (e) => {
-        //     console.log('Overlay clicked!'); // Debug log to confirm click detection
-        //     this.cropEnd();
-        // });
-        // this.getStage().on('click tap', (e) => {
-        //     // if (e.target !== this.cropImage) {
-        //     console.log("click tap");
-        //     this.cropEnd();
-        //     // }
-        // });
 
         // Debug: Log the layer children to verify z-index
         console.log('Layer children after setup:', layer.children.map(child => ({
@@ -273,8 +255,6 @@ import { deleteShape } from "@/utils/Helper";
             if (layer) {
                 layer.batchDraw();
             }
-            // Re-enable dragging
-            // this.draggable(true);
         }
     };
 
@@ -488,11 +468,6 @@ export default function Editor() {
             stage.stageref.current = newObj;
             stage.selectedShapes = [];
         })
-
-        // let deleteCount = isChangeStack ? 2 : 1;
-        // deleteCount > 1 && undoStack.pop();
-        // setTimeout(() => {
-        // }, 500);
         undoStack.pop();
 
         const previousState = undoStack[undoStack.length - 1].stages;

@@ -17,7 +17,7 @@ export default function ProfileDropDownCom() {
         }else if(action === "my-account"){
             navigate("/account/details")
         }else if(action === "logout"){
-            navigate("/sign-in")
+            navigate("/auth/sign-in")
         }
     };
 

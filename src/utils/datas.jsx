@@ -7,7 +7,7 @@ import TableOfContentsComponent from '@/components/CustomizeLayoutComponents/Tab
 import { FileCode, FileText, Image, CirclePlay, Pencil, SlidersHorizontal, ChartPie, Send, BookOpen, Share2, Home, Bot, Diamond, Settings, Users, Eye, PieChart, TableOfContents, Palette, AlignRight, PersonStanding, LayoutPanelLeft, SquareMousePointer, Type, Upload, Component } from 'lucide-react';
 
 const defaultRoutes = {
-    home: '/my-flipbooks',
+    home: '/myflipbooks',
     automation: '/automation',
     statistics: '/statistics',
     branding: '/branding/profile/settings',
@@ -15,7 +15,7 @@ const defaultRoutes = {
 };
 
 const navItems = [
-    { id: 'home', icon: Home, label: 'Home', path: '/my-flipbooks' },
+    { id: 'home', icon: Home, label: 'Home', path: '/myflipbooks' },
     { id: 'automation', icon: Bot, label: 'Automation', path: '/automation' },
     { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics' },
     { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings' },
@@ -32,7 +32,7 @@ const editorNavItems = [
 ];
 
 const bottomNavItems = [
-    { id: 'home', icon: Home, label: 'Home', path: '/my-flipbooks', hasDrawer: true },
+    { id: 'home', icon: Home, label: 'Home', path: '/myflipbooks', hasDrawer: true },
     { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', hasDrawer: false },
     { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics', hasDrawer: false },
     { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings', hasDrawer: true },
