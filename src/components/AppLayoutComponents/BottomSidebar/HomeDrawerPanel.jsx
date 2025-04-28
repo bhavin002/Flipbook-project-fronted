@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChevronRight, Folder, BookOpen, Users, UserCheck, LayoutPanelLeft, Trash, Crown } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
@@ -6,8 +6,30 @@ import { Separator } from "@/components/ui/separator";
 import CreateFolderDialog from "../Sidebar/Home/CreateFolderDialog";
 import FolderDropdown from "../Sidebar/Home/FolderDropdown";
 import { getData } from "@/utils/datas";
+import { toast } from "sonner";
 
 export default function HomeDrawerPanel() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [folders, setFolders] = useState([]);
+
+  useEffect(() => {
+    const getFolders = async () => {
+      try {
+        const response = await GetWorkspaceFoldersApi();
+        console.log("response", response.data);
+        setFolders(response.data);
+      } catch (error) {
+        toast.error("Folder fetch failed", {
+          description: error.message || "Oops! Something went wrong.",
+        });
+
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getFolders();
+  }, [])
+
   const sidebarSections = getData('sidebarSections');
 
   const [selectedItem, setSelectedItem] = useState({
@@ -22,9 +44,8 @@ export default function HomeDrawerPanel() {
   const MenuButton = ({ isActive, onClick, children }) => {
     return (
       <button
-        className={`flex items-center w-full p-2 text-sm rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${
-          isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : ""
-        }`}
+        className={`flex items-center w-full p-2 text-sm rounded-md hover:bg-sidebar-accent hover:text-sidebar-accent-foreground ${isActive ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" : ""
+          }`}
         onClick={(e) => {
           if (!e.isDefaultPrevented()) {
             onClick(e);

@@ -1,11 +1,15 @@
 import axios from 'axios';
 
 export default function ApiClient() {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('fn_access_token');
+    const workspaceid = localStorage.getItem('fn_workspace_id');
+
     const headers = {
         'Content-Type': 'application/json',
-        Authorization: token ? `Bearer ${token}` : '',
+        Authorization: token ? `${token}` : '',
+        workspaceid: workspaceid ? workspaceid : '' 
     };
+    
     const instance = axios.create({
         baseURL: import.meta.env.VITE_API_URL,
         responseType: 'json',

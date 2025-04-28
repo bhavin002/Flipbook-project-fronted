@@ -145,26 +145,14 @@ const sidebarSections = [
     {
         id: 'flipbooks-team',
         icon: Users,
-        label: 'Team',
+        label: 'Personal',
         type: 'flipbooks',
-        folders: [
-            { id: 'flipbooks-folder-1', name: 'Folder 1' },
-            { id: 'flipbooks-folder-2', name: 'Folder 2' },
-            { id: 'flipbooks-folder-3', name: 'Folder 3' },
-            { id: 'flipbooks-folder-4', name: 'Folder 4' },
-        ]
     },
     {
         id: 'template-team',
         icon: Users,
-        label: 'Team',
+        label: 'Personal',
         type: 'template',
-        folders: [
-            { id: 'template-folder-1', name: 'Folder 1' },
-            { id: 'template-folder-2', name: 'Folder 2' },
-            { id: 'template-folder-3', name: 'Folder 3' },
-            { id: 'template-folder-4', name: 'Folder 4' },
-        ]
     }
 ]
 

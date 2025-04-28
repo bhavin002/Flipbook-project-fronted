@@ -11,6 +11,7 @@ import { toast } from "sonner"
 import { useState } from "react"
 import LoadingButton from "@/utils/LoadingButton"
 import { SignInApi } from "@/service/auth.service"
+import { useAuth } from "@/context/AuthContext"
 
 const loginSchema = z.object({
   email: z
@@ -28,7 +29,8 @@ export function LoginForm({
 }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  
+  const { login } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -44,7 +46,9 @@ export function LoginForm({
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      await SignInApi(data);
+      const response = await SignInApi(data);
+      console.log(response)
+      login(response.data)
       navigate("/");
     } catch (error) {
       toast.error("Login failed", {

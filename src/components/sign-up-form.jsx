@@ -47,7 +47,8 @@ export function SignUpForm({ className, ...props }) {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      await SignUpApi(data);
+      const response = await SignUpApi(data);
+      localStorage.setItem("fn_confirm_token", response.data.token);
       navigate("/account/confirm-account");
     } catch (error) {
       toast.error("Sign Up failed", {

@@ -15,7 +15,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Loader } from "@/components/ui/loader";
 import { toast } from "sonner";
-import { UnverifiedAccountApi, VerifyAccountApi } from "@/service/auth.service";
+import { ValidateEmailApi, VerifyAccountApi } from "@/service/auth.service";
 import LoadingButton from "@/utils/LoadingButton";
 
 export default function ConfirmAccount() {
@@ -28,13 +28,13 @@ export default function ConfirmAccount() {
     const confirmAccount = async () => {
       try {
         setIsLoading(true);
-        const UnverifiedUserToken = localStorage.getItem("unverified_user_token");
-        if (!UnverifiedUserToken) {
+        const confirmToken = localStorage.getItem("fn_confirm_token");
+        if (!confirmToken) {
           navigate("/auth/sign-up");
           return;
         }
-        const response = await UnverifiedAccountApi(UnverifiedUserToken);
-        if (!response.success) {
+        const response = await ValidateEmailApi(confirmToken);
+        if (!response.data.success) {
           navigate("/auth/sign-up");
         }
       } catch (error) {
@@ -51,7 +51,8 @@ export default function ConfirmAccount() {
   const handleVerify = async () => {
     try {
       setIsVerifyLoading(true);
-      await VerifyAccountApi({ otp });
+      const confirmToken = localStorage.getItem("fn_confirm_token");
+      await VerifyAccountApi({ token: confirmToken, otp });
       navigate("/myflipbooks");
     } catch (error) {
       toast.error("Account Confirmation failed", {

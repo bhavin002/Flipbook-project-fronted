@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useAuth } from "@/context/AuthContext";
 import { CircleUser } from 'lucide-react';
 import { BookUser } from 'lucide-react';
 import { Settings } from 'lucide-react';
@@ -10,13 +11,15 @@ import { useNavigate } from "react-router-dom";
 export default function ProfileDropDownCom() {
 
     const navigate = useNavigate();
+    const { logout } = useAuth();
 
     const handleItemClick = (action) => {
-        if(action ==="setting"){
+        if (action === "setting") {
             navigate("/settings/workspace")
-        }else if(action === "my-account"){
+        } else if (action === "my-account") {
             navigate("/account/details")
-        }else if(action === "logout"){
+        } else if (action === "logout") {
+            logout()
             navigate("/auth/sign-in")
         }
     };
