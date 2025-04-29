@@ -87,7 +87,7 @@ export default function App() {
         <Route path="/auth/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
         <Route path="/auth/sign-in" element={<PublicRoute><SignIn /></PublicRoute>} />
         <Route path="/auth/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
-        <Route path="/auth/reset-password" element={<PublicRoute><ResetPassword /></PublicRoute>} />
+        <Route path="/auth/forgot-password/:token" element={<PublicRoute><ResetPassword /></PublicRoute>} />
         <Route path="/account/confirm-account" element={<PublicRoute><ConfirmAccount /></PublicRoute>} />
 
         {/* Default redirect */}

@@ -19,3 +19,23 @@ export const SignInApi = async (data) => {
     const response = await ApiClient().post("/auth/signin", data);
     return response.data;
 }
+
+export const GetUserInfoApi = async (token) => {
+    const response = await ApiClient().get(`/auth/get-user-info/${token}`);
+    return response.data;
+}
+
+export const SendResetLinkApi = async (email) => {
+    const response = await ApiClient().get(`/auth/forget-password/${email}`);
+    return response.data;
+}
+
+export const ForgotPasswordVerifyTokenApi = async (token) => {
+    const response = await ApiClient().get(`/auth/forget-password/verify-token/${token}`);
+    return response.data;
+}
+
+export const ResetPasswordApi = async (data) => {
+    const response = await ApiClient().post(`/auth/forget-password/verify-token-password`, data);
+    return response.data;
+}

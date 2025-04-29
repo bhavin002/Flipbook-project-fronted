@@ -64,6 +64,27 @@ export default function HomeSidebarPanel() {
         setSelectedItem({ sectionId, folderId });
     };
 
+    const handleFolderRenamed = (updatedFolder) => {
+        setFolders(prevFolders =>
+            prevFolders.map(folder =>
+                folder._id === updatedFolder._id ? updatedFolder : folder
+            )
+        );
+    };
+
+    const handleFolderDeleted = (folderId) => {
+        setFolders(prevFolders =>
+            prevFolders.filter(folder => folder._id !== folderId)
+        );
+
+        if (selectedItem.folderId === folderId) {
+            setSelectedItem({
+                ...selectedItem,
+                folderId: null
+            });
+        }
+    };
+
     const normalFolders = folders.filter(folder => folder.folderScope === 0);
     const templateFolders = folders.filter(folder => folder.folderScope === 1);
 
@@ -122,31 +143,35 @@ export default function HomeSidebarPanel() {
                                                 <CollapsibleContent>
                                                     <SidebarMenuSub>
                                                         <div className="max-h-[150px] overflow-y-auto">
-                                                        {isLoading ? (
-                                                            <div className="mt-1">
-                                                                {Array(3).fill().map((_, index) => (
-                                                                    <FolderSkeleton key={`skeleton-${index}`} />
-                                                                ))}
-                                                            </div>
-                                                        ) : (
-                                                            folderData.length > 0 ? folderData.map(folder => (
-                                                                <SidebarMenuButton
-                                                                    key={folder._id}
-                                                                    isActive={selectedItem.folderId === folder._id}
-                                                                    onClick={() => handleItemSelect(section.id, folder._id)}
-                                                                >
-                                                                    <Folder />
-                                                                    <div className="flex items-center justify-between w-full">
-                                                                        <p className="truncate text-xs w-[110px]">{folder.name}</p>
-                                                                        <FolderDropdown />
-                                                                    </div>
-                                                                </SidebarMenuButton>
-                                                            )) : (
-                                                                <p className="text-white text-xs py-2 px-3 text-center">No folders found</p>
-                                                            )
-                                                        )}
+                                                            {isLoading ? (
+                                                                <div className="mt-1">
+                                                                    {Array(3).fill().map((_, index) => (
+                                                                        <FolderSkeleton key={`skeleton-${index}`} />
+                                                                    ))}
+                                                                </div>
+                                                            ) : (
+                                                                folderData.length > 0 ? folderData.map(folder => (
+                                                                    <SidebarMenuButton
+                                                                        key={folder._id}
+                                                                        isActive={selectedItem.folderId === folder._id}
+                                                                        onClick={() => handleItemSelect(section.id, folder._id)}
+                                                                    >
+                                                                        <Folder />
+                                                                        <div className="flex items-center justify-between w-full">
+                                                                            <p className="truncate text-xs w-[110px]">{folder.name}</p>
+                                                                            <FolderDropdown
+                                                                                folder={folder}
+                                                                                onFolderRenamed={handleFolderRenamed}
+                                                                                onFolderDeleted={handleFolderDeleted}
+                                                                            />
+                                                                        </div>
+                                                                    </SidebarMenuButton>
+                                                                )) : (
+                                                                    <p className="text-white text-xs py-2 px-3 text-center">No folders found</p>
+                                                                )
+                                                            )}
                                                         </div>
-                                                        
+
                                                     </SidebarMenuSub>
                                                 </CollapsibleContent>
                                             </Collapsible>
@@ -202,13 +227,9 @@ export default function HomeSidebarPanel() {
             <CreateFolderDialog
                 isCreateFolderModalOpen={isCreateFolderModalOpen}
                 setIsCreateFolderModalOpen={setIsCreateFolderModalOpen}
-                onFolderCreated={
-                    (folder) => {
-                        debugger
-                        console.log("folder", folder);
-                        setFolders(prevFolders => [...prevFolders, folder]);
-                    }
-                }
+                onFolderCreated={(folder) => {
+                    setFolders(prevFolders => [...prevFolders, folder]);
+                }}
             />
         </>
     )

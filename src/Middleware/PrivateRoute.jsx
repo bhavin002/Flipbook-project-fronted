@@ -4,7 +4,6 @@ import { Loader } from '@/components/ui/loader';
 
 export function PrivateRoute({ children }) {
     const { isAuthenticated, isLoading } = useAuth();
-    console.log("isAuthenticated ??", isAuthenticated)
     const location = useLocation();
 
     if (isLoading) {

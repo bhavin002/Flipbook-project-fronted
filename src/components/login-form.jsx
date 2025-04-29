@@ -47,7 +47,6 @@ export function LoginForm({
     try {
       setIsLoading(true);
       const response = await SignInApi(data);
-      console.log(response)
       login(response.data)
       navigate("/");
     } catch (error) {
@@ -102,7 +101,7 @@ export function LoginForm({
                     Password
                   </Label>
                   <a
-                    onClick={() => navigate("/forgot-password")}
+                    onClick={() => navigate("/auth/forgot-password")}
                     className="ml-auto text-sm underline-offset-2 hover:underline cursor-pointer"
                   >
                     Forgot your password?

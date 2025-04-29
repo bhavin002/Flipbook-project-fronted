@@ -1,10 +1,11 @@
+import { GetUserInfoApi } from '@/service/auth.service';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext({
     isAuthenticated: false,
     isLoading: true,
-    login: () => { },
+    login: async () => { },
     logout: () => { },
     checkAuth: async () => false
 });
@@ -12,6 +13,7 @@ const AuthContext = createContext({
 export function AuthProvider({ children }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [userMeta, setUserMeta] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,10 +26,11 @@ export function AuthProvider({ children }) {
 
     const isTokenVerified = async (token) => {
         if (!token) return false;
-
         try {
-            // const response = await apiClient().get(`/pdf-chatbot/isvalid-user/${token}`);
-            // if (response.status !== 200) return false;
+            const response = await GetUserInfoApi(token);
+            if (response.status !== 200) return false;
+            setUserMeta(response.data.user);
+            sessionStorage.setItem('fn_workspace_id', response.data.user.workspaceId);
             return true;
         } catch (error) {
             return false;
@@ -45,21 +48,28 @@ export function AuthProvider({ children }) {
         return isValidToken;
     };
 
-    const login = (data) => {
+    const login = async (data) => {
         localStorage.setItem('fn_access_token', data.token);
-        localStorage.setItem('fn_workspace_id', data.user.workspaceId);
         localStorage.removeItem('fn_confirm_token');
-        setIsAuthenticated(true);
+        const isValid = await isTokenVerified(data.token);
+        if (isValid) {
+            setIsAuthenticated(true);
+            return true;
+        } else {
+            localStorage.removeItem('fn_access_token');
+            return false;
+        }
     };
 
     const logout = () => {
-        localStorage.removeItem('fn_access_token');
+        localStorage.clear();
+        sessionStorage.clear();
         setIsAuthenticated(false);
         navigate('/auth/sign-in');
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, checkAuth }}>
+        <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, checkAuth, userMeta }}>
             {children}
         </AuthContext.Provider>
     );

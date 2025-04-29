@@ -8,6 +8,5 @@ export default function ForgotPassword() {
                 <ForgotPasswordForm />
             </div>
         </div>
-
     )
 }
