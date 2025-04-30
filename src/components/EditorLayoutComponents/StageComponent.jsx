@@ -20,7 +20,6 @@ import KonvaText from "./Widget/KonvaText";
 
 export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
-    // console.log("stage.selectedShapes.length" , stage.selectedShapes.length);
     const stageRef = useRef(null);
     const demo = useRef(null);
     const dragRect = useRef(null);

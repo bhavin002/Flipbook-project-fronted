@@ -19,7 +19,7 @@ function NavItem({ item, isSelected, onClick }) {
     );
 };
 
-export default function SidebarNavigation({ windowInnerWidth, currentView, setCurrentView, mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
+export default function EditorSidebarNavigation({ windowInnerWidth, currentView, setCurrentView, mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
     const navItems = getData('editorNavItems');
 

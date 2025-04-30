@@ -8,8 +8,18 @@ import { LayoutPanelLeft } from 'lucide-react';
 import { LibraryBig } from 'lucide-react';
 import { Folder } from 'lucide-react';
 import { Archive } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
 
 export default function CreateDropDownCom() {
+
+    const navigate = useNavigate();
+
+    const handleItemClick = (action) => {
+        if (action === "from-scratch") {
+            navigate("/create")
+        }
+    };
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
@@ -24,7 +34,7 @@ export default function CreateDropDownCom() {
                     <DropdownMenuItem>
                         <Upload />  Upload PDF
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleItemClick("from-scratch")}>
                         <Brush /> From scratch
                     </DropdownMenuItem>
                     <DropdownMenuItem>

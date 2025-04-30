@@ -46,6 +46,9 @@ import { PublicRoute } from "./Middleware/PublicRoute";
 import { PrivateRoute } from "./Middleware/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
 import FlipbookFromScratch from "./pages/FlipbookFromScratch";
+import ScratchAppLayout from "./layout/ScratchAppLayout";
+import { Loader } from "./components/ui/loader";
+import { useApiCounterStore } from "./utils/ApiClient";
 
 // Route configurations
 const brandingRoutes = [
@@ -76,6 +79,8 @@ const settingsRoutes = [
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [windowInnerWidth, setWindowInnerWidth] = useState(window.innerWidth);
+  const apiCounter = useApiCounterStore((state) => state.counter);
+
 
   window.addEventListener('resize', () => {
     setWindowInnerWidth(window.innerWidth);
@@ -83,6 +88,7 @@ export default function App() {
 
   return (
     <AuthProvider>
+      {apiCounter > 0 && <Loader />}
       <Routes>
         {/* Public Auth routes */}
         <Route path="/auth/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
@@ -223,7 +229,7 @@ export default function App() {
         
         <Route path="/create" element={
           <PrivateRoute>
-            <CustomizeAppLayout />
+            <ScratchAppLayout />
           </PrivateRoute>
         }>
           <Route index element={<FlipbookFromScratch />} />

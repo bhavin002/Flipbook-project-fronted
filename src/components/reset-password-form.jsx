@@ -11,7 +11,6 @@ import { toast } from "sonner"
 import { useState, useEffect } from "react"
 import LoadingButton from "@/utils/LoadingButton"
 import { ForgotPasswordVerifyTokenApi, ResetPasswordApi } from "@/service/auth.service"
-import { Loader } from "./ui/loader"
 
 const resetPasswordSchema = z.object({
     password: z
@@ -33,7 +32,6 @@ export function ResetPasswordForm({
 }) {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
-    const [isVerifying, setIsVerifying] = useState(true);
     const { token } = useParams();
 
     const {
@@ -51,7 +49,6 @@ export function ResetPasswordForm({
     useEffect(() => {
         const verifyToken = async () => {
             try {
-                setIsVerifying(true);
                 if (!token) {
                     navigate("/auth/sign-in");
                     return;
@@ -63,8 +60,6 @@ export function ResetPasswordForm({
                 }
             } catch (error) {
                 navigate("/auth/sign-in");
-            } finally {
-                setIsVerifying(false);
             }
         };
 
@@ -94,12 +89,6 @@ export function ResetPasswordForm({
             setIsLoading(false);
         }
     };
-
-    if (isVerifying) {
-        return (
-            <Loader />
-        );
-    }
 
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>

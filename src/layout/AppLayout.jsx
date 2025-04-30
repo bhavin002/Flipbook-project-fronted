@@ -6,7 +6,7 @@ import SidebarNavigation from "../components/AppLayoutComponents/SidebarNavigati
 import {
     SidebarProvider,
 } from "@/components/ui/sidebar"
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import AppBreadcrumbs from "@/utils/AppBreadcrumb";
 import CreateDropDownCom from "@/components/AppLayoutComponents/CreateDropDownCom";
 import { AppSidebar } from "@/utils/AppSidebar";
@@ -16,6 +16,7 @@ export default function AppLayout({ setIsSidebarOpen }) {
     const [searchValue, setSearchValue] = useState("");
     const [isFocused, setIsFocused] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
+    const navigate = useNavigate();
 
     const handleBlur = (e) => {
         setTimeout(() => {
@@ -30,7 +31,9 @@ export default function AppLayout({ setIsSidebarOpen }) {
             <div className="flex flex-col min-h-screen">
                 <header className="fixed top-0 left-0 right-0 z-10 bg-white">
                     <div className="flex h-16 w-full justify-between shrink-0 items-center px-4 md:px-6">
-                        <div>
+                        <div className="cursor-pointer" onClick={() => {
+                            navigate("/myflipbooks")
+                        }}>
                             <img src="/src/assets/logo.png" width={200} />
                         </div>
                         <div className="relative md:flex gap-6 hidden" onBlur={handleBlur}>

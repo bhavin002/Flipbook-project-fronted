@@ -21,7 +21,9 @@ export const SignInApi = async (data) => {
 }
 
 export const GetUserInfoApi = async (token) => {
-    const response = await ApiClient().get(`/auth/get-user-info/${token}`);
+    const response = await ApiClient().get(`/auth/get-user-info/${token}`, {
+        showLoader: true
+    });
     return response.data;
 }
 
@@ -31,7 +33,9 @@ export const SendResetLinkApi = async (email) => {
 }
 
 export const ForgotPasswordVerifyTokenApi = async (token) => {
-    const response = await ApiClient().get(`/auth/forget-password/verify-token/${token}`);
+    const response = await ApiClient().get(`/auth/forget-password/verify-token/${token}`, {
+        showLoader: true
+    });
     return response.data;
 }
 

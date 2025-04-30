@@ -5,7 +5,7 @@ import TopToolbar from "../components/EditorLayoutComponents/TopToolbar";
 import PanelRight from "@/components/EditorLayoutComponents/PanelRight";
 import LateralPanelRightPages from "@/components/EditorLayoutComponents/LateralPanelRightPages";
 import LateralPanelRightLayer from "@/components/EditorLayoutComponents/LateralPanelRightLayer";
-import { BookOpen, Check, Crop, Layers, Redo, Undo, ZoomIn, ZoomOut } from "lucide-react";
+import { BookOpen, Layers, Redo, Undo, ZoomIn, ZoomOut } from "lucide-react";
 import { v4 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -351,7 +351,7 @@ import { deleteShape } from "@/utils/Helper";
 })(Konva);
 
 export default function Editor() {
-    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, setIsEditorDrawerOpen } = useOutletContext();
+    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu } = useOutletContext();
     const autoScroll = useRef([]);
     useEffect(() => {
         autoScroll.current[selectedIndex].scrollIntoView({

@@ -1,4 +1,11 @@
 import axios from 'axios';
+import { create } from 'zustand';
+
+export const useApiCounterStore = create((set) => ({
+    counter: 0,
+    increment: () => set((state) => ({ counter: state.counter + 1 })),
+    decrement: () => set((state) => ({ counter: state.counter - 1 })),
+}));
 
 export default function ApiClient() {
     const token = localStorage.getItem('fn_access_token');
@@ -7,18 +14,49 @@ export default function ApiClient() {
     const headers = {
         'Content-Type': 'application/json',
         Authorization: token ? `${token}` : '',
-        workspaceid: workspaceid ? workspaceid : '' 
+        workspaceid: workspaceid ? workspaceid : ''
     };
-    
+
     const instance = axios.create({
         baseURL: import.meta.env.VITE_API_URL,
         responseType: 'json',
         headers,
     });
 
-    instance.interceptors.response.use(
-        (response) => response,
+    instance.interceptors.request.use(
+        (config) => {
+            const showLoader = config.showLoader
+
+            if (showLoader) {
+                useApiCounterStore.getState().increment();
+            }
+
+            return config;
+        },
         (error) => {
+            if (error.config?.showLoader) {
+                useApiCounterStore.getState().decrement();
+            }
+
+            return Promise.reject(error);
+        }
+    );
+
+    instance.interceptors.response.use(
+        (response) => {
+            const showLoader = response.config.showLoader;
+
+            if (showLoader) {
+                useApiCounterStore.getState().decrement();
+            }
+
+            return response;
+        },
+        (error) => {
+            if (error.config && error.config.showLoader) {
+                useApiCounterStore.getState().decrement();
+            }
+
             if (error.response && error.response.status === 401) {
                 localStorage.clear();
                 sessionStorage.clear();
@@ -26,8 +64,8 @@ export default function ApiClient() {
                     message: error.response.data.message || "Authentication failed. Please log in again.",
                     status: 401
                 });
-                
             }
+
             const errorMessage = error.response?.data?.message ?? error.message ?? 'Something went wrong';
 
             return Promise.reject({
