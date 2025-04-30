@@ -45,6 +45,7 @@ import ConfirmAccount from "./pages/ConfirmAccount";
 import { PublicRoute } from "./Middleware/PublicRoute";
 import { PrivateRoute } from "./Middleware/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
+import FlipbookFromScratch from "./pages/FlipbookFromScratch";
 
 // Route configurations
 const brandingRoutes = [
@@ -218,6 +219,14 @@ export default function App() {
           </PrivateRoute>
         }>
           <Route index element={<Customize />} />
+        </Route>
+        
+        <Route path="/create" element={
+          <PrivateRoute>
+            <CustomizeAppLayout />
+          </PrivateRoute>
+        }>
+          <Route index element={<FlipbookFromScratch />} />
         </Route>
 
         <Route path="/editor/:id" element={
