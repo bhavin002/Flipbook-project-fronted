@@ -253,23 +253,14 @@ export default function InteractionsSidebarPanel({ setIsEditorDrawerOpen, setMai
                                 {element.widget.map((item, itemIndex) => (
                                     <div key={itemIndex} className="cursor-pointer flex flex-col items-center"
                                         draggable
-                                        // onDragStart={() => {
-                                        //     mainStage[selectedIndex].dragRect.current = item.attrs;
-                                        // }}
                                         onDragStart={(e) => {
                                             mainStage[selectedIndex].dragRect.current =
                                                 item.attrs;
                                             const dragMask = createDynamicDragMask(item);
-                                            // document.body.appendChild(dragMask);
-                                            // setTimeout(() => {
-                                            e.dataTransfer.setDragImage(dragMask, 10, 10); // Cursor offset
-                                            // }, 0);
+                                            e.dataTransfer.setDragImage(dragMask, 10, 10); 
                                             const cleanup = () => {
-                                                // dragMask.style = null;
                                                 dragMask.innerHTML = "";
                                                 dragMask.removeAttribute("style");
-                                                // document.body.removeChild(dragMask);
-                                                // document.removeEventListener("dragend", cleanup);
                                             };
                                             document.addEventListener("dragend", cleanup);
                                         }}
