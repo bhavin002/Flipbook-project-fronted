@@ -1,44 +1,161 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { addIntercationDataToMainStage } from "@/utils/Helper";
 
-export default function GoToUrl() {
-    const [selectedTab, setSelectedTab] = useState("new-tab");
-    const tabs = [
-        { value: "new-tab", label: "New tab" },
-        { value: "same-tab", label: "Same tab" },
-    ];
+const URL_PATTERN = /^(https?:\/\/)([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\/[a-zA-Z0-9_\-.~!*'();:@&=+$,/?%#[\]]*)?$/;
+const DOMAIN_PATTERN = /^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\/[a-zA-Z0-9_\-.~!*'();:@&=+$,/?%#[\]]*)?$/;
+
+const urlSchema = z.object({
+    url: z.string()
+        .trim()
+        .min(1, { message: "URL is required" })
+        .transform(val => {
+            if (!val.startsWith('http://') && !val.startsWith('https://')) {
+                return `https://${val}`;
+            }
+            return val;
+        })
+        .refine(url => URL_PATTERN.test(url), {
+            message: "Please enter a valid URL format"
+        }),
+    openIn: z.enum(["new-tab", "same-tab"])
+});
+
+export default function GoToUrl({ mainStage, setMainStage, selectedShape, selectedIndex }) {
+    const initialUrl = selectedShape[0]?.attrs?.htmlData?.url || "";
+    const initialOpenIn = selectedShape[0]?.attrs?.htmlData?.openIn || "new-tab";
+    const [isUrlValid, setIsUrlValid] = useState(false);
+    const [rawInputValue, setRawInputValue] = useState(initialUrl);
+
+    const form = useForm({
+        resolver: zodResolver(urlSchema),
+        defaultValues: {
+            url: initialUrl,
+            openIn: initialOpenIn
+        },
+        mode: "onChange"
+    });
+
+    useEffect(() => {
+        if (initialUrl) {
+            setRawInputValue(initialUrl);
+            form.setValue("url", initialUrl, { shouldValidate: true });
+
+            if (URL_PATTERN.test(initialUrl)) {
+                setIsUrlValid(true);
+            }
+        } else {
+            setRawInputValue("");
+            form.setValue("url", "", { shouldValidate: true });
+            setIsUrlValid(false);
+        }
+
+        if (initialOpenIn) {
+            form.setValue("openIn", initialOpenIn);
+        }
+    }, [selectedShape]);
+
+    const updateMainStage = (data) => {
+        if (!isUrlValid) return;
+        const output = {
+            data: {
+                action: "go-to-url",
+                url: data.url,
+                openIn: data.openIn
+            }
+        };
+        addIntercationDataToMainStage(mainStage, setMainStage, selectedShape, selectedIndex, output);
+    };
+
+    const { watch, formState } = form;
+    const formValues = watch();
+
+    useEffect(() => {
+        setIsUrlValid(formState.isValid);
+    }, [formState]);
+
+    const onSubmit = (data) => {
+        if (isUrlValid) {
+            updateMainStage(data);
+        }
+    };
+
+    const handleInputChange = (e) => {
+        const value = e.target.value;
+        setRawInputValue(value);
+
+        if (!value.startsWith('http://') && !value.startsWith('https://') && DOMAIN_PATTERN.test(value)) {
+            form.setValue("url", `https://${value}`, { shouldValidate: true });
+        } else {
+            form.setValue("url", value, { shouldValidate: true });
+        }
+    };
+
+    const handleTabChange = (value) => {
+        form.setValue("openIn", value);
+        if (isUrlValid) {
+            updateMainStage({ ...formValues, openIn: value });
+        }
+    };
+
     return (
-        <>
-            <div>
-                <Label htmlFor="url" className="text-xs">URL</Label>
-                <Input
-                    type="text"
-                    id="url"
-                    placeholder="Set your URL"
-                    className="placeholder:text-[#d8dce3]" />
-            </div>
-            <div>
-                <Label htmlFor="url" className="text-xs">Open in</Label>
-                <Select
-                    defaultValue="new-tab"
-                    value={selectedTab}
-                    onValueChange={(value) => setSelectedTab(value)}
-                >
-                    <SelectTrigger id="tab" className="w-full">
-                        <SelectValue placeholder="Select tab" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {tabs.map(option => (
-                            <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
-        </>
+        <Form {...form} onSubmit={form.handleSubmit(onSubmit)}>
+            <FormField
+                control={form.control}
+                name="url"
+                render={({ field }) => (
+                    <FormItem className="mb-4">
+                        <Label htmlFor="url" className="text-xs">URL</Label>
+                        <FormControl>
+                            <Input
+                                type="text"
+                                id="url"
+                                placeholder="Set your URL (e.g., example.com)"
+                                className={`placeholder:text-gray-400 ${formState.errors.url ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
+                                onChange={handleInputChange}
+                                value={rawInputValue}
+                                onBlur={() => {
+                                    if (isUrlValid) {
+                                        form.handleSubmit(onSubmit)();
+                                        const formValue = form.getValues("url");
+                                        if (formValue !== rawInputValue) {
+                                            setRawInputValue(formValue);
+                                        }
+                                    }
+                                }}
+                            />
+                        </FormControl>
+                    </FormItem>
+                )}
+            />
 
-    )
+            <FormField
+                control={form.control}
+                name="openIn"
+                render={({ field }) => (
+                    <FormItem>
+                        <Label htmlFor="tab" className="text-xs">Open in</Label>
+                        <Select
+                            value={field.value}
+                            onValueChange={(value) => handleTabChange(value)}
+                        >
+                            <SelectTrigger id="tab" className="w-full">
+                                <SelectValue placeholder="Select tab" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="new-tab">New tab</SelectItem>
+                                <SelectItem value="same-tab">Same tab</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </FormItem>
+                )}
+            />
+        </Form>
+    );
 }

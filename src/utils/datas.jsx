@@ -1405,7 +1405,7 @@ const interactions = [
                     title: "hyperlink",
                     visible: true,
                     layer: "Link",
-                    htmlType: "go-to-url",
+                    htmlType: "link-area",
                 }
             },
             {

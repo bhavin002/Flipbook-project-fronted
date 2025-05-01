@@ -51,7 +51,7 @@ export default function InteractionsSidebarPanel({ setIsEditorDrawerOpen, setMai
 
         dragMask.style.opacity = attrs.opacity || "1"; // Use element opacity or default
         switch (attrs.htmlType) {
-            case "go-to-url":
+            case "link-area":
                 dragMask.style.width = `80px`;
                 dragMask.style.height = `16px`;
                 dragMask.style.background = attrs.fill || "#7bc2ff";

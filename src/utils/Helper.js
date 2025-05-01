@@ -33,7 +33,7 @@ export const duplicateStage = (mainStage, setMainStage, index, setSelectedIndex)
 }
 
 export const deleteStage = (mainStage, setMainStage, index, selectedIndex, setSelectedIndex) => {
-    if(mainStage.length == 1) return;
+    if (mainStage.length == 1) return;
     mainStage.length - 1 == index && setSelectedIndex(index - 1);
     mainStage.length - 1 == selectedIndex && setSelectedIndex(selectedIndex - 1);
     if (index < mainStage.length - 1) {
@@ -66,5 +66,26 @@ export function deleteShape(mainStage, setMainStage, selectedIndex) {
         return !(tempSelectedShapes.some(e => e.attrs.id === innerShape.id))
     })
     mainStage[selectedIndex].selectedShapes = [];
+    setMainStage([...mainStage]);
+}
+
+export function addIntercationDataToMainStage(mainStage, setMainStage, selectedShape, selectedIndex, output) {
+    mainStage[selectedIndex].stageref.current.children[0].children[1].children.find(e => {
+        if (e.attrs.id === selectedShape[0].attrs.id) {
+            e.attrs.htmlData = {
+                ...e.attrs.htmlData,
+                ...output.data
+            };
+            return true;
+        }
+    });
+
+    mainStage[selectedIndex].shapes = mainStage[selectedIndex].stageref.current.children[0].children[1].children.map(e =>
+        JSON.parse(JSON.stringify(e.attrs))
+    ) || [];
+
+    const temp = JSON.parse(JSON.stringify(mainStage[selectedIndex]));
+    temp.selectedShapes = [];
+    temp.stageref = null;
     setMainStage([...mainStage]);
 }

@@ -11,33 +11,44 @@ import PhoneNumber from "./Hyperlink/PhoneNumber";
 import PhotoSlideshow from "./Hyperlink/PhotoSlideshow";
 import Chart from "./Hyperlink/Chart";
 import { useEffect, useState } from "react";
+import { addIntercationDataToMainStage } from "@/utils/Helper";
 
-export default function Hyperlink({ action }) {
+export default function Hyperlink({ mainStage, setMainStage, selectedShape, selectedIndex }) {
     const hyperlinks = getData("hyperlinks") || [];
-    const [selectedAction, setSelectedAction] = useState(action || "send-email");
+    const currentAction = selectedShape[0]?.attrs?.htmlData?.action;
+    const [selectedAction, setSelectedAction] = useState(currentAction || "go-to-url");
 
     useEffect(() => {
-        if (action) {
-            setSelectedAction(action);
-        }
-    }, [action]);
+        const action = selectedShape[0]?.attrs?.htmlData?.action;
+        setSelectedAction(action || "go-to-url");
+    }, [selectedShape]);
+
+    const changeAction = (value) => {
+        setSelectedAction(value);
+        const output = {
+            data: {
+                action: value,
+            }
+        };
+        addIntercationDataToMainStage(mainStage, setMainStage, selectedShape, selectedIndex, output);
+    };
 
     const renderDynamicContent = () => {
         switch (selectedAction) {
             case "send-email":
-                return <SendEmail />;
+                return <SendEmail mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />;
             case "go-to-profile":
-                return <GoToProfile />;
+                return <GoToProfile mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />;
             case "go-to-url":
-                return <GoToUrl />;
+                return <GoToUrl mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />;
             case "go-to-page":
-                return <GoToPage />;
+                return <GoToPage mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />;
             case "popup-frame":
                 return <PopupFrame />;
             case "spotlight":
                 return <Spotlight />;
             case "phone-number":
-                return <PhoneNumber />;
+                return <PhoneNumber mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />;
             case "photo-slideshow":
                 return <PhotoSlideshow />;
             case "line-chart":
@@ -58,9 +69,8 @@ export default function Hyperlink({ action }) {
                 <div>
                     <Label className="text-xs">Action</Label>
                     <Select
-                        defaultValue="send-email"
                         value={selectedAction}
-                        onValueChange={(value) => setSelectedAction(value)}
+                        onValueChange={(value) => changeAction(value)}
                     >
                         <SelectTrigger id="hyperlink" className="w-full">
                             <SelectValue placeholder="Select hyperlink" />

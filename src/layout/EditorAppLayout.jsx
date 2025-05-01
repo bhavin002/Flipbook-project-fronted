@@ -23,11 +23,11 @@ export default function EditorAppLayout({ windowInnerWidth, isSidebarOpen, setIs
     const [currentView, setCurrentView] = useState(null);
     const { id } = useParams();
     const [mainStage, setMainStage] = useState([]);
+    console.log("mainStage ??", mainStage)
     const navigate = useNavigate();
 
     useEffect(() => {
         const getFlipbook = async () => {
-            console.log("getFlipbook ??? ",)
             try {
                 const response = await GetFlipbookApi(id);
                 console.log(response.data.pages);
@@ -67,7 +67,7 @@ export default function EditorAppLayout({ windowInnerWidth, isSidebarOpen, setIs
                 className="drag-mask bg-[url(/src/assets/icons/Code.svg)] bg-[#ebf0fc] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
-                id="go-to-url"
+                id="link-area"
                 className="drag-mask bg-[#7bc2ff] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div

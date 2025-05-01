@@ -28,7 +28,7 @@ import Text from "../widgetSidebar/Text"
 function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, setIsShapeDrawerOpen) {
     if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
         return (
-            <Hyperlink action={selectedShape[0].attrs.htmlType} />
+            <Hyperlink mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />
         )
     }
     if (selectedSubMenu === 'effect') {
