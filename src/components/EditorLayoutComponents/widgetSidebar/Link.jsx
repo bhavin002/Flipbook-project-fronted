@@ -7,6 +7,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { addIntercationDataToMainStage } from "@/utils/Helper";
+import CornerRadiusControl from "@/utils/CornerRadiusControl";
 
 const URL_PATTERN = /^(https?:\/\/)([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\/[a-zA-Z0-9_\-.~!*'();:@&=+$,/?%#[\]]*)?$/;
 const DOMAIN_PATTERN = /^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\/[a-zA-Z0-9_\-.~!*'();:@&=+$,/?%#[\]]*)?$/;
@@ -25,15 +26,20 @@ const linkSchema = z.object({
             message: "Please enter a valid URL format"
         }),
     tooltip: z.string().default("Go to URL"),
-    openIn: z.enum(["new-tab", "same-tab"]),
-    cornerRadius: z.number().int().min(0).default(3)
+    openIn: z.enum(["new-tab", "same-tab"])
 });
 
 export default function Link({ mainStage, setMainStage, selectedShape, selectedIndex }) {
+    const [useIndividualCorners, setUseIndividualCorners] = useState(false);
+    const [cornerRadius, setCornerRadius] = useState(0);
+    const [topLeftRadius, setTopLeftRadius] = useState(0);
+    const [topRightRadius, setTopRightRadius] = useState(0);
+    const [bottomRightRadius, setBottomRightRadius] = useState(0);
+    const [bottomLeftRadius, setBottomLeftRadius] = useState(0);
+    
     const initialUrl = selectedShape[0]?.attrs?.htmlData?.url || "";
     const initialTooltip = selectedShape[0]?.attrs?.htmlData?.tooltip || "Go to URL";
     const initialOpenIn = selectedShape[0]?.attrs?.htmlData?.openIn || "new-tab";
-    const initialCornerRadius = selectedShape[0]?.attrs?.htmlData?.cornerRadius || 3;
     
     const [isUrlValid, setIsUrlValid] = useState(false);
     const [rawInputValue, setRawInputValue] = useState(initialUrl);
@@ -44,42 +50,86 @@ export default function Link({ mainStage, setMainStage, selectedShape, selectedI
         defaultValues: {
             url: initialUrl,
             tooltip: initialTooltip,
-            openIn: initialOpenIn,
-            cornerRadius: initialCornerRadius
+            openIn: initialOpenIn
         },
         mode: "onChange"
     });
 
     useEffect(() => {
-        if (selectedShape[0]?.attrs?.htmlData) {
-            const newUrl = selectedShape[0]?.attrs?.htmlData?.url || "";
-            const newTooltip = selectedShape[0]?.attrs?.htmlData?.tooltip || "Go to URL";
-            const newOpenIn = selectedShape[0]?.attrs?.htmlData?.openIn || "new-tab";
-            const newCornerRadius = selectedShape[0]?.attrs?.htmlData?.cornerRadius || 3;
+        if (selectedShape.length && selectedShape[0]) {
+            const effect = selectedShape[0].attrs.effect || {};
+            const hasIndividualCorners = effect.individualCorners;
 
-            setRawInputValue(newUrl);
-            form.setValue("url", newUrl, { shouldValidate: true });
-            form.setValue("tooltip", newTooltip);
-            form.setValue("openIn", newOpenIn);
-            form.setValue("cornerRadius", newCornerRadius);
-
-            if (URL_PATTERN.test(newUrl)) {
-                setIsUrlValid(true);
+            setUseIndividualCorners(hasIndividualCorners);
+            setCornerRadius(effect.cornerRadius || 0);
+            if (hasIndividualCorners) {
+                setTopLeftRadius(effect.topLeftRadius || 0);
+                setTopRightRadius(effect.topRightRadius || 0);
+                setBottomRightRadius(effect.bottomRightRadius || 0);
+                setBottomLeftRadius(effect.bottomLeftRadius || 0);
             } else {
-                setIsUrlValid(false);
+                const uniformRadius = effect.cornerRadius || 0;
+                setTopLeftRadius(uniformRadius);
+                setTopRightRadius(uniformRadius);
+                setBottomRightRadius(uniformRadius);
+                setBottomLeftRadius(uniformRadius);
             }
+            
+            if (selectedShape[0]?.attrs?.htmlData) {
+                const newUrl = selectedShape[0]?.attrs?.htmlData?.url || "";
+                const newTooltip = selectedShape[0]?.attrs?.htmlData?.tooltip || "Go to URL";
+                const newOpenIn = selectedShape[0]?.attrs?.htmlData?.openIn || "new-tab";
 
-            setIsTouched(false);
-        } else {
-            setRawInputValue("");
-            form.setValue("url", "", { shouldValidate: true });
-            form.setValue("tooltip", "Go to URL");
-            form.setValue("openIn", "new-tab");
-            form.setValue("cornerRadius", 3);
-            setIsUrlValid(false);
-            setIsTouched(false);
+                setRawInputValue(newUrl);
+                form.setValue("url", newUrl, { shouldValidate: true });
+                form.setValue("tooltip", newTooltip);
+                form.setValue("openIn", newOpenIn);
+
+                if (URL_PATTERN.test(newUrl)) {
+                    setIsUrlValid(true);
+                } else {
+                    setIsUrlValid(false);
+                }
+
+                setIsTouched(false);
+            } else {
+                setRawInputValue("");
+                form.setValue("url", "", { shouldValidate: true });
+                form.setValue("tooltip", "Go to URL");
+                form.setValue("openIn", "new-tab");
+                setIsUrlValid(false);
+                setIsTouched(false);
+            }
         }
     }, [selectedShape, form]);
+
+    useEffect(() => {
+        if (!selectedShape.length || !mainStage[selectedIndex]?.shapes) return;
+
+        const updatedMainStage = [...mainStage];
+        updatedMainStage[selectedIndex].shapes = mainStage[selectedIndex].shapes.map(element => {
+            const matchingShape = selectedShape.find(selShape => selShape.attrs.id === element.id);
+            if (matchingShape) {
+                return {
+                    ...element,
+                    effect: {
+                        cornerRadius: cornerRadius,
+                        individualCorners: useIndividualCorners,
+                        topLeftRadius: useIndividualCorners ? topLeftRadius : cornerRadius,
+                        topRightRadius: useIndividualCorners ? topRightRadius : cornerRadius,
+                        bottomRightRadius: useIndividualCorners ? bottomRightRadius : cornerRadius,
+                        bottomLeftRadius: useIndividualCorners ? bottomLeftRadius : cornerRadius,
+                    }
+                };
+            }
+            return element;
+        });
+
+        setMainStage(updatedMainStage);
+    }, [
+        cornerRadius, useIndividualCorners, topLeftRadius, topRightRadius,
+        bottomRightRadius, bottomLeftRadius
+    ]);
 
     const updateMainStage = (data, skipUrlValidation = false) => {
         if (!skipUrlValidation && !isUrlValid) return;
@@ -89,8 +139,7 @@ export default function Link({ mainStage, setMainStage, selectedShape, selectedI
                 action: "link",
                 url: data.url || "",
                 tooltip: data.tooltip,
-                openIn: data.openIn,
-                cornerRadius: data.cornerRadius
+                openIn: data.openIn
             }
         };
         
@@ -136,14 +185,6 @@ export default function Link({ mainStage, setMainStage, selectedShape, selectedI
         setTimeout(() => {
             updateMainStage(form.getValues(), true);
         }, 0);
-    };
-
-    const handleCornerRadiusChange = (e) => {
-        const value = parseInt(e.target.value);
-        if (!isNaN(value) && value >= 0) {
-            form.setValue("cornerRadius", value);
-            updateMainStage({ ...formValues, cornerRadius: value }, true);
-        }
     };
 
     const showError = isTouched && formState.errors.url;
@@ -224,29 +265,23 @@ export default function Link({ mainStage, setMainStage, selectedShape, selectedI
                             </FormItem>
                         )}
                     />
-
-                    <FormField
-                        control={form.control}
-                        name="cornerRadius"
-                        render={({ field }) => (
-                            <FormItem>
-                                <Label htmlFor="corner-radius" className="text-xs">Corner roundness</Label>
-                                <FormControl>
-                                    <Input
-                                        type="number"
-                                        id="corner-radius"
-                                        min={0}
-                                        className="placeholder:text-gray-400"
-                                        {...field}
-                                        value={field.value}
-                                        onChange={handleCornerRadiusChange}
-                                    />
-                                </FormControl>
-                            </FormItem>
-                        )}
-                    />
                 </div>
             </Form>
+
+            <CornerRadiusControl 
+                useIndividualCorners={useIndividualCorners}
+                setUseIndividualCorners={setUseIndividualCorners}
+                cornerRadius={cornerRadius}
+                setCornerRadius={setCornerRadius}
+                topLeftRadius={topLeftRadius}
+                setTopLeftRadius={setTopLeftRadius}
+                topRightRadius={topRightRadius}
+                setTopRightRadius={setTopRightRadius}
+                bottomRightRadius={bottomRightRadius}
+                setBottomRightRadius={setBottomRightRadius}
+                bottomLeftRadius={bottomLeftRadius}
+                setBottomLeftRadius={setBottomLeftRadius}
+            />
         </div>
     );
 }

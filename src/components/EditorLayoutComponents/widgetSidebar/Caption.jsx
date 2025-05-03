@@ -1,25 +1,68 @@
-import { Checkbox } from "@/components/ui/checkbox";
-import { FilterSlider } from "@/components/ui/filterSlider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { addIntercationDataToMainStage } from "@/utils/Helper";
+import CornerRadiusControl from "@/utils/CornerRadiusControl";
 
-export default function Caption({ selectedShape,
-    setMainStage,
-    mainStage,
-    selectedIndex }) {
+const URL_PATTERN = /^(https?:\/\/)([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\/[a-zA-Z0-9_\-.~!*'();:@&=+$,/?%#[\]]*)?$/;
+const DOMAIN_PATTERN = /^([a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\/[a-zA-Z0-9_\-.~!*'();:@&=+$,/?%#[\]]*)?$/;
+
+const captionSchema = z.object({
+    text: z.string().default(""),
+    url: z.string()
+        .optional()
+        .transform(val => {
+            if (!val) return "";
+            if (!val.startsWith('http://') && !val.startsWith('https://')) {
+                return `https://${val}`;
+            }
+            return val;
+        })
+        .refine(url => !url || URL_PATTERN.test(url), {
+            message: "Please enter a valid URL format"
+        }),
+    buttonLabel: z.string().default("Open link")
+});
+
+export default function Caption({ 
+    selectedShape, 
+    setMainStage, 
+    mainStage, 
+    selectedIndex 
+}) {
     const [useIndividualCorners, setUseIndividualCorners] = useState(false);
     const [cornerRadius, setCornerRadius] = useState(0);
     const [topLeftRadius, setTopLeftRadius] = useState(0);
     const [topRightRadius, setTopRightRadius] = useState(0);
     const [bottomRightRadius, setBottomRightRadius] = useState(0);
     const [bottomLeftRadius, setBottomLeftRadius] = useState(0);
+    
+    const initialText = selectedShape[0]?.attrs?.htmlData?.text || "Add text here";
+    const initialUrl = selectedShape[0]?.attrs?.htmlData?.url || "";
+    const initialButtonLabel = selectedShape[0]?.attrs?.htmlData?.buttonLabel || "Open link";
+    
+    const [isUrlValid, setIsUrlValid] = useState(!!initialUrl && URL_PATTERN.test(initialUrl));
+    const [rawUrlValue, setRawUrlValue] = useState(initialUrl);
+    const [isUrlTouched, setIsUrlTouched] = useState(false);
+
+    const form = useForm({
+        resolver: zodResolver(captionSchema),
+        defaultValues: {
+            text: initialText,
+            url: initialUrl,
+            buttonLabel: initialButtonLabel
+        },
+        mode: "onChange"
+    });
 
     useEffect(() => {
         if (selectedShape.length && selectedShape[0]) {
             const effect = selectedShape[0].attrs.effect || {};
             const hasIndividualCorners = effect.individualCorners
-
 
             setUseIndividualCorners(hasIndividualCorners);
             setCornerRadius(effect.cornerRadius || 0);
@@ -35,8 +78,30 @@ export default function Caption({ selectedShape,
                 setBottomRightRadius(uniformRadius);
                 setBottomLeftRadius(uniformRadius);
             }
+            
+            if (selectedShape[0]?.attrs?.htmlData) {
+                const newText = selectedShape[0]?.attrs?.htmlData?.text || "Add text here";
+                const newUrl = selectedShape[0]?.attrs?.htmlData?.url || "";
+                const newButtonLabel = selectedShape[0]?.attrs?.htmlData?.buttonLabel || "Open link";
+
+                setRawUrlValue(newUrl);
+                form.setValue("text", newText);
+                form.setValue("url", newUrl, { shouldValidate: true });
+                form.setValue("buttonLabel", newButtonLabel);
+
+                setIsUrlValid(!!newUrl && URL_PATTERN.test(newUrl));
+                setIsUrlTouched(false);
+            }else{
+                form.setValue("text", "Add text here");
+                setRawUrlValue("");
+                form.setValue("url", "", { shouldValidate: true });
+                form.setValue("buttonLabel", "Open link");
+                
+                setIsUrlValid(false);
+                setIsUrlTouched(false);
+            }
         }
-    }, [selectedShape]);
+    }, [selectedShape, form]);
 
     useEffect(() => {
         if (!selectedShape.length || !mainStage[selectedIndex]?.shapes) return;
@@ -66,121 +131,152 @@ export default function Caption({ selectedShape,
         bottomRightRadius, bottomLeftRadius
     ]);
 
+    const updateMainStage = (data) => {
+        const output = {
+            data: {
+                action: "caption",
+                text: data.text,
+                url: data.url,
+                buttonLabel: isUrlValid ? data.buttonLabel : "Open link"
+            }
+        };
+        
+        addIntercationDataToMainStage(mainStage, setMainStage, selectedShape, selectedIndex, output);
+    };
+
+    const { watch, formState } = form;
+    const formValues = watch();
+
+    useEffect(() => {
+        const currentUrl = formValues.url;
+        const isValid = currentUrl && URL_PATTERN.test(currentUrl);
+        setIsUrlValid(isValid);
+    }, [formValues.url]);
+
+    const handleTextChange = (e) => {
+        const value = e.target.value;
+        form.setValue("text", value);
+        updateMainStage({ ...formValues, text: value });
+    };
+
+    const handleUrlChange = (e) => {
+        if (!isUrlTouched) {
+            setIsUrlTouched(true);
+        }
+
+        const value = e.target.value;
+        setRawUrlValue(value);
+
+        if (value && !value.startsWith('http://') && !value.startsWith('https://') && DOMAIN_PATTERN.test(value)) {
+            form.setValue("url", `https://${value}`, { shouldValidate: true });
+        } else {
+            form.setValue("url", value, { shouldValidate: true });
+        }
+    };
+
+    const handleButtonLabelChange = (e) => {
+        const value = e.target.value;
+        form.setValue("buttonLabel", value);
+        if (isUrlValid) {
+            updateMainStage({ ...formValues, buttonLabel: value });
+        }
+    };
+
+    const handleUrlBlur = () => {
+        setIsUrlTouched(true);
+        updateMainStage(form.getValues());
+        
+        const formValue = form.getValues("url");
+        if (formValue !== rawUrlValue) {
+            setRawUrlValue(formValue);
+        }
+    };
+
+    const showUrlError = isUrlTouched && formState.errors.url;
+
     return (
         <div className="p-6 space-y-2 w-full overflow-y-auto">
             <Label className="text-lg">Caption</Label>
-            <div className="space-y-2">
-                <div>
-                    <Label htmlFor="Caption-text" className="text-xs">Text</Label>
-                    <Input
-                        type="text"
-                        id="Caption-text"
-                        placeholder="Set your text"
-                        defaultValue="Add text here"
-                        className="placeholder:text-[#d8dce3]" />
-                </div>
-                <div>
-                    <Label htmlFor="Caption-url" className="text-xs">URL</Label>
-                    <Input
-                        type="text"
-                        id="Caption-url"
-                        placeholder="Set your URL"
-                        className="placeholder:text-[#d8dce3]" />
-                </div>
-                <div>
-                    <Label htmlFor="button-label" className="text-xs">Button label</Label>
-                    <Input
-                        type="text"
-                        id="button-label"
-                        placeholder="Set your label"
-                        defaultValue="Open link"
-                        disabled
-                        className="placeholder:text-[#d8dce3]" />
-                </div>
+            <Form {...form}>
                 <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                        <Label className="text-sm font-medium flex items-center">
-                            Corner Radius
-                        </Label>
-                        <div className="flex items-center gap-1">
-                            <Checkbox
-                                id="individual-corners"
-                                checked={useIndividualCorners}
-                                onCheckedChange={(checked) => setUseIndividualCorners(checked)}
-                                className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
-                            />
-                            <Label htmlFor="individual-corners" className="text-sm font-medium flex items-center">Individual Corners</Label>
-                        </div>
-                    </div>
+                    <FormField
+                        control={form.control}
+                        name="text"
+                        render={({ field }) => (
+                            <FormItem>
+                                <Label htmlFor="Caption-text" className="text-xs">Text</Label>
+                                <FormControl>
+                                    <Input
+                                        type="text"
+                                        id="Caption-text"
+                                        placeholder="Set your text"
+                                        className="placeholder:text-[#d8dce3]"
+                                        {...field}
+                                        onChange={handleTextChange}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
 
-                    {!useIndividualCorners && (
-                        <FilterSlider
-                            min={0}
-                            max={100}
-                            value={[cornerRadius]}
-                            onValueChange={(values) => setCornerRadius(values[0])}
-                            className="w-full"
-                        />
-                    )}
+                    <FormField
+                        control={form.control}
+                        name="url"
+                        render={({ field }) => (
+                            <FormItem>
+                                <Label htmlFor="Caption-url" className="text-xs">URL</Label>
+                                <FormControl>
+                                    <Input
+                                        type="text"
+                                        id="Caption-url"
+                                        placeholder="Set your URL"
+                                        className={`placeholder:text-[#d8dce3] ${showUrlError ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
+                                        value={rawUrlValue}
+                                        onChange={handleUrlChange}
+                                        onBlur={handleUrlBlur}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
 
-                    {
-                        useIndividualCorners && (<div className="space-y-4">
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-center">
-                                    <Label className="text-xs">Top Left</Label>
-                                    <span className="text-xs">{topLeftRadius}</span>
-                                </div>
-                                <FilterSlider
-                                    min={0}
-                                    max={100}
-                                    value={[topLeftRadius]}
-                                    onValueChange={(values) => setTopLeftRadius(values[0])}
-                                    className="w-full"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-center">
-                                    <Label className="text-xs">Top Right</Label>
-                                    <span className="text-xs">{topRightRadius}</span>
-                                </div>
-                                <FilterSlider
-                                    min={0}
-                                    max={100}
-                                    value={[topRightRadius]}
-                                    onValueChange={(values) => setTopRightRadius(values[0])}
-                                    className="w-full"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-center">
-                                    <Label className="text-xs">Bottom Right</Label>
-                                    <span className="text-xs">{bottomRightRadius}</span>
-                                </div>
-                                <FilterSlider
-                                    min={0}
-                                    max={100}
-                                    value={[bottomRightRadius]}
-                                    onValueChange={(values) => setBottomRightRadius(values[0])}
-                                    className="w-full"
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex justify-between items-center">
-                                    <Label className="text-xs">Bottom Left</Label>
-                                    <span className="text-xs">{bottomLeftRadius}</span>
-                                </div>
-                                <FilterSlider
-                                    min={0}
-                                    max={100}
-                                    value={[bottomLeftRadius]}
-                                    onValueChange={(values) => setBottomLeftRadius(values[0])}
-                                    className="w-full"
-                                />
-                            </div>
-                        </div>)
-                    }
+                    <FormField
+                        control={form.control}
+                        name="buttonLabel"
+                        render={({ field }) => (
+                            <FormItem>
+                                <Label htmlFor="button-label" className="text-xs">Button label</Label>
+                                <FormControl>
+                                    <Input
+                                        type="text"
+                                        id="button-label"
+                                        placeholder="Set your label"
+                                        className="placeholder:text-[#d8dce3]"
+                                        disabled={!isUrlValid}
+                                        {...field}
+                                        onChange={handleButtonLabelChange}
+                                    />
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
                 </div>
-            </div>
+            </Form>
+
+            <CornerRadiusControl 
+                useIndividualCorners={useIndividualCorners}
+                setUseIndividualCorners={setUseIndividualCorners}
+                cornerRadius={cornerRadius}
+                setCornerRadius={setCornerRadius}
+                topLeftRadius={topLeftRadius}
+                setTopLeftRadius={setTopLeftRadius}
+                topRightRadius={topRightRadius}
+                setTopRightRadius={setTopRightRadius}
+                bottomRightRadius={bottomRightRadius}
+                setBottomRightRadius={setBottomRightRadius}
+                bottomLeftRadius={bottomLeftRadius}
+                setBottomLeftRadius={setBottomLeftRadius}
+            />
         </div>
     )
 }
