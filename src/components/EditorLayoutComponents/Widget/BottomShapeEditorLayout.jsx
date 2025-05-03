@@ -68,12 +68,12 @@ function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSe
     }
     if (selectedSubMenu === 'link') {
         return (
-            <Link />
+            <Link mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "tag") {
         return (
-            <Tag />
+            <Tag mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "caption") {
@@ -83,27 +83,27 @@ function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSe
     }
     if (selectedSubMenu === "embed") {
         return (
-            <Embed />
+            <Embed selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "slideshow") {
         return (
-            <SlideShow />
+            <SlideShow selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
         )
     }
     if (selectedSubMenu === "video-embed") {
         return (
-            <VideoWidget />
+            <VideoWidget selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "video-button") {
         return (
-            <Video />
+            <Video selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "audio-button") {
         return (
-            <Audio />
+            <Audio selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "shopping-list") {
@@ -133,12 +133,12 @@ function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSe
     }
     if (selectedSubMenu === "page-options") {
         return (
-            <PageOptions />
+            <PageOptions selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
         )
     }
     if (selectedSubMenu === "go-to-page") {
         return (
-            <GoToPage />
+            <GoToPage selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "stock-video") {

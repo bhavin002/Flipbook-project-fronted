@@ -160,7 +160,6 @@ export default function Caption({
     const updateMainStage = (data) => {
         const output = {
             data: {
-                action: "caption",
                 text: data.text,
                 url: data.url,
                 buttonLabel: isUrlValid ? data.buttonLabel : "Open link"

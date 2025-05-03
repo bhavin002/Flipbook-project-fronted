@@ -137,7 +137,6 @@ export default function GoToPage({
                     ...element,
                     htmlData: {
                         ...element.htmlData,
-                        action: "go-to-page",
                         pageNumber: pageNumberValue,
                         tooltip: tooltipValue
                     }

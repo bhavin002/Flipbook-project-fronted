@@ -9,6 +9,13 @@ export default function PageOptions({
     mainStage,
     selectedIndex
 }) {
+    const pageOptions = {
+        "go-to-previous-page": "Go to previous page",
+        "go-to-next-page": "Go to next page",
+        "go-to-first-page": "Go to first page",
+        "go-to-last-page": "Go to last page"
+    };
+
     const [useIndividualCorners, setUseIndividualCorners] = useState(
         selectedShape?.[0]?.attrs?.effect?.individualCorners || false
     );
@@ -39,18 +46,12 @@ export default function PageOptions({
             selectedShape?.[0]?.attrs?.effect?.bottomLeftRadius || 0 : 
             defaultCornerRadius
     );
+
     
     const [tooltip, setTooltip] = useState(
         selectedShape?.[0]?.attrs?.htmlData?.tooltip || 
         pageOptions[selectedShape?.[0]?.attrs?.htmlType] || ""
     );
-
-    const pageOptions = {
-        "go-to-previous-page": "Go to previous page",
-        "go-to-next-page": "Go to next page",
-        "go-to-first-page": "Go to first page",
-        "go-to-last-page": "Go to last page"
-    };
 
     useEffect(() => {
         if (selectedShape.length && selectedShape[0]) {
@@ -124,7 +125,6 @@ export default function PageOptions({
                     ...element,
                     htmlData: {
                         ...element.htmlData,
-                        action: "page-options",
                         type: selectedShape[0].attrs.htmlType,
                         tooltip: tooltipValue
                     }

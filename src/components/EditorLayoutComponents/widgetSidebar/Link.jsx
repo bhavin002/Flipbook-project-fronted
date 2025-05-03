@@ -162,7 +162,6 @@ export default function Link({ mainStage, setMainStage, selectedShape, selectedI
         
         const output = {
             data: {
-                action: "link",
                 url: data.url || "",
                 tooltip: data.tooltip,
                 openIn: data.openIn

@@ -44,13 +44,13 @@ export default function Hyperlink({ mainStage, setMainStage, selectedShape, sele
             case "go-to-page":
                 return <GoToPage mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />;
             case "popup-frame":
-                return <PopupFrame />;
+                return <PopupFrame mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex}/>;
             case "spotlight":
-                return <Spotlight />;
+                return <Spotlight mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex}/>;
             case "phone-number":
                 return <PhoneNumber mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />;
             case "photo-slideshow":
-                return <PhotoSlideshow />;
+                return <PhotoSlideshow mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />;
             case "line-chart":
                 return <Chart chart={"Line"} />;
             case "bar-chart":

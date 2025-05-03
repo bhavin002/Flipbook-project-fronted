@@ -1,30 +1,174 @@
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { addIntercationDataToMainStage } from "@/utils/Helper";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 
-export default function PopupFrame() {
+const popupFrameSchema = z.object({
+    tooltip: z.string().optional(),
+    embedCode: z.string()
+        .refine(code => {
+            return code === "" || /^<(iframe|embed)[\s\S]*?>([\s\S]*?<\/(iframe|embed)>)?$/.test(code);
+        }, {
+            message: "Please enter a valid embed code (iframe or embed tags)"
+        })
+});
+
+export default function PopupFrame({ mainStage, setMainStage, selectedShape, selectedIndex }) {
+    const [isEmbedCodeValid, setIsEmbedCodeValid] = useState(false);
+    const [isEmbedCodeTouched, setIsEmbedCodeTouched] = useState(false);
+
+    const initialTooltip = selectedShape[0]?.attrs?.htmlData?.tooltip || "";
+    const initialEmbedCode = selectedShape[0]?.attrs?.htmlData?.embedCode || "";
+
+    const form = useForm({
+        resolver: zodResolver(popupFrameSchema),
+        defaultValues: {
+            tooltip: initialTooltip,
+            embedCode: initialEmbedCode
+        },
+        mode: "onChange"
+    });
+
+    useEffect(() => {
+        if (selectedShape[0]?.attrs?.htmlData) {
+            const newTooltip = selectedShape[0]?.attrs?.htmlData?.tooltip || "";
+            const newEmbedCode = selectedShape[0]?.attrs?.htmlData?.embedCode || "";
+
+            form.setValue("tooltip", newTooltip);
+            form.setValue("embedCode", newEmbedCode, { shouldValidate: true });
+
+            setIsEmbedCodeValid(!!newEmbedCode && /^<(iframe|embed)[\s\S]*?>([\s\S]*?<\/(iframe|embed)>)?$/.test(newEmbedCode));
+            setIsEmbedCodeTouched(false);
+        } else {
+            form.setValue("tooltip", "");
+            form.setValue("embedCode", "");
+
+            setIsEmbedCodeValid(false);
+            setIsEmbedCodeTouched(false);
+        }
+    }, [selectedShape, form]);
+
+    const updateMainStage = (data) => {
+        if (isEmbedCodeValid || !data.embedCode) {
+            const output = {
+                data: {
+                    action: "popup-frame",
+                    tooltip: data.tooltip,
+                    embedCode: data.embedCode
+                }
+            };
+            addIntercationDataToMainStage(mainStage, setMainStage, selectedShape, selectedIndex, output);
+        }
+    };
+
+    const { watch, formState } = form;
+    const formValues = watch();
+
+    useEffect(() => {
+        const currentEmbedCode = formValues.embedCode;
+        const isValid = currentEmbedCode && /^<(iframe|embed)[\s\S]*?>([\s\S]*?<\/(iframe|embed)>)?$/.test(currentEmbedCode);
+        setIsEmbedCodeValid(isValid);
+
+        if (isEmbedCodeTouched && !isValid && currentEmbedCode) {
+            form.setError("embedCode", {
+                type: "manual",
+                message: "Please enter a valid embed code (iframe or embed tags)"
+            });
+        } else if (isValid || !currentEmbedCode) {
+            form.clearErrors("embedCode");
+        }
+    }, [formValues.embedCode, isEmbedCodeTouched, form]);
+
+    const handleEmbedCodeChange = (e) => {
+        if (!isEmbedCodeTouched) {
+            setIsEmbedCodeTouched(true);
+        }
+
+        const value = e.target.value;
+        form.setValue("embedCode", value, { shouldValidate: true });
+
+        const isValid = value && /^<(iframe|embed)[\s\S]*?>([\s\S]*?<\/(iframe|embed)>)?$/.test(value);
+        setIsEmbedCodeValid(isValid);
+    };
+
+    const handleEmbedCodeBlur = () => {
+        setIsEmbedCodeTouched(true);
+        const values = form.getValues();
+        const isValid = values.embedCode && /^<(iframe|embed)[\s\S]*?>([\s\S]*?<\/(iframe|embed)>)?$/.test(values.embedCode);
+        setIsEmbedCodeValid(isValid);
+
+        if (isValid || !values.embedCode) {
+            updateMainStage(values);
+        }
+    };
+
+    const handleTooltipBlur = () => {
+        const values = form.getValues();
+        if (isEmbedCodeValid || !values.embedCode) {
+            updateMainStage(values);
+        }
+    };
+
+    const showEmbedCodeError = isEmbedCodeTouched && formState.errors.embedCode;
+
     return (
         <>
-            <div>
-                <Label htmlFor="popup-frame-tooltip" className="text-xs">Tooltip</Label>
-                <Input
-                    type="text"
-                    id="popup-frame-tooltip"
-                    placeholder="Popup frame"
-                    className="placeholder:text-[#d8dce3]" />
-            </div>
-            <div>
-                <Label htmlFor="popup-frame-code" className="text-xs">Popup frame code</Label>
-                <Textarea
-                    id="popup-frame-code"
-                    placeholder="Embed code"
-                    className="resize-none placeholder:text-[#d8dce3]"
-                    rows={4}
+            <Form {...form}>
+                <FormField
+                    control={form.control}
+                    name="tooltip"
+                    render={({ field }) => (
+                        <FormItem>
+                            <Label htmlFor="popup-frame-tooltip" className="text-xs">Tooltip</Label>
+                            <FormControl>
+                                <Input
+                                    type="text"
+                                    id="popup-frame-tooltip"
+                                    placeholder="Popup frame"
+                                    className="placeholder:text-[#d8dce3]"
+                                    {...field}
+                                    onBlur={handleTooltipBlur}
+                                />
+                            </FormControl>
+                        </FormItem>
+                    )}
                 />
-            </div>
-            <a target="_blank" className="text-sm font-medium cursor-pointer hover:underline">Find out how it works</a>
+                <FormField
+                    control={form.control}
+                    name="embedCode"
+                    render={({ field }) => (
+                        <FormItem>
+                            <Label htmlFor="popup-frame-code" className="text-xs">Popup frame code</Label>
+                            <FormControl>
+                                <Textarea
+                                    id="popup-frame-code"
+                                    placeholder="Embed code"
+                                    className={`resize-none placeholder:text-[#d8dce3] ${showEmbedCodeError ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
+                                    rows={4}
+                                    {...field}
+                                    onChange={handleEmbedCodeChange}
+                                    onBlur={handleEmbedCodeBlur}
+                                />
+                            </FormControl>
+                        </FormItem>
+                    )}
+                />
+            </Form>
+
+            <a
+                href="https://example.com/popup-frame-guide"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium cursor-pointer hover:underline"
+            >
+                Find out how it works
+            </a>
         </>
 
-
-    )
+    );
 }

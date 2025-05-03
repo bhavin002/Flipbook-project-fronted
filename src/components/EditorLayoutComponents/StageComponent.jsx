@@ -938,9 +938,9 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                     case 'video-embed':
                                         return <VideoButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'video-button':
-                                        return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'audio-button':
-                                        return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'shop-area':
                                         return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />;
                                     case 'shop-button':
