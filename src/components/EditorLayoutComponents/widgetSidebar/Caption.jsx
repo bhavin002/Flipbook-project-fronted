@@ -34,18 +34,44 @@ export default function Caption({
     mainStage, 
     selectedIndex 
 }) {
-    const [useIndividualCorners, setUseIndividualCorners] = useState(false);
-    const [cornerRadius, setCornerRadius] = useState(0);
-    const [topLeftRadius, setTopLeftRadius] = useState(0);
-    const [topRightRadius, setTopRightRadius] = useState(0);
-    const [bottomRightRadius, setBottomRightRadius] = useState(0);
-    const [bottomLeftRadius, setBottomLeftRadius] = useState(0);
+    const [useIndividualCorners, setUseIndividualCorners] = useState(
+        selectedShape?.[0]?.attrs?.effect?.individualCorners || false
+    );
     
-    const initialText = selectedShape[0]?.attrs?.htmlData?.text || "Add text here";
-    const initialUrl = selectedShape[0]?.attrs?.htmlData?.url || "";
-    const initialButtonLabel = selectedShape[0]?.attrs?.htmlData?.buttonLabel || "Open link";
+    const defaultCornerRadius = selectedShape?.[0]?.attrs?.effect?.cornerRadius || 0;
+    const [cornerRadius, setCornerRadius] = useState(defaultCornerRadius);
     
-    const [isUrlValid, setIsUrlValid] = useState(!!initialUrl && URL_PATTERN.test(initialUrl));
+    const [topLeftRadius, setTopLeftRadius] = useState(
+        useIndividualCorners ? 
+            selectedShape?.[0]?.attrs?.effect?.topLeftRadius || 0 : 
+            defaultCornerRadius
+    );
+    
+    const [topRightRadius, setTopRightRadius] = useState(
+        useIndividualCorners ? 
+            selectedShape?.[0]?.attrs?.effect?.topRightRadius || 0 : 
+            defaultCornerRadius
+    );
+    
+    const [bottomRightRadius, setBottomRightRadius] = useState(
+        useIndividualCorners ? 
+            selectedShape?.[0]?.attrs?.effect?.bottomRightRadius || 0 : 
+            defaultCornerRadius
+    );
+    
+    const [bottomLeftRadius, setBottomLeftRadius] = useState(
+        useIndividualCorners ? 
+            selectedShape?.[0]?.attrs?.effect?.bottomLeftRadius || 0 : 
+            defaultCornerRadius
+    );
+    
+    const initialText = selectedShape?.[0]?.attrs?.htmlData?.text || "Add text here";
+    const initialUrl = selectedShape?.[0]?.attrs?.htmlData?.url || "";
+    const initialButtonLabel = selectedShape?.[0]?.attrs?.htmlData?.buttonLabel || "Open link";
+    
+    const [isUrlValid, setIsUrlValid] = useState(
+        !!initialUrl && URL_PATTERN.test(initialUrl)
+    );
     const [rawUrlValue, setRawUrlValue] = useState(initialUrl);
     const [isUrlTouched, setIsUrlTouched] = useState(false);
 
@@ -62,7 +88,7 @@ export default function Caption({
     useEffect(() => {
         if (selectedShape.length && selectedShape[0]) {
             const effect = selectedShape[0].attrs.effect || {};
-            const hasIndividualCorners = effect.individualCorners
+            const hasIndividualCorners = effect.individualCorners;
 
             setUseIndividualCorners(hasIndividualCorners);
             setCornerRadius(effect.cornerRadius || 0);
@@ -91,7 +117,7 @@ export default function Caption({
 
                 setIsUrlValid(!!newUrl && URL_PATTERN.test(newUrl));
                 setIsUrlTouched(false);
-            }else{
+            } else {
                 form.setValue("text", "Add text here");
                 setRawUrlValue("");
                 form.setValue("url", "", { shouldValidate: true });
@@ -278,5 +304,5 @@ export default function Caption({
                 setBottomLeftRadius={setBottomLeftRadius}
             />
         </div>
-    )
+    );
 }

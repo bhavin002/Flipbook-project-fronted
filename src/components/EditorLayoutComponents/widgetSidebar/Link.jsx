@@ -30,18 +30,44 @@ const linkSchema = z.object({
 });
 
 export default function Link({ mainStage, setMainStage, selectedShape, selectedIndex }) {
-    const [useIndividualCorners, setUseIndividualCorners] = useState(false);
-    const [cornerRadius, setCornerRadius] = useState(0);
-    const [topLeftRadius, setTopLeftRadius] = useState(0);
-    const [topRightRadius, setTopRightRadius] = useState(0);
-    const [bottomRightRadius, setBottomRightRadius] = useState(0);
-    const [bottomLeftRadius, setBottomLeftRadius] = useState(0);
+    const [useIndividualCorners, setUseIndividualCorners] = useState(
+        selectedShape?.[0]?.attrs?.effect?.individualCorners || false
+    );
     
-    const initialUrl = selectedShape[0]?.attrs?.htmlData?.url || "";
-    const initialTooltip = selectedShape[0]?.attrs?.htmlData?.tooltip || "Go to URL";
-    const initialOpenIn = selectedShape[0]?.attrs?.htmlData?.openIn || "new-tab";
+    const defaultCornerRadius = selectedShape?.[0]?.attrs?.effect?.cornerRadius || 0;
+    const [cornerRadius, setCornerRadius] = useState(defaultCornerRadius);
     
-    const [isUrlValid, setIsUrlValid] = useState(false);
+    const [topLeftRadius, setTopLeftRadius] = useState(
+        useIndividualCorners ? 
+            selectedShape?.[0]?.attrs?.effect?.topLeftRadius || 0 : 
+            defaultCornerRadius
+    );
+    
+    const [topRightRadius, setTopRightRadius] = useState(
+        useIndividualCorners ? 
+            selectedShape?.[0]?.attrs?.effect?.topRightRadius || 0 : 
+            defaultCornerRadius
+    );
+    
+    const [bottomRightRadius, setBottomRightRadius] = useState(
+        useIndividualCorners ? 
+            selectedShape?.[0]?.attrs?.effect?.bottomRightRadius || 0 : 
+            defaultCornerRadius
+    );
+    
+    const [bottomLeftRadius, setBottomLeftRadius] = useState(
+        useIndividualCorners ? 
+            selectedShape?.[0]?.attrs?.effect?.bottomLeftRadius || 0 : 
+            defaultCornerRadius
+    );
+    
+    const initialUrl = selectedShape?.[0]?.attrs?.htmlData?.url || "";
+    const initialTooltip = selectedShape?.[0]?.attrs?.htmlData?.tooltip || "Go to URL";
+    const initialOpenIn = selectedShape?.[0]?.attrs?.htmlData?.openIn || "new-tab";
+    
+    const [isUrlValid, setIsUrlValid] = useState(
+        !!initialUrl && URL_PATTERN.test(initialUrl)
+    );
     const [rawInputValue, setRawInputValue] = useState(initialUrl);
     const [isTouched, setIsTouched] = useState(false);
 

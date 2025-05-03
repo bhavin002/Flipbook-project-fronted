@@ -1489,7 +1489,10 @@ const interactions = [
                     title: "hyperlink",
                     visible: true,
                     layer: "Link",
-                    htmlType: "popup-frame"
+                    htmlType: "popup-frame",
+                    htmlData: {
+                        action: "popup-frame"
+                    }
                 }
             },
         ]
@@ -1512,7 +1515,10 @@ const interactions = [
                     title: "hyperlink",
                     visible: true,
                     layer: "Link",
-                    htmlType: "spotlight"
+                    htmlType: "spotlight",
+                    htmlData: {
+                        action: "spotlight"
+                    }
                 }
             },
             {
@@ -1529,7 +1535,7 @@ const interactions = [
                     title: "slideshow",
                     visible: true,
                     layer: "Slideshow",
-                    htmlType: "slideshow",
+                    htmlType: "slideshow"
                 }
 
             },
@@ -1547,7 +1553,10 @@ const interactions = [
                     title: "hyperlink",
                     visible: true,
                     layer: "Link",
-                    htmlType: "photo-slideshow"
+                    htmlType: "photo-slideshow",
+                    htmlData: {
+                        action: "photo-slideshow"
+                    }
                 }
             }
         ]

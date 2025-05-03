@@ -132,12 +132,12 @@ function renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, 
     }
     if (selectedSubMenu === "page-options") {
         return (
-            <PageOptions action={selectedShape[0].attrs.htmlType} />
+            <PageOptions selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} action={selectedShape[0].attrs.htmlType} />
         )
     }
     if (selectedSubMenu === "go-to-page") {
         return (
-            <GoToPage />
+            <GoToPage selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} action={selectedShape[0].attrs.htmlType}/>
         )
     }
     if (selectedSubMenu === "stock-video") {

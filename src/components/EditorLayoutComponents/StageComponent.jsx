@@ -926,7 +926,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                     case 'shape-widget':
                                         return <ShapeMakerForAll onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'link-button':
-                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />    
+                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'tag':
                                         return <Tag onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />;
                                     case 'caption':
@@ -954,9 +954,9 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                     case 'contact-form':
                                         return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
                                     case 'page-options':
-                                        return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'go-to-page':
-                                        return <LinkButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
+                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'stock-video':
                                         return <StockVideo onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handelDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'stock-gif':
