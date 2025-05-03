@@ -530,25 +530,31 @@ export default function Editor() {
     };
     useEffect(() => {
         const handleKeyboardShortcuts = (event) => {
-            if (event.key === 'a' || event.key === 'A') {
-                event.preventDefault(); // Prevent default browser select all
-                selectAllShapes(selectedIndex);
-                return;
-            }
-            if (event.ctrlKey || event.metaKey) {
-                if (event.key === "z" || event.key === "Z") {
+            // Check if the active element is an input, textarea, or other editable element
+            const isInputFocused =
+                document.activeElement.tagName === 'INPUT' ||
+                document.activeElement.tagName === 'TEXTAREA' ||
+                document.activeElement.isContentEditable;
+
+            if ((event.ctrlKey || event.metaKey) && !isInputFocused) {
+                if (event.key === 'a' || event.key === 'A') {
+                    event.preventDefault(); // Prevent default browser select all
+                    selectAllShapes(selectedIndex);
+                    return;
+                }
+                if (event.key === 'z' || event.key === 'Z') {
                     event.preventDefault(); // Prevent the default browser undo action
                     handleUndo();
-                } else if (event.key === "y" || event.key === "Y") {
+                } else if (event.key === 'y' || event.key === 'Y') {
                     event.preventDefault(); // Prevent the default browser redo action
                     handleRedo();
                 }
             }
         };
 
-        document.addEventListener("keydown", handleKeyboardShortcuts);
+        document.addEventListener('keydown', handleKeyboardShortcuts);
         return () => {
-            document.removeEventListener("keydown", handleKeyboardShortcuts);
+            document.removeEventListener('keydown', handleKeyboardShortcuts);
         };
     }, [handleUndo, handleRedo, selectedIndex, mainStage, setMainStage]);
 
