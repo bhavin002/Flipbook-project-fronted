@@ -22,6 +22,7 @@ export default function PhoneNumber({ mainStage, setMainStage, selectedShape, se
     const initialPhoneNumber = selectedShape[0]?.attrs?.htmlData?.phoneNumber || "";
     const [isPhoneValid, setIsPhoneValid] = useState(false);
     const [previousPhoneNumber, setPreviousPhoneNumber] = useState(initialPhoneNumber);
+    const [isTouched, setIsTouched] = useState(false);
 
     const form = useForm({
         resolver: zodResolver(phoneSchema),
@@ -41,10 +42,12 @@ export default function PhoneNumber({ mainStage, setMainStage, selectedShape, se
             } else {
                 setIsPhoneValid(false);
             }
+            setIsTouched(false); 
         } else {
             form.setValue("phoneNumber", "", { shouldValidate: true });
             setPreviousPhoneNumber("");
             setIsPhoneValid(false);
+            setIsTouched(false); 
         }
     }, [selectedShape, form]);
 
@@ -53,7 +56,7 @@ export default function PhoneNumber({ mainStage, setMainStage, selectedShape, se
         
         const output = {
             data: {
-                action: "phone-call",
+                action: "phone-number",
                 phoneNumber: data.phoneNumber
             }
         };
@@ -69,6 +72,10 @@ export default function PhoneNumber({ mainStage, setMainStage, selectedShape, se
     }, [formState]);
 
     const handleInputChange = (e) => {
+        if (!isTouched) {
+            setIsTouched(true);
+        }
+        
         const value = e.target.value;
         form.setValue("phoneNumber", value, { shouldValidate: true });
         
@@ -76,6 +83,8 @@ export default function PhoneNumber({ mainStage, setMainStage, selectedShape, se
             updateMainStage({ phoneNumber: value });
         }
     };
+
+    const showError = isTouched && formState.errors.phoneNumber;
 
     return (
         <Form {...form}>
@@ -90,8 +99,9 @@ export default function PhoneNumber({ mainStage, setMainStage, selectedShape, se
                                 type="text"
                                 id="phone-number"
                                 placeholder="Enter phone number"
-                                className={`placeholder:text-gray-400 ${formState.errors.phoneNumber ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
+                                className={`placeholder:text-gray-400 ${showError ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
                                 onChange={handleInputChange}
+                                onBlur={() => setIsTouched(true)}
                                 value={field.value}
                             />
                         </FormControl>

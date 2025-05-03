@@ -32,6 +32,7 @@ export default function GoToUrl({ mainStage, setMainStage, selectedShape, select
     const initialOpenIn = selectedShape[0]?.attrs?.htmlData?.openIn || "new-tab";
     const [isUrlValid, setIsUrlValid] = useState(false);
     const [rawInputValue, setRawInputValue] = useState(initialUrl);
+    const [isTouched, setIsTouched] = useState(false);
 
     const form = useForm({
         resolver: zodResolver(urlSchema),
@@ -43,23 +44,29 @@ export default function GoToUrl({ mainStage, setMainStage, selectedShape, select
     });
 
     useEffect(() => {
-        if (initialUrl) {
-            setRawInputValue(initialUrl);
-            form.setValue("url", initialUrl, { shouldValidate: true });
+        if (selectedShape[0]?.attrs?.htmlData) {
+            const newUrl = selectedShape[0]?.attrs?.htmlData?.url || "";
+            const newOpenIn = selectedShape[0]?.attrs?.htmlData?.openIn || "new-tab";
 
-            if (URL_PATTERN.test(initialUrl)) {
+            setRawInputValue(newUrl);
+            form.setValue("url", newUrl, { shouldValidate: true });
+            form.setValue("openIn", newOpenIn);
+
+            if (URL_PATTERN.test(newUrl)) {
                 setIsUrlValid(true);
+            } else {
+                setIsUrlValid(false);
             }
+
+            setIsTouched(false);
         } else {
             setRawInputValue("");
             form.setValue("url", "", { shouldValidate: true });
+            form.setValue("openIn", "new-tab");
             setIsUrlValid(false);
+            setIsTouched(false);
         }
-
-        if (initialOpenIn) {
-            form.setValue("openIn", initialOpenIn);
-        }
-    }, [selectedShape]);
+    }, [selectedShape, form]);
 
     const updateMainStage = (data) => {
         if (!isUrlValid) return;
@@ -87,6 +94,10 @@ export default function GoToUrl({ mainStage, setMainStage, selectedShape, select
     };
 
     const handleInputChange = (e) => {
+        if (!isTouched) {
+            setIsTouched(true);
+        }
+
         const value = e.target.value;
         setRawInputValue(value);
 
@@ -104,6 +115,9 @@ export default function GoToUrl({ mainStage, setMainStage, selectedShape, select
         }
     };
 
+
+    const showError = isTouched && formState.errors.url;
+
     return (
         <Form {...form} onSubmit={form.handleSubmit(onSubmit)}>
             <FormField
@@ -117,10 +131,11 @@ export default function GoToUrl({ mainStage, setMainStage, selectedShape, select
                                 type="text"
                                 id="url"
                                 placeholder="Set your URL (e.g., example.com)"
-                                className={`placeholder:text-gray-400 ${formState.errors.url ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
+                                className={`placeholder:text-gray-400 ${showError ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
                                 onChange={handleInputChange}
                                 value={rawInputValue}
                                 onBlur={() => {
+                                    setIsTouched(true);
                                     if (isUrlValid) {
                                         form.handleSubmit(onSubmit)();
                                         const formValue = form.getValues("url");

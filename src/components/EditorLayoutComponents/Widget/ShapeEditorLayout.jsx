@@ -67,12 +67,12 @@ function renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, 
     }
     if (selectedSubMenu === 'link') {
         return (
-            <Link />
+            <Link mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "tag") {
         return (
-            <Tag />
+            <Tag mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "caption") {
