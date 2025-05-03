@@ -5,7 +5,6 @@ import StagePageMenu from "./StagePageMenu";
 import ShapeMakerForAll from "./Widget/ShapeMakerForAll";
 import MaskedImage from "./Widget/MaskedImage";
 import StockPhoto from "./Widget/StockPhoto";
-import LinkButton from "./Widget/LinkButton";
 import Tag from "./Widget/Tag";
 import EmbedCode from "./Widget/EmbedCode";
 import SlideShow from "./Widget/SlideShow";

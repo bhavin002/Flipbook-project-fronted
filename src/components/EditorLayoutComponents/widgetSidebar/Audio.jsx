@@ -120,7 +120,6 @@ export default function Audio({ mainStage, setMainStage, selectedShape, selected
             const newAudioData = selectedShape[0]?.attrs?.htmlData?.audioFile || null;
             const newTooltip = selectedShape[0]?.attrs?.htmlData?.tooltip || "Click to play";
 
-            // Set audio related data from selected shape
             if (selectedShape[0]?.attrs?.htmlData?.trimEnabled !== undefined) {
                 setTrimEnabled(selectedShape[0]?.attrs?.htmlData?.trimEnabled);
             }
