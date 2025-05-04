@@ -181,7 +181,7 @@ export default function Embed({ mainStage, setMainStage, selectedShape, selected
                             coverImage: newImageData
                         }
                         e.attrs.htmlType = selectedShape[0].attrs.htmlType;
-                        e.attrs.fill = "#ffffffa6";
+                        // e.attrs.fill = "#ffffffa6";
                         return true;
                     }
                 });
