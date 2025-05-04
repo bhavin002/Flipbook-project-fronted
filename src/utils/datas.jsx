@@ -1466,7 +1466,7 @@ const interactions = [
                 attrs: {
                     width: 300,
                     height: 300,
-                    fill: "#ebf0fc",
+                    fill: "#ffffffa6",
                     type: "img",
                     src: "/src/assets/icons/Code.svg",
                     title: "embed-code",
@@ -1528,7 +1528,7 @@ const interactions = [
                 attrs: {
                     width: 300,
                     height: 200,
-                    fill: "#ebf0fc",
+                    fill: "#ffffffa6",
                     type: "img",
                     src: "/src/assets/icons/SlideShow.svg",
                     isImage: false,

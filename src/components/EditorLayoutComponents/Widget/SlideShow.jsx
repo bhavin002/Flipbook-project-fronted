@@ -30,7 +30,7 @@ export default function SlideShow({ shape, onSelect, handleDragStart, handleDrag
                 setBgImage(img);
             };
         }else{
-            shape.fill = "#ebf0fc";
+            // shape.fill = "#ffffffa6";
             shape.src = "/src/assets/icons/SlideShow.svg";
         }
     }, [shape.src, shape?.htmlData?.images?.length]);
@@ -56,10 +56,10 @@ export default function SlideShow({ shape, onSelect, handleDragStart, handleDrag
         });
     };
 
-    const getImageProps = () => {
+    const getImageProps = (isCheck) => {
         const { width, height, scaleX, scaleY } = dimensions;
 
-        if (haveImages) {
+        if (haveImages && isCheck) {
             return {
                 x: 0,
                 y: 0,
@@ -94,7 +94,7 @@ export default function SlideShow({ shape, onSelect, handleDragStart, handleDrag
             {haveImages && (
                 <Image
                     image={bgImage}
-                    {...getImageProps()}
+                    {...getImageProps(true)}
                 />
             )}
             <Rect
@@ -106,7 +106,7 @@ export default function SlideShow({ shape, onSelect, handleDragStart, handleDrag
             />
             <Image
                 image={image}
-                {...getImageProps()}
+                {...getImageProps(false)}
             />
         </Group>
     );

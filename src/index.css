@@ -103,11 +103,11 @@
 
 .load-effect {
   opacity: 0;
-  /* opacity-0 */
+  
   transition: all 0.2s;
-  /* transition-all duration-200 */
+  
   animation: fadeIn 0.5s forwards;
-  /* animate-fadeIn */
+  
 }
 
 @keyframes fadeIn {
@@ -175,25 +175,33 @@
   fill:#7b39ed !important;
 }
 
-::-webkit-scrollbar-track
-{
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
-	border-radius: 10px;
-	background-color: transparent;
+div::-webkit-scrollbar {
+  width: 5px; 
+  background-color: transparent;
+  position: absolute;
 }
 
-::-webkit-scrollbar
-{
-	width: 5px;
-	background-color: transparent;
+div::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: transparent;
+  position: absolute
 }
 
-::-webkit-scrollbar-thumb
-{
-	border-radius: 10px;
-	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.1);
-	background-color: #ffffff86;
+div::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: transparent; 
+  position: absolute
 }
 
+div:hover::-webkit-scrollbar {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 
+  width: 5px; 
+  position: absolute
+}
+div:hover::-webkit-scrollbar-thumb {
+  background-color: #ffffff86; 
+  position: absolute
+}
 

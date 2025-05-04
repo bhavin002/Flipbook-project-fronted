@@ -29,7 +29,7 @@ export default function EmbedCode({ shape, onSelect, handleDragStart, handleDrag
                 setBgImage(img);
             };
         }else{
-            shape.fill = "#ebf0fc";
+            // shape.fill = "#ffffffa6";
         }
     }, [shape.src, shape?.htmlData?.coverImage]);
 
@@ -88,7 +88,7 @@ export default function EmbedCode({ shape, onSelect, handleDragStart, handleDrag
                 />
             )}
             <Rect
-                fill="#ebf0fc"
+                fill={shape.fill || "ffffffa6"}
                 x={0}
                 y={0}
                 width={shape.width}
