@@ -113,7 +113,7 @@ function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSe
     }
     if (selectedSubMenu === "product-tag") {
         return (
-            <ProductTag />
+            <ProductTag selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "quiz") {
