@@ -6,7 +6,7 @@ import MyUpload from "./MyUpload";
 import TeamUpload from "./TeamUpload";
 import MediaFilterDropDownCom from "./MediaFilterDropDownCom";
 
-export default function UploadsSidebarPanel() {
+export default function UploadsSidebarPanel({ mainStage, selectedIndex }) {
     const [createdByFilter, setCreatedByFilter] = useState([]);
     const mediaTypes = {
         id: 'createdBy',

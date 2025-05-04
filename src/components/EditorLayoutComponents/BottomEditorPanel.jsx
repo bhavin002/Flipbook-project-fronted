@@ -54,7 +54,7 @@ export default function BottomEditorPanel({ isEditorDrawerOpen, setIsEditorDrawe
             value: "uploads",
             icon: <Upload />,
             label: "Uploads",
-            component: <UploadsSidebarPanel />
+            component: <UploadsSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex}/>
         },
         {
             value: "elements",

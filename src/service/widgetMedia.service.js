@@ -1,6 +1,5 @@
 import ApiClient from "@/utils/ApiClient"
 
-
 export const UploadSingleMediaApi = async (data) => {
     const response = await ApiClient().post("/widget-media/upload/single", data, {
         headers: {

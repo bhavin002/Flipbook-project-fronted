@@ -1,3 +1,4 @@
+
 export const FolderSkeleton = () => {
   return (
     <div className="flex items-center py-1 px-3 animate-pulse">
@@ -18,3 +19,18 @@ export const SingleFileUploadSkeleton = () => {
     </div>
   );
 };
+
+export function MediaFolderSkeleton() {
+  const skeletons = Array(9).fill(null);
+
+  return (
+    <div className="grid grid-cols-3 gap-2">
+      {skeletons.map((_, index) => (
+        <div key={index} className="flex flex-col items-center w-full">
+          <div className="rounded-lg w-full bg-violet-200/30 animate-pulse flex gap-2 px-1 py-1 items-center h-7">
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}

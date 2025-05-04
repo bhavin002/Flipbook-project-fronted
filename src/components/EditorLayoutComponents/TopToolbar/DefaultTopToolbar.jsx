@@ -1,6 +1,6 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-export default function DefaultTopToolbar({ setIsShapeDrawerOpen, selectedSubMenu, setSelectedSubMenu }) {
+export default function DefaultTopToolbar({ setIsShapeDrawerOpen, selectedSubMenu, setSelectedSubMenu,mainStage, selectedIndex }) {
     return (
         <div className="h-[49px] flex justify-between items-center px-3 py-[6px] bg-white border-y border-[#d0d0d0]">
             <div className="flex gap-2">
@@ -17,6 +17,9 @@ export default function DefaultTopToolbar({ setIsShapeDrawerOpen, selectedSubMen
                                     onClick={() => {
                                         setIsShapeDrawerOpen(true)
                                         selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                    }}
+                                    style={{
+                                        backgroundColor: mainStage[selectedIndex].background,
                                     }}
                                     className="w-8 h-8 rounded cursor-pointer border bg-white hover:bg-gray-50"
                                 ></div>
