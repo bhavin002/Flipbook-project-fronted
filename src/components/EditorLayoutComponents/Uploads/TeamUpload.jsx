@@ -161,6 +161,12 @@ export default function TeamUpload() {
             <UploadSection
                 mediaFiles={selectedFolderMedia}
                 folders={folders}
+                currentView={currentView}
+                selectedFolder={selectedFolder}
+                currentFolderId={selectedFolder?._id}
+                setSelectedFolderMedia={setSelectedFolderMedia}
+                setMediaFiles={setMediaFiles}
+                isTeamMedia={true}
             />
         </div>
     );
@@ -248,6 +254,12 @@ export default function TeamUpload() {
             <UploadSection
                 mediaFiles={mediaFiles}
                 folders={folders}
+                currentView={currentView}
+                selectedFolder={selectedFolder}
+                currentFolderId={folders.find(folder => folder.byDefault)?._id}
+                setMediaFiles={setMediaFiles}
+                setSelectedFolderMedia={setSelectedFolderMedia}
+                isTeamMedia={true}
             />
         </>
     );

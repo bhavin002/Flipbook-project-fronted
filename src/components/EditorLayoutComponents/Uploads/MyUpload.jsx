@@ -76,7 +76,7 @@ export default function MyUpload() {
                 if (currentView === 'main') {
                     const defaultFolder = folders.find(folder => folder.byDefault);
                     if (defaultFolder) {
-                        setMediaFiles([...defaultFolder.media, ...response.data]);
+                        setMediaFiles([...mediaFiles, ...response.data]);
                     }
                 } else {
                     setSelectedFolderMedia([...selectedFolderMedia, ...response.data]);
@@ -162,6 +162,12 @@ export default function MyUpload() {
             <UploadSection 
                 mediaFiles={selectedFolderMedia}
                 folders={folders}
+                currentView={currentView}
+                selectedFolder={selectedFolder}
+                currentFolderId={selectedFolder?._id}
+                setSelectedFolderMedia={setSelectedFolderMedia}
+                setMediaFiles={setMediaFiles}
+                isTeamMedia={false}
             />
         </div>
     );
@@ -249,6 +255,12 @@ export default function MyUpload() {
             <UploadSection 
                 mediaFiles={mediaFiles}
                 folders={folders}
+                currentView={currentView}
+                selectedFolder={selectedFolder}
+                currentFolderId={folders.find(folder => folder.byDefault)?._id}
+                setMediaFiles={setMediaFiles}
+                setSelectedFolderMedia={setSelectedFolderMedia}
+                isTeamMedia={false}
             />
         </>
     );

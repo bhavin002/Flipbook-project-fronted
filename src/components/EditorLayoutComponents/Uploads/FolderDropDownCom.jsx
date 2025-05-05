@@ -2,7 +2,7 @@ import { useState } from "react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { EllipsisVertical, Users, FolderOpen, PencilLine, Trash2 } from 'lucide-react';
 import RenameMediaFolderDialog from "./RenameMediaFolderDialog";
-import { CopyToWorkspaceApi, DeleteMediaFolderApi } from "@/service/mediaFolder.service";
+import { CopyMediaFolderToWorkspaceApi, DeleteMediaFolderApi } from "@/service/mediaFolder.service";
 import { toast } from "sonner";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 
@@ -31,7 +31,7 @@ export default function FolderDropDownCom({ onOpenChange, folder, onFolderRename
   const handleCopyToTeam = async (e) => {
     e.stopPropagation();
     try {
-      await CopyToWorkspaceApi(folder._id);
+      await CopyMediaFolderToWorkspaceApi(folder._id);
       toast.success("Folder copied to team", {
         description: "Folder successfully copied to team"
       });

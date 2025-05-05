@@ -30,7 +30,7 @@ export const GetMediaInFolderApi = async (folderId) => {
     return response.data;
 }
 
-export const CopyToWorkspaceApi = async (folderId) => {
+export const CopyMediaFolderToWorkspaceApi = async (folderId) => {
     const response = await ApiClient().post("/media-folder/copy-to-workspace", { folderId });
     return response.data;
 }
