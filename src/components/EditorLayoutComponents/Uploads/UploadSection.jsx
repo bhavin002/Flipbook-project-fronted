@@ -228,7 +228,7 @@ export default function UploadSection({
   const handleImageSelect = async (media, isDragStart = false) => {
     const mediaSrc = media.mediaType === "video/mp4" ? `${media.thumbnailUrl}` : `${media.url}`
     // const imgSrc = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(mediaSrc)}`
-    
+
     const dimensions = await new Promise((resolve, reject) => {
       const img = new Image();
       img.src = mediaSrc
@@ -237,10 +237,23 @@ export default function UploadSection({
     });
 
     console.log("dimensions ??", dimensions)
-
+    function scaleDimensions(width, height, maxSize = 600) {
+      const aspectRatio = width / height;
+      if (width > maxSize || height > maxSize) {
+        if (width > height) {
+          width = maxSize;
+          height = Math.round(maxSize / aspectRatio);
+        } else {
+          height = maxSize;
+          width = Math.round(maxSize * aspectRatio);
+        }
+      }
+      return { width, height };
+    }
+    const { width, height } = scaleDimensions(dimensions.width, dimensions.height);
     const imageData = {
-      width: dimensions.width,
-      height: dimensions.height,
+      width: width,
+      height: height,
       type: "img",
       src: media.url,
       visible: true,
@@ -250,8 +263,6 @@ export default function UploadSection({
       layer: media.mediaType === "video/mp4" ? "Video widget" : "Image",
       htmlType: media.mediaType === "video/mp4" ? "stock-video" : imageMediaTypes.includes(media.mediaType) ? "stock-photo" : "stock-gif",
     };
-
-
 
     if (isDragStart) {
       mainStage[selectedIndex].dragRect.current = imageData;
@@ -369,20 +380,32 @@ export default function UploadSection({
     }
   };
 
-  const renderMedia = (media) => {
+  const createDynamicDragMask = (element, index) => {
+    const attrs = element.attrs;
+    let dragMask = document.getElementById(`image${index}`);
+    return dragMask;
+  };
+
+  const renderMedia = (media, index) => {
     if (videoMediaTypes.includes(media.mediaType)) {
       return (
         <div
           className="relative w-full"
         >
           {/* Video Thumbnail */}
-          <video
+          {/* <video
             controls={false} // Hide controls for videos
             className={`w-full rounded-lg ${isFileSelected(media._id) ? 'ring-2 ring-primary' : ''}`}
           >
             <source src={media.url} type={media.mediaType} />
             Your browser does not support the video tag.
-          </video>
+          </video> */}
+          <img
+            id={`image${index}`}
+            src={media.thumbnailUrl}
+            alt={`Upload ${media._id}`}
+            className={`w-full rounded-lg ${isFileSelected(media._id) ? 'ring-2 ring-primary' : ''}`}
+          />
 
           {/* Play SVG Icon */}
           <div className="absolute inset-0 flex items-center justify-center">
@@ -417,6 +440,7 @@ export default function UploadSection({
     } else if (imageMediaTypes.includes(media.mediaType) || media.mediaType === "image/gif") {
       return (
         <img
+          id={`image${index}`}
           src={media.url}
           alt={`Upload ${media._id}`}
           className={`w-full rounded-lg ${isFileSelected(media._id) ? 'ring-2 ring-primary' : ''}`}
@@ -490,11 +514,16 @@ export default function UploadSection({
                     }
                   }}
                   draggable
-                  onDragStart={() => 
-                    {setHoveredImageIndex(null);handleImageSelect(item, true)}}
+                  onDragStart={(e) => {
+                    setHoveredImageIndex(null);
+                    handleImageSelect(item, true);
+                    const dragMask = createDynamicDragMask(item, itemIndex);
+                    e.dataTransfer.setDragImage(dragMask, 10, 10);
+
+                  }}
                   onClick={() => handleImageSelect(item, false)}
                 >
-                  {renderMedia(item)}
+                  {renderMedia(item, itemIndex)}
 
                   {(hoveredImageIndex === itemIndex || isFileSelected(item._id)) && (
                     <div className="absolute top-1 left-1.5">

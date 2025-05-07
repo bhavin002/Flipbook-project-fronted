@@ -16,7 +16,7 @@ export default function StockVideo({ shape, onSelect,handleDragStart, handelDrag
         if (shape.iconSrc) {
             const img = new window.Image();
             img.src = shape.iconSrc;
-            img.crossOrigin = 'Anonymous';
+            // img.crossOrigin = 'Anonymous';
             img.onload = () => {
                 setImage(img);
             };
@@ -27,7 +27,7 @@ export default function StockVideo({ shape, onSelect,handleDragStart, handelDrag
         if (shape.bgImage) {
             const img = new window.Image();
             img.src = shape.bgImage;
-            img.crossOrigin = 'Anonymous';
+            // img.crossOrigin = 'Anonymous';
             img.onload = () => {
                 setBgImage(img);
             };
