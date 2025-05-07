@@ -186,10 +186,8 @@ const StockPhotosView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selec
 
 const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainStage, selectedIndex, setIsEditorDrawerOpen }) => {
     // Extracted reusable function to handle the image selection logic
-    console.log("selectedIndex" , selectedIndex);
     
     const handleImageSelect = async (image, isDragStart = false) => {
-        console.log("handleImageSelect",selectedIndex);
         const dimensions = await new Promise((resolve, reject) => {
             const img = new Image();
             img.src = image.src.medium;
@@ -257,7 +255,7 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
 
             // Handle masked image case
             if (isOverShapeWidget && shapeWidget?.isMasked &&
-                (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'upload-photo')) {
+                (stage.dragRect.current.htmlType === 'stock-photo' )) {
                 newShape = {
                     src: newShape.src,
                     height: Number(shapeWidget.height),

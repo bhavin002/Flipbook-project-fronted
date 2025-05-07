@@ -758,12 +758,11 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                     let newShape = null;
 
                     // Handle the drop
-                    if (isOverMaskedImage && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'upload-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker')) {
+                    if (isOverMaskedImage && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker')) {
                         // Replace the existing masked-image
                         mainStage[selectedIndex].selectedShapes = [];
                         const htmlType = stage.dragRect.current.htmlType;
                         const typeMapping = {
-                            'upload-photo': 'masked-image',
                             'stock-gif': 'masked-gif',
                             'stock-photo': 'masked-image',
                             'stock-sticker': 'masked-sticker'
@@ -795,11 +794,10 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                             };
                             return updatedState;
                         });
-                    } else if (isOverShapeWidget && targetShape?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'upload-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker')) {
+                    } else if (isOverShapeWidget && targetShape?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker')) {
                         // Create a new masked-image
                         const htmlType = stage.dragRect.current.htmlType;
                         const typeMapping = {
-                            'upload-photo': 'masked-image',
                             'stock-gif': 'masked-gif',
                             'stock-photo': 'masked-image',
                             'stock-sticker': 'masked-sticker'

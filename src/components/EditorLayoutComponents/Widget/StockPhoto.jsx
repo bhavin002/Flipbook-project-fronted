@@ -20,7 +20,7 @@ export default function StockPhoto({
         if (shape && shape.src) {
             const img = new window.Image();
             img.src = shape.src;
-            img.crossOrigin = 'Anonymous';
+            // img.crossOrigin = 'Anonymous';
             img.onload = () => {
                 setLoadedImage(img);
             };

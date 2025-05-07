@@ -262,7 +262,7 @@ const Section = ({ setIsEditorDrawerOpen, setMainStage, title, stickers, lastSti
 
             // Handle masked image case
             if (isOverShapeWidget && shapeWidget?.isMasked &&
-                (mainStage[selectedIndex].dragRect.current.htmlType === 'stock-photo' || mainStage[selectedIndex].dragRect.current.htmlType === 'upload-photo')) {
+                (mainStage[selectedIndex].dragRect.current.htmlType === 'stock-photo')) {
                 newShape = {
                     src: newShape.src,
                     height: Number(shapeWidget.height),

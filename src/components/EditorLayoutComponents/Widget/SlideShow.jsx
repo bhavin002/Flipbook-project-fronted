@@ -24,8 +24,9 @@ export default function SlideShow({ shape, onSelect, handleDragStart, handleDrag
         }
         if (haveImages) {
             const img = new window.Image();
-            img.src = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(shape.htmlData.images[0].url)}`;
-            img.crossOrigin = 'Anonymous';
+            // img.src = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(shape.htmlData.images[0].url)}`;
+            // img.crossOrigin = 'Anonymous';
+            img.src = shape.htmlData.images[0].url;
             img.onload = () => {
                 setBgImage(img);
             };

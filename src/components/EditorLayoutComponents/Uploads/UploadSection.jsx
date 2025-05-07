@@ -23,6 +23,7 @@ export default function UploadSection({
   mainStage,
   selectedIndex,
   setMainStage,
+  setIsEditorDrawerOpen,
   isLoading = false
 }) {
   const [hoveredImageIndex, setHoveredImageIndex] = useState(null);
@@ -213,25 +214,44 @@ export default function UploadSection({
   const hasSelectedFiles = selectedFiles.length > 0;
   const selectedFilesCount = selectedFiles.length;
 
-  const handleImageSelect = async (image, isDragStart = false) => {
-    const imgSrc = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(image.url)}`
+  const videoMediaTypes = [
+    "video/mp4",
+  ]
+
+  const imageMediaTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/svg+xml",
+  ]
+
+  const handleImageSelect = async (media, isDragStart = false) => {
+    const mediaSrc = media.mediaType === "video/mp4" ? `${media.thumbnailUrl}` : `${media.url}`
+    // const imgSrc = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(mediaSrc)}`
+    
     const dimensions = await new Promise((resolve, reject) => {
       const img = new Image();
-      img.src = imgSrc
+      img.src = mediaSrc
       img.onload = () => resolve({ width: img.width, height: img.height });
       img.onerror = () => reject("Error loading image");
     });
+
+    console.log("dimensions ??", dimensions)
 
     const imageData = {
       width: dimensions.width,
       height: dimensions.height,
       type: "img",
-      src: `${imgSrc}`,
+      src: media.url,
       visible: true,
-      title: "stock-photo",
-      layer: "Image",
-      htmlType: "stock-photo",
+      bgImage: media?.thumbnailUrl,
+      iconSrc: "/src/assets/icons/PlayVideo.svg",
+      title: media.mediaType === "video/mp4" ? "stock-video" : imageMediaTypes.includes(media.mediaType) ? "stock-photo" : "stock-gif",
+      layer: media.mediaType === "video/mp4" ? "Video widget" : "Image",
+      htmlType: media.mediaType === "video/mp4" ? "stock-video" : imageMediaTypes.includes(media.mediaType) ? "stock-photo" : "stock-gif",
     };
+
+
 
     if (isDragStart) {
       mainStage[selectedIndex].dragRect.current = imageData;
@@ -280,8 +300,7 @@ export default function UploadSection({
       };
 
       // Handle masked image case
-      if (isOverShapeWidget && shapeWidget?.isMasked &&
-        (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'upload-photo')) {
+      if (isOverShapeWidget && shapeWidget?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo')) {
         newShape = {
           src: newShape.src,
           height: Number(shapeWidget.height),
@@ -350,6 +369,62 @@ export default function UploadSection({
     }
   };
 
+  const renderMedia = (media) => {
+    if (videoMediaTypes.includes(media.mediaType)) {
+      return (
+        <div
+          className="relative w-full"
+        >
+          {/* Video Thumbnail */}
+          <video
+            controls={false} // Hide controls for videos
+            className={`w-full rounded-lg ${isFileSelected(media._id) ? 'ring-2 ring-primary' : ''}`}
+          >
+            <source src={media.url} type={media.mediaType} />
+            Your browser does not support the video tag.
+          </video>
+
+          {/* Play SVG Icon */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <svg
+              version="1.1"
+              id="Layer_1"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 27 27"
+              xmlSpace="preserve"
+              className="w-8 h-8"
+            >
+              <g id="Page-1">
+                <g transform="translate(-249.000000, -251.000000)">
+                  <g id="play-button" transform="translate(129.000000, 215.000000)">
+                    <g id="Shape">
+                      <path
+                        fill="#E2E2E2"
+                        stroke="#626262"
+                        strokeWidth="0.2"
+                        d="M139.7,60.3c-6,3.5-13.6,1.4-17.1-4.6c-3.5-6-1.4-13.6,4.6-17.1c6-3.5,13.6-1.4,17.1,4.6
+                                C147.8,49.2,145.7,56.9,139.7,60.3z M139.1,48.9l-8.2-4.8c-0.7-0.4-1.3-0.1-1.3,0.8l0,9.5c0,0.9,0.6,1.2,1.4,0.8l8.1-4.7
+                                C139.9,50,139.9,49.3,139.1,48.9z"
+                      ></path>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </div>
+        </div>
+      );
+    } else if (imageMediaTypes.includes(media.mediaType) || media.mediaType === "image/gif") {
+      return (
+        <img
+          src={media.url}
+          alt={`Upload ${media._id}`}
+          className={`w-full rounded-lg ${isFileSelected(media._id) ? 'ring-2 ring-primary' : ''}`}
+        />
+      );
+    }
+  };
+
   return (
     <>
       <div className="space-y-2 flex flex-col flex-grow overflow-y-auto h-0">
@@ -415,14 +490,11 @@ export default function UploadSection({
                     }
                   }}
                   draggable
-                  onDragStart={() => handleImageSelect(item, true)}
+                  onDragStart={() => 
+                    {setHoveredImageIndex(null);handleImageSelect(item, true)}}
                   onClick={() => handleImageSelect(item, false)}
                 >
-                  <img
-                    src={item.url}
-                    alt={`Upload ${item._id}`}
-                    className={`w-full rounded-lg ${isFileSelected(item._id) ? 'ring-2 ring-primary' : ''}`}
-                  />
+                  {renderMedia(item)}
 
                   {(hoveredImageIndex === itemIndex || isFileSelected(item._id)) && (
                     <div className="absolute top-1 left-1.5">

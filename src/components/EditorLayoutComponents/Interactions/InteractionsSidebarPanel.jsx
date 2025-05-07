@@ -306,7 +306,7 @@ export default function InteractionsSidebarPanel({ setIsEditorDrawerOpen, setMai
 
                                                 // Handle masked image case
                                                 if (isOverShapeWidget && shapeWidget?.isMasked &&
-                                                    (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'upload-photo')) {
+                                                    (stage.dragRect.current.htmlType === 'stock-photo' )) {
                                                     newShape = {
                                                         src: newShape.src,
                                                         height: Number(shapeWidget.height),

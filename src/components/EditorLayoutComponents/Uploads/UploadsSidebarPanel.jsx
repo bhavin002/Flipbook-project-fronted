@@ -6,7 +6,7 @@ import MyUpload from "./MyUpload";
 import TeamUpload from "./TeamUpload";
 import MediaFilterDropDownCom from "./MediaFilterDropDownCom";
 
-export default function UploadsSidebarPanel({ mainStage, selectedIndex, setMainStage }) {
+export default function UploadsSidebarPanel({ mainStage, selectedIndex, setMainStage,setIsEditorDrawerOpen }) {
     const [createdByFilter, setCreatedByFilter] = useState([]);
     const mediaTypes = {
         id: 'createdBy',
@@ -42,10 +42,10 @@ export default function UploadsSidebarPanel({ mainStage, selectedIndex, setMainS
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="myUpload" className="space-y-4 hidden-cust flex-1 flex flex-col overflow-y-auto">
-                    <MyUpload mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage}/>
+                    <MyUpload mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} setIsEditorDrawerOpen={setIsEditorDrawerOpen}/>
                 </TabsContent>
                 <TabsContent value="teamUpload" className="space-y-4 hidden-cust flex-1 flex flex-col  overflow-y-auto">
-                    <TeamUpload mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage}/>
+                    <TeamUpload mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} setIsEditorDrawerOpen={setIsEditorDrawerOpen}/>
                 </TabsContent>
             </Tabs>
         </div>

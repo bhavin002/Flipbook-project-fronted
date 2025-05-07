@@ -28,7 +28,7 @@ export function AppSidebar({setIsEditorDrawerOpen, setMainStage, currentView, se
             case 'text':
                 return <TextSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage}/>;
             case 'uploads':
-                return <UploadsSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage}/>;
+                return <UploadsSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} setIsEditorDrawerOpen={setIsEditorDrawerOpen}/>;
             case 'elements':
                 return <ElementsSidebarPanel setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} />;
             case 'automation':
