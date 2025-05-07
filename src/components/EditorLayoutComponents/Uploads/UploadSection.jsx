@@ -75,7 +75,7 @@ export default function UploadSection({
     if (event) {
       event.stopPropagation();
     }
-    
+
     if (checked) {
       setSelectedFiles(prev => [...prev, fileId]);
     } else {
@@ -388,6 +388,11 @@ export default function UploadSection({
   const createDynamicDragMask = (element, index) => {
     const attrs = element.attrs;
     let dragMask = document.getElementById(`image${index}`);
+    dragMask.style.opacity = 1;
+
+    dragMask.style.width = `94px`;
+    dragMask.style.backgroundSize = `94px 94px `;
+    dragMask.style.height = `100%`;
     return dragMask;
   };
 
@@ -406,11 +411,43 @@ export default function UploadSection({
             Your browser does not support the video tag.
           </video> */}
           <img
-            id={`image${index}`}
             src={media.thumbnailUrl}
             alt={`Upload ${media._id}`}
             className={`w-full rounded-lg ${isFileSelected(media._id) ? 'ring-2 ring-primary' : ''}`}
           />
+          <div
+            id={`image${index}`}
+            className={`drag-mask absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none`}
+          >
+            <img src={media.thumbnailUrl} alt="" style={{ width: '100%', height: '100%' }} />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg
+                version="1.1"
+                id="Layer_1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 27 27"
+                xmlSpace="preserve"
+                className="w-8 h-8"
+              >
+                <g id="Page-1">
+                  <g transform="translate(-249.000000, -251.000000)">
+                    <g id="play-button" transform="translate(129.000000, 215.000000)">
+                      <g id="Shape">
+                        <path
+                          fill="#E2E2E2"
+                          stroke="#626262"
+                          strokeWidth="0.2"
+                          d="M139.7,60.3c-6,3.5-13.6,1.4-17.1-4.6c-3.5-6-1.4-13.6,4.6-17.1c6-3.5,13.6-1.4,17.1,4.6
+                                C147.8,49.2,145.7,56.9,139.7,60.3z M139.1,48.9l-8.2-4.8c-0.7-0.4-1.3-0.1-1.3,0.8l0,9.5c0,0.9,0.6,1.2,1.4,0.8l8.1-4.7
+                                C139.9,50,139.9,49.3,139.1,48.9z"
+                        ></path>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </svg>
+            </div>
+          </div>
 
           {/* Play SVG Icon */}
           <div className="absolute inset-0 flex items-center justify-center">
@@ -444,12 +481,22 @@ export default function UploadSection({
       );
     } else if (imageMediaTypes.includes(media.mediaType) || media.mediaType === "image/gif") {
       return (
-        <img
-          id={`image${index}`}
-          src={media.url}
-          alt={`Upload ${media._id}`}
-          className={`w-full rounded-lg ${isFileSelected(media._id) ? 'ring-2 ring-primary' : ''}`}
-        />
+        <>
+          <img
+            // id={`image${index}`}
+            src={media.url}
+            alt={`Upload ${media._id}`}
+            className={`w-full rounded-lg ${isFileSelected(media._id) ? 'ring-2 ring-primary' : ''}`}
+          />
+          <div
+            id={`image${index}`}
+            className={`drag-mask absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none`}
+
+          >
+            <img src={media.url} alt="" style={{ width: '100%', height: '100%' }} />
+          </div>
+        </>
+
       );
     }
   };
@@ -531,7 +578,7 @@ export default function UploadSection({
                   {renderMedia(item, itemIndex)}
 
                   {(hoveredImageIndex === itemIndex || isFileSelected(item._id)) && (
-                    <div 
+                    <div
                       className="absolute top-1 left-1.5"
                       onClick={(e) => e.stopPropagation()} // Stop click propagation
                     >
