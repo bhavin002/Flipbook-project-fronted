@@ -26,7 +26,9 @@ export default function KonvaGif({
     useEffect(() => {
         let anim;
         try {
-            window.gifler(shape.src).get((a) => {
+            const imgSrc = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(shape.src)}`
+
+            window.gifler(imgSrc).get((a) => {
                 anim = a;
                 // Set canvas dimensions to match shape
                 canvas.width = shape.width || anim.frames[0].width;
@@ -48,7 +50,7 @@ export default function KonvaGif({
                 anim.stop();
             }
         };
-    }, [shape.src, canvas, shape.width, shape.height]);
+    }, [canvas, shape.width, shape.height]);
 
     // Apply effects and cropping
     useEffect(() => {
