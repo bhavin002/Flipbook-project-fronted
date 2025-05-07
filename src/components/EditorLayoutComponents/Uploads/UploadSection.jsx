@@ -70,7 +70,12 @@ export default function UploadSection({
     }
   };
 
-  const handleSelectFile = (fileId, checked) => {
+  const handleSelectFile = (fileId, checked, event) => {
+    // Stop event propagation to prevent parent click handler from firing
+    if (event) {
+      event.stopPropagation();
+    }
+    
     if (checked) {
       setSelectedFiles(prev => [...prev, fileId]);
     } else {
@@ -228,7 +233,7 @@ export default function UploadSection({
   const handleImageSelect = async (media, isDragStart = false) => {
     const mediaSrc = media.mediaType === "video/mp4" ? `${media.thumbnailUrl}` : `${media.url}`
     // const imgSrc = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(mediaSrc)}`
-    
+
     const dimensions = await new Promise((resolve, reject) => {
       const img = new Image();
       img.src = mediaSrc
@@ -490,18 +495,21 @@ export default function UploadSection({
                     }
                   }}
                   draggable
-                  onDragStart={() => 
-                    {setHoveredImageIndex(null);handleImageSelect(item, true)}}
+                  onDragStart={() => { setHoveredImageIndex(null); handleImageSelect(item, true) }}
                   onClick={() => handleImageSelect(item, false)}
                 >
                   {renderMedia(item)}
 
                   {(hoveredImageIndex === itemIndex || isFileSelected(item._id)) && (
-                    <div className="absolute top-1 left-1.5">
+                    <div 
+                      className="absolute top-1 left-1.5"
+                      onClick={(e) => e.stopPropagation()} // Stop click propagation
+                    >
                       <Checkbox
                         className="bg-white border-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
                         checked={isFileSelected(item._id)}
-                        onCheckedChange={(checked) => handleSelectFile(item._id, checked)}
+                        onCheckedChange={(checked) => handleSelectFile(item._id, checked, event)}
+                        onClick={(e) => e.stopPropagation()} // Add another layer of protection
                       />
                     </div>
                   )}

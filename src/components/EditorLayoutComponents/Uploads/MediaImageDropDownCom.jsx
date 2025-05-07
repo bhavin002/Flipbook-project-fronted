@@ -45,7 +45,11 @@ export default function MediaImageDropDownCom({
         return filename.length > 20 ? filename.substring(0, 17) + "..." : filename;
     };
 
-    const handleCopyLink = () => {
+    const handleCopyLink = (e) => {
+        if (e) {
+            e.stopPropagation();
+        }
+        
         if (mediaFile?.url) {
             navigator.clipboard.writeText(mediaFile.url)
                 .then(() => {
@@ -62,7 +66,11 @@ export default function MediaImageDropDownCom({
         }
     };
 
-    const handleDownload = async (mediaId, fileName) => {
+    const handleDownload = async (mediaId, fileName, e) => {
+        if (e) {
+            e.stopPropagation();
+        }
+        
         try {
             setIsDownloading(true);
             const response = await GeneratePresignedUrlApi(mediaId);
@@ -99,11 +107,18 @@ export default function MediaImageDropDownCom({
         }
     };
 
-    const confirmDelete = () => {
+    const confirmDelete = (e) => {
+        if (e) {
+            e.stopPropagation();
+        }
         setIsDeleteConfirmOpen(true);
     };
 
-    const handleDelete = async () => {
+    const handleDelete = async (e) => {
+        if (e) {
+            e.stopPropagation();
+        }
+        
         setIsDeleteLoading(true);
         try {
             const response = await DeleteMediaFilesApi({
@@ -136,7 +151,11 @@ export default function MediaImageDropDownCom({
         }
     };
 
-    const handleCopyToTeam = async () => {
+    const handleCopyToTeam = async (e) => {
+        if (e) {
+            e.stopPropagation();
+        }
+        
         setIsCopying(true);
         try {
             const response = await CopyMediaFileToWorkspaceApi({
@@ -158,7 +177,11 @@ export default function MediaImageDropDownCom({
         }
     };
 
-    const handleMoveToFolder = async (folderId) => {
+    const handleMoveToFolder = async (folderId, e) => {
+        if (e) {
+            e.stopPropagation();
+        }
+        
         try {
             const response = await MoveToFolderApi({
                 sourceFolderId: currentFolderId,
@@ -193,7 +216,10 @@ export default function MediaImageDropDownCom({
         return (
             <DropdownMenu open={isMoveSubmenuOpen} onOpenChange={setIsMoveSubmenuOpen}>
                 <DropdownMenuTrigger asChild>
-                    <div className="flex items-center justify-between w-full">
+                    <div 
+                        className="flex items-center justify-between w-full"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <div className="flex items-center">
                             <FolderSymlink className="mr-2 h-4 w-4" />
                             <span>Move to</span>
@@ -201,7 +227,12 @@ export default function MediaImageDropDownCom({
                         <ChevronRight className="ml-2 w-4 h-4" />
                     </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 max-h-[200px]" align="start" side="right">
+                <DropdownMenuContent 
+                    className="w-56 max-h-[200px]" 
+                    align="start" 
+                    side="right" 
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <DropdownMenuGroup>
                         {folders.map((folder, index) => {
                             const isSelected = (currentView === 'folder' && selectedFolder && folder._id === selectedFolder._id) ||
@@ -210,7 +241,12 @@ export default function MediaImageDropDownCom({
                                 <DropdownMenuItem
                                     key={index}
                                     disabled={isSelected}
-                                    onSelect={() => !isSelected && handleMoveToFolder(folder._id)}
+                                    onSelect={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        if (!isSelected) handleMoveToFolder(folder._id, e);
+                                    }}
+                                    onClick={(e) => e.stopPropagation()}
                                 >
                                     {isSelected ?
                                         <Folder fill="currentColor" className="mr-2 h-4 w-4" /> :
@@ -229,12 +265,19 @@ export default function MediaImageDropDownCom({
     return (
         <>
             <DropdownMenu open={isMainDropdownOpen} onOpenChange={handleMainDropdownOpenChange}>
-                <DropdownMenuTrigger ref={mainDropdownTriggerRef} className="absolute top-1 right-1 text-center bg-black bg-opacity-70 text-white px-1.5 rounded-[12px] text-xs font-medium">
+                <DropdownMenuTrigger 
+                    ref={mainDropdownTriggerRef} 
+                    className="absolute top-1 right-1 text-center bg-black bg-opacity-70 text-white px-1.5 rounded-[12px] text-xs font-medium"
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <Ellipsis className="h-5 w-5" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="start">
+                <DropdownMenuContent 
+                    align="start"
+                    onClick={(e) => e.stopPropagation()}
+                >
                     <DropdownMenuGroup>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                             <span>{getTruncatedFilename(mediaFile?.fileName)}</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
@@ -244,8 +287,10 @@ export default function MediaImageDropDownCom({
                                 disabled={isCopying}
                                 onSelect={(e) => {
                                     e.preventDefault();
-                                    handleCopyToTeam();
+                                    e.stopPropagation();
+                                    handleCopyToTeam(e);
                                 }}
+                                onClick={(e) => e.stopPropagation()}
                             >
                                 <Users className="mr-2 h-4 w-4" />
                                 <span>{isCopying ? 'Copying...' : 'Copy to my team'}</span>
@@ -255,14 +300,16 @@ export default function MediaImageDropDownCom({
                         <DropdownMenuItem
                             onSelect={(e) => {
                                 e.preventDefault();
-                                handleCopyLink();
+                                e.stopPropagation();
+                                handleCopyLink(e);
                             }}
+                            onClick={(e) => e.stopPropagation()}
                         >
                             <Link2 className="mr-2 h-4 w-4" />
                             <span>Copy link</span>
                         </DropdownMenuItem>
 
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                             <MoveToSubmenu />
                         </DropdownMenuItem>
 
@@ -270,8 +317,10 @@ export default function MediaImageDropDownCom({
                             disabled={isDownloading}
                             onSelect={(e) => {
                                 e.preventDefault();
-                                handleDownload(mediaFile._id, mediaFile.fileName);
+                                e.stopPropagation();
+                                handleDownload(mediaFile._id, mediaFile.fileName, e);
                             }}
+                            onClick={(e) => e.stopPropagation()}
                         >
                             <Download className="mr-2 h-4 w-4" />
                             {isDownloading ? 'Downloading...' : 'Download original'}
@@ -280,8 +329,10 @@ export default function MediaImageDropDownCom({
                         <DropdownMenuItem
                             onSelect={(e) => {
                                 e.preventDefault();
-                                confirmDelete();
+                                e.stopPropagation();
+                                confirmDelete(e);
                             }}
+                            onClick={(e) => e.stopPropagation()}
                         >
                             <Trash2 className="mr-2 h-4 w-4" />
                             <span>Delete</span>

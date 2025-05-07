@@ -18,25 +18,58 @@ export default function ConfirmationDialog({
     onCancel,
     isLoading = false
 }) {
-    const handleConfirm = () => {
+    const handleConfirm = (e) => {
+        // Prevent event propagation
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
         if (onConfirm) {
-            onConfirm();
+            onConfirm(e);
         } else {
             setIsConfirmModalOpen(false);
         }
     };
 
-    const handleCancel = () => {
+    const handleCancel = (e) => {
+        // Prevent event propagation
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
         if (onCancel) {
-            onCancel();
+            onCancel(e);
         } else {
             setIsConfirmModalOpen(false);
+        }
+    };
+
+    // Function to handle dialog close via the X button or clicking outside
+    const handleOpenChange = (open) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        if (!open && onCancel) {
+            onCancel();
+        } else {
+            setIsConfirmModalOpen(open);
         }
     };
 
     return (
-        <Dialog open={isConfirmModalOpen} onOpenChange={setIsConfirmModalOpen}>
-            <DialogContent className="sm:max-w-[540px] w-[90vw]">
+        <Dialog 
+            open={isConfirmModalOpen} 
+            onOpenChange={handleOpenChange}
+            onClick={(e) => e.stopPropagation()} // Prevent clicks from reaching parent
+        >
+            <DialogContent 
+                className="sm:max-w-[540px] w-[90vw]"
+                onClick={(e) => e.stopPropagation()} // Prevent clicks from reaching parent
+            >
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>
