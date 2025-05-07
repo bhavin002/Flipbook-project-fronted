@@ -10,7 +10,7 @@ import { MediaFolderSkeleton } from "@/utils/Skeleton";
 import { UploadMultipleMediaFilesApi } from "@/service/mediaFiles.service";
 import UploadSection from "./UploadSection";
 
-export default function MyUpload() {
+export default function MyUpload({ mainStage, selectedIndex, setMainStage }) {
     const fileInputRef = useRef(null);
     const [showAllFolders, setShowAllFolders] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -159,7 +159,7 @@ export default function MyUpload() {
                 <span className="font-semibold">{selectedFolder?.name}</span>
             </div>
 
-            <UploadSection 
+            <UploadSection
                 mediaFiles={selectedFolderMedia}
                 folders={folders}
                 currentView={currentView}
@@ -168,6 +168,10 @@ export default function MyUpload() {
                 setSelectedFolderMedia={setSelectedFolderMedia}
                 setMediaFiles={setMediaFiles}
                 isTeamMedia={false}
+                mainStage={mainStage}
+                selectedIndex={selectedIndex}
+                setMainStage={setMainStage}
+                isLoading={isLoading}
             />
         </div>
     );
@@ -251,8 +255,8 @@ export default function MyUpload() {
                     )}
                 </div>
             </div>
-            
-            <UploadSection 
+
+            <UploadSection
                 mediaFiles={mediaFiles}
                 folders={folders}
                 currentView={currentView}
@@ -261,6 +265,10 @@ export default function MyUpload() {
                 setMediaFiles={setMediaFiles}
                 setSelectedFolderMedia={setSelectedFolderMedia}
                 isTeamMedia={false}
+                mainStage={mainStage}
+                selectedIndex={selectedIndex}
+                setMainStage={setMainStage}
+                isLoading={isLoading}
             />
         </>
     );

@@ -34,3 +34,16 @@ export function MediaFolderSkeleton() {
     </div>
   );
 }
+
+export function MediaImageSkeleton() {
+  const skeletons = Array(9).fill(null);
+  return (
+    <div className="columns-3 gap-2 space-y-2 p-1">
+      {skeletons.map((_, index) => (
+        <div key={index} className="break-inside-avoid relative group">
+          <div className="rounded-lg w-full bg-violet-200/30 animate-pulse h-[100px]"></div>
+        </div>
+      ))}
+    </div>
+  );
+}

@@ -10,7 +10,7 @@ import { MediaFolderSkeleton } from "@/utils/Skeleton";
 import { UploadMultipleMediaFilesApi } from "@/service/mediaFiles.service";
 import UploadSection from "./UploadSection";
 
-export default function TeamUpload() {
+export default function TeamUpload({ mainStage, selectedIndex, setMainStage }) {
     const fileInputRef = useRef(null);
     const [showAllFolders, setShowAllFolders] = useState(false);
     const [hoveredIndex, setHoveredIndex] = useState(null);
@@ -167,6 +167,10 @@ export default function TeamUpload() {
                 setSelectedFolderMedia={setSelectedFolderMedia}
                 setMediaFiles={setMediaFiles}
                 isTeamMedia={true}
+                mainStage={mainStage}
+                selectedIndex={selectedIndex}
+                setMainStage={setMainStage}
+                isLoading={isLoading}
             />
         </div>
     );
@@ -260,6 +264,10 @@ export default function TeamUpload() {
                 setMediaFiles={setMediaFiles}
                 setSelectedFolderMedia={setSelectedFolderMedia}
                 isTeamMedia={true}
+                mainStage={mainStage}
+                selectedIndex={selectedIndex}
+                setMainStage={setMainStage}
+                isLoading={isLoading}
             />
         </>
     );
