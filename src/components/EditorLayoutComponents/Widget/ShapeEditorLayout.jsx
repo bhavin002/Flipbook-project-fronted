@@ -24,7 +24,7 @@ import GoToPage from "../widgetSidebar/GoToPage"
 import StockVideo from "../widgetSidebar/StockVideo"
 import Text from "../widgetSidebar/Text"
 
-function renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex) {
+function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex) {
     if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
         return (
             <Hyperlink mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />
@@ -37,7 +37,7 @@ function renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, 
     }
     if (selectedSubMenu === 'color') {
         return (
-            <Color windowInnerWidth={windowInnerWidth} setIsShapeDrawerOpen={setIsShapeDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
+            <Color setIsShapeDrawerOpen={setIsShapeDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
         )
     }
     if (selectedSubMenu === 'shape-style') {
@@ -52,7 +52,7 @@ function renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, 
     }
     if (selectedSubMenu === 'image-filter') {
         return (
-            <ImageFilter windowInnerWidth={windowInnerWidth} setIsShapeDrawerOpen={setIsShapeDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
+            <ImageFilter setIsShapeDrawerOpen={setIsShapeDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
         )
     }
     if (selectedSubMenu === 'image-style') {
@@ -153,10 +153,10 @@ function renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, 
 
 }
 
-export default function ShapeEditorLayout({ windowInnerWidth, setIsShapeDrawerOpen, selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex, setSelectedSubMenu }) {
+export default function ShapeEditorLayout({ setIsShapeDrawerOpen, selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex, setSelectedSubMenu }) {
     return (
         <div className={`absolute right-0 h-full dark-theme top-0 bg-sidebar z-[11] text-white transition-all flex`} style={{ width: (selectedSubMenu) ? '23rem' : "0px", position: "absolute", overflowX: 'hidden' }}>
-            {renderComponent(windowInnerWidth, setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex)}
+            {renderComponent(setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex)}
         </div>
     )
 

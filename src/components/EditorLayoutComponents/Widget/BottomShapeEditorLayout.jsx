@@ -25,7 +25,7 @@ import { Drawer, DrawerContent } from "@/components/ui/drawer"
 import StockVideo from "../widgetSidebar/StockVideo"
 import Text from "../widgetSidebar/Text"
 
-function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, setIsShapeDrawerOpen) {
+function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, setIsShapeDrawerOpen) {
     if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
         return (
             <Hyperlink mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />
@@ -38,7 +38,7 @@ function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSe
     }
     if (selectedSubMenu === 'color') {
         return (
-            <Color windowInnerWidth={windowInnerWidth} setIsShapeDrawerOpen={setIsShapeDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
+            <Color setIsShapeDrawerOpen={setIsShapeDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
         )
     }
     if (selectedSubMenu === 'shape-style') {
@@ -53,7 +53,7 @@ function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSe
     }
     if (selectedSubMenu === 'image-filter') {
         return (
-            <ImageFilter windowInnerWidth={windowInnerWidth} setIsShapeDrawerOpen={setIsShapeDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
+            <ImageFilter setIsShapeDrawerOpen={setIsShapeDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
         )
     }
     if (selectedSubMenu === 'image-style') {
@@ -154,14 +154,14 @@ function renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSe
 
 }
 
-export default function BottomShapeEditorLayout({ windowInnerWidth, isShapeDrawerOpen, setIsShapeDrawerOpen, selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex, setSelectedSubMenu }) {
+export default function BottomShapeEditorLayout({ isShapeDrawerOpen, setIsShapeDrawerOpen, selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex, setSelectedSubMenu }) {
     return (
         <Drawer open={isShapeDrawerOpen} onOpenChange={() => {
             setIsShapeDrawerOpen(false)
             setSelectedSubMenu(null)
         }}>
             <DrawerContent className="max-h-[85vh] rounded-t-xl flex flex-col">
-                {renderComponent(windowInnerWidth, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, setIsShapeDrawerOpen)}
+                {renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, setIsShapeDrawerOpen)}
             </DrawerContent>
         </Drawer>
     )

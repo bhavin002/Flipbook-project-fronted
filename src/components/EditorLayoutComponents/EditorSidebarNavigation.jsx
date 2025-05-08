@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 import { getData } from '@/utils/datas';
+import useWindowWidth from '@/hooks/use-window-width';
 
 function NavItem({ item, isSelected, onClick }) {
     const { icon: Icon, label } = item;
@@ -19,9 +20,10 @@ function NavItem({ item, isSelected, onClick }) {
     );
 };
 
-export default function EditorSidebarNavigation({ windowInnerWidth, currentView, setCurrentView, mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
+export default function EditorSidebarNavigation({ currentView, setCurrentView, mainStage, setSelectedShape, selectedSubMenu, setSelectedSubMenu, selectedIndex, isSidebarOpen, setIsSidebarOpen, setSelectedItem }) {
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
     const navItems = getData('editorNavItems');
+    const windowInnerWidth = useWindowWidth();
 
     useEffect(() => {
         setGlobalSelectedItem('templates');

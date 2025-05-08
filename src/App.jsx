@@ -78,13 +78,7 @@ const settingsRoutes = [
 
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [windowInnerWidth, setWindowInnerWidth] = useState(window.innerWidth);
   const apiCounter = useApiCounterStore((state) => state.counter);
-
-
-  window.addEventListener('resize', () => {
-    setWindowInnerWidth(window.innerWidth);
-  });
 
   return (
     <AuthProvider>
@@ -237,7 +231,7 @@ export default function App() {
 
         <Route path="/editor/:id" element={
           <PrivateRoute>
-            <EditorAppLayout windowInnerWidth={windowInnerWidth} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+            <EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
           </PrivateRoute>
         }>
           <Route index element={<Editor />} />

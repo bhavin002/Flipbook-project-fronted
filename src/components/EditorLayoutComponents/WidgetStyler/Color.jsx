@@ -1,15 +1,17 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import useWindowWidth from "@/hooks/use-window-width";
 import { Plus } from "lucide-react";
 import { useRef, useState } from "react";
 
-export default function Color({ windowInnerWidth, setIsShapeDrawerOpen, setSelectedSubMenu, selectedShape, mainStage, selectedIndex, setMainStage }) {
+export default function Color({ setIsShapeDrawerOpen, setSelectedSubMenu, selectedShape, mainStage, selectedIndex, setMainStage }) {
     const [isNewColorAdded, setIsNewColorAdded] = useState(false);
     const colorInputRef = useRef(null);
     const handleAddColor = () => {
         setIsNewColorAdded(true);
         setTimeout(() => colorInputRef.current?.click(), 10);
     };
+    const windowInnerWidth = useWindowWidth();
     const recentColors = [
         '#000000', '#020301'
     ];

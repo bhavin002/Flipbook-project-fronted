@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { FilterSlider } from "@/components/ui/filterSlider";
 import { Label } from "@/components/ui/label";
+import useWindowWidth from "@/hooks/use-window-width";
 
 const filterPresets = {
   Normal: {
@@ -48,7 +49,6 @@ const filterPresets = {
 };
 
 export default function ImageFilter({
-  windowInnerWidth,
   setIsShapeDrawerOpen,
   setSelectedSubMenu,
   selectedShape,
@@ -96,6 +96,7 @@ export default function ImageFilter({
     blur: selectedShape[0].attrs?.effect?.blur || 0,
     grayscale: selectedShape[0].attrs?.effect?.grayscale || 0,
   });
+  const windowInnerWidth = useWindowWidth();
 
   // Load filter settings from selected shape
   useEffect(() => {

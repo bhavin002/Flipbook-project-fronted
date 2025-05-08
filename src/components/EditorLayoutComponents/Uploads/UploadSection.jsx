@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { MediaImageSkeleton } from "@/utils/Skeleton";
 import { v4 as uuid } from "uuid";
+import useWindowWidth from "@/hooks/use-window-width";
 
 export default function UploadSection({
   mediaFiles = [],
@@ -35,6 +36,7 @@ export default function UploadSection({
   const [isMoving, setIsMoving] = useState(false);
   const [isCopying, setIsCopying] = useState(false);
   const [isMoveDropdownOpen, setIsMoveDropdownOpen] = useState(false);
+  const windowInnerWidth = useWindowWidth();
   const moveDropdownTriggerRef = useRef(null);
 
   useEffect(() => {
@@ -404,14 +406,6 @@ export default function UploadSection({
         <div
           className="relative w-full"
         >
-          {/* Video Thumbnail */}
-          {/* <video
-            controls={false} // Hide controls for videos
-            className={`w-full rounded-lg ${isFileSelected(media._id) ? 'ring-2 ring-primary' : ''}`}
-          >
-            <source src={media.url} type={media.mediaType} />
-            Your browser does not support the video tag.
-          </video> */}
           <img
             src={media.thumbnailUrl}
             alt={`Upload ${media._id}`}
@@ -485,7 +479,6 @@ export default function UploadSection({
       return (
         <>
           <img
-            // id={`image${index}`}
             src={media.url}
             alt={`Upload ${media._id}`}
             className={`w-full rounded-lg ${isFileSelected(media._id) ? 'ring-2 ring-primary' : ''}`}
@@ -493,14 +486,17 @@ export default function UploadSection({
           <div
             id={`image${index}`}
             className={`drag-mask absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none`}
-
           >
             <img src={media.url} alt="" style={{ width: '100%', height: '100%' }} />
           </div>
         </>
-
       );
     }
+  };
+
+  // Check if an element should be visible - always visible on mobile, otherwise based on hover
+  const isElementVisible = (itemIndex, itemId) => {
+    return windowInnerWidth <= 768 || hoveredImageIndex === itemIndex || activeImageDropdownIndex === itemIndex || isFileSelected(itemId);
   };
 
   return (
@@ -573,48 +569,56 @@ export default function UploadSection({
                     handleImageSelect(item, true);
                     const dragMask = createDynamicDragMask(item, itemIndex);
                     e.dataTransfer.setDragImage(dragMask, 10, 10);
-
                   }}
                   onClick={() => handleImageSelect(item, false)}
                 >
                   {renderMedia(item, itemIndex)}
 
-                  {(hoveredImageIndex === itemIndex || isFileSelected(item._id)) && (
-                    <div
-                      className="absolute top-1 left-1.5"
-                      onClick={(e) => e.stopPropagation()} // Stop click propagation
-                    >
-                      <Checkbox
-                        className="bg-white border-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
-                        checked={isFileSelected(item._id)}
-                        onCheckedChange={(checked) => handleSelectFile(item._id, checked, event)}
-                        onClick={(e) => e.stopPropagation()} // Add another layer of protection
-                      />
-                    </div>
-                  )}
+                  {/* Always show checkbox on mobile, otherwise show on hover or when selected */}
+                  <div
+                    className="absolute top-1 left-1.5"
+                    onClick={(e) => e.stopPropagation()} // Stop click propagation
+                    style={{ display: isElementVisible(itemIndex, item._id) ? 'block' : 'none' }}
+                  >
+                    <Checkbox
+                      className="bg-white border-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
+                      checked={isFileSelected(item._id)}
+                      onCheckedChange={(checked) => handleSelectFile(item._id, checked, event)}
+                      onClick={(e) => e.stopPropagation()} // Add another layer of protection
+                    />
+                  </div>
 
-                  {!hasSelectedFiles && (hoveredImageIndex === itemIndex || activeImageDropdownIndex === itemIndex) && (
+                  {/* Show file type label and dropdown on mobile or when not in selection mode */}
+                  {(!hasSelectedFiles || windowInnerWidth <= 768) && (
                     <>
-                      <div className="absolute left-1 bottom-1 text-center bg-black bg-opacity-70 text-white px-2 py-0.5 rounded-[12px] text-xs font-medium">
+                      {/* Always show file type on mobile, otherwise show on hover */}
+                      <div 
+                        className="absolute left-1 bottom-1 text-center bg-black bg-opacity-70 text-white px-2 py-0.5 rounded-[12px] text-xs font-medium"
+                        style={{ display: isElementVisible(itemIndex, item._id) ? 'block' : 'none' }}
+                      >
                         {item.fileType || 'Image'}
                       </div>
-                      <MediaImageDropDownCom
-                        mediaFile={item}
-                        folders={folders}
-                        currentView={currentView}
-                        currentFolderId={currentFolderId}
-                        selectedFolder={selectedFolder}
-                        setMediaFiles={setMediaFiles}
-                        setSelectedFolderMedia={setSelectedFolderMedia}
-                        isTeamMedia={isTeamMedia}
-                        onOpenChange={(open) => {
-                          if (open) {
-                            handleImageDropdownOpen(itemIndex);
-                          } else {
-                            handleImageDropdownClose();
-                          }
-                        }}
-                      />
+                      
+                      {/* Always show dropdown on mobile, otherwise show on hover */}
+                      <div style={{ display: isElementVisible(itemIndex, item._id) ? 'block' : 'none' }}>
+                        <MediaImageDropDownCom
+                          mediaFile={item}
+                          folders={folders}
+                          currentView={currentView}
+                          currentFolderId={currentFolderId}
+                          selectedFolder={selectedFolder}
+                          setMediaFiles={setMediaFiles}
+                          setSelectedFolderMedia={setSelectedFolderMedia}
+                          isTeamMedia={isTeamMedia}
+                          onOpenChange={(open) => {
+                            if (open) {
+                              handleImageDropdownOpen(itemIndex);
+                            } else {
+                              handleImageDropdownClose();
+                            }
+                          }}
+                        />
+                      </div>
                     </>
                   )}
                 </div>
