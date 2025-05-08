@@ -18,3 +18,13 @@ export const GetFlipbookApi = async (flipbookId) => {
     });
     return response.data;
 }
+
+export const UpdateFlipbookNameApi = async (flipbookId, data) => {
+    const response = await ApiClient().post(`/flipbook/rename-flipbook/${flipbookId}`, data);
+    return response.data;
+}
+
+export const UpdateFlipbookPageDataApi = async (flipbookId, data) => {
+    const response = await ApiClient().put(`/flipbook/edit/${flipbookId}`, data);
+    return response.data;
+}

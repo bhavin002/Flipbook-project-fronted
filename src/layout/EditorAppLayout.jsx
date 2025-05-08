@@ -3,8 +3,7 @@ import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDow
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { CloudUpload, Download, Eye, SlidersHorizontal } from "lucide-react";
+import { Download, Eye, SlidersHorizontal } from "lucide-react";
 import ShareDropDownCom from "@/components/EditorLayoutComponents/ShareDropDownCom";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/utils/AppSidebar";
@@ -12,9 +11,10 @@ import EditorSidebarNavigation from "@/components/EditorLayoutComponents/EditorS
 import BottomEditorPanel from "@/components/EditorLayoutComponents/BottomEditorPanel";
 import ShapeEditorLayout from "@/components/EditorLayoutComponents/Widget/ShapeEditorLayout";
 import BottomShapeEditorLayout from "@/components/EditorLayoutComponents/Widget/BottomShapeEditorLayout";
-import { GetFlipbookApi } from "@/service/flipbook.service";
+import { GetFlipbookApi, UpdateFlipbookPageDataApi } from "@/service/flipbook.service";
 import { toast } from "sonner";
 import useWindowWidth from "@/hooks/use-window-width";
+import EditFlipbookName from "@/utils/EditFlipbookName";
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
@@ -22,17 +22,23 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [selectedShape, setSelectedShape] = useState([]);
     const [currentView, setCurrentView] = useState(null);
+    const [flipbookName, setFlipbookName] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [stageWidth, setStageWidth] = useState(0);
+    const [stageHeight, setStageHeight] = useState(0);
     const windowInnerWidth = useWindowWidth();
     const { id } = useParams();
     const [mainStage, setMainStage] = useState([]);
-    console.log("mainStage ??", mainStage)
     const navigate = useNavigate();
 
     useEffect(() => {
         const getFlipbook = async () => {
             try {
                 const response = await GetFlipbookApi(id);
-                console.log(response.data.pages);
+                console.log("response ??", response);
+                setFlipbookName(response.data.name);
+                setStageWidth(response.data.width);
+                setStageHeight(response.data.height);
                 const validPageData = response.data.pages;
                 setMainStage(validPageData.map(e => JSON.parse(e.pageData)));
             } catch (error) {
@@ -43,6 +49,46 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
             getFlipbook();
         }
     }, [id])
+
+    useEffect(() => {
+        const updatePageData = async () => {
+            try {
+                setIsLoading(true);
+                mainStage.forEach(e => {
+                    e.temp = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
+                });
+                const temp = JSON.parse(JSON.stringify(mainStage))
+                temp.forEach(e => {
+                    e.selectedShapes = [];
+                    console.log(e);
+                    e.shapes = e.temp;
+                    delete e.temp;
+                    e.stageref = null;
+                });
+                await UpdateFlipbookPageDataApi(id, {
+                    width: stageWidth,
+                    height: stageHeight,
+                    pages: temp.map(e => ({
+                        pageData: JSON.stringify(e),
+                    })),
+                });
+            } catch (error) {
+                toast.error("Failed to update page data", {
+                    description: error.message || "Something went wrong"
+                })
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        const interval = setInterval(() => {
+            if (id && mainStage.length > 0) {
+                updatePageData();
+            }
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, [mainStage]);
 
     const [selectedSubMenu, setSelectedSubMenu] = useState(null);
     const [isShapeDrawerOpen, setIsShapeDrawerOpen] = useState(false);
@@ -226,10 +272,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         </div>
                         <div className="relative lg:flex hidden">
                             <div className="flex items-center gap-2">
-                                <Input type="text" placeholder="Flipbook name" className="w-56" />
-                                <Button variant="outline">
-                                    <CloudUpload />
-                                </Button>
+                                <EditFlipbookName isLoading={isLoading} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} />
                             </div>
                         </div>
                         <div className="flex gap-2 items-center">
@@ -257,10 +300,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                     </div>
                     <div className="relative lg:flex px-4">
                         <div className="hidden items-center gap-2 max-lg:flex">
-                            <Input type="text" placeholder="Flipbook name" />
-                            <Button variant="outline">
-                                <CloudUpload />
-                            </Button>
+                            <EditFlipbookName isLoading={isLoading} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} />
                         </div>
                     </div>
                 </header>
