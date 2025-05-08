@@ -186,7 +186,7 @@ const StockPhotosView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selec
 
 const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainStage, selectedIndex, setIsEditorDrawerOpen }) => {
     // Extracted reusable function to handle the image selection logic
-    
+
     const handleImageSelect = async (image, isDragStart = false) => {
         const dimensions = await new Promise((resolve, reject) => {
             const img = new Image();
@@ -224,27 +224,6 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
             const dropX = (groupWidth / 2) / group.scaleX() - (item.attrs.width || 50) / 2;
             const dropY = (groupHeight / 2) / group.scaleY() - (item.attrs.height || 50) / 2;
 
-            let isOverShapeWidget = false;
-            let shapeWidget = null;
-            let shapeWidgetData = [];
-
-            // Check if the drop position overlaps with a shape-widget
-            mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(shape => {
-                if (shape.attrs.title === 'shape-widget') {
-                    const shapeLeft = shape.attrs.x;
-                    const shapeTop = shape.attrs.y;
-                    const shapeRight = shape.attrs.x + (shape.attrs.width * (shape.attrs.scaleX || 1));
-                    const shapeBottom = shape.attrs.y + (shape.attrs.height * (shape.attrs.scaleY || 1));
-
-                    // Check if drop position is within shape-widget bounds
-                    if (dropX >= shapeLeft && dropX <= shapeRight && dropY >= shapeTop && dropY <= shapeBottom) {
-                        isOverShapeWidget = true;
-                        shapeWidget = shape.attrs;
-                        shapeWidgetData = shape.children[0].dataArray;
-                    }
-                }
-            });
-
             // Create new shape at the center of the group
             let newShape = {
                 x: dropX,
@@ -252,56 +231,15 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
                 ...item.attrs,
                 id: uuid()
             };
-
-            // Handle masked image case
-            if (isOverShapeWidget && shapeWidget?.isMasked &&
-                (stage.dragRect.current.htmlType === 'stock-photo' )) {
-                newShape = {
-                    src: newShape.src,
-                    height: Number(shapeWidget.height),
-                    width: Number(shapeWidget.width),
-                    x: shapeWidget.x,
-                    y: shapeWidget.y,
-                    scaleX: shapeWidget.scaleX,
-                    scaleY: shapeWidget.scaleY,
-                    skewX: shapeWidget.skewX,
-                    skewY: shapeWidget.skewY,
-                    title: 'masked-image',
-                    layer: 'masked-image',
-                    htmlType: 'masked-image',
-                    type: 'img',
-                    data: shapeWidget.data,
-                    maskData: shapeWidgetData,
-                    maskType: shapeWidget.maskType,
-                    draggable: true,
-                    visible: true,
-                    id: uuid()
+            // Add the new shape at the center of the group
+            setMainStage(prevState => {
+                const updatedState = [...prevState];
+                updatedState[selectedIndex] = {
+                    ...updatedState[selectedIndex],
+                    shapes: [...updatedState[selectedIndex].shapes, newShape]
                 };
-
-                // Update mainStage by removing the shape-widget and adding the new masked-image
-                mainStage[selectedIndex].selectedShapes = [];
-                setMainStage(prevState => {
-                    const updatedState = [...prevState];
-                    const updatedShapes = updatedState[selectedIndex].shapes.filter(
-                        shape => shape.id !== shapeWidget.id
-                    );
-                    updatedState[selectedIndex] = {
-                        ...updatedState[selectedIndex],
-                        shapes: [...updatedShapes, newShape]
-                    };
-                    return updatedState;
-                });
-            } else {
-                // Add the new shape at the center of the group
-                setMainStage(prevState => {
-                    const updatedState = [...prevState];
-                    updatedState[selectedIndex] = {
-                        ...updatedState[selectedIndex],
-                        shapes: [...updatedState[selectedIndex].shapes, newShape]
-                    };
-                    return updatedState;
-                });
-            }
+                return updatedState;
+            });
 
             // Select the newly added shape
             setTimeout(() => {

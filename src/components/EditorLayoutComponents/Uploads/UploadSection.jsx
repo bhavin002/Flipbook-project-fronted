@@ -232,11 +232,12 @@ export default function UploadSection({
 
   const handleImageSelect = async (media, isDragStart = false) => {
     const mediaSrc = media.mediaType === "video/mp4" ? `${media.thumbnailUrl}` : `${media.url}`
-    // const imgSrc = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(mediaSrc)}`
+    const imgSrc = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(mediaSrc)}`
+
 
     const dimensions = await new Promise((resolve, reject) => {
       const img = new Image();
-      img.src = mediaSrc
+      img.src = imgSrc
       img.onload = () => resolve({ width: img.width, height: img.height });
       img.onerror = () => reject("Error loading image");
     });
@@ -260,13 +261,14 @@ export default function UploadSection({
       width: width,
       height: height,
       type: "img",
-      src: media.url,
+      src: imgSrc,
       visible: true,
       bgImage: media?.thumbnailUrl,
       iconSrc: "/src/assets/icons/PlayVideo.svg",
-      title: media.mediaType === "video/mp4" ? "stock-video" : imageMediaTypes.includes(media.mediaType) ? "stock-photo" : "stock-gif",
+      title: media.mediaType === "video/mp4" ? "stock-video" : imageMediaTypes.includes(media.mediaType) ? "upload-photo" : "stock-gif",
       layer: media.mediaType === "video/mp4" ? "Video widget" : "Image",
-      htmlType: media.mediaType === "video/mp4" ? "stock-video" : imageMediaTypes.includes(media.mediaType) ? "stock-photo" : "stock-gif",
+      htmlType: media.mediaType === "video/mp4" ? "stock-video" : imageMediaTypes.includes(media.mediaType) ? "upload-photo" : "stock-gif",
+      sidebar: "image-action"
     };
 
     if (isDragStart) {
@@ -286,26 +288,26 @@ export default function UploadSection({
       const dropX = (groupWidth / 2) / group.scaleX() - (item.attrs.width || 50) / 2;
       const dropY = (groupHeight / 2) / group.scaleY() - (item.attrs.height || 50) / 2;
 
-      let isOverShapeWidget = false;
-      let shapeWidget = null;
-      let shapeWidgetData = [];
+      // let isOverShapeWidget = false;
+      // let shapeWidget = null;
+      // let shapeWidgetData = [];
 
-      // Check if the drop position overlaps with a shape-widget
-      mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(shape => {
-        if (shape.attrs.title === 'shape-widget') {
-          const shapeLeft = shape.attrs.x;
-          const shapeTop = shape.attrs.y;
-          const shapeRight = shape.attrs.x + (shape.attrs.width * (shape.attrs.scaleX || 1));
-          const shapeBottom = shape.attrs.y + (shape.attrs.height * (shape.attrs.scaleY || 1));
+      // // Check if the drop position overlaps with a shape-widget
+      // mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(shape => {
+      //   if (shape.attrs.title === 'shape-widget') {
+      //     const shapeLeft = shape.attrs.x;
+      //     const shapeTop = shape.attrs.y;
+      //     const shapeRight = shape.attrs.x + (shape.attrs.width * (shape.attrs.scaleX || 1));
+      //     const shapeBottom = shape.attrs.y + (shape.attrs.height * (shape.attrs.scaleY || 1));
 
-          // Check if drop position is within shape-widget bounds
-          if (dropX >= shapeLeft && dropX <= shapeRight && dropY >= shapeTop && dropY <= shapeBottom) {
-            isOverShapeWidget = true;
-            shapeWidget = shape.attrs;
-            shapeWidgetData = shape.children[0].dataArray;
-          }
-        }
-      });
+      //     // Check if drop position is within shape-widget bounds
+      //     if (dropX >= shapeLeft && dropX <= shapeRight && dropY >= shapeTop && dropY <= shapeBottom) {
+      //       isOverShapeWidget = true;
+      //       shapeWidget = shape.attrs;
+      //       shapeWidgetData = shape.children[0].dataArray;
+      //     }
+      //   }
+      // });
 
       // Create new shape at the center of the group
       let newShape = {
@@ -316,44 +318,44 @@ export default function UploadSection({
       };
 
       // Handle masked image case
-      if (isOverShapeWidget && shapeWidget?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo')) {
-        newShape = {
-          src: newShape.src,
-          height: Number(shapeWidget.height),
-          width: Number(shapeWidget.width),
-          x: shapeWidget.x,
-          y: shapeWidget.y,
-          scaleX: shapeWidget.scaleX,
-          scaleY: shapeWidget.scaleY,
-          skewX: shapeWidget.skewX,
-          skewY: shapeWidget.skewY,
-          title: 'masked-image',
-          layer: 'masked-image',
-          htmlType: 'masked-image',
-          type: 'img',
-          data: shapeWidget.data,
-          maskData: shapeWidgetData,
-          maskType: shapeWidget.maskType,
-          draggable: true,
-          visible: true,
-          id: uuid()
-        };
+      // if (isOverShapeWidget && shapeWidget?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo')) {
+      //   newShape = {
+      //     src: newShape.src,
+      //     height: Number(shapeWidget.height),
+      //     width: Number(shapeWidget.width),
+      //     x: shapeWidget.x,
+      //     y: shapeWidget.y,
+      //     scaleX: shapeWidget.scaleX,
+      //     scaleY: shapeWidget.scaleY,
+      //     skewX: shapeWidget.skewX,
+      //     skewY: shapeWidget.skewY,
+      //     title: 'masked-image',
+      //     layer: 'masked-image',
+      //     htmlType: 'masked-image',
+      //     type: 'img',
+      //     data: shapeWidget.data,
+      //     maskData: shapeWidgetData,
+      //     maskType: shapeWidget.maskType,
+      //     draggable: true,
+      //     visible: true,
+      //     id: uuid()
+      //   };
 
-        // Update mainStage by removing the shape-widget and adding the new masked-image
-        mainStage[selectedIndex].selectedShapes = [];
-        console.log("mainstage updateed before")
-        setMainStage(prevState => {
-          const updatedState = [...prevState];
-          const updatedShapes = updatedState[selectedIndex].shapes.filter(
-            shape => shape.id !== shapeWidget.id
-          );
-          updatedState[selectedIndex] = {
-            ...updatedState[selectedIndex],
-            shapes: [...updatedShapes, newShape]
-          };
-          return updatedState;
-        });
-      } else {
+      //   // Update mainStage by removing the shape-widget and adding the new masked-image
+      //   mainStage[selectedIndex].selectedShapes = [];
+      //   console.log("mainstage updateed before")
+      //   setMainStage(prevState => {
+      //     const updatedState = [...prevState];
+      //     const updatedShapes = updatedState[selectedIndex].shapes.filter(
+      //       shape => shape.id !== shapeWidget.id
+      //     );
+      //     updatedState[selectedIndex] = {
+      //       ...updatedState[selectedIndex],
+      //       shapes: [...updatedShapes, newShape]
+      //     };
+      //     return updatedState;
+      //   });
+      // } else {
         // Add the new shape at the center of the group
         setMainStage(prevState => {
           const updatedState = [...prevState];
@@ -363,7 +365,7 @@ export default function UploadSection({
           };
           return updatedState;
         });
-      }
+      // }
 
       // Select the newly added shape
       setTimeout(() => {

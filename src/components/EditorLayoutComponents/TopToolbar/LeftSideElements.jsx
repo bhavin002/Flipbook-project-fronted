@@ -274,6 +274,41 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                     </DropdownMenu>
                 </>}
             </>
+        case 'upload-photo':
+            return <>
+                {selectedShape?.length == 1 && <>
+                    <Button variant="ghost" size="sm" onClick={() => {
+                        setIsShapeDrawerOpen(true)
+                        selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
+                    }}>
+                        Filters
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => {
+                        setIsShapeDrawerOpen(true)
+                        selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style")
+                    }}>
+                        Style
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={handleCrop}>
+                        Crop
+                    </Button>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <Button variant="ghost" size="sm">
+                                Flip
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                            <DropdownMenuItem onClick={() => handleFlip("horizontal")}>
+                                <FlipHorizontal2 /> Flip horizontal
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleFlip("vertical")}>
+                                <FlipVertical2 /> Flip vertical
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </>}
+            </>
         case 'stock-sticker':
             return <>
                 {selectedShape?.length == 1 && <>

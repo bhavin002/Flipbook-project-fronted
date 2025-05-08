@@ -16,6 +16,7 @@ import StockVideo from "./Widget/StockVideo";
 import KonavGif from "./Widget/KonvaGif";
 import MaskedKonvaGif from "./Widget/MaskedKonvaGif";
 import KonvaText from "./Widget/KonvaText";
+import UploadPhoto from "./Widget/UploadPhoto";
 
 export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
@@ -758,11 +759,12 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                     let newShape = null;
 
                     // Handle the drop
-                    if (isOverMaskedImage && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker')) {
+                    if (isOverMaskedImage && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker' || stage.dragRect.current.htmlType === 'upload-photo')) {
                         // Replace the existing masked-image
                         mainStage[selectedIndex].selectedShapes = [];
                         const htmlType = stage.dragRect.current.htmlType;
                         const typeMapping = {
+                            'upload-photo': 'masked-image',
                             'stock-gif': 'masked-gif',
                             'stock-photo': 'masked-image',
                             'stock-sticker': 'masked-sticker'
@@ -794,10 +796,11 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                             };
                             return updatedState;
                         });
-                    } else if (isOverShapeWidget && targetShape?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker')) {
+                    } else if (isOverShapeWidget && targetShape?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker' || stage.dragRect.current.htmlType === 'upload-photo')) {
                         // Create a new masked-image
                         const htmlType = stage.dragRect.current.htmlType;
                         const typeMapping = {
+                            'upload-photo': 'masked-image',
                             'stock-gif': 'masked-gif',
                             'stock-photo': 'masked-image',
                             'stock-sticker': 'masked-sticker'
@@ -920,6 +923,8 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                         return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable setMainStage={setMainStage} selectedIndex={selectedIndex} mainStage={mainStage} mainStageString={mainStageString} setMainStageString={setMainStageString} />;
                                     case 'stock-photo':
                                         return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                    case 'upload-photo':
+                                        return <UploadPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'shape-widget':
                                         return <ShapeMakerForAll onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'link-button':
