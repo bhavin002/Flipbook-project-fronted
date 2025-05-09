@@ -1,14 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CircleCheckBig, CloudUpload, X, Pencil, RefreshCw } from "lucide-react";
+import { CircleCheckBig, X, Pencil, RefreshCw } from "lucide-react";
 import { UpdateFlipbookNameApi } from "@/service/flipbook.service";
 import { toast } from "sonner";
 
 export default function EditFlipbookName({
-    flipbookName, setFlipbookName, flipbookId, isLoading
+    flipbookName, setFlipbookName, flipbookId, isLoading, updatePageData
 }) {
-    console.log("isLoading in EditFlipbookName", isLoading);
     const [isEditing, setIsEditing] = useState(false);
     const [tempName, setTempName] = useState(flipbookName);
     const [isHovering, setIsHovering] = useState(false);
@@ -61,7 +60,7 @@ export default function EditFlipbookName({
                 return <CircleCheckBig size={16} className="text-green-500" />;
             case "upload":
             default:
-                return <CloudUpload size={16} />;
+                return <RefreshCw size={16} />;
         }
     };
 
@@ -118,6 +117,7 @@ export default function EditFlipbookName({
             <Button
                 variant="outline"
                 disabled={isLoading}
+                onClick={updatePageData}
                 className="transition-all duration-200"
             >
                 {renderIcon()}

@@ -28,3 +28,8 @@ export const UpdateFlipbookPageDataApi = async (flipbookId, data) => {
     const response = await ApiClient().put(`/flipbook/edit/${flipbookId}`, data);
     return response.data;
 }
+
+export const GetFlipbooksApi = async () => {
+    const response = await ApiClient().post("/flipbook/get-flipbook");
+    return response.data;
+}

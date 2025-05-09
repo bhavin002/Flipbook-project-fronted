@@ -41,7 +41,7 @@ export default function FlipbookFromScratch() {
 
     const [width, setWidth] = useState(1123);
     const [height, setHeight] = useState(793);
-    const [selectedTemplate, setSelectedTemplate] = useState("Presentation");
+    const [selectedTemplate, setSelectedTemplate] = useState("Tabloid");
 
     const handleTemplateSelect = (template) => {
         setSelectedTemplate(template.name);

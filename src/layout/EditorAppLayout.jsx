@@ -50,37 +50,37 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
         }
     }, [id])
 
-    useEffect(() => {
-        const updatePageData = async () => {
-            try {
-                setIsLoading(true);
-                mainStage.forEach(e => {
-                    e.temp = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
-                });
-                const temp = JSON.parse(JSON.stringify(mainStage))
-                temp.forEach(e => {
-                    e.selectedShapes = [];
-                    console.log(e);
-                    e.shapes = e.temp;
-                    delete e.temp;
-                    e.stageref = null;
-                });
-                await UpdateFlipbookPageDataApi(id, {
-                    width: stageWidth,
-                    height: stageHeight,
-                    pages: temp.map(e => ({
-                        pageData: JSON.stringify(e),
-                    })),
-                });
-            } catch (error) {
-                toast.error("Failed to update page data", {
-                    description: error.message || "Something went wrong"
-                })
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    const updatePageData = async () => {
+        try {
+            setIsLoading(true);
+            mainStage.forEach(e => {
+                e.temp = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
+            });
+            const temp = JSON.parse(JSON.stringify(mainStage))
+            temp.forEach(e => {
+                e.selectedShapes = [];
+                console.log(e);
+                e.shapes = e.temp;
+                delete e.temp;
+                e.stageref = null;
+            });
+            await UpdateFlipbookPageDataApi(id, {
+                width: stageWidth,
+                height: stageHeight,
+                pages: temp.map(e => ({
+                    pageData: JSON.stringify(e),
+                })),
+            });
+        } catch (error) {
+            toast.error("Failed to update page data", {
+                description: error.message || "Something went wrong"
+            })
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
+    useEffect(() => {
         const interval = setInterval(() => {
             if (id && mainStage.length > 0) {
                 updatePageData();
@@ -272,7 +272,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         </div>
                         <div className="relative lg:flex hidden">
                             <div className="flex items-center gap-2">
-                                <EditFlipbookName isLoading={isLoading} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} />
+                                <EditFlipbookName isLoading={isLoading} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} updatePageData={updatePageData} />
                             </div>
                         </div>
                         <div className="flex gap-2 items-center">
@@ -300,7 +300,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                     </div>
                     <div className="relative lg:flex px-4">
                         <div className="hidden items-center gap-2 max-lg:flex">
-                            <EditFlipbookName isLoading={isLoading} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} />
+                            <EditFlipbookName isLoading={isLoading} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} updatePageData={updatePageData} />
                         </div>
                     </div>
                 </header>
