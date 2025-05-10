@@ -17,7 +17,7 @@ import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import PublishFlipbookDialog from "./PublishFlipbookDialog";
 import { useNavigate } from "react-router-dom";
 
-export default function MyFlipbookDropdown({ status }) {
+export default function MyFlipbookDropdown({ status, flipbookId }) {
     const [isSaveAsTemplateModalOpen, setIsSaveAsTemplateModalOpen] = useState(false);
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -28,6 +28,7 @@ export default function MyFlipbookDropdown({ status }) {
     const navigate = useNavigate();
 
     const handleItemClick = (action) => {
+        console.log("Action:", action);
         if (action === 'saveAsTemplate') {
             setIsSaveAsTemplateModalOpen(true);
         } else if (action === 'rename') {
@@ -42,13 +43,16 @@ export default function MyFlipbookDropdown({ status }) {
             setIsTrashModalOpen(true);
         } else if (action === 'publish') {
             setIsPublishModalOpen(true);
-        }else if (action === "stats"){
-            navigate("/stats/sd2112wdwd1d")
-        }else if (action === "embed"){
-            navigate("/embed/sd2112wdwd1d")
-        }else if (action === "trackableLinks"){
-            navigate("/trackable-links/sd2112wdwd1d")
-        } else {
+        } else if (action === "stats") {
+            navigate(`/stats/${flipbookId}`)
+        } else if (action === "embed") {
+            navigate(`/embed/${flipbookId}`)
+        } else if (action === "trackableLinks") {
+            navigate(`/trackable-links/${flipbookId}`)
+        } else if (action === "edit") {
+            navigate(`/editor/${flipbookId}`)
+        }
+        else {
             console.error("Invalid action:", action);
         }
     };
@@ -56,7 +60,7 @@ export default function MyFlipbookDropdown({ status }) {
     const getMenuItems = () => {
         const publishedItems = (
             <>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleItemClick('edit')}>
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -101,7 +105,7 @@ export default function MyFlipbookDropdown({ status }) {
 
         const draftItems = (
             <>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleItemClick('edit')}>
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -154,7 +158,7 @@ export default function MyFlipbookDropdown({ status }) {
                     <Send className="mr-2 h-4 w-4" /> Publish
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleItemClick('edit')}>
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
@@ -204,7 +208,7 @@ export default function MyFlipbookDropdown({ status }) {
         <>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <button className='absolute top-3 right-3 bg-white/50 p-1.5 rounded-full shadow-sm cursor-pointer hover:bg-violet-50/50 hover:scale-110 transition-all duration-200 hover:text-violet-700'>
+                    <button className='absolute top-3 right-3 bg-primary p-1.5 rounded-full shadow-sm cursor-pointer text-white hover:scale-110 transition-all duration-200'>
                         <EllipsisVertical className="w-4 h-4" />
                     </button>
                 </DropdownMenuTrigger>

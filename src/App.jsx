@@ -49,6 +49,9 @@ import FlipbookFromScratch from "./pages/FlipbookFromScratch";
 import ScratchAppLayout from "./layout/ScratchAppLayout";
 import { Loader } from "./components/ui/loader";
 import { useApiCounterStore } from "./utils/ApiClient";
+import FolderFlipbooks from "./pages/FolderFlipbooks";
+import SharedWithMe from "./pages/SharedWithMe";
+import Trash from "./pages/Trash";
 
 // Route configurations
 const brandingRoutes = [
@@ -101,6 +104,11 @@ export default function App() {
           </PrivateRoute>
         }>
           <Route index element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
+          <Route path="folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
+          <Route path="template" element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
+          <Route path="template/folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
+          <Route path="shared-with-me" element={<SharedWithMe isSidebarOpen={isSidebarOpen} />} />
+          <Route path="trash" element={<Trash isSidebarOpen={isSidebarOpen} />} />
         </Route>
 
         <Route path="/automation" element={

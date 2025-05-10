@@ -10,17 +10,14 @@ import CreateFolderDialog from "../Sidebar/Home/CreateFolderDialog";
 import { GetWorkspaceFoldersApi } from "@/service/folder.service";
 import { FolderSkeleton } from "@/utils/Skeleton";
 import { FolderPlus } from "lucide-react";
-import {
-  SidebarMenuButton,
-  SidebarMenuSub,
-} from "@/components/ui/sidebar";
-
-
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function HomeDrawerPanel() {
   const [isLoading, setIsLoading] = useState(false);
   const [folders, setFolders] = useState([]);
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const getFolders = async () => {
     setIsLoading(true);
@@ -42,13 +39,57 @@ export default function HomeDrawerPanel() {
 
   const sidebarSections = getData('sidebarSections');
 
-  const [selectedItem, setSelectedItem] = useState({
-    sectionId: "flipbooks-team",
-    folderId: null
-  });
+  // Detect current section and folder based on URL path
+  const detectCurrentSelection = () => {
+    const path = location.pathname;
+    
+    // Extract folder ID if present in the path
+    const folderIdMatch = path.match(/\/folder\/([^/]+)/);
+    const folderId = folderIdMatch ? folderIdMatch[1] : null;
+    
+    if (path.includes('/myflipbooks/template/folder/')) {
+      return { sectionId: "template-team", folderId };
+    } else if (path.includes('/myflipbooks/folder/')) {
+      return { sectionId: "flipbooks-team", folderId };
+    } else if (path.includes('/myflipbooks/template')) {
+      return { sectionId: "template-team", folderId: null };
+    } else if (path.includes('/myflipbooks/shared-with-me')) {
+      return { sectionId: "share-with-me", folderId: null };
+    } else if (path.includes('/myflipbooks/trash')) {
+      return { sectionId: "trash", folderId: null };
+    } else if (path.includes('/myflipbooks')) {
+      return { sectionId: "flipbooks-team", folderId: null };
+    }
+    
+    return { sectionId: "flipbooks-team", folderId: null }; // Default
+  };
+
+  const [selectedItem, setSelectedItem] = useState(detectCurrentSelection());
+
+  // Update selected item when URL changes
+  useEffect(() => {
+    const currentSelection = detectCurrentSelection();
+    setSelectedItem(currentSelection);
+  }, [location.pathname]);
 
   const handleItemSelect = (sectionId, folderId = null) => {
     setSelectedItem({ sectionId, folderId });
+
+    if (folderId) {
+      if (sectionId === "template-team") {
+        navigate(`/myflipbooks/template/folder/${folderId}`);
+      } else {
+        navigate(`/myflipbooks/folder/${folderId}`);
+      }
+    } else if (sectionId === "flipbooks-team") {
+      navigate("/myflipbooks");
+    } else if (sectionId === "template-team") {
+      navigate("/myflipbooks/template");
+    } else if (sectionId === "share-with-me") {
+      navigate("/myflipbooks/shared-with-me");
+    } else if (sectionId === "trash") {
+      navigate("/myflipbooks/trash");
+    }
   };
 
   const handleFolderRenamed = (updatedFolder) => {
@@ -69,6 +110,13 @@ export default function HomeDrawerPanel() {
         ...selectedItem,
         folderId: null
       });
+      
+      // Navigate back to root based on current section
+      if (selectedItem.sectionId === "template-team") {
+        navigate("/myflipbooks/template");
+      } else {
+        navigate("/myflipbooks");
+      }
     }
   };
 
@@ -142,40 +190,6 @@ export default function HomeDrawerPanel() {
                           </div>
                         </MenuButton>
                       </CollapsibleTrigger>
-                      {/* <CollapsibleContent>
-                        <SidebarMenuSub>
-                          <div className="max-h-[150px] overflow-y-auto">
-                            {isLoading ? (
-                              <div className="mt-1">
-                                {Array(3).fill().map((_, index) => (
-                                  <FolderSkeleton key={`skeleton-${index}`} />
-                                ))}
-                              </div>
-                            ) : (
-                              folderData.length > 0 ? folderData.map(folder => (
-                                <SidebarMenuButton
-                                  key={folder._id}
-                                  isActive={selectedItem.folderId === folder._id}
-                                  onClick={() => handleItemSelect(section.id, folder._id)}
-                                >
-                                  <Folder />
-                                  <div className="flex items-center justify-between w-full">
-                                    <p className="truncate text-xs w-[110px]">{folder.name}</p>
-                                    <FolderDropdown
-                                      folder={folder}
-                                      onFolderRenamed={handleFolderRenamed}
-                                      onFolderDeleted={handleFolderDeleted}
-                                    />
-                                  </div>
-                                </SidebarMenuButton>
-                              )) : (
-                                <p className="text-white text-xs py-2 px-3 text-center">No folders found</p>
-                              )
-                            )}
-                          </div>
-
-                        </SidebarMenuSub>
-                      </CollapsibleContent> */}
                       <CollapsibleContent>
                         <div className="pl-6 mt-1 space-y-1">
                           {isLoading ? (
@@ -206,8 +220,7 @@ export default function HomeDrawerPanel() {
                             )) : (
                               <p className="text-white text-xs py-2 px-3 text-center">No folders found</p>
                             )
-                          )
-                          }
+                          )}
                         </div>
                       </CollapsibleContent>
                     </Collapsible>
@@ -243,12 +256,14 @@ export default function HomeDrawerPanel() {
           <div className="space-y-2 mt-2">
             <Button
               className="w-full bg-violet-700"
+              onClick={() => navigate('/settings/teammates')}
             >
               <Users className="h-4 w-4 mr-2" />
               Invite teammates
             </Button>
             <Button
               className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-600 hover:to-indigo-700"
+              onClick={() => navigate('/settings/billing/subscription')}
             >
               <Crown className="h-4 w-4 mr-2" />Upgrade
             </Button>

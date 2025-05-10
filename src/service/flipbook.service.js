@@ -1,4 +1,5 @@
 import ApiClient from "@/utils/ApiClient";
+import { flipbookType } from "@/utils/enum";
 
 export const GetPageLayoutsApi = async () => {
     const response = await ApiClient().get("/page-layout/get", {
@@ -29,7 +30,12 @@ export const UpdateFlipbookPageDataApi = async (flipbookId, data) => {
     return response.data;
 }
 
-export const GetFlipbooksApi = async () => {
-    const response = await ApiClient().post("/flipbook/get-flipbook");
+export const GetFlipbooksApi = async (data) => {
+    const response = await ApiClient().post("/flipbook/get-flipbook", data);
+    return response.data;
+}
+
+export const GetFolderFlipbooksApi = async (folderId) => {
+    const response = await ApiClient().get(`/flipbook/get-folder-flipbook?flipbookType=${flipbookType.FLIPBOOK}&folderId=${folderId}`);
     return response.data;
 }
