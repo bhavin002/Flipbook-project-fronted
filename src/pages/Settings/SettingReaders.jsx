@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from '@/components/ui/switch';
 import {
-    Info
+    Info,
+    Search
 } from "lucide-react";
 import {
     Tooltip,
@@ -10,25 +11,66 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import InviteReaderDialog from "../../components/AppLayoutComponents/Sidebar/Setting/Readers/InviteReaderDialog"
-import { useState } from 'react';
-import { Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
-import { getData } from '@/utils/datas';
 import ReadersTable from "../../components/AppLayoutComponents/Sidebar/Setting/Readers/ReadersTable"
 import TablePagination from "@/utils/TablePagination";
 import { Label } from "@/components/ui/label";
+import { GetWorkspaceReadersApi, ResendReaderTokenApi } from "@/service/workspace.reader.service";
+import { toast } from "sonner";
+import ConfirmationDialog from "@/utils/ConfirmationDialog";
+import { DeleteReadersApi } from "@/service/workspace.reader.service";
 
 export default function SettingReaders() {
     const [selectedReaders, setSelectedReaders] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+    const [readers, setReaders] = useState([]);
+    const [resendingId, setResendingId] = useState(null);
+    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+    const [isDeletingReaders, setIsDeletingReaders] = useState(false);
+
+    const fetchReaders = async () => {
+        try {
+            setIsLoading(true);
+            const response = await GetWorkspaceReadersApi();
+            setReaders(response.data);
+        } catch (error) {
+            toast.error("Failed to fetch readers", {
+                description: error.message || "Oops! Something went wrong.",
+            });
+            setReaders([]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchReaders();
+    }, []);
+
+    const handleResendInvitation = async (readerId) => {
+        try {
+            setResendingId(readerId);
+            const response = await ResendReaderTokenApi(readerId);
+            toast.success("Invitation resent", {
+                description: response.message
+            });
+        } catch (error) {
+            toast.error("Failed to resend invitation", {
+                description: error.message || "Oops! Something went wrong.",
+            });
+        } finally {
+            setResendingId(null);
+        }
+    };
+
     const recordsPerPage = 5;
 
-    const readers = getData('readers');
-
-    const filteredReaders = readers.filter(teammate =>
-        teammate.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        teammate.status.toLowerCase().includes(searchQuery.toLowerCase())
+    const filteredReaders = readers?.filter(reader =>
+        reader.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (reader.isAccepted ? "active" : "pending").toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const indexOfLastRecord = currentPage * recordsPerPage;
@@ -38,25 +80,25 @@ export default function SettingReaders() {
 
     const toggleSelect = (id) => {
         if (selectedReaders.includes(id)) {
-            setSelectedReaders(selectedReaders.filter(teamId => teamId !== id));
+            setSelectedReaders(selectedReaders.filter(readerId => readerId !== id));
         } else {
             setSelectedReaders([...selectedReaders, id]);
         }
     };
 
-    const toggleSelectAll = (currentTeammateIds) => {
-        const allCurrentSelected = currentTeammateIds.every(id => selectedReaders.includes(id));
+    const toggleSelectAll = (currentReaderIds) => {
+        const allCurrentSelected = currentReaderIds.every(id => selectedReaders.includes(id));
 
         if (allCurrentSelected) {
-            setSelectedReaders(selectedReaders.filter(id => !currentTeammateIds.includes(id)));
+            setSelectedReaders(selectedReaders.filter(id => !currentReaderIds.includes(id)));
         } else {
-            const newSelectedTeammates = [...selectedReaders];
-            currentTeammateIds.forEach(id => {
-                if (!newSelectedTeammates.includes(id)) {
-                    newSelectedTeammates.push(id);
+            const newSelectedReaders = [...selectedReaders];
+            currentReaderIds.forEach(id => {
+                if (!newSelectedReaders.includes(id)) {
+                    newSelectedReaders.push(id);
                 }
             });
-            setSelectedReaders(newSelectedTeammates);
+            setSelectedReaders(newSelectedReaders);
         }
     };
 
@@ -66,16 +108,47 @@ export default function SettingReaders() {
         }
     };
 
-    const deleteSelectedTeammates = () => {
-        setSelectedReaders([]);
+    const deleteSelectedReaders = () => {
+        if (selectedReaders.length > 0) {
+            setIsDeleteConfirmOpen(true);
+        }
     };
+
+    const handleDeleteConfirmation = async (confirmed) => {
+        if (confirmed) {
+            setIsDeletingReaders(true);
+            try {
+                const response = await DeleteReadersApi({
+                    readerIds: selectedReaders
+                });
+
+                setReaders(readers.filter(reader => !selectedReaders.includes(reader._id)));
+
+                setSelectedReaders([]);
+
+                toast.success("Readers deleted", {
+                    description: response.message || "Selected readers have been removed successfully."
+                });
+            } catch (error) {
+                toast.error("Failed to delete readers", {
+                    description: error.message || "Something went wrong."
+                });
+            } finally {
+                setIsDeletingReaders(false);
+                setIsDeleteConfirmOpen(false);
+            }
+        } else {
+            setIsDeleteConfirmOpen(false);
+        }
+    };
+
     return (
         <div className="p-6 max-w-[100vw] overflow-auto space-y-4">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Readers</h1>
                 <p className="text-gray-500">Here you can add or remove account readers.</p>
             </div>
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>Show folders to your readers</CardTitle>
                 </CardHeader>
@@ -102,12 +175,12 @@ export default function SettingReaders() {
                     </div>
                 </CardContent>
             </Card>
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>Manage your readers</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <InviteReaderDialog />
+                    <InviteReaderDialog setReaders={setReaders} />
                     <div className="mt-8">
                         <div className="flex justify-between mb-4 gap-4">
                             <h2 className="text-lg font-medium w-full">Readers ({filteredReaders.length})</h2>
@@ -130,24 +203,51 @@ export default function SettingReaders() {
                         </div>
 
                         <ReadersTable
-                            currentReaders={currentReaders}
+                            currentReaders={currentReaders.map(reader => ({
+                                id: reader._id,
+                                email: reader.email,
+                                status: reader.isAccepted ? "Active" : "Pending"
+                            }))}
                             selectedReaders={selectedReaders}
                             onToggleSelect={toggleSelect}
                             onToggleSelectAll={toggleSelectAll}
-                            onDeleteSelected={deleteSelectedTeammates}
+                            onDeleteSelected={deleteSelectedReaders}
+                            isLoading={isLoading}
+                            resendingId={resendingId}
+                            onResendInvitation={handleResendInvitation}
                         />
 
-                        <TablePagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onChangePage={changePage}
-                        />
-                        <div className="text-sm text-gray-500 mt-4 text-center">
-                            Showing {indexOfFirstRecord + 1}-{Math.min(indexOfLastRecord, filteredReaders.length)} of {filteredReaders.length} readers
-                        </div>
+                        {!isLoading && readers.length > 0 && (
+                            <>
+                                <TablePagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    onChangePage={changePage}
+                                />
+                                <div className="text-sm text-gray-500 mt-4 text-center">
+                                    Showing {indexOfFirstRecord + 1}-{Math.min(indexOfLastRecord, filteredReaders.length)} of {filteredReaders.length} readers
+                                </div>
+                            </>
+                        )}
+
+                        {!isLoading && readers.length === 0 && (
+                            <div className="text-center py-8 border rounded-lg">
+                                <p className="text-gray-500">No readers found. Invite readers to get started.</p>
+                            </div>
+                        )}
                     </div>
                 </CardContent>
             </Card>
+
+            <ConfirmationDialog
+                isConfirmModalOpen={isDeleteConfirmOpen}
+                setIsConfirmModalOpen={setIsDeleteConfirmOpen}
+                title="Delete readers"
+                description={`Are you sure you want to delete ${selectedReaders.length} ${selectedReaders.length === 1 ? 'reader' : 'readers'}?`}
+                isLoading={isDeletingReaders}
+                onConfirm={() => handleDeleteConfirmation(true)}
+                onCancel={() => handleDeleteConfirmation(false)}
+            />
         </div>
     )
 }
