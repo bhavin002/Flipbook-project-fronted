@@ -12,7 +12,7 @@ import { useState } from 'react';
 import RenameFolderDialog from './RenameFolderDialog';
 import GetShareLink from './GetShareLink';
 import ConfirmationDialog from '../../../../utils/ConfirmationDialog';
-import { DeleteWorkspaceFolderApi } from '@/service/folder.service';
+import { MoveToTrashWorkspaceFolderApi } from '@/service/folder.service';
 import { toast } from 'sonner';
 
 export default function FolderDropdown({ folder, onFolderRenamed, onFolderDeleted }) {
@@ -48,7 +48,7 @@ export default function FolderDropdown({ folder, onFolderRenamed, onFolderDelete
         if (confirmed) {
             setIsLoading(true);
             try {
-                const response = await DeleteWorkspaceFolderApi(folder._id);
+                const response = await MoveToTrashWorkspaceFolderApi(folder._id);
                 onFolderDeleted(folder._id);
                 toast.success("Folder delete", {
                     description: response.message

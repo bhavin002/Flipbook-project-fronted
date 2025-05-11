@@ -52,6 +52,7 @@ import { useApiCounterStore } from "./utils/ApiClient";
 import FolderFlipbooks from "./pages/FolderFlipbooks";
 import SharedWithMe from "./pages/SharedWithMe";
 import Trash from "./pages/Trash";
+import { FolderProvider } from "./context/FolderContext";
 
 // Route configurations
 const brandingRoutes = [
@@ -85,6 +86,7 @@ export default function App() {
 
   return (
     <AuthProvider>
+      <FolderProvider>
       {apiCounter > 0 && <Loader />}
       <Routes>
         {/* Public Auth routes */}
@@ -245,6 +247,7 @@ export default function App() {
           <Route index element={<Editor />} />
         </Route>
       </Routes>
+      </FolderProvider>
     </AuthProvider>
   );
 }

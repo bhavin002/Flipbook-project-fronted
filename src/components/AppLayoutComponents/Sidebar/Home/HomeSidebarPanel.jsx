@@ -27,33 +27,40 @@ import { Separator } from "@/components/ui/separator"
 import CreateFolderDialog from "./CreateFolderDialog";
 import FolderDropdown from "./FolderDropdown";
 import { getData } from "@/utils/datas";
-import { GetWorkspaceFoldersApi } from "@/service/folder.service";
-import { toast } from "sonner";
 import { FolderSkeleton } from "@/utils/Skeleton";
+import { triggerTrashRefresh } from "@/pages/Trash"
+import { useFolders } from "@/context/FolderContext"
+
+// New event for refreshing sidebar when folders are recovered
+export const refreshSidebarEvent = new CustomEvent('refreshSidebar');
+
+export function triggerSidebarRefresh() {
+    window.dispatchEvent(refreshSidebarEvent);
+}
 
 export default function HomeSidebarPanel() {
-    const [isLoading, setIsLoading] = useState(false);
-    const [folders, setFolders] = useState([]);
     const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
+    const [refreshCounter, setRefreshCounter] = useState(0);
     const navigate = useNavigate();
     const location = useLocation();
 
-    const getFolders = async () => {
-        setIsLoading(true);
-        try {
-            const response = await GetWorkspaceFoldersApi();
-            setFolders(response.data);
-        } catch (error) {
-            toast.error("Folder fetch failed", {
-                description: error.message || "Oops! Something went wrong.",
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    }
+    const { folders, isLoading, refreshFolders, updateFolder, removeFolder, addFolder } = useFolders();
 
     useEffect(() => {
-        getFolders();
+        refreshFolders();
+    }, [refreshCounter]);
+
+    // Listen for the refresh event
+    useEffect(() => {
+        const handleRefreshEvent = () => {
+            setRefreshCounter(prev => prev + 1);
+        };
+
+        window.addEventListener('refreshSidebar', handleRefreshEvent);
+
+        return () => {
+            window.removeEventListener('refreshSidebar', handleRefreshEvent);
+        };
     }, []);
 
     const sidebarSections = getData('sidebarSections');
@@ -61,11 +68,11 @@ export default function HomeSidebarPanel() {
     // Detect current section and folder based on URL path
     const detectCurrentSelection = () => {
         const path = location.pathname;
-        
+
         // Extract folder ID if present in the path
         const folderIdMatch = path.match(/\/folder\/([^/]+)/);
         const folderId = folderIdMatch ? folderIdMatch[1] : null;
-        
+
         if (path.includes('/myflipbooks/template/folder/')) {
             return { sectionId: "template-team", folderId };
         } else if (path.includes('/myflipbooks/folder/')) {
@@ -79,7 +86,7 @@ export default function HomeSidebarPanel() {
         } else if (path.includes('/myflipbooks')) {
             return { sectionId: "flipbooks-team", folderId: null };
         }
-        
+
         return { sectionId: "flipbooks-team", folderId: null }; // Default
     };
 
@@ -93,7 +100,7 @@ export default function HomeSidebarPanel() {
 
     const handleItemSelect = (sectionId, folderId = null) => {
         setSelectedItem({ sectionId, folderId });
-        
+
         if (folderId) {
             if (sectionId === "template-team") {
                 navigate(`/myflipbooks/template/folder/${folderId}`);
@@ -112,25 +119,21 @@ export default function HomeSidebarPanel() {
     };
 
     const handleFolderRenamed = (updatedFolder) => {
-        setFolders(prevFolders =>
-            prevFolders.map(folder =>
-                folder._id === updatedFolder._id ? updatedFolder : folder
-            )
-        );
+        updateFolder(updatedFolder);
     };
 
     const handleFolderDeleted = (folderId) => {
-        setFolders(prevFolders =>
-            prevFolders.filter(folder => folder._id !== folderId)
-        );
+        removeFolder(folderId);
+
+        if (location.pathname === "/myflipbooks/trash") {
+            triggerTrashRefresh();
+        }
 
         if (selectedItem.folderId === folderId) {
             setSelectedItem({
                 ...selectedItem,
                 folderId: null
             });
-            
-            // Navigate back to root based on current section
             if (selectedItem.sectionId === "template-team") {
                 navigate("/myflipbooks/template");
             } else {
@@ -293,7 +296,7 @@ export default function HomeSidebarPanel() {
                 setIsCreateFolderModalOpen={setIsCreateFolderModalOpen}
                 folderScope={folderScope}
                 onFolderCreated={(folder) => {
-                    setFolders(prevFolders => [...prevFolders, folder]);
+                    addFolder(folder);
                 }}
             />
         </>

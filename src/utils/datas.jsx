@@ -141,6 +141,11 @@ const publishedButtons = [
     { icon: Share2, title: "Share", value: "share", color: "text-green-600", bg: "bg-green-50", hover: "hover:bg-green-100" },
 ];
 
+const templateButtons = [
+    { icon: LayoutPanelLeft, title: "Use template", value: "use-template", color: "text-blue-600", bg: "bg-blue-50", hover: "hover:bg-blue-100" },
+    { icon: Pencil, title: "Edit", value: "edit", color: "text-amber-600", bg: "bg-amber-50", hover: "hover:bg-amber-100" },
+];
+
 const sidebarSections = [
     {
         id: 'flipbooks-team',
@@ -3290,6 +3295,8 @@ export function getData(dataType) {
             return unpublishedButtons;
         case 'publishedButtons':
             return publishedButtons;
+        case 'templateButtons':
+            return templateButtons;
         case 'sidebarSections':
             return sidebarSections;
         case 'downloadOptions':

@@ -4,10 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export const ZeroState = ({
     title = "No items found",
-    description = "Get started by creating your first item",
-    actionLabel = "Create New",
-    onActionClick,
-    hideAction = false
+    description = "Get started by creating your first item"
 }) => {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -87,16 +84,6 @@ export const ZeroState = ({
                     >
                         {description}
                     </motion.p>
-
-                    {!hideAction && (
-                        <motion.div variants={itemVariants}>
-                            <Button
-                                onClick={onActionClick}
-                            >
-                                {actionLabel}
-                            </Button>
-                        </motion.div>
-                    )}
                 </motion.div>
             )}
         </div>

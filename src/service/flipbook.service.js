@@ -55,7 +55,17 @@ export const MoveToTrashFlipbookApi = async (flipbookId) => {
     return response.data;
 }
 
-export const getTrashFlipbooksApi = async () => {
+export const getTrashedFlipbooksApi = async () => {
     const response = await ApiClient().get(`/flipbook/get-trash-flipbook`);
+    return response.data;
+}
+
+export const DeleteFlipbookApi = async (flipbookId) => {
+    const response = await ApiClient().delete(`/flipbook/delete/${flipbookId}`);
+    return response.data;
+}
+
+export const RecoverFlipbookApi = async (flipbookId) => {
+    const response = await ApiClient().get(`/flipbook/recover-trash-flipbook/${flipbookId}`);
     return response.data;
 }

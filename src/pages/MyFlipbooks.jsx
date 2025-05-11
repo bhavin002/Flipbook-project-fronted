@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import Flipbooks from '@/utils/Flipbooks';
 import { useLocation } from 'react-router-dom';
 import { flipbookType } from '@/utils/enum';
+import ZeroState from '@/utils/ZeroState';
 
 export default function MyFlipbooks({ isSidebarOpen }) {
     const [isLoading, setIsLoading] = useState(true);
@@ -28,7 +29,17 @@ export default function MyFlipbooks({ isSidebarOpen }) {
         }
         getFlipbooks();
     }, [location.pathname])
+
+    if (flipbooks.length === 0) {
+        return (
+            <ZeroState
+                title="Folder is empty"
+                description="Get started on your first flipbook – just click the button below!"
+            />
+        );
+    }
+
     return (
-        <Flipbooks isLoading={isLoading} flipbooks={flipbooks} isSidebarOpen={isSidebarOpen} setFlipbooks={setFlipbooks} />
+        <Flipbooks isLoading={isLoading} flipbooks={flipbooks} isSidebarOpen={isSidebarOpen} setFlipbooks={setFlipbooks} view={isTemplateView ? 'template' : 'flipbook'} />
     );
 }

@@ -1,24 +1,29 @@
 import MyFlipbookDropdown from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/MyFlipbookDropdown'
 import ShareFlipbookDialog from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/ShareFlipbookDialog'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PublishFlipbookDialog from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog'
 import { getData } from '@/utils/datas';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import ZeroState from '@/utils/ZeroState';
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Trash2 } from 'lucide-react';
+import { X, Trash2, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MoveToFolderDropdown from '@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/MoveToFolderDropdown';
 
-export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlipbooks }) {
+export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlipbooks, isTrash = false, isFolder = false, view }) {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [selectedFlipbooks, setSelectedFlipbooks] = useState([]);
     const router = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        setSelectedFlipbooks([]);
+    }, [location.pathname]);
 
     const unpublishedButtons = getData('unpublishedButtons');
     const publishedButtons = getData('publishedButtons');
+    const templateButtons = getData('templateButtons');
 
     const handleItemClick = (action, flipbookId) => {
         if (action === 'share') {
@@ -33,12 +38,18 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
             router(`/customize/${flipbookId}`)
         } else if (action === "edit") {
             router(`/editor/${flipbookId}`)
+        } else if (action === "use-template") {
+            router(`/editor/${flipbookId}`)
         } else {
             console.error("Invalid action:", action);
         }
     };
 
     const getButtonsForStatus = (status) => {
+        if (isTrash) {
+            return [];
+        }
+
         switch (status) {
             case 'draft':
                 return publishedButtons;
@@ -46,8 +57,8 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 return publishedButtons;
             case 'unpublished':
                 return unpublishedButtons;
-            default:
-                return unpublishedButtons;
+            case 'template':
+                return templateButtons;
         }
     };
 
@@ -59,9 +70,9 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 return 'bg-green-100/50 text-green-700';
             case 'unpublished':
                 return 'bg-red-100/50 text-red-700';
-            case 'Template':
+            case 'template':
                 return 'bg-[#ebd6ff] text-[#7a1f5b]';
-            case 'Deleted':
+            case 'deleted':
                 return 'bg-gray-100/50 text-gray-700';
             default:
                 return 'bg-gray-100/50 text-gray-700';
@@ -76,9 +87,9 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 return 'Published';
             case 'unpublished':
                 return 'Not published';
-            case 'Template':
+            case 'template':
                 return 'Template';
-            case 'Deleted':
+            case 'deleted':
                 return 'Deleted';
             default:
                 return 'Unknown';
@@ -137,17 +148,6 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
             );
         }
 
-        if (flipbooks.length === 0) {
-            return (
-                <ZeroState
-                    title="Folder is empty"
-                    description="Get started on your first flipbook – just click the button below!"
-                    actionLabel="From scratch"
-                    onActionClick={() => router('/create')}
-                />
-            );
-        }
-
         return (
             <div className={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 ${isSidebarOpen ? "lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" : "lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"} gap-4 p-6`}>
                 {flipbooks.map((flipbook) => {
@@ -191,7 +191,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                     <h3 className="font-semibold text-violet-900 transition-colors duration-200 hover:text-violet-600">
                                         {flipbook.name}
                                     </h3>
-                                    <MyFlipbookDropdown status={flipbook.status} flipbook={flipbook} setFlipbooks={setFlipbooks} />
+                                    <MyFlipbookDropdown status={flipbook.tag ? flipbook.tag : flipbook.isPublished ? "published" : "unpublished"} flipbook={flipbook} setFlipbooks={setFlipbooks} isTrash={isTrash} />
                                 </div>
 
                                 <p className="text-sm text-violet-600">
@@ -199,7 +199,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                 </p>
 
                                 <div className="flex gap-2 justify-center py-3 flex-wrap">
-                                    {getButtonsForStatus(flipbook.status).map((btn, index) => (
+                                    {getButtonsForStatus(flipbook.tag ? flipbook.tag : flipbook.isPublished ? "published" : "unpublished").map((btn, index) => (
                                         <button
                                             key={index}
                                             className={`p-2 hover:-translate-y-[1px] rounded-lg ${btn.color} ${btn.bg} ${btn.hover} hover:scale-110 transition-all duration-200`}
@@ -240,22 +240,56 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                     <span className="font-medium text-violet-900">({selectedFlipbooks.length}) selected</span>
 
                     <div className="flex items-center gap-3">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={handleDelete}
-                        >
-                            <Trash2 />
-                        </Button>
+                        {
+                            isTrash ? <>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    title="Recover"
+                                    onClick={handleDelete}
+                                >
+                                    <Clock />
+                                </Button>
 
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={clearSelection}
-                        >
-                            <X />
-                        </Button>
-                        <MoveToFolderDropdown clearSelection={clearSelection} />
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    title="Delete forever"
+                                    onClick={handleDelete}
+                                >
+                                    <Trash2 />
+                                </Button>
+
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    title="Clear selection"
+                                    onClick={clearSelection}
+                                >
+                                    <X />
+                                </Button>
+                            </> : <>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    title="Move to trash"
+                                    onClick={handleDelete}
+                                >
+                                    <Trash2 />
+                                </Button>
+
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    title="Clear selection"
+                                    onClick={clearSelection}
+                                >
+                                    <X />
+                                </Button>
+                                <MoveToFolderDropdown clearSelection={clearSelection} view={view} isFolder={isFolder} />
+                            </>
+                        }
+
                     </div>
                 </div>
             )}

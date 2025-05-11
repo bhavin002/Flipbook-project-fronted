@@ -15,7 +15,22 @@ export const RenameWorkspaceFolderApi = async (folderId, data) => {
     return response.data;
 }
 
+export const MoveToTrashWorkspaceFolderApi = async (folderId) => {
+    const response = await ApiClient().get(`/workspace-folder/move-to-trash/${folderId}`);
+    return response.data;
+}
+
+export const getTrashedFoldersApi = async () => {
+    const response = await ApiClient().get(`/workspace-folder/get-trash-folder`);
+    return response.data;
+}
+
 export const DeleteWorkspaceFolderApi = async (folderId) => {
     const response = await ApiClient().delete(`/workspace-folder/delete/${folderId}`);
+    return response.data;
+}
+
+export const RecoverWorkspaceFolderApi = async (folderId) => {
+    const response = await ApiClient().get(`/workspace-folder/recover-trash-folder/${folderId}`);
     return response.data;
 }
