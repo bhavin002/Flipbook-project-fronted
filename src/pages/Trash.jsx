@@ -1,22 +1,17 @@
 import { useState, useEffect } from 'react';
-import { GetFlipbooksApi } from '@/service/flipbook.service';
+import { getTrashFlipbooksApi } from '@/service/flipbook.service';
 import { toast } from 'sonner';
 import Flipbooks from '@/utils/Flipbooks';
-import { useLocation } from 'react-router-dom';
-import { flipbookType } from '@/utils/enum';
 
 export default function Trash({ isSidebarOpen }) {
     const [isLoading, setIsLoading] = useState(true);
     const [flipbooks, setFlipbooks] = useState([]);
-    const location = useLocation();
-
-    const isTemplateView = location.pathname.includes('/template');
 
     useEffect(() => {
         const getFlipbooks = async () => {
             try {
                 setIsLoading(true);
-                const response = isTemplateView ? await GetFlipbooksApi({ type: flipbookType.TEMPLATE }) : await GetFlipbooksApi({ type: flipbookType.FLIPBOOK });
+                const response = await getTrashFlipbooksApi();
                 setFlipbooks(response.data);
             } catch (error) {
                 toast.error("Flipbook fetch failed", {
@@ -27,7 +22,7 @@ export default function Trash({ isSidebarOpen }) {
             }
         }
         getFlipbooks();
-    }, [location.pathname])
+    }, [])
     return (
         <Flipbooks isLoading={isLoading} flipbooks={flipbooks} isSidebarOpen={isSidebarOpen} />
     );

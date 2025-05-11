@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CircleCheckBig, X, Pencil, RefreshCw } from "lucide-react";
-import { UpdateFlipbookNameApi } from "@/service/flipbook.service";
+import { UpdateFlipbookApi } from "@/service/flipbook.service";
 import { toast } from "sonner";
 
 export default function EditFlipbookName({
@@ -30,7 +30,7 @@ export default function EditFlipbookName({
 
     const handleSave = async () => {
         try {
-            const response = await UpdateFlipbookNameApi(flipbookId, { name: tempName });
+            const response = await UpdateFlipbookApi(flipbookId, { name: tempName });
             setFlipbookName(tempName);
             toast.success("Flipbook name updated", {
                 description: response.message || "Flipbook name updated successfully"

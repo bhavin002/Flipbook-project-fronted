@@ -16,8 +16,10 @@ import MoveToWorkspaceDialog from "./MoveToWorkspaceDialog";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import PublishFlipbookDialog from "./PublishFlipbookDialog";
 import { useNavigate } from "react-router-dom";
+import { MakeCopyOfFlipbookApi, MoveToTrashFlipbookApi } from "@/service/flipbook.service";
+import { toast } from "sonner";
 
-export default function MyFlipbookDropdown({ status, flipbookId }) {
+export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks }) {
     const [isSaveAsTemplateModalOpen, setIsSaveAsTemplateModalOpen] = useState(false);
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -25,10 +27,10 @@ export default function MyFlipbookDropdown({ status, flipbookId }) {
     const [isMoveToWorkspaceModalOpen, setIsMoveToWorkspaceModalOpen] = useState(false);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleItemClick = (action) => {
-        console.log("Action:", action);
+    const handleItemClick = async (action) => {
         if (action === 'saveAsTemplate') {
             setIsSaveAsTemplateModalOpen(true);
         } else if (action === 'rename') {
@@ -44,16 +46,50 @@ export default function MyFlipbookDropdown({ status, flipbookId }) {
         } else if (action === 'publish') {
             setIsPublishModalOpen(true);
         } else if (action === "stats") {
-            navigate(`/stats/${flipbookId}`)
+            navigate(`/stats/${flipbook._id}`)
         } else if (action === "embed") {
-            navigate(`/embed/${flipbookId}`)
+            navigate(`/embed/${flipbook._id}`)
         } else if (action === "trackableLinks") {
-            navigate(`/trackable-links/${flipbookId}`)
+            navigate(`/trackable-links/${flipbook._id}`)
         } else if (action === "edit") {
-            navigate(`/editor/${flipbookId}`)
+            navigate(`/editor/${flipbook._id}`)
+        } else if (action === "makeCopy") {
+            try {
+                const response = await MakeCopyOfFlipbookApi(flipbook._id);
+                toast.success("Flipbook copied", {
+                    description: response.message
+                })
+                setFlipbooks(prev => [...prev, response.data]);
+            } catch (error) {
+                toast.error("Failed to copy flipbook", {
+                    description: error.message || "Something went wrong",
+                });
+            }
         }
         else {
             console.error("Invalid action:", action);
+        }
+    };
+
+    const handleDeleteConfirmation = async (confirmed) => {
+        if (confirmed) {
+            setIsLoading(true);
+            try {
+                const response = await MoveToTrashFlipbookApi(flipbook._id);
+                setFlipbooks(prev => prev.filter(item => item._id !== flipbook._id));
+                toast.success("Flipbook moved to trash", {
+                    description: response.message || "The flipbook was successfully moved to trash"
+                });
+                setIsTrashModalOpen(false);
+            } catch (error) {
+                toast.error("Failed to move flipbook to trash", {
+                    description: error.message || "Something went wrong",
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        } else {
+            setIsTrashModalOpen(false);
         }
     };
 
@@ -67,7 +103,7 @@ export default function MyFlipbookDropdown({ status, flipbookId }) {
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
                     <LayoutPanelLeft className="mr-2 h-4 w-4" /> Save as template
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('makeCopy')}>
                     <CopyPlus className="mr-2 h-4 w-4" /> Make a copy
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleItemClick('rename')}>
@@ -116,7 +152,7 @@ export default function MyFlipbookDropdown({ status, flipbookId }) {
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
                     <LayoutPanelLeft className="mr-2 h-4 w-4" /> Save as template
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('makeCopy')}>
                     <CopyPlus className="mr-2 h-4 w-4" /> Make a copy
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleItemClick('rename')}>
@@ -164,7 +200,7 @@ export default function MyFlipbookDropdown({ status, flipbookId }) {
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
                     <LayoutPanelLeft className="mr-2 h-4 w-4" /> Save as template
                 </DropdownMenuItem>
-                <DropdownMenuItem >
+                <DropdownMenuItem onClick={() => handleItemClick('makeCopy')}>
                     <CopyPlus className="mr-2 h-4 w-4" /> Make a copy
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleItemClick('rename')}>
@@ -218,8 +254,8 @@ export default function MyFlipbookDropdown({ status, flipbookId }) {
                     </DropdownMenuGroup>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <SaveAsTemplateDialog isSaveAsTemplateModalOpen={isSaveAsTemplateModalOpen} setIsSaveAsTemplateModalOpen={setIsSaveAsTemplateModalOpen} />
-            <RenameFlipbookDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} />
+            <SaveAsTemplateDialog isSaveAsTemplateModalOpen={isSaveAsTemplateModalOpen} setIsSaveAsTemplateModalOpen={setIsSaveAsTemplateModalOpen} flipbook={flipbook} />
+            <RenameFlipbookDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} flipbook={flipbook} setFlipbooks={setFlipbooks} />
             <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
             <DownloadDialog isDownloadModalOpen={isDownloadModalOpen} setIsDownloadModalOpen={setIsDownloadModalOpen} />
             <MoveToWorkspaceDialog isMoveToWorkspaceModalOpen={isMoveToWorkspaceModalOpen} setIsMoveToWorkspaceModalOpen={setIsMoveToWorkspaceModalOpen} />
@@ -228,6 +264,9 @@ export default function MyFlipbookDropdown({ status, flipbookId }) {
                 setIsConfirmModalOpen={setIsTrashModalOpen}
                 title="Move to Trash"
                 description="Are you sure you want to move this flipbook to Trash?"
+                isLoading={isLoading}
+                onConfirm={() => handleDeleteConfirmation(true)}
+                onCancel={() => handleDeleteConfirmation(false)}
             />
             <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} />
         </>

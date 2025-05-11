@@ -1,17 +1,17 @@
 import MyFlipbookDropdown from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/MyFlipbookDropdown'
 import ShareFlipbookDialog from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/ShareFlipbookDialog'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import PublishFlipbookDialog from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog'
 import { getData } from '@/utils/datas';
 import { useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import ZeroState from '@/utils/ZeroState';
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Trash2, FolderInput } from 'lucide-react';
+import { X, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MoveToFolderDropdown from '@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/MoveToFolderDropdown';
 
-export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen }) {
+export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlipbooks }) {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [selectedFlipbooks, setSelectedFlipbooks] = useState([]);
@@ -59,6 +59,10 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen }) {
                 return 'bg-green-100/50 text-green-700';
             case 'unpublished':
                 return 'bg-red-100/50 text-red-700';
+            case 'Template':
+                return 'bg-[#ebd6ff] text-[#7a1f5b]';
+            case 'Deleted':
+                return 'bg-gray-100/50 text-gray-700';
             default:
                 return 'bg-gray-100/50 text-gray-700';
         }
@@ -72,6 +76,10 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen }) {
                 return 'Published';
             case 'unpublished':
                 return 'Not published';
+            case 'Template':
+                return 'Template';
+            case 'Deleted':
+                return 'Deleted';
             default:
                 return 'Unknown';
         }
@@ -175,19 +183,19 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen }) {
                             </div>
 
                             <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white">
-                                <span className={`text-xs font-medium px-2 py-0.5 rounded-sm inline-flex items-center ${getStatusBadgeStyle(flipbook.isPublished ? "published" : "unpublished")}`}>
+                                <span className={`text-xs font-medium px-2 py-0.5 rounded-sm inline-flex items-center ${getStatusBadgeStyle(flipbook.tag ? flipbook.tag : flipbook.isPublished ? "published" : "unpublished")}`}>
                                     <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-70"></span>
-                                    {getStatusDisplayText(flipbook.isPublished ? "published" : "unpublished")}
+                                    {getStatusDisplayText(flipbook.tag ? flipbook.tag : flipbook.isPublished ? "published" : "unpublished")}
                                 </span>
                                 <div className="flex items-center justify-between">
                                     <h3 className="font-semibold text-violet-900 transition-colors duration-200 hover:text-violet-600">
                                         {flipbook.name}
                                     </h3>
-                                    <MyFlipbookDropdown status={flipbook.status} flipbookId={flipbook._id} />
+                                    <MyFlipbookDropdown status={flipbook.status} flipbook={flipbook} setFlipbooks={setFlipbooks} />
                                 </div>
 
                                 <p className="text-sm text-violet-600">
-                                    Created: {format(flipbook.createdAt, "MMM d, yyyy")}
+                                    Created: {format(flipbook.createdAt, "MMM d, yyyy")} by {flipbook.createdBy.firstName} {flipbook.createdBy.lastName}
                                 </p>
 
                                 <div className="flex gap-2 justify-center py-3 flex-wrap">

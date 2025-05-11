@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -20,6 +20,12 @@ export default function RenameFolderDialog({
 }) {
     const [newFolderName, setNewFolderName] = useState(folder?.name || "");
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (isRenameModalOpen && folder) {
+            setNewFolderName(folder.name || "");
+        }
+    }, [isRenameModalOpen]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -70,7 +76,7 @@ export default function RenameFolderDialog({
                         >
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={isLoading}>
+                        <Button type="submit" disabled={isLoading || !newFolderName.trim()}>
                             {
                                 isLoading ? <LoadingButton /> : `Rename`
                             }

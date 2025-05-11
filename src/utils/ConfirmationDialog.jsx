@@ -47,7 +47,7 @@ export default function ConfirmationDialog({
     };
 
     // Function to handle dialog close via the X button or clicking outside
-    const handleOpenChange = (open) => {
+    const handleOpenChange = (open,e) => {
         if (e) {
             e.preventDefault();
             e.stopPropagation();

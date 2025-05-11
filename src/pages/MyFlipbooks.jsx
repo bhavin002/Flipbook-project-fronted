@@ -29,6 +29,6 @@ export default function MyFlipbooks({ isSidebarOpen }) {
         getFlipbooks();
     }, [location.pathname])
     return (
-        <Flipbooks isLoading={isLoading} flipbooks={flipbooks} isSidebarOpen={isSidebarOpen} />
+        <Flipbooks isLoading={isLoading} flipbooks={flipbooks} isSidebarOpen={isSidebarOpen} setFlipbooks={setFlipbooks} />
     );
 }
