@@ -9,7 +9,7 @@ export default function BrandingFonts() {
         { id: 3, name: "Roboto", styles: ["Regular", "Bold",] },
     ];
     return (
-        <div className="flex flex-col max-w-[100vw] overflow-auto p-6 h-full space-y-4">
+        <div className="p-6 max-w-[100vw] overflow-auto space-y-4 pt-0 flex-1 flex flex-col max-md:max-h-[calc(100vh-156px-80px)]">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Brand fonts</h1>
                 <p className="text-gray-500">Upload and manage custom fonts to use in your designs.</p>
