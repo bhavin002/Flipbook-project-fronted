@@ -30,7 +30,7 @@ export default function SharedWithMe({ isSidebarOpen }) {
         getFlipbooks();
     }, [location.pathname])
 
-    if (flipbooks.length === 0) {
+    if (flipbooks.length === 0 && !isLoading) {
             return (
                 <ZeroState
                     title="Folder is empty"

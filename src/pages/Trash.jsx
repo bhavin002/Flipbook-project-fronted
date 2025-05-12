@@ -130,7 +130,7 @@ export default function Trash({ isSidebarOpen }) {
         return status === action;
     };
 
-    if (flipbooks.length === 0 && folders.length === 0) {
+    if (flipbooks.length === 0 && folders.length === 0 && !isLoading) {
         return (
             <ZeroState
                 title="Folder is empty"

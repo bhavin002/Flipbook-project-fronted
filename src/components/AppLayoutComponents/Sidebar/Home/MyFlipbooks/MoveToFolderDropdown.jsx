@@ -7,15 +7,21 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useFolders } from "@/context/FolderContext";
-import { Folder, FolderInput } from 'lucide-react';
-import { useState, useEffect } from "react";
+import { MoveFlipbooksToFolderApi } from "@/service/folder.service";
+import { Folder, FolderInput, Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useParams } from "react-router-dom";
+import { toast } from "sonner";
 
-export default function MoveToFolderDropdown({ clearSelection, view, isFolder }) {
+export default function MoveToFolderDropdown({ clearSelection, view, isFolder, selectedFlipbooks }) {
     const { getNormalFolders, getTemplateFolders } = useFolders();
     const [selectedFolderId, setSelectedFolderId] = useState(null);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const [isMoving, setIsMoving] = useState(false);
+    const [movingFolderId, setMovingFolderId] = useState(null);
     const location = useLocation();
     const params = useParams();
+    const dropdownTriggerRef = useRef(null);
 
     const folders = view === 'template' ? getTemplateFolders() : getNormalFolders();
 
@@ -26,22 +32,66 @@ export default function MoveToFolderDropdown({ clearSelection, view, isFolder })
     }, [isFolder, params.id]);
 
     useEffect(() => {
-        return () => setSelectedFolderId(null);
+        return () => {
+            setSelectedFolderId(null);
+            setIsMoving(false);
+            setMovingFolderId(null);
+        };
     }, [location.pathname]);
 
-    const handleMoveToFolder = (folderId) => {
-        console.log(`Moving items to folder: ${folderId}`);
-        clearSelection();
+    const handleDropdownOpenChange = (open) => {
+        setIsDropdownOpen(open);
+    };
+
+    const closeDropdown = () => {
+        setIsDropdownOpen(false);
+    };
+
+    const handleMoveToFolder = async (folderId) => {
+        // Don't allow moving to the current folder
+        if (selectedFolderId === folderId) {
+            return;
+        }
+
+        setIsMoving(true);
+        setMovingFolderId(folderId);
+
+        try {
+            const data = {
+                folderId: folderId,
+                flipbookIds: selectedFlipbooks
+            };
+
+            const response = await MoveFlipbooksToFolderApi(data);
+            
+            toast.success("Flipbooks moved", {
+                description: response.message || `${selectedFlipbooks.length} flipbooks moved successfully`
+            });
+            
+            // Close dropdown after successful API call
+            closeDropdown();
+            
+            // Clear selection after successful move
+            clearSelection();
+        } catch (error) {
+            toast.error("Failed to move flipbooks", {
+                description: error.message || "Something went wrong"
+            });
+        } finally {
+            setIsMoving(false);
+            setMovingFolderId(null);
+        }
     };
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+        <DropdownMenu open={isDropdownOpen} onOpenChange={handleDropdownOpenChange}>
+            <DropdownMenuTrigger asChild ref={dropdownTriggerRef}>
                 <Button
                     size="icon"
                     variant="ghost"
                     title="Move to folder"
                     aria-label="Move to folder"
+                    disabled={isMoving}
                 >
                     <FolderInput className="h-4 w-4" />
                 </Button>
@@ -49,21 +99,43 @@ export default function MoveToFolderDropdown({ clearSelection, view, isFolder })
             <DropdownMenuContent className="w-56" align="end" side="right">
                 <DropdownMenuGroup>
                     <DropdownMenuItem
-                        onClick={() => handleMoveToFolder('personal')}
-                        disabled={selectedFolderId === null}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleMoveToFolder('personal');
+                        }}
+                        disabled={selectedFolderId === null || isMoving}
                         className={selectedFolderId === null ? "opacity-50 cursor-not-allowed" : ""}
                     >
-                        {selectedFolderId === null ? <Folder fill="currentColor" className="mr-2 h-4 w-4" /> : <Folder className="mr-2 h-4 w-4" />} Personal
+                        {isMoving && movingFolderId === 'personal' ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : selectedFolderId === null ? (
+                            <Folder fill="currentColor" className="mr-2 h-4 w-4" />
+                        ) : (
+                            <Folder className="mr-2 h-4 w-4" />
+                        )}
+                        {isMoving && movingFolderId === 'personal' ? 'Moving...' : 'Personal'}
                     </DropdownMenuItem>
 
                     {folders.map((folder) => (
                         <DropdownMenuItem
                             key={folder._id}
-                            onClick={() => handleMoveToFolder(folder._id)}
-                            disabled={selectedFolderId === folder._id}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleMoveToFolder(folder._id);
+                            }}
+                            disabled={selectedFolderId === folder._id || isMoving}
                             className={selectedFolderId === folder._id ? "opacity-50 cursor-not-allowed" : ""}
                         >
-                            {selectedFolderId === folder._id ? <Folder fill="currentColor" className="mr-2 h-4 w-4" /> : <Folder className="mr-2 h-4 w-4" />} {folder.name}
+                            {isMoving && movingFolderId === folder._id ? (
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            ) : selectedFolderId === folder._id ? (
+                                <Folder fill="currentColor" className="mr-2 h-4 w-4" />
+                            ) : (
+                                <Folder className="mr-2 h-4 w-4" />
+                            )}
+                            {isMoving && movingFolderId === folder._id ? 'Moving...' : folder.name}
                         </DropdownMenuItem>
                     ))}
                 </DropdownMenuGroup>

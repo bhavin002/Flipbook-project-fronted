@@ -105,7 +105,9 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
         } else if (action === "recover") {
             setIsRecovering(true);
             try {
-                const response = await RecoverFlipbookApi(flipbook._id);
+                const response = await RecoverFlipbookApi({
+                    flipbookIds: [flipbook._id]
+                });
                 toast.success("Flipbook recovered", {
                     description: response.message || "The flipbook was successfully recovered"
                 });
@@ -130,7 +132,9 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
         if (confirmed) {
             setIsLoading(true);
             try {
-                const response = await MoveToTrashFlipbookApi(flipbook._id);
+                const response = await MoveToTrashFlipbookApi({
+                    flipbookIds: [flipbook._id]
+                });
                 setFlipbooks(prev => prev.filter(item => item._id !== flipbook._id));
                 toast.success("Flipbook moved to trash", {
                     description: response.message || "The flipbook was successfully moved to trash"
@@ -152,7 +156,9 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
         if (confirmed) {
             setIsLoading(true);
             try {
-                const response = await DeleteFlipbookApi(flipbook._id);
+                const response = await DeleteFlipbookApi({
+                    flipbookIds: [flipbook._id]
+                });
                 setFlipbooks(prev => prev.filter(item => item._id !== flipbook._id));
                 toast.success("Flipbook deleted permanently", {
                     description: response.message || "The flipbook was permanently deleted"
@@ -180,7 +186,7 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
                     <LayoutPanelLeft className="mr-2 h-4 w-4" /> Save as template
                 </DropdownMenuItem>
-                <DropdownMenuItem 
+                <DropdownMenuItem
                     disabled={isCopying}
                     onSelect={(e) => {
                         e.preventDefault();
@@ -236,7 +242,7 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
                     <LayoutPanelLeft className="mr-2 h-4 w-4" /> Save as template
                 </DropdownMenuItem>
-                <DropdownMenuItem 
+                <DropdownMenuItem
                     disabled={isCopying}
                     onSelect={(e) => {
                         e.preventDefault();
@@ -291,7 +297,7 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
                     <LayoutPanelLeft className="mr-2 h-4 w-4" /> Save as template
                 </DropdownMenuItem>
-                <DropdownMenuItem 
+                <DropdownMenuItem
                     disabled={isCopying}
                     onSelect={(e) => {
                         e.preventDefault();
@@ -323,7 +329,7 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 <DropdownMenuItem onClick={() => handleItemClick('edit')}>
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem 
+                <DropdownMenuItem
                     disabled={isCopying}
                     onSelect={(e) => {
                         e.preventDefault();
@@ -345,7 +351,7 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
 
         const deletedItems = (
             <>
-                <DropdownMenuItem 
+                <DropdownMenuItem
                     disabled={isRecovering}
                     onSelect={(e) => {
                         e.preventDefault();

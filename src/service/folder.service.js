@@ -34,3 +34,8 @@ export const RecoverWorkspaceFolderApi = async (folderId) => {
     const response = await ApiClient().get(`/workspace-folder/recover-trash-folder/${folderId}`);
     return response.data;
 }
+
+export const MoveFlipbooksToFolderApi = async (data) => {
+    const response = await ApiClient().post("/workspace-folder/move-to-folder", data);
+    return response.data;
+}

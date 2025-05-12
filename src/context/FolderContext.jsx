@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { GetWorkspaceFoldersApi } from "@/service/folder.service";
 import { toast } from "sonner";
+import { useAuth } from "./AuthContext";
 
 // Create the context
 const FolderContext = createContext();
@@ -17,6 +18,7 @@ export const useFolders = () => {
 export const FolderProvider = ({ children }) => {
   const [folders, setFolders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const {isAuthenticated} = useAuth();
   
   const fetchFolders = async () => {
     setIsLoading(true);
@@ -34,6 +36,7 @@ export const FolderProvider = ({ children }) => {
 
   // Initial load of folders
   useEffect(() => {
+    if (!isAuthenticated) return;
     fetchFolders();
   }, []);
 

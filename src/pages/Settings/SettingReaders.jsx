@@ -229,12 +229,6 @@ export default function SettingReaders() {
                                 </div>
                             </>
                         )}
-
-                        {!isLoading && readers.length === 0 && (
-                            <div className="text-center py-8 border rounded-lg">
-                                <p className="text-gray-500">No readers found. Invite readers to get started.</p>
-                            </div>
-                        )}
                     </div>
                 </CardContent>
             </Card>

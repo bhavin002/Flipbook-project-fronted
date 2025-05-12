@@ -97,7 +97,7 @@ export default function ReadersTable({
                     <TableBody>
                         <TableRow>
                             <TableCell colSpan={4} className="h-24 text-center text-gray-500">
-                                No readers found for the current search.
+                                No readers found.
                             </TableCell>
                         </TableRow>
                     </TableBody>

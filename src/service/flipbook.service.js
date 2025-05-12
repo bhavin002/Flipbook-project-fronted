@@ -50,8 +50,8 @@ export const MakeCopyOfFlipbookApi = async (flipbookId) => {
     return response.data;
 }
 
-export const MoveToTrashFlipbookApi = async (flipbookId) => {
-    const response = await ApiClient().get(`/flipbook/move-to-trash/${flipbookId}`);
+export const MoveToTrashFlipbookApi = async (data) => {
+    const response = await ApiClient().post(`/flipbook/move-to-trash`,data);
     return response.data;
 }
 
@@ -60,12 +60,12 @@ export const getTrashedFlipbooksApi = async () => {
     return response.data;
 }
 
-export const DeleteFlipbookApi = async (flipbookId) => {
-    const response = await ApiClient().delete(`/flipbook/delete/${flipbookId}`);
+export const DeleteFlipbookApi = async (data) => {
+    const response = await ApiClient().post(`/flipbook/delete`, data);
     return response.data;
 }
 
-export const RecoverFlipbookApi = async (flipbookId) => {
-    const response = await ApiClient().get(`/flipbook/recover-trash-flipbook/${flipbookId}`);
+export const RecoverFlipbookApi = async (data) => {
+    const response = await ApiClient().post(`/flipbook/recover-trash-flipbook`,data);
     return response.data;
 }

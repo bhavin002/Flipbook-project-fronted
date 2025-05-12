@@ -9,11 +9,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { X, Trash2, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MoveToFolderDropdown from '@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/MoveToFolderDropdown';
+import ConfirmationDialog from "@/utils/ConfirmationDialog";
+import { MoveToTrashFlipbookApi, DeleteFlipbookApi, RecoverFlipbookApi } from "@/service/flipbook.service";
+import { toast } from "sonner";
 
 export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlipbooks, isTrash = false, isFolder = false, view }) {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [selectedFlipbooks, setSelectedFlipbooks] = useState([]);
+    const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
+    const [isDeleteForeverModalOpen, setIsDeleteForeverModalOpen] = useState(false);
+    const [actionLoading, setActionLoading] = useState(false);
     const router = useNavigate();
     const location = useLocation();
 
@@ -112,11 +118,86 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
         setSelectedFlipbooks([]);
     };
 
-    const handleDelete = () => {
-        // Implement delete functionality here
-        console.log("Deleting flipbooks:", selectedFlipbooks);
-        // After deletion is complete, clear selection
-        clearSelection();
+    // Handle multiple flipbooks move to trash
+    const handleTrashConfirmation = async (confirmed) => {
+        if (confirmed) {
+            setActionLoading(true);
+            try {
+                const response = await MoveToTrashFlipbookApi({
+                    flipbookIds: selectedFlipbooks
+                });
+                
+                setFlipbooks(prev => prev.filter(item => !selectedFlipbooks.includes(item._id)));
+                
+                toast.success("Flipbooks moved to trash", {
+                    description: response.message || `${selectedFlipbooks.length} flipbooks were successfully moved to trash`
+                });
+                
+                clearSelection();
+                setIsTrashModalOpen(false);
+            } catch (error) {
+                toast.error("Failed to move flipbooks to trash", {
+                    description: error.message || "Something went wrong",
+                });
+            } finally {
+                setActionLoading(false);
+            }
+        } else {
+            setIsTrashModalOpen(false);
+        }
+    };
+
+    // Handle multiple flipbooks delete forever
+    const handleDeleteForeverConfirmation = async (confirmed) => {
+        if (confirmed) {
+            setActionLoading(true);
+            try {
+                const response = await DeleteFlipbookApi({
+                    flipbookIds: selectedFlipbooks
+                });
+                
+                setFlipbooks(prev => prev.filter(item => !selectedFlipbooks.includes(item._id)));
+                
+                toast.success("Flipbooks deleted permanently", {
+                    description: response.message || `${selectedFlipbooks.length} flipbooks were permanently deleted`
+                });
+                
+                clearSelection();
+                setIsDeleteForeverModalOpen(false);
+            } catch (error) {
+                toast.error("Failed to delete flipbooks", {
+                    description: error.message || "Something went wrong",
+                });
+            } finally {
+                setActionLoading(false);
+            }
+        } else {
+            setIsDeleteForeverModalOpen(false);
+        }
+    };
+
+    // Handle multiple flipbooks recover - directly without confirmation
+    const handleRecover = async () => {
+        setActionLoading(true);
+        try {
+            const response = await RecoverFlipbookApi({
+                flipbookIds: selectedFlipbooks
+            });
+            
+            setFlipbooks(prev => prev.filter(item => !selectedFlipbooks.includes(item._id)));
+            
+            toast.success("Flipbooks recovered", {
+                description: response.message || `${selectedFlipbooks.length} flipbooks were successfully recovered`
+            });
+            
+            clearSelection();
+        } catch (error) {
+            toast.error("Failed to recover flipbooks", {
+                description: error.message || "Something went wrong",
+            });
+        } finally {
+            setActionLoading(false);
+        }
     };
 
     const SkeletonCard = () => (
@@ -224,6 +305,26 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
             <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
             <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} />
 
+            <ConfirmationDialog
+                isConfirmModalOpen={isTrashModalOpen}
+                setIsConfirmModalOpen={setIsTrashModalOpen}
+                title="Move to Trash"
+                description={`Are you sure you want to move ${selectedFlipbooks.length} flipbook${selectedFlipbooks.length > 1 ? 's' : ''} to Trash?`}
+                isLoading={actionLoading}
+                onConfirm={() => handleTrashConfirmation(true)}
+                onCancel={() => handleTrashConfirmation(false)}
+            />
+
+            <ConfirmationDialog
+                isConfirmModalOpen={isDeleteForeverModalOpen}
+                setIsConfirmModalOpen={setIsDeleteForeverModalOpen}
+                title="Delete Forever"
+                description={`Are you sure you want to permanently delete ${selectedFlipbooks.length} flipbook${selectedFlipbooks.length > 1 ? 's' : ''}? This action cannot be undone.`}
+                isLoading={actionLoading}
+                onConfirm={() => handleDeleteForeverConfirmation(true)}
+                onCancel={() => handleDeleteForeverConfirmation(false)}
+            />
+
             {selectedFlipbooks.length > 0 && (
                 <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white text-gray-900 px-4 py-2 rounded-lg shadow-lg flex items-center justify-between w-96 z-50 border border-violet-200">
                     <div className="flex items-center gap-3">
@@ -246,16 +347,17 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                     variant="ghost"
                                     size="icon"
                                     title="Recover"
-                                    onClick={handleDelete}
+                                    onClick={handleRecover}
+                                    disabled={actionLoading}
                                 >
-                                    <Clock />
+                                    <Clock className={`${actionLoading ? 'animate-spin' : ''}`} />
                                 </Button>
 
                                 <Button
                                     variant="ghost"
                                     size="icon"
                                     title="Delete forever"
-                                    onClick={handleDelete}
+                                    onClick={() => setIsDeleteForeverModalOpen(true)}
                                 >
                                     <Trash2 />
                                 </Button>
@@ -273,7 +375,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                     variant="ghost"
                                     size="icon"
                                     title="Move to trash"
-                                    onClick={handleDelete}
+                                    onClick={() => setIsTrashModalOpen(true)}
                                 >
                                     <Trash2 />
                                 </Button>
@@ -286,10 +388,9 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                 >
                                     <X />
                                 </Button>
-                                <MoveToFolderDropdown clearSelection={clearSelection} view={view} isFolder={isFolder} />
+                                <MoveToFolderDropdown clearSelection={clearSelection} view={view} isFolder={isFolder} selectedFlipbooks={selectedFlipbooks} />
                             </>
                         }
-
                     </div>
                 </div>
             )}
