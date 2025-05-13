@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react';
-import { GetFlipbooksApi } from '@/service/flipbook.service';
+import { GetWorkspaceFlipbooksApi, GetWorkspaceTemplatesApi } from '@/service/flipbook.service';
 import { toast } from 'sonner';
 import Flipbooks from '@/utils/Flipbooks';
 import { useLocation } from 'react-router-dom';
-import { flipbookType } from '@/utils/enum';
 import ZeroState from '@/utils/ZeroState';
 
 export default function MyFlipbooks({ isSidebarOpen }) {
@@ -17,7 +16,7 @@ export default function MyFlipbooks({ isSidebarOpen }) {
         const getFlipbooks = async () => {
             try {
                 setIsLoading(true);
-                const response = isTemplateView ? await GetFlipbooksApi({ type: flipbookType.TEMPLATE }) : await GetFlipbooksApi({ type: flipbookType.FLIPBOOK });
+                const response = isTemplateView ? await GetWorkspaceTemplatesApi() : await GetWorkspaceFlipbooksApi();
                 setFlipbooks(response.data);
             } catch (error) {
                 toast.error("Flipbook fetch failed", {

@@ -1,19 +1,47 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import CreateGroupDialog from "../../components/AppLayoutComponents/Sidebar/Setting/Groups/CreateGroupDialog"
-import { useState } from 'react';
+import CreateGroupDialog from "../../components/AppLayoutComponents/Sidebar/Setting/Groups/CreateGroupDialog";
+import { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { getData } from '@/utils/datas';
 import GroupsTable from "../../components/AppLayoutComponents/Sidebar/Setting/Groups/GroupsTable";
 import TablePagination from "@/utils/TablePagination";
+import { GetWorkspaceGroupsApi, DeleteWorkspaceGroupsApi } from "@/service/workspace.group.service";
+import { toast } from "sonner";
+import ConfirmationDialog from "@/utils/ConfirmationDialog";
 
 export default function SettingGroups() {
     const [selectedGroups, setSelectedGroups] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+    const [groups, setGroups] = useState([]);
+    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+    const [isDeletingGroups, setIsDeletingGroups] = useState(false);
+    
     const recordsPerPage = 5;
 
-    const groups = getData('groups');
+    const fetchGroups = async () => {
+        try {
+            setIsLoading(true);
+            const response = await GetWorkspaceGroupsApi();
+            if (response.data) {
+                setGroups(response.data);
+            } else {
+                setGroups([]);
+            }
+        } catch (error) {
+            toast.error("Failed to fetch groups", {
+                description: error.message || "Oops! Something went wrong.",
+            });
+            setGroups([]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchGroups();
+    }, []);
 
     const filteredGroups = groups.filter(group =>
         group.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -26,20 +54,20 @@ export default function SettingGroups() {
 
     const toggleSelect = (id) => {
         if (selectedGroups.includes(id)) {
-            setSelectedGroups(selectedGroups.filter(teamId => teamId !== id));
+            setSelectedGroups(selectedGroups.filter(groupId => groupId !== id));
         } else {
             setSelectedGroups([...selectedGroups, id]);
         }
     };
 
-    const toggleSelectAll = (currentTeammateIds) => {
-        const allCurrentSelected = currentTeammateIds.every(id => selectedGroups.includes(id));
+    const toggleSelectAll = (currentGroupIds) => {
+        const allCurrentSelected = currentGroupIds.every(id => selectedGroups.includes(id));
 
         if (allCurrentSelected) {
-            setSelectedGroups(selectedGroups.filter(id => !currentTeammateIds.includes(id)));
+            setSelectedGroups(selectedGroups.filter(id => !currentGroupIds.includes(id)));
         } else {
             const newSelectedGroups = [...selectedGroups];
-            currentTeammateIds.forEach(id => {
+            currentGroupIds.forEach(id => {
                 if (!newSelectedGroups.includes(id)) {
                     newSelectedGroups.push(id);
                 }
@@ -55,20 +83,50 @@ export default function SettingGroups() {
     };
 
     const deleteSelectedGroups = () => {
-        setSelectedGroups([]);
+        if (selectedGroups.length > 0) {
+            setIsDeleteConfirmOpen(true);
+        }
     };
+
+    const handleDeleteConfirmation = async (confirmed) => {
+        if (confirmed) {
+            setIsDeletingGroups(true);
+            try {
+                const response = await DeleteWorkspaceGroupsApi({
+                    groupIds: selectedGroups
+                });
+
+                setGroups(groups.filter(group => !selectedGroups.includes(group._id)));
+                setSelectedGroups([]);
+
+                toast.success("Groups deleted", {
+                    description: response.message || "Selected groups have been removed successfully."
+                });
+            } catch (error) {
+                toast.error("Failed to delete groups", {
+                    description: error.message || "Something went wrong."
+                });
+            } finally {
+                setIsDeletingGroups(false);
+                setIsDeleteConfirmOpen(false);
+            }
+        } else {
+            setIsDeleteConfirmOpen(false);
+        }
+    };
+
     return (
         <div className="p-6 max-w-[100vw] overflow-auto space-y-4 pt-0">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Groups</h1>
-                <p className="text-gray-500">Create multiple groups of groups for different categories or departments.</p>
+                <p className="text-gray-500">Create multiple groups of readers for different categories or departments.</p>
             </div>
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>Manage your groups</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <CreateGroupDialog />
+                    <CreateGroupDialog onGroupCreated={fetchGroups} />
                     <div className="mt-8">
                         <div className="flex justify-between mb-4 gap-4">
                             <h2 className="text-lg font-medium w-full">Groups ({filteredGroups.length})</h2>
@@ -85,6 +143,7 @@ export default function SettingGroups() {
                                     value={searchQuery}
                                     onChange={(e) => {
                                         setSearchQuery(e.target.value);
+                                        setCurrentPage(1); // Reset to first page on search
                                     }}
                                 />
                             </div>
@@ -96,19 +155,34 @@ export default function SettingGroups() {
                             onToggleSelect={toggleSelect}
                             onToggleSelectAll={toggleSelectAll}
                             onDeleteSelected={deleteSelectedGroups}
+                            isLoading={isLoading}
                         />
 
-                        <TablePagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onChangePage={changePage}
-                        />
-                        <div className="text-sm text-gray-500 mt-4 text-center">
-                            Showing {indexOfFirstRecord + 1}-{Math.min(indexOfLastRecord, filteredGroups.length)} of {filteredGroups.length} groups
-                        </div>
+                        {!isLoading && groups.length > 0 && (
+                            <>
+                                <TablePagination
+                                    currentPage={currentPage}
+                                    totalPages={totalPages}
+                                    onChangePage={changePage}
+                                />
+                                <div className="text-sm text-gray-500 mt-4 text-center">
+                                    Showing {indexOfFirstRecord + 1}-{Math.min(indexOfLastRecord, filteredGroups.length)} of {filteredGroups.length} groups
+                                </div>
+                            </>
+                        )}
                     </div>
                 </CardContent>
             </Card>
+
+            <ConfirmationDialog
+                isConfirmModalOpen={isDeleteConfirmOpen}
+                setIsConfirmModalOpen={setIsDeleteConfirmOpen}
+                title="Delete groups"
+                description={`Are you sure you want to delete ${selectedGroups.length} ${selectedGroups.length === 1 ? 'group' : 'groups'}?`}
+                isLoading={isDeletingGroups}
+                onConfirm={() => handleDeleteConfirmation(true)}
+                onCancel={() => handleDeleteConfirmation(false)}
+            />
         </div>
-    )
+    );
 }

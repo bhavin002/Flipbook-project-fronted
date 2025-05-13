@@ -21,9 +21,9 @@ export default function SelectGroupMember({ options, selectedValues, onChange })
 
     const handleReaderChange = (option, checked) => {
         if (checked) {
-            onChange([...selectedValues, option.label]);
+            onChange([...selectedValues, option.value]);
         } else {
-            const newSelection = selectedValues.filter(item => item !== option.label);
+            const newSelection = selectedValues.filter(item => item !== option.value);
             onChange(newSelection);
         }
     };
@@ -38,13 +38,20 @@ export default function SelectGroupMember({ options, selectedValues, onChange })
         if (selectedValues.length === 0) {
             return "Select readers";
         }
-        if (selectedValues.length <= 3) {
-            return selectedValues.join(", ");
+        
+        // Get display names for selected readers
+        const selectedLabels = selectedValues.map(value => {
+            const option = options.find(opt => opt.value === value);
+            return option ? option.label : value;
+        });
+        
+        if (selectedLabels.length <= 3) {
+            return selectedLabels.join(", ");
         }
         return (
             <div className="flex items-center space-x-2">
-                <span className="truncate">{selectedValues.slice(0, 3).join(", ")}</span>
-                <Badge variant="secondary">+{selectedValues.length - 3}</Badge>
+                <span className="truncate">{selectedLabels.slice(0, 3).join(", ")}</span>
+                <Badge variant="secondary">+{selectedLabels.length - 3}</Badge>
             </div>
         );
     };
@@ -104,7 +111,7 @@ export default function SelectGroupMember({ options, selectedValues, onChange })
                             filteredOptions.map((option) => (
                                 <DropdownMenuCheckboxItem
                                     key={option.value}
-                                    checked={selectedValues.includes(option.label)}
+                                    checked={selectedValues.includes(option.value)}
                                     onCheckedChange={(checked) => handleReaderChange(option, checked)}
                                     onSelect={handleSelect}
                                 >

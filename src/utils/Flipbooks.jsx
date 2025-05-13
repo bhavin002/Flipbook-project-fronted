@@ -52,33 +52,34 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     };
 
     const getButtonsForStatus = (status) => {
+        console.log("status", status);
         if (isTrash) {
             return [];
         }
 
         switch (status) {
-            case 'draft':
+            case 'Draft':
                 return publishedButtons;
-            case 'published':
+            case 'Published':
                 return publishedButtons;
-            case 'unpublished':
+            case 'Not Published':
                 return unpublishedButtons;
-            case 'template':
+            case 'Template':
                 return templateButtons;
         }
     };
 
     const getStatusBadgeStyle = (status) => {
         switch (status) {
-            case 'draft':
+            case 'Draft':
                 return 'bg-purple-100/50 text-purple-700';
-            case 'published':
+            case 'Published':
                 return 'bg-green-100/50 text-green-700';
-            case 'unpublished':
+            case 'Not Published':
                 return 'bg-red-100/50 text-red-700';
-            case 'template':
+            case 'Template':
                 return 'bg-[#ebd6ff] text-[#7a1f5b]';
-            case 'deleted':
+            case 'Deleted':
                 return 'bg-gray-100/50 text-gray-700';
             default:
                 return 'bg-gray-100/50 text-gray-700';
@@ -87,15 +88,15 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
 
     const getStatusDisplayText = (status) => {
         switch (status) {
-            case 'draft':
+            case 'Draft':
                 return 'Draft';
-            case 'published':
+            case 'Published':
                 return 'Published';
-            case 'unpublished':
+            case 'Not Published':
                 return 'Not published';
-            case 'template':
+            case 'Template':
                 return 'Template';
-            case 'deleted':
+            case 'Deleted':
                 return 'Deleted';
             default:
                 return 'Unknown';
@@ -264,15 +265,15 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                             </div>
 
                             <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white">
-                                <span className={`text-xs font-medium px-2 py-0.5 rounded-sm inline-flex items-center ${getStatusBadgeStyle(flipbook.tag ? flipbook.tag : flipbook.isPublished ? "published" : "unpublished")}`}>
+                                <span className={`text-xs font-medium px-2 py-0.5 rounded-sm inline-flex items-center ${getStatusBadgeStyle(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}`}>
                                     <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-70"></span>
-                                    {getStatusDisplayText(flipbook.tag ? flipbook.tag : flipbook.isPublished ? "published" : "unpublished")}
+                                    {getStatusDisplayText(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}
                                 </span>
                                 <div className="flex items-center justify-between">
                                     <h3 className="font-semibold text-violet-900 transition-colors duration-200 hover:text-violet-600">
                                         {flipbook.name}
                                     </h3>
-                                    <MyFlipbookDropdown status={flipbook.tag ? flipbook.tag : flipbook.isPublished ? "published" : "unpublished"} flipbook={flipbook} setFlipbooks={setFlipbooks} isTrash={isTrash} />
+                                    <MyFlipbookDropdown status={flipbook.tag ? flipbook.tag : flipbook.flipbookState} flipbook={flipbook} setFlipbooks={setFlipbooks} isTrash={isTrash} />
                                 </div>
 
                                 <p className="text-sm text-violet-600">
@@ -280,7 +281,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                 </p>
 
                                 <div className="flex gap-2 justify-center py-3 flex-wrap">
-                                    {getButtonsForStatus(flipbook.tag ? flipbook.tag : flipbook.isPublished ? "published" : "unpublished").map((btn, index) => (
+                                    {getButtonsForStatus(flipbook.tag ? flipbook.tag : flipbook.flipbookState).map((btn, index) => (
                                         <button
                                             key={index}
                                             className={`p-2 hover:-translate-y-[1px] rounded-lg ${btn.color} ${btn.bg} ${btn.hover} hover:scale-110 transition-all duration-200`}
@@ -388,7 +389,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                 >
                                     <X />
                                 </Button>
-                                <MoveToFolderDropdown clearSelection={clearSelection} view={view} isFolder={isFolder} selectedFlipbooks={selectedFlipbooks} />
+                                <MoveToFolderDropdown clearSelection={clearSelection} view={view} isFolder={isFolder} selectedFlipbooks={selectedFlipbooks} setFlipbooks={setFlipbooks} />
                             </>
                         }
                     </div>

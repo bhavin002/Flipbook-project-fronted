@@ -13,7 +13,7 @@ import { useState, useEffect, useRef } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
-export default function MoveToFolderDropdown({ clearSelection, view, isFolder, selectedFlipbooks }) {
+export default function MoveToFolderDropdown({ clearSelection, view, isFolder, selectedFlipbooks, setFlipbooks }) {
     const { getNormalFolders, getTemplateFolders } = useFolders();
     const [selectedFolderId, setSelectedFolderId] = useState(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -48,7 +48,6 @@ export default function MoveToFolderDropdown({ clearSelection, view, isFolder, s
     };
 
     const handleMoveToFolder = async (folderId) => {
-        // Don't allow moving to the current folder
         if (selectedFolderId === folderId) {
             return;
         }
@@ -57,21 +56,23 @@ export default function MoveToFolderDropdown({ clearSelection, view, isFolder, s
         setMovingFolderId(folderId);
 
         try {
+            // Create the data object, excluding folderId for "personal"
             const data = {
-                folderId: folderId,
                 flipbookIds: selectedFlipbooks
             };
+            
+            // Only add folderId to payload if not moving to personal
+            if (folderId !== 'personal') {
+                data.folderId = folderId;
+            }
 
             const response = await MoveFlipbooksToFolderApi(data);
-            
+            setFlipbooks(prev => prev.filter(item => !selectedFlipbooks.includes(item._id)));
+
             toast.success("Flipbooks moved", {
                 description: response.message || `${selectedFlipbooks.length} flipbooks moved successfully`
             });
-            
-            // Close dropdown after successful API call
             closeDropdown();
-            
-            // Clear selection after successful move
             clearSelection();
         } catch (error) {
             toast.error("Failed to move flipbooks", {

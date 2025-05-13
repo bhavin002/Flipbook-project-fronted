@@ -18,16 +18,17 @@ export default function GroupsTable({
     selectedGroups,
     onToggleSelect,
     onToggleSelectAll,
-    onDeleteSelected
+    onDeleteSelected,
+    isLoading
 }) {
     const headerCheckboxRef = useRef(null);
-    const currentReaderIds = currentGroups.map(group => group.id);
+    const currentGroupIds = currentGroups.map(group => group._id);
 
     const allCurrentSelected = currentGroups.length > 0 &&
-        currentReaderIds.every(id => selectedGroups.includes(id));
+        currentGroupIds.every(id => selectedGroups.includes(id));
 
     const someCurrentSelected = currentGroups.length > 0 &&
-        currentReaderIds.some(id => selectedGroups.includes(id)) &&
+        currentGroupIds.some(id => selectedGroups.includes(id)) &&
         !allCurrentSelected;
 
     useEffect(() => {
@@ -35,6 +36,72 @@ export default function GroupsTable({
             headerCheckboxRef.current.indeterminate = someCurrentSelected;
         }
     }, [someCurrentSelected]);
+
+    if (isLoading) {
+        return (
+            <div className="border rounded-lg overflow-hidden">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-gray-50">
+                            <TableHead className="w-12">
+                                <div className="h-4 w-4 rounded bg-gray-200 animate-pulse" />
+                            </TableHead>
+                            <TableHead className="font-medium">Group name</TableHead>
+                            <TableHead className="font-medium">Members</TableHead>
+                            <TableHead className="font-medium text-center">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {[...Array(3)].map((_, index) => (
+                            <TableRow key={index}>
+                                <TableCell className="w-12">
+                                    <div className="h-4 w-4 rounded bg-gray-200 animate-pulse" />
+                                </TableCell>
+                                <TableCell>
+                                    <div className="h-4 w-40 bg-gray-200 rounded animate-pulse" />
+                                </TableCell>
+                                <TableCell>
+                                    <div className="h-4 w-16 bg-gray-200 rounded animate-pulse" />
+                                </TableCell>
+                                <TableCell className="text-center">
+                                    <div className="flex items-center justify-center">
+                                        <div className="h-8 w-16 bg-gray-200 rounded animate-pulse mx-1" />
+                                        <div className="h-8 w-16 bg-gray-200 rounded animate-pulse mx-1" />
+                                    </div>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+        );
+    }
+
+    if (currentGroups.length === 0) {
+        return (
+            <div className="border rounded-lg overflow-hidden">
+                <Table>
+                    <TableHeader>
+                        <TableRow className="bg-gray-50">
+                            <TableHead className="w-12">
+                                <Checkbox disabled />
+                            </TableHead>
+                            <TableHead className="font-medium">Group name</TableHead>
+                            <TableHead className="font-medium">Members</TableHead>
+                            <TableHead className="font-medium text-center">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell colSpan={4} className="h-24 text-center text-gray-500">
+                                No groups found.
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+            </div>
+        );
+    }
 
     return (
         <div className="border rounded-lg overflow-hidden">
@@ -60,7 +127,7 @@ export default function GroupsTable({
                             <Checkbox
                                 ref={headerCheckboxRef}
                                 checked={allCurrentSelected}
-                                onCheckedChange={() => onToggleSelectAll(currentReaderIds)}
+                                onCheckedChange={() => onToggleSelectAll(currentGroupIds)}
                             />
                         </TableHead>
                         <TableHead className="font-medium">Group name</TableHead>
@@ -70,18 +137,20 @@ export default function GroupsTable({
                 </TableHeader>
                 <TableBody>
                     {currentGroups.map((group) => (
-                        <TableRow key={group.id} className={selectedGroups.includes(group.id) ? 'bg-muted/50' : ''}>
+                        <TableRow key={group._id} className={selectedGroups.includes(group._id) ? 'bg-muted/50' : ''}>
                             <TableCell className="w-12">
                                 <Checkbox
-                                    checked={selectedGroups.includes(group.id)}
-                                    onCheckedChange={() => onToggleSelect(group.id)}
+                                    checked={selectedGroups.includes(group._id)}
+                                    onCheckedChange={() => onToggleSelect(group._id)}
                                 />
                             </TableCell>
                             <TableCell className="text-sm">{group.name}</TableCell>
-                            <TableCell className="text-sm">{group.members}</TableCell>
-                            <TableCell className="flex items-center justify-center">
-                                <EditGroupDialog  />
-                                <DeleteGroupDialog/>
+                            <TableCell className="text-sm">{group.readerIds ? group.readerIds.length : 0} member{group.readerIds && group.readerIds.length !== 1 ? 's' : ''}</TableCell>
+                            <TableCell>
+                                <div className="flex items-center justify-center space-x-2">
+                                    <EditGroupDialog group={group} />
+                                    <DeleteGroupDialog groupId={group._id} groupName={group.name} />
+                                </div>
                             </TableCell>
                         </TableRow>
                     ))}
