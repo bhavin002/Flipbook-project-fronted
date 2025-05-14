@@ -19,16 +19,16 @@ import { AddReaderApi } from "@/service/workspace.reader.service"
 import LoadingButton from "@/utils/LoadingButton"
 
 const inviteSchema = z.object({
-  email: z
-    .string()
-    .min(1, "Email is required")
-    .email("Please enter a valid email address"),
+    email: z
+        .string()
+        .min(1, "Email is required")
+        .email("Please enter a valid email address"),
 });
 
-export default function InviteReaderDialog({setReaders}) {
+export default function InviteReaderDialog({ setReaders }) {
     const [isLoading, setIsLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-    
+
     const {
         register,
         handleSubmit,
@@ -56,7 +56,7 @@ export default function InviteReaderDialog({setReaders}) {
             setIsLoading(false);
         }
     };
-    
+
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
@@ -67,7 +67,7 @@ export default function InviteReaderDialog({setReaders}) {
             <DialogContent className="sm:max-w-[540px] w-[90vw]">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <DialogHeader>
-                        <DialogTitle>Add user</DialogTitle>
+                        <DialogTitle>Add reader</DialogTitle>
                         <DialogDescription className="sr-only">
                             Invite a user as a reader
                         </DialogDescription>
@@ -84,9 +84,9 @@ export default function InviteReaderDialog({setReaders}) {
                         />
                     </div>
                     <DialogFooter>
-                        <Button 
-                            type="button" 
-                            variant="outline" 
+                        <Button
+                            type="button"
+                            variant="outline"
                             onClick={() => {
                                 reset();
                                 setIsOpen(false);

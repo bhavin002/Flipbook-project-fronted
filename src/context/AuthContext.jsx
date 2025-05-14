@@ -55,10 +55,10 @@ export function AuthProvider({ children }) {
         if (isValid) {
             setIsAuthenticated(true);
             
-            const readerToken = localStorage.getItem('fn_reader_token');
+            const readerToken = localStorage.getItem('fn_invite_token');
             if (readerToken) {
-                localStorage.removeItem('fn_reader_token');
-                navigate(`/verify-reader/${readerToken}`);
+                localStorage.removeItem('fn_invite_token');
+                navigate(`/accept-invitation/${readerToken}`);
                 return true;
             }
             

@@ -14,3 +14,8 @@ export const DeleteWorkspaceGroupsApi = async (data) => {
     const response = await ApiClient().post("/workspace-group/delete", data);
     return response.data;
 }
+
+export const UpdateWorkspaceGroupApi = async (data) => {
+    const response = await ApiClient().put(`/workspace-group/update`, data);
+    return response.data;
+}

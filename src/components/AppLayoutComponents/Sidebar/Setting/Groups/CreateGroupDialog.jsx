@@ -28,15 +28,13 @@ const groupSchema = z.object({
         .min(3, "Group name must be at least 3 characters"),
 });
 
-export default function CreateGroupDialog() {
+export default function CreateGroupDialog({ setGroups }) {
     const [isOpen, setIsOpen] = useState(false);
     const [readers, setReaders] = useState([]);
     const [selectedReaders, setSelectedReaders] = useState([]);
     const [isLoadingReaders, setIsLoadingReaders] = useState(false);
     const [isCreatingGroup, setIsCreatingGroup] = useState(false);
     const [hasAcceptedReaders, setHasAcceptedReaders] = useState(true);
-
-    console.log("selectedReaders ??",selectedReaders)
 
     const {
         register,
@@ -63,7 +61,7 @@ export default function CreateGroupDialog() {
             const allReaders = response.data;
 
             const acceptedReaders = allReaders.filter(reader => reader.isAccepted === true);
-            
+
             // Set flag if there are no accepted readers
             setHasAcceptedReaders(acceptedReaders.length > 0);
 
@@ -96,6 +94,8 @@ export default function CreateGroupDialog() {
                 name: data.groupName,
                 readerIds: selectedReaders
             });
+
+            setGroups(prevGroups => [...prevGroups, response.data]);
 
             toast.success("Group created", {
                 description: response.message,

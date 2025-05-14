@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import {
     Table,
     TableBody,
@@ -11,7 +11,9 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2 } from 'lucide-react';
 import EditGroupDialog from './EditGroupDialog';
-import DeleteGroupDialog from './DeleteGroupDialog';
+import ConfirmationDialog from "@/utils/ConfirmationDialog";
+import { DeleteWorkspaceGroupsApi } from "@/service/workspace.group.service";
+import { toast } from "sonner";
 
 export default function GroupsTable({
     currentGroups,
@@ -19,10 +21,14 @@ export default function GroupsTable({
     onToggleSelect,
     onToggleSelectAll,
     onDeleteSelected,
+    setGroups,
     isLoading
 }) {
     const headerCheckboxRef = useRef(null);
     const currentGroupIds = currentGroups.map(group => group._id);
+    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+    const [isDeletingGroup, setIsDeletingGroup] = useState(false);
+    const [groupToDelete, setGroupToDelete] = useState(null);
 
     const allCurrentSelected = currentGroups.length > 0 &&
         currentGroupIds.every(id => selectedGroups.includes(id));
@@ -36,6 +42,39 @@ export default function GroupsTable({
             headerCheckboxRef.current.indeterminate = someCurrentSelected;
         }
     }, [someCurrentSelected]);
+
+    const handleDeleteSingleGroup = (group) => {
+        setGroupToDelete(group);
+        setIsDeleteConfirmOpen(true);
+    };
+
+    const handleDeleteConfirmation = async (confirmed) => {
+        if (confirmed && groupToDelete) {
+            setIsDeletingGroup(true);
+            try {
+                const response = await DeleteWorkspaceGroupsApi({
+                    groupIds: [groupToDelete._id]
+                });
+
+                setGroups(prevGroups => prevGroups.filter(group => group._id !== groupToDelete._id));
+
+                toast.success("Group deleted", {
+                    description: response.message || "Group has been removed successfully."
+                });
+            } catch (error) {
+                toast.error("Failed to delete group", {
+                    description: error.message || "Something went wrong."
+                });
+            } finally {
+                setIsDeletingGroup(false);
+                setIsDeleteConfirmOpen(false);
+                setGroupToDelete(null);
+            }
+        } else {
+            setIsDeleteConfirmOpen(false);
+            setGroupToDelete(null);
+        }
+    };
 
     if (isLoading) {
         return (
@@ -148,14 +187,31 @@ export default function GroupsTable({
                             <TableCell className="text-sm">{group.readerIds ? group.readerIds.length : 0} member{group.readerIds && group.readerIds.length !== 1 ? 's' : ''}</TableCell>
                             <TableCell>
                                 <div className="flex items-center justify-center space-x-2">
-                                    <EditGroupDialog group={group} />
-                                    <DeleteGroupDialog groupId={group._id} groupName={group.name} />
+                                    <EditGroupDialog group={group} setGroups={setGroups} />
+                                    <Button 
+                                        variant="ghost" 
+                                        className="hover:text-red-500" 
+                                        size="sm" 
+                                        onClick={() => handleDeleteSingleGroup(group)}
+                                    >
+                                        <Trash2 />
+                                    </Button>
                                 </div>
                             </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
+
+            <ConfirmationDialog
+                isConfirmModalOpen={isDeleteConfirmOpen}
+                setIsConfirmModalOpen={setIsDeleteConfirmOpen}
+                title="Delete group"
+                description={groupToDelete ? `Are you sure you want to delete "${groupToDelete.name}" group?` : "Are you sure you want to delete this group?"}
+                isLoading={isDeletingGroup}
+                onConfirm={() => handleDeleteConfirmation(true)}
+                onCancel={() => handleDeleteConfirmation(false)}
+            />
         </div>
     );
 }

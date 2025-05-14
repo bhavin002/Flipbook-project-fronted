@@ -2,8 +2,8 @@ import { cn } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { VerifyReaderTokenApi } from "@/service/workspace.reader.service";
 import { useAuth } from "@/context/AuthContext";
+import { VerifyReaderTokenApi } from "@/service/helper.service";
 
 export default function VerifyReader() {
     const navigate = useNavigate();
@@ -26,7 +26,7 @@ export default function VerifyReader() {
                     await VerifyReaderTokenApi(token);
                     setIsVerified(true);
                     setIsProcessing(false);
-                    localStorage.removeItem("fn_reader_token");
+                    localStorage.removeItem("fn_invite_token");
                 } else if (!isLoading && !isAuthenticated) {
                     setIsVerified(false);
                     setError("authentication");
@@ -51,7 +51,7 @@ export default function VerifyReader() {
 
     const handleSignIn = () => {
         if (error === "authentication") {
-            localStorage.setItem("fn_reader_token", token);
+            localStorage.setItem("fn_invite_token", token);
         }
         navigate("/auth/sign-in");
     };

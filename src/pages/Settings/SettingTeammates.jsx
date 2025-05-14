@@ -1,26 +1,70 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Search } from 'lucide-react';
 import InviteTeammateDialog from "../../components/AppLayoutComponents/Sidebar/Setting/Teammates/InviteTeammateDialog"
 import { Input } from '@/components/ui/input';
-import { getData } from '@/utils/datas';
 import TeammatesTable from "../../components/AppLayoutComponents/Sidebar/Setting/Teammates/TeammatesTable"
 import RolesInfo from "../../components/AppLayoutComponents/Sidebar/Setting/Teammates/RolesInfo"
 import TFA from "../../components/AppLayoutComponents/Sidebar/Setting/Teammates/TFA"
 import TablePagination from '@/utils/TablePagination';
+import { GetTeammatesApi, ResendTeammaterTokenApi } from '@/service/teammate.service';
+import { GetUserRolesApi } from "@/service/user.role.service";
+import { toast } from 'sonner';
 
 export default function SettingTeammates() {
     const [selectedTeammates, setSelectedTeammates] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [searchQuery, setSearchQuery] = useState("");
+    const [teammates, setTeammates] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [roles, setRoles] = useState([]);
+    const [isLoadingRoles, setIsLoadingRoles] = useState(false);
+    const [resendingId, setResendingId] = useState(null);
     const recordsPerPage = 5;
 
-    const teammates = getData('teammates');
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setIsLoading(true);
+                // Fetch teammates
+                const teammatesResponse = await GetTeammatesApi();
+                setTeammates(teammatesResponse.data || []);
+
+                // Fetch roles
+                setIsLoadingRoles(true);
+                const rolesResponse = await GetUserRolesApi();
+                setRoles(rolesResponse.data || []);
+            } catch (error) {
+                toast.error("Failed to fetch data", {
+                    description: error.message || "Oops! Something went wrong.",
+                });
+            } finally {
+                setIsLoading(false);
+                setIsLoadingRoles(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    const handleResendInvitation = async (teammateId) => {
+        try {
+            setResendingId(teammateId);
+            const response = await ResendTeammaterTokenApi(teammateId);
+            toast.success("Invitation resent", {
+                description: response.message
+            });
+        } catch (error) {
+            toast.error("Failed to resend invitation", {
+                description: error.message || "Oops! Something went wrong.",
+            });
+        } finally {
+            setResendingId(null);
+        }
+    };
 
     const filteredTeammates = teammates.filter(teammate =>
-        teammate.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        teammate.role.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        teammate.status.toLowerCase().includes(searchQuery.toLowerCase())
+        teammate.email.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const indexOfLastRecord = currentPage * recordsPerPage;
@@ -59,6 +103,8 @@ export default function SettingTeammates() {
     };
 
     const deleteSelectedTeammates = () => {
+        // TODO: Implement actual deletion logic via API call
+        setTeammates(teammates.filter(teammate => !selectedTeammates.includes(teammate._id)));
         setSelectedTeammates([]);
     };
 
@@ -68,16 +114,17 @@ export default function SettingTeammates() {
                 <h1 className="text-2xl font-bold mb-2">Teammates</h1>
                 <p className="text-gray-500">Add or remove teammates from this workspace, and manage roles.</p>
             </div>
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>Manage your teammates</CardTitle>
                 </CardHeader>
 
                 <CardContent>
                     <div className="flex items-center justify-between">
-                        <InviteTeammateDialog />
+                        <InviteTeammateDialog setTeammates={setTeammates} />
                         <div className="flex items-center gap-2">
-                            <Users className="w-5 h-5" /> <span className="text-sm">2/3 members</span>
+                            <Users className="w-5 h-5" />
+                            <span className="text-sm">{teammates.length}/3 members</span>
                         </div>
                     </div>
                     <div className="flex justify-center flex-wrap mt-8 mb-6 border shadow-sm rounded-lg p-4 gap-1">
@@ -105,22 +152,30 @@ export default function SettingTeammates() {
                             </div>
                         </div>
 
-                        <TeammatesTable
-                            currentTeammates={currentTeammates}
-                            selectedTeammates={selectedTeammates}
-                            onToggleSelect={toggleSelect}
-                            onToggleSelectAll={toggleSelectAll}
-                            onDeleteSelected={deleteSelectedTeammates}
-                        />
+                        <>
+                            <TeammatesTable
+                                currentTeammates={currentTeammates}
+                                selectedTeammates={selectedTeammates}
+                                onToggleSelect={toggleSelect}
+                                onToggleSelectAll={toggleSelectAll}
+                                onDeleteSelected={deleteSelectedTeammates}
+                                roles={roles}
+                                isLoading={isLoading}
+                                isLoadingRoles={isLoadingRoles}
+                                resendingId={resendingId}
+                                onResendInvitation={handleResendInvitation}
+                            />
 
-                        <TablePagination
-                            currentPage={currentPage}
-                            totalPages={totalPages}
-                            onChangePage={changePage}
-                        />
-                        <div className="text-sm text-gray-500 mt-4 text-center">
-                            Showing {indexOfFirstRecord + 1}-{Math.min(indexOfLastRecord, filteredTeammates.length)} of {filteredTeammates.length} teammates
-                        </div>
+                            <TablePagination
+                                currentPage={currentPage}
+                                totalPages={totalPages}
+                                onChangePage={changePage}
+                            />
+                            <div className="text-sm text-gray-500 mt-4 text-center">
+                                Showing {filteredTeammates.length > 0 ? indexOfFirstRecord + 1 : 0}-
+                                {Math.min(indexOfLastRecord, filteredTeammates.length)} of {filteredTeammates.length} teammates
+                            </div>
+                        </>
                     </div>
                 </CardContent>
             </Card>

@@ -15,13 +15,6 @@ export const ResendReaderTokenApi = async (readerId) => {
     return response.data;
 }
 
-export const VerifyReaderTokenApi  = async (token) => {
-    const response = await ApiClient().get(`/workspace-reader/verify-reader/${token}`,{
-        showLoader: true
-    });
-    return response.data;
-}
-
 export const DeleteReadersApi = async (data) => {
     const response = await ApiClient().post("/workspace-reader/delete", data);
     return response.data;

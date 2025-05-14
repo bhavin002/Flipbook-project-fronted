@@ -96,7 +96,7 @@ export default function App() {
           <Route path="/auth/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
           <Route path="/auth/forgot-password/:token" element={<PublicRoute><ResetPassword /></PublicRoute>} />
           <Route path="/account/confirm-account" element={<PublicRoute><ConfirmAccount /></PublicRoute>} />
-          <Route path="/verify-reader/:token" element={<VerifyReader />} />
+          <Route path="/accept-invitation/:token" element={<VerifyReader />} />
 
           {/* Default redirect */}
           <Route path="/" element={<Navigate to="/myflipbooks" replace />} />

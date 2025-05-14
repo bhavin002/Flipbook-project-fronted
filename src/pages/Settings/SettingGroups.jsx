@@ -126,7 +126,7 @@ export default function SettingGroups() {
                     <CardTitle>Manage your groups</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <CreateGroupDialog onGroupCreated={fetchGroups} />
+                    <CreateGroupDialog setGroups={setGroups} />
                     <div className="mt-8">
                         <div className="flex justify-between mb-4 gap-4">
                             <h2 className="text-lg font-medium w-full">Groups ({filteredGroups.length})</h2>
@@ -155,6 +155,7 @@ export default function SettingGroups() {
                             onToggleSelect={toggleSelect}
                             onToggleSelectAll={toggleSelectAll}
                             onDeleteSelected={deleteSelectedGroups}
+                            setGroups={setGroups}
                             isLoading={isLoading}
                         />
 
