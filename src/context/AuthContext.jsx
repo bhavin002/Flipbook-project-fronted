@@ -30,7 +30,10 @@ export function AuthProvider({ children }) {
             const response = await GetUserInfoApi(token);
             if (response.status !== 200) return false;
             setUserMeta(response.data.user);
-            sessionStorage.setItem('fn_workspace_id', response.data.user.workspaceId);
+            const fn_workspace_id = sessionStorage.getItem('fn_workspace_id');
+            if (!fn_workspace_id) {
+                sessionStorage.setItem('fn_workspace_id', response.data.user.workspaceId);
+            }
             return true;
         } catch (error) {
             return false;
@@ -54,14 +57,14 @@ export function AuthProvider({ children }) {
         const isValid = await isTokenVerified(data.token);
         if (isValid) {
             setIsAuthenticated(true);
-            
+
             const readerToken = localStorage.getItem('fn_invite_token');
             if (readerToken) {
                 localStorage.removeItem('fn_invite_token');
                 navigate(`/accept-invitation/${readerToken}`);
                 return true;
             }
-            
+
             return true;
         } else {
             localStorage.removeItem('fn_access_token');

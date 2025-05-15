@@ -7,9 +7,10 @@ import TeammatesTable from "../../components/AppLayoutComponents/Sidebar/Setting
 import RolesInfo from "../../components/AppLayoutComponents/Sidebar/Setting/Teammates/RolesInfo"
 import TFA from "../../components/AppLayoutComponents/Sidebar/Setting/Teammates/TFA"
 import TablePagination from '@/utils/TablePagination';
-import { GetTeammatesApi, ResendTeammaterTokenApi } from '@/service/teammate.service';
+import { GetTeammatesApi, ResendTeammaterTokenApi, DeleteTeammatesApi } from '@/service/teammate.service';
 import { GetUserRolesApi } from "@/service/user.role.service";
 import { toast } from 'sonner';
+import ConfirmationDialog from "@/utils/ConfirmationDialog";
 
 export default function SettingTeammates() {
     const [selectedTeammates, setSelectedTeammates] = useState([]);
@@ -20,6 +21,9 @@ export default function SettingTeammates() {
     const [roles, setRoles] = useState([]);
     const [isLoadingRoles, setIsLoadingRoles] = useState(false);
     const [resendingId, setResendingId] = useState(null);
+    const [isTeammateOwner, setIsTeammateOwner] = useState(false);
+    const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+    const [isDeletingTeammates, setIsDeletingTeammates] = useState(false);
     const recordsPerPage = 5;
 
     useEffect(() => {
@@ -28,7 +32,8 @@ export default function SettingTeammates() {
                 setIsLoading(true);
                 // Fetch teammates
                 const teammatesResponse = await GetTeammatesApi();
-                setTeammates(teammatesResponse.data || []);
+                setTeammates(teammatesResponse.data.teammateData || []);
+                setIsTeammateOwner(teammatesResponse.data.isTeammateOwner || false);
 
                 // Fetch roles
                 setIsLoadingRoles(true);
@@ -73,6 +78,10 @@ export default function SettingTeammates() {
     const totalPages = Math.ceil(filteredTeammates.length / recordsPerPage);
 
     const toggleSelect = (id) => {
+        // Don't select owners
+        const teammate = teammates.find(t => t._id === id);
+        if (teammate && teammate.isOwner) return;
+
         if (selectedTeammates.includes(id)) {
             setSelectedTeammates(selectedTeammates.filter(teamId => teamId !== id));
         } else {
@@ -81,13 +90,19 @@ export default function SettingTeammates() {
     };
 
     const toggleSelectAll = (currentTeammateIds) => {
-        const allCurrentSelected = currentTeammateIds.every(id => selectedTeammates.includes(id));
+        // Filter out owners from the selection
+        const selectableIds = currentTeammateIds.filter(id => {
+            const teammate = teammates.find(t => t._id === id);
+            return teammate && !teammate.isOwner;
+        });
+
+        const allCurrentSelected = selectableIds.every(id => selectedTeammates.includes(id));
 
         if (allCurrentSelected) {
-            setSelectedTeammates(selectedTeammates.filter(id => !currentTeammateIds.includes(id)));
+            setSelectedTeammates(selectedTeammates.filter(id => !selectableIds.includes(id)));
         } else {
             const newSelectedTeammates = [...selectedTeammates];
-            currentTeammateIds.forEach(id => {
+            selectableIds.forEach(id => {
                 if (!newSelectedTeammates.includes(id)) {
                     newSelectedTeammates.push(id);
                 }
@@ -103,9 +118,45 @@ export default function SettingTeammates() {
     };
 
     const deleteSelectedTeammates = () => {
-        // TODO: Implement actual deletion logic via API call
-        setTeammates(teammates.filter(teammate => !selectedTeammates.includes(teammate._id)));
-        setSelectedTeammates([]);
+        if (selectedTeammates.length > 0) {
+            setIsDeleteConfirmOpen(true);
+        }
+    };
+
+    const handleDeleteConfirmation = async (confirmed) => {
+        if (confirmed) {
+            setIsDeletingTeammates(true);
+            try {
+                const response = await DeleteTeammatesApi({
+                    teammateIds: selectedTeammates
+                });
+
+                setTeammates(teammates.filter(teammate => !selectedTeammates.includes(teammate._id)));
+                setSelectedTeammates([]);
+
+                toast.success("Teammates deleted", {
+                    description: response.message || "Selected teammates have been removed successfully."
+                });
+            } catch (error) {
+                toast.error("Failed to delete teammates", {
+                    description: error.message || "Something went wrong."
+                });
+            } finally {
+                setIsDeletingTeammates(false);
+                setIsDeleteConfirmOpen(false);
+            }
+        } else {
+            setIsDeleteConfirmOpen(false);
+        }
+    };
+
+    const handleTeammateRoleUpdate = (teammateId, newRoleId) => {
+        // Update the local state with the new role
+        setTeammates(teammates.map(teammate => 
+            teammate._id === teammateId 
+                ? { ...teammate, userRole: newRoleId } 
+                : teammate
+        ));
     };
 
     return (
@@ -120,13 +171,7 @@ export default function SettingTeammates() {
                 </CardHeader>
 
                 <CardContent>
-                    <div className="flex items-center justify-between">
-                        <InviteTeammateDialog setTeammates={setTeammates} />
-                        <div className="flex items-center gap-2">
-                            <Users className="w-5 h-5" />
-                            <span className="text-sm">{teammates.length}/3 members</span>
-                        </div>
-                    </div>
+                    {isTeammateOwner && <InviteTeammateDialog setTeammates={setTeammates} />}
                     <div className="flex justify-center flex-wrap mt-8 mb-6 border shadow-sm rounded-lg p-4 gap-1">
                         The owner of this workspace is : <p className="font-semibold">Bhavin Vasavada</p>
                     </div>
@@ -164,6 +209,8 @@ export default function SettingTeammates() {
                                 isLoadingRoles={isLoadingRoles}
                                 resendingId={resendingId}
                                 onResendInvitation={handleResendInvitation}
+                                isTeammateOwner={isTeammateOwner}
+                                onTeammateRoleUpdate={handleTeammateRoleUpdate}
                             />
 
                             <TablePagination
@@ -181,6 +228,16 @@ export default function SettingTeammates() {
             </Card>
             <RolesInfo />
             <TFA />
+
+            <ConfirmationDialog
+                isConfirmModalOpen={isDeleteConfirmOpen}
+                setIsConfirmModalOpen={setIsDeleteConfirmOpen}
+                title="Delete teammates"
+                description={`Are you sure you want to delete ${selectedTeammates.length} ${selectedTeammates.length === 1 ? 'teammate' : 'teammates'}?`}
+                isLoading={isDeletingTeammates}
+                onConfirm={() => handleDeleteConfirmation(true)}
+                onCancel={() => handleDeleteConfirmation(false)}
+            />
         </div>
     );
 }

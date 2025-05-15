@@ -6,7 +6,14 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 
-export default function SelectRole({ roles = [], isLoading = false, selectedRole = "", onRoleChange, error }) {
+export default function SelectRole({ 
+    roles = [], 
+    isLoading = false, 
+    selectedRole = "", 
+    onRoleChange, 
+    error,
+    disabled = false
+}) {
     const selectedRoleName = () => {
         if (!selectedRole || roles.length === 0) return "";
         const role = roles.find(r => r._id === selectedRole);
@@ -17,7 +24,7 @@ export default function SelectRole({ roles = [], isLoading = false, selectedRole
         <Select 
             value={selectedRole} 
             onValueChange={onRoleChange}
-            disabled={isLoading || roles.length === 0}
+            disabled={isLoading || roles.length === 0 || disabled}
         >
             <SelectTrigger id="role" className={`w-full ${error ? "border-red-500" : ""}`}>
                 <SelectValue placeholder="Select a role">
