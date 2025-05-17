@@ -55,6 +55,7 @@ import Trash from "./pages/Trash";
 import { FolderProvider } from "./context/FolderContext";
 import { CurrencyProvider } from "./context/CurrencyContext";
 import VerifyReader from "./pages/Settings/VerifyReader";
+import { WorkspaceProvider } from "./context/WorkspaceContext";
 
 // Route configurations
 const brandingRoutes = [
@@ -90,167 +91,169 @@ export default function App() {
     <AuthProvider>
       <FolderProvider>
         <CurrencyProvider>
-        {apiCounter > 0 && <Loader />}
-        <Routes>
-          {/* Public Auth routes */}
-          <Route path="/auth/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
-          <Route path="/auth/sign-in" element={<PublicRoute><SignIn /></PublicRoute>} />
-          <Route path="/auth/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
-          <Route path="/auth/forgot-password/:token" element={<PublicRoute><ResetPassword /></PublicRoute>} />
-          <Route path="/account/confirm-account" element={<PublicRoute><ConfirmAccount /></PublicRoute>} />
-          <Route path="/accept-invitation/:token" element={<VerifyReader />} />
+          <WorkspaceProvider>
+            {apiCounter > 0 && <Loader />}
+            <Routes>
+              {/* Public Auth routes */}
+              <Route path="/auth/sign-up" element={<PublicRoute><SignUp /></PublicRoute>} />
+              <Route path="/auth/sign-in" element={<PublicRoute><SignIn /></PublicRoute>} />
+              <Route path="/auth/forgot-password" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+              <Route path="/auth/forgot-password/:token" element={<PublicRoute><ResetPassword /></PublicRoute>} />
+              <Route path="/account/confirm-account" element={<PublicRoute><ConfirmAccount /></PublicRoute>} />
+              <Route path="/accept-invitation/:token" element={<VerifyReader />} />
 
-          {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/myflipbooks" replace />} />
+              {/* Default redirect */}
+              <Route path="/" element={<Navigate to="/myflipbooks" replace />} />
 
-          {/* Main content routes */}
-          <Route path="/myflipbooks" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
-            <Route path="folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
-            <Route path="template" element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
-            <Route path="template/folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
-            <Route path="shared-with-me" element={<SharedWithMe isSidebarOpen={isSidebarOpen} />} />
-            <Route path="trash" element={<Trash isSidebarOpen={isSidebarOpen} />} />
-          </Route>
+              {/* Main content routes */}
+              <Route path="/myflipbooks" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
+                <Route path="folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
+                <Route path="template" element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
+                <Route path="template/folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
+                <Route path="shared-with-me" element={<SharedWithMe isSidebarOpen={isSidebarOpen} />} />
+                <Route path="trash" element={<Trash isSidebarOpen={isSidebarOpen} />} />
+              </Route>
 
-          <Route path="/automation" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<AutomationContent />} />
-          </Route>
+              <Route path="/automation" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<AutomationContent />} />
+              </Route>
 
-          <Route path="/statistics" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<StatisticsContent />} />
-          </Route>
+              <Route path="/statistics" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<StatisticsContent />} />
+              </Route>
 
-          {/* Branding routes */}
-          <Route path="/branding" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<Navigate to="profile/settings" replace />} />
-            {brandingRoutes.map((route) => (
-              <Route key={route.path} path={route.path} element={route.element} />
-            ))}
-          </Route>
+              {/* Branding routes */}
+              <Route path="/branding" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<Navigate to="profile/settings" replace />} />
+                {brandingRoutes.map((route) => (
+                  <Route key={route.path} path={route.path} element={route.element} />
+                ))}
+              </Route>
 
-          {/* Settings routes */}
-          <Route path="/settings" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<Navigate to="workspace" replace />} />
-            {settingsRoutes.map((route) => (
-              <Route key={route.path} path={route.path} element={route.element} />
-            ))}
-          </Route>
+              {/* Settings routes */}
+              <Route path="/settings" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<Navigate to="workspace" replace />} />
+                {settingsRoutes.map((route) => (
+                  <Route key={route.path} path={route.path} element={route.element} />
+                ))}
+              </Route>
 
-          {/* Legacy settings route - redirect to workspace */}
-          <Route path="/settings" element={<Navigate to="/settings/workspace" replace />} />
-          <Route path="/settings/workspace" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<SettingWorkspace />} />
-          </Route>
+              {/* Legacy settings route - redirect to workspace */}
+              <Route path="/settings" element={<Navigate to="/settings/workspace" replace />} />
+              <Route path="/settings/workspace" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<SettingWorkspace />} />
+              </Route>
 
-          {/* flipbook details page routes */}
-          <Route path="/details/:id" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<Details />} />
-          </Route>
-          <Route path="/embed/:id" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<Details />} />
-          </Route>
-          <Route path="/trackable-links/:id" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<Details />} />
-          </Route>
-          <Route path="/stats/:id" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<Details />} />
-          </Route>
-          <Route path="/send-email/:id" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<Details />} />
-          </Route>
-          <Route path="/download-qr/:id" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<Details />} />
-          </Route>
+              {/* flipbook details page routes */}
+              <Route path="/details/:id" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<Details />} />
+              </Route>
+              <Route path="/embed/:id" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<Details />} />
+              </Route>
+              <Route path="/trackable-links/:id" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<Details />} />
+              </Route>
+              <Route path="/stats/:id" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<Details />} />
+              </Route>
+              <Route path="/send-email/:id" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<Details />} />
+              </Route>
+              <Route path="/download-qr/:id" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<Details />} />
+              </Route>
 
-          {/* my account page routes */}
-          <Route path="/account/details" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<MyAccount />} />
-          </Route>
-          <Route path="/account/email-preferences" element={
-            <PrivateRoute>
-              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<MyAccount />} />
-          </Route>
+              {/* my account page routes */}
+              <Route path="/account/details" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<MyAccount />} />
+              </Route>
+              <Route path="/account/email-preferences" element={
+                <PrivateRoute>
+                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<MyAccount />} />
+              </Route>
 
-          <Route path="/customize/:id" element={
-            <PrivateRoute>
-              <CustomizeAppLayout />
-            </PrivateRoute>
-          }>
-            <Route index element={<Customize />} />
-          </Route>
+              <Route path="/customize/:id" element={
+                <PrivateRoute>
+                  <CustomizeAppLayout />
+                </PrivateRoute>
+              }>
+                <Route index element={<Customize />} />
+              </Route>
 
-          <Route path="/create" element={
-            <PrivateRoute>
-              <ScratchAppLayout />
-            </PrivateRoute>
-          }>
-            <Route index element={<FlipbookFromScratch />} />
-          </Route>
+              <Route path="/create" element={
+                <PrivateRoute>
+                  <ScratchAppLayout />
+                </PrivateRoute>
+              }>
+                <Route index element={<FlipbookFromScratch />} />
+              </Route>
 
-          <Route path="/editor/:id" element={
-            <PrivateRoute>
-              <EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-            </PrivateRoute>
-          }>
-            <Route index element={<Editor />} />
-          </Route>
-        </Routes>
+              <Route path="/editor/:id" element={
+                <PrivateRoute>
+                  <EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                </PrivateRoute>
+              }>
+                <Route index element={<Editor />} />
+              </Route>
+            </Routes>
+          </WorkspaceProvider>
         </CurrencyProvider>
       </FolderProvider>
     </AuthProvider>

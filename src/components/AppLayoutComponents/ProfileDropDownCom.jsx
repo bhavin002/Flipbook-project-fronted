@@ -1,35 +1,15 @@
-import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "@/context/AuthContext";
 import { CircleUser, BookUser, Settings, Wrench, LogOut, ChevronRight, Check, Loader2 } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
-import { GetWorkspacesApi } from "@/service/workspace.service";
+import { useWorkspaces } from "@/context/WorkspaceContext";
 
 export default function ProfileDropDownCom() {
     const navigate = useNavigate();
     const { logout } = useAuth();
-    const [workspaces, setWorkspaces] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchWorkspaces = async () => {
-            setIsLoading(true);
-            try {
-                const response = await GetWorkspacesApi();
-                setWorkspaces(response.data || []);
-            } catch (error) {
-                toast.error("Failed to fetch workspaces", {
-                    description: error.message || "Oops! Something went wrong.",
-                });
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchWorkspaces();
-    }, []);
+    const { workspaces, isLoading } = useWorkspaces();
 
     const currentWorkspace = workspaces.find(w => w.isCurrent) || workspaces[0];
 
