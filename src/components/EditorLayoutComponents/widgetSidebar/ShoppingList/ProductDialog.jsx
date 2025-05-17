@@ -4,8 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { getData } from "@/utils/datas";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Trash2, GripVertical } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -14,7 +13,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Info } from "lucide-react";
 import {
     Tooltip,
@@ -40,8 +39,159 @@ import {
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import AdvancedOptions from "./AdvancedOptions";
+import { AddProductApi, ProductImageUploadApi } from "@/service/product.service";
+import { toast } from "sonner";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import LoadingButton from "@/utils/LoadingButton";
+import { useCurrency } from "@/context/CurrencyContext";
+import { restrictNumericInput } from "@/utils/Helper";
 
-// Sortable image item component
+const stringToNumberOrNull = (value) => {
+    if (value === "" || value === null || value === undefined) return null;
+    const num = parseFloat(value);
+    return isNaN(num) ? null : num;
+};
+
+const numberAsStringSchema = z
+    .string()
+    .regex(/^$|^[0-9]*\.?[0-9]*$/, "Only numbers are allowed")
+    .transform(stringToNumberOrNull)
+    .nullable();
+
+const positiveNumberAsStringSchema = numberAsStringSchema.refine(
+    (val) => val === null || val >= 0,
+    {
+        message: "Value must be a non-negative number",
+    }
+);
+
+const strictlyPositiveNumberAsStringSchema = numberAsStringSchema.refine(
+    (val) => val === null || val > 0,
+    {
+        message: "Value must be greater than 0.",
+    }
+);
+
+const productSchema = z.object({
+    productTitle: z.string().optional(),
+    sku: z.string().optional(),
+    description: z.string().optional(),
+    currencyId: z.string().min(1, "Currency is required"),
+    price: positiveNumberAsStringSchema,
+    onSale: z.boolean(),
+    discountPrice: positiveNumberAsStringSchema,
+    images: z.array(z.object({
+        imageId: z.string(),
+        url: z.string().url()
+    })).max(3, "Maximum 3 images allowed"),
+    quantityOption: z.boolean(),
+    enableMinMaxQuantity: z.boolean(),
+    minQuantity: positiveNumberAsStringSchema,
+    maxQuantity: positiveNumberAsStringSchema,
+    restrictToMoqMultiples: z.boolean(),
+    customizableProduct: z.boolean(),
+    instructionMessage: z.string().optional(),
+    instructionMessageRequired: z.boolean(),
+    paidPersonalization: z.boolean(),
+    pricingMethod: z.enum(["FLAT_FEE", "PER_CHAR"]).optional(),
+    personalizationPrice: strictlyPositiveNumberAsStringSchema,
+    charLimit: strictlyPositiveNumberAsStringSchema,
+    productAttributes: z.array(z.object({
+        attributeName: z.string().min(1, "Attribute name is required"),
+        optionValues: z.array(z.string().min(1, "Option value is required"))
+    })),
+    productVariants: z.array(z.object({
+        variantName: z.string().min(1, "Variant name is required"),
+        price: numberAsStringSchema,
+        discountPrice: numberAsStringSchema,
+        sku: z.string().optional(),
+        visibility: z.boolean()
+    })),
+    variantImages: z.union([
+        z.object({
+            selectedAttribute: z.string().optional(),
+            attributeValues: z.array(
+                z.object({
+                    value: z.string().min(1, "Value is required"),
+                    image: z.array(
+                        z.object({
+                            imageId: z.string().min(1, "Image ID is required"),
+                            url: z.string().url(),
+                        })
+                    ).optional()
+                })
+            ).optional()
+        }).optional(),
+        z.literal(null)
+    ])
+}).superRefine((data, ctx) => {
+
+    if (data.price !== null && data.discountPrice !== null && data.discountPrice > data.price) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Discount price cannot be greater than the original price",
+            path: ["discountPrice"]
+        });
+    }
+
+    if (data.quantityOption && data.enableMinMaxQuantity && data.restrictToMoqMultiples) {
+        if (data.minQuantity === null || data.minQuantity <= 0) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "The max. value must be a multiple of the min.",
+                path: ["minQuantity"]
+            });
+        }
+        if (data.maxQuantity === null || data.maxQuantity <= 0) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "",
+                path: ["maxQuantity"]
+            });
+        }
+        if (
+            data.minQuantity !== null &&
+            data.maxQuantity !== null &&
+            data.maxQuantity < data.minQuantity
+        ) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Maximum quantity must be greater than or equal to minimum quantity",
+                path: ["maxQuantity"]
+            });
+        }
+    }
+
+    if (data.customizableProduct && !data.instructionMessage) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "This field cannot be left empty. Please enter a value.",
+            path: ["instructionMessage"]
+        });
+    }
+
+    if (data.customizableProduct && data.paidPersonalization) {
+        if (data.personalizationPrice === null || data.personalizationPrice <= 0) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Value must be greater than 0.",
+                path: ["personalizationPrice"]
+            });
+        }
+        if (data.charLimit === null || data.charLimit <= 0) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: "Value must be greater than 0.",
+                path: ["charLimit"]
+            });
+        }
+    }
+});
+
+
+
 function SortableImageItem({ image, onDelete }) {
     const {
         attributes,
@@ -66,13 +216,14 @@ function SortableImageItem({ image, onDelete }) {
         >
             <div className="flex gap-2 items-center">
                 <button
+                    type="button"
                     className="cursor-grab focus:outline-none"
                     {...attributes}
                     {...listeners}
                 >
                     <GripVertical className="h-4 w-4 text-gray-400" />
                 </button>
-                <img src={image.url} className="w-[50px] h-[40px] object-cover rounded-sm" alt={image.name} />
+                <img src={image.imageLink} className="w-[50px] h-[40px] object-cover rounded-sm" alt={image.name} />
                 <p className="text-sm truncate">{image.name}</p>
             </div>
             <Button variant="ghost" onClick={() => onDelete(image.id)}>
@@ -86,21 +237,110 @@ export default function ProductDialog({
     isProductDialogOpen,
     setIsProductDialogOpen
 }) {
-    const [onSale, setIsSale] = useState(false);
-    const currencyData = getData("currency") || [];
+    const { currencies, loading } = useCurrency();
+    const [productImages, setProductImages] = useState([]);
+    console.log("productImages ??", productImages)
+    const [isUploading, setIsUploading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const fileInputRef = useRef(null);
 
-    // Added for image handling
-    const [productImages, setProductImages] = useState([
-        { id: '1', name: '152 (4).jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
-        { id: '2', name: '152 (4).jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
-        { id: '3', name: '152 (4).jpg', url: 'https://cdn.flipsnack.com/collections/uploads/1500b2e0589f1cb5dcdbab1f49929443_t' },
-    ]);
+    const { register, handleSubmit, watch, setValue, formState: { errors }, clearErrors } = useForm({
+        resolver: zodResolver(productSchema),
+        defaultValues: {
+            productTitle: "",
+            sku: "",
+            description: "",
+            currencyId: currencies[0]?.value || "",
+            price: "",
+            onSale: false,
+            discountPrice: "",
+            images: [],
+            quantityOption: false,
+            enableMinMaxQuantity: false,
+            minQuantity: "0",
+            maxQuantity: "0",
+            restrictToMoqMultiples: false,
+            customizableProduct: false,
+            instructionMessage: "",
+            instructionMessageRequired: false,
+            paidPersonalization: false,
+            pricingMethod: "FLAT_FEE",
+            personalizationPrice: "2.5",
+            charLimit: "4",
+            productAttributes: [],
+            productVariants: [],
+            variantImages: null
+        }
+    });
 
-    const handleDeleteImage = (id) => {
-        setProductImages(productImages.filter(image => image.id !== id));
+    console.log("errors ??",errors)
+
+    const onSale = watch("onSale");
+
+    const handleNumberInputChange = (e, fieldName) => {
+        let { value } = e.target;
+        if (value === "") {
+            setValue(fieldName, value);
+            clearErrors(fieldName);
+            return;
+        }
+        const isIntegerField = ["charLimit", "minQuantity", "maxQuantity"].includes(fieldName);
+        const regex = isIntegerField ? /^[0-9]*$/ : /^[0-9]*\.?[0-9]*$/;
+        if (regex.test(value)) {
+            setValue(fieldName, value);
+            if (value !== "0" || !["minQuantity", "maxQuantity"].includes(fieldName)) {
+                clearErrors(fieldName);
+            }
+        }
     };
 
-    // DnD setup
+    const handleDeleteImage = (id) => {
+        const newImages = productImages.filter(image => image.id !== id);
+        setProductImages(newImages);
+        setValue("images", newImages.map(img => ({
+            imageId: img.id,
+            url: img.imageLink
+        })));
+    };
+
+    const handleFileChange = async (e) => {
+        const files = e.target.files;
+        if (!files.length) return;
+
+        const formData = new FormData();
+        Array.from(files).forEach(file => {
+            formData.append('files', file);
+        });
+
+        if (files.length > 0) {
+            setIsUploading(true);
+            try {
+                const response = await ProductImageUploadApi(formData);
+                const imageResponseData = response.data;
+                const newImages = [...productImages, ...imageResponseData];
+                setProductImages(newImages);
+                setValue("images", newImages.map(img => ({
+                    imageId: img.id,
+                    url: img.imageLink
+                })));
+
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                }
+            } catch (error) {
+                toast.error("Upload failed", {
+                    description: error.message || "Oops! Something went wrong.",
+                });
+
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = "";
+                }
+            } finally {
+                setIsUploading(false);
+            }
+        }
+    };
+
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor, {
@@ -115,11 +355,32 @@ export default function ProductDialog({
             setProductImages((items) => {
                 const oldIndex = items.findIndex(item => item.id === active.id);
                 const newIndex = items.findIndex(item => item.id === over.id);
-
-                return arrayMove(items, oldIndex, newIndex);
+                const newItems = arrayMove(items, oldIndex, newIndex);
+                setValue("images", newItems.map(img => ({
+                    imageId: img.id,
+                    url: img.imageLink
+                })));
+                return newItems;
             });
         }
     }
+
+    const onSubmit = async (data) => {
+        try {
+            setIsLoading(true);
+            const response = await AddProductApi(data);
+            toast.success("Product created", {
+                description: response.message
+            });
+            setIsProductDialogOpen(false);
+        } catch (error) {
+            toast.error("Failed to create product", {
+                description: error.message || "Oops! Something went wrong.",
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
@@ -130,140 +391,192 @@ export default function ProductDialog({
                         Description
                     </DialogDescription>
                 </DialogHeader>
-                <div className="lg:max-h-[calc(100vh-150px)] max-lg:max-h-[calc(100vh-300px)] overflow-y-auto">
-                    <div className="space-y-2 px-1">
-                        <div className="flex gap-4">
-                            <div className="w-[60%]">
-                                <Label htmlFor="product-title" className="text-xs">Product title</Label>
-                                <Input
-                                    type="text"
-                                    id="product-title"
-                                    placeholder="ex. Product 1"
-                                />
-                            </div>
-                            <div className="w-[40%]">
-                                <Label htmlFor="sku" className="text-xs">SKU</Label>
-                                <Input
-                                    type="text"
-                                    id="sku"
-                                    placeholder="ex. 123ABC"
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <Label htmlFor="description" className="text-xs">Description</Label>
-                            <Textarea
-                                id="description"
-                                placeholder="Description"
-                                className="resize-none"
-                                rows={4}
-                            />
-                        </div>
-                    </div>
-                    <Separator className="my-5" />
-                    <div className="space-y-4 px-1" >
-                        <Label className="text-md font-semibold">Pricing</Label>
-                        <div className="flex gap-4">
-                            <div className="w-[50%]">
-                                <Label htmlFor="product-price" className="text-xs">price</Label>
-                                <Input
-                                    type="text"
-                                    id="product-price" />
-                            </div>
-                            <div className="w-[50%]">
-                                <div className='flex gap-2 items-center mt-1 mb-1'>
-                                    <Label htmlFor="sku" className="text-xs">Currency</Label>
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Info className="h-3 w-3 cursor-pointer" />
-                                            </TooltipTrigger>
-                                            <TooltipContent
-                                                side="right"
-                                                align="center"
-                                                className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                            >
-                                                <p className="text-sm">The currency you select will apply to all products added in your catalog. If you change it, it will also change for all products.</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="lg:max-h-[calc(100vh-150px)] max-lg:max-h-[calc(100vh-300px)] overflow-auto">
+                        <div className="space-y-2 px-1">
+                            <div className="flex gap-4">
+                                <div className="w-[60%]">
+                                    <Label htmlFor="product-title" className="text-xs">Product title</Label>
+                                    <Input
+                                        id="product-title"
+                                        placeholder="ex. Product 1"
+                                        {...register("productTitle")}
+                                    />
                                 </div>
-                                <Select defaultValue="inr">
-                                    <SelectTrigger id="currency" className="w-full">
-                                        <SelectValue placeholder="Select currency" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {currencyData.map(option => (
-                                            <SelectItem key={option.value} value={option.value}>
-                                                {option.label}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <div className="w-[40%]">
+                                    <Label htmlFor="sku" className="text-xs">SKU</Label>
+                                    <Input
+                                        id="sku"
+                                        placeholder="ex. 123ABC"
+                                        {...register("sku")}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                        <div className="space-y-4">
-                            <div className="flex items-center">
-                                <Switch
-                                    id="on-sale"
-                                    checked={onSale}
-                                    onCheckedChange={setIsSale}
+                            <div>
+                                <Label htmlFor="description" className="text-xs">Description</Label>
+                                <Textarea
+                                    id="description"
+                                    placeholder="Description"
+                                    className="resize-none"
+                                    rows={4}
+                                    {...register("description")}
                                 />
-                                <Label htmlFor="on-sale" className="ml-3 text-gray-700">
-                                    On sale
-                                </Label>
                             </div>
-                            {onSale && <div className="w-[50%]">
-                                <Label htmlFor="discount-product-price" className="text-xs">Discount price</Label>
-                                <Input
-                                    type="text"
-                                    id="discount-product-price" />
-                            </div>
-                            }
                         </div>
-                    </div>
-                    <Separator className="my-5" />
-                    <div className="space-y-4 px-1">
-                        <Label className="text-md font-semibold">Images ({productImages.length}/3)</Label>
-                        <div className="space-y-2">
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                onDragEnd={handleDragEnd}
-                                modifiers={[restrictToVerticalAxis]}
-                            >
-                                <SortableContext
-                                    items={productImages.map(img => img.id)}
-                                    strategy={verticalListSortingStrategy}
-                                >
-                                    {productImages.map((image) => (
-                                        <SortableImageItem
-                                            key={image.id}
-                                            image={image}
-                                            onDelete={handleDeleteImage}
+                        <Separator className="my-5" />
+                        <div className="space-y-4 px-1" >
+                            <Label className="text-md font-semibold">Pricing</Label>
+                            <div className="flex gap-4">
+                                <div className="w-[50%]">
+                                    <Label htmlFor="product-price" className={`text-xs ${errors.price ? "text-red-500" : ""}`}>
+                                        Price
+                                    </Label>
+                                    <Input
+                                        type="text"
+                                        className={errors.price ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
+                                        id="product-price"
+                                        {...register("price")}
+                                        onChange={(e) => handleNumberInputChange(e, "price")}
+                                        onKeyDown={(e) => restrictNumericInput(e, false)}
+
+                                    />
+                                    {errors.price && <p className="text-red-500 text-xs">{errors.price.message}</p>}
+                                </div>
+                                <div className="w-[50%]">
+                                    <div className='flex gap-2 items-center mt-1 mb-1'>
+                                        <Label htmlFor="currency" className="text-xs">Currency</Label>
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <Info className="h-3 w-3 cursor-pointer" />
+                                                </TooltipTrigger>
+                                                <TooltipContent
+                                                    side="right"
+                                                    align="center"
+                                                    className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                                                >
+                                                    <p className="text-sm">The currency you select will apply to all products added in your catalog. If you change it, it will also change for all products.</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>
+                                    </div>
+                                    <Select
+                                        onValueChange={(value) => setValue("currencyId", value)}
+                                        defaultValue={currencies.length > 0 ? currencies[0].value : "loading"}
+                                    >
+                                        <SelectTrigger id="currency">
+                                            <SelectValue placeholder="Select currency" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {loading ? (
+                                                <SelectItem value="loading" disabled>Loading...</SelectItem>
+                                            ) : currencies.map(option => (
+                                                <SelectItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.currencyId && <p className="text-red-500 text-xs">{errors.currencyId.message}</p>}
+                                </div>
+                            </div>
+                            <div className="space-y-4">
+                                <div className="flex items-center">
+                                    <Switch
+                                        id="on-sale"
+                                        checked={onSale}
+                                        onCheckedChange={(checked) => setValue("onSale", checked)}
+                                    />
+                                    <Label htmlFor="on-sale" className="ml-3 text-gray-700">
+                                        On sale
+                                    </Label>
+                                </div>
+                                {onSale && (
+                                    <div className="w-[50%]">
+                                        <Label
+                                            htmlFor="discount-product-price"
+                                            className={`text-xs ${errors.discountPrice ? "text-red-500" : ""}`}
+                                        >
+                                            Discount price
+                                        </Label>
+                                        <Input
+                                            type="text"
+                                            className={errors.discountPrice ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
+                                            id="discount-product-price"
+                                            {...register("discountPrice")}
+                                            onChange={(e) => handleNumberInputChange(e, "discountPrice")}
+                                            onKeyDown={(e) => restrictNumericInput(e, false)}
                                         />
-                                    ))}
-                                </SortableContext>
-                            </DndContext>
+                                        {errors.discountPrice && <p className="text-red-500 text-xs">{errors.discountPrice.message}</p>}
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <Button
-                            variant="outline"
-                            disabled={productImages.length >= 3}
-                        >
-                            Upload images
-                        </Button>
+                        <Separator className="my-5" />
+                        <div className="space-y-4 px-1">
+                            <Label className="text-md font-semibold">Images ({productImages.length}/3)</Label>
+                            <div className="space-y-2">
+                                <DndContext
+                                    sensors={sensors}
+                                    collisionDetection={closestCenter}
+                                    onDragEnd={handleDragEnd}
+                                    modifiers={[restrictToVerticalAxis]}
+                                >
+                                    <SortableContext
+                                        items={productImages.map(img => img.id)}
+                                        strategy={verticalListSortingStrategy}
+                                    >
+                                        {productImages.map((image) => (
+                                            <SortableImageItem
+                                                key={image.id}
+                                                image={image}
+                                                onDelete={handleDeleteImage}
+                                            />
+                                        ))}
+                                    </SortableContext>
+                                </DndContext>
+                            </div>
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                                accept="image/*"
+                                multiple
+                                className="hidden"
+                            />
+                            <Button
+                                variant="outline"
+                                type="button"
+                                disabled={isUploading || productImages.length >= 3}
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                {isUploading ? "Uploading..." : "Upload images"}
+                            </Button>
+                            {errors.images && <p className="text-red-500 text-xs">{errors.images.message}</p>}
+                        </div>
+                        <Separator className="my-5" />
+                        <AdvancedOptions
+                            register={register}
+                            watch={watch}
+                            setValue={setValue}
+                            errors={errors}
+                            handleNumberInputChange={handleNumberInputChange}
+                            clearErrors={clearErrors}
+                        />
                     </div>
-                    <Separator className="my-5" />
-                    <AdvancedOptions />
-                </div>
-                <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsProductDialogOpen(false)}>
-                        Cancle
-                    </Button>
-                    <Button>
-                        Save product
-                    </Button>
-                </DialogFooter>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsProductDialogOpen(false)}>
+                            Cancel
+                        </Button>
+                        <Button type="submit" disabled={isLoading}>
+                            {isLoading ? (
+                                <>
+                                    <LoadingButton />
+                                </>
+                            ) : 'Save product'}
+                        </Button>
+                    </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog>
     )

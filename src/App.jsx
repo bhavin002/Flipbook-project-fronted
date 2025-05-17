@@ -53,6 +53,7 @@ import FolderFlipbooks from "./pages/FolderFlipbooks";
 import SharedWithMe from "./pages/SharedWithMe";
 import Trash from "./pages/Trash";
 import { FolderProvider } from "./context/FolderContext";
+import { CurrencyProvider } from "./context/CurrencyContext";
 import VerifyReader from "./pages/Settings/VerifyReader";
 
 // Route configurations
@@ -88,6 +89,7 @@ export default function App() {
   return (
     <AuthProvider>
       <FolderProvider>
+        <CurrencyProvider>
         {apiCounter > 0 && <Loader />}
         <Routes>
           {/* Public Auth routes */}
@@ -249,6 +251,7 @@ export default function App() {
             <Route index element={<Editor />} />
           </Route>
         </Routes>
+        </CurrencyProvider>
       </FolderProvider>
     </AuthProvider>
   );

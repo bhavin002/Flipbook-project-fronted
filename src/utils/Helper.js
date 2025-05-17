@@ -89,3 +89,16 @@ export function addIntercationDataToMainStage(mainStage, setMainStage, selectedS
     temp.stageref = null;
     setMainStage([...mainStage]);
 }
+
+export const restrictNumericInput = (e, allowDecimal = true) => {
+    const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete'];
+    const isValidKey = allowDecimal ? /[0-9.]/.test(e.key) : /[0-9]/.test(e.key);
+  
+    if (!isValidKey && !allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+  
+    if (allowDecimal && e.key === '.' && e.target.value.includes('.')) {
+      e.preventDefault();
+    }
+  };

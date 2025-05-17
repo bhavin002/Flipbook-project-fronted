@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import MaskInputEmail from "@/utils/MaskInputEmail";
+import MaskInput from "@/utils/MaskInput";
 import { Input } from "@/components/ui/input";
 import {
     DndContext,
@@ -76,7 +76,7 @@ function SortableEmailField({ field, onDelete, onKeyChange }) {
             </div>
 
             <div className="flex-1">
-                <MaskInputEmail className="" />
+                <MaskInput className="" />
             </div>
 
             <Button
@@ -198,7 +198,7 @@ export default function GeneralSettings() {
                                 <Label htmlFor="email" className="text-xs">
                                     Email <span>*</span>
                                 </Label>
-                                <MaskInputEmail />
+                                <MaskInput />
                             </>
                         ) : (
                             <div className="space-y-2">

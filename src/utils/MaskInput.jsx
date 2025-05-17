@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X } from "lucide-react";
 
-export default function MaskInputEmail({
+export default function MaskInput({
   onChange,
   maxKeywords = Infinity,
   initialKeywords = [],
@@ -25,7 +25,12 @@ export default function MaskInputEmail({
       if (keywords.length >= maxKeywords) {
         return;
       }
-      const newKeywords = [...keywords, inputValue.trim()];
+      const trimmedValue = inputValue.trim();
+      // Check for duplicate
+      if (keywords.includes(trimmedValue)) {
+        return;
+      }
+      const newKeywords = [...keywords, trimmedValue];
       setKeywords(newKeywords);
       setInputValue('');
       onChange?.(newKeywords);

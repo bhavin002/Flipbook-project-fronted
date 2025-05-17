@@ -29,7 +29,7 @@ export default function ProductCustomize({
     };
 
     return (
-        <Tabs defaultValue="open-overlay" className="h-full flex flex-col items-start flex-grow overflow-y-auto" >
+        <Tabs defaultValue="open-overlay" className="w-full">
             <TabsList className="w-full">
                 <TabsTrigger className="items-center gap-2 w-full" value="open-overlay">
                     <span className="text-xs">Open overlay</span>
@@ -45,7 +45,6 @@ export default function ProductCustomize({
                         <div className="flex flex-col gap-1 w-full">
                             <p className="text-sm font-semibold">Product 1</p>
                             <p className="text-sm text-gray-50">ABC123</p>
-                            <p className="text-sm text-gray-50">1200 INR</p>
                             <Button size="sm" variant="outline" className="w-full text-black hover:text-primary" onClick={() => setIsProductDialogOpen(true)}>
                                 <Pencil /> Edit product
                             </Button>
@@ -159,7 +158,6 @@ export default function ProductCustomize({
                         <div className="flex flex-col gap-1 w-full">
                             <p className="text-sm font-semibold">Product 1</p>
                             <p className="text-sm text-gray-50">ABC123</p>
-                            <p className="text-sm text-gray-50">1200 INR</p>
                             <Button size="sm" variant="outline" className="w-full text-black hover:text-primary" onClick={() => setIsProductDialogOpen(true)}>
                                 <Pencil /> Edit product
                             </Button>

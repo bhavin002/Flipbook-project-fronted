@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import MaskInputEmail from "@/utils/MaskInputEmail";
+import MaskInput from "@/utils/MaskInput";
 import { Button } from "@/components/ui/button";
 import {
     Trash2,
@@ -27,7 +27,7 @@ export default function CustomizeEmail() {
                     <Label>
                         Enter email addresses here
                     </Label>
-                    <MaskInputEmail />
+                    <MaskInput />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="subject">
