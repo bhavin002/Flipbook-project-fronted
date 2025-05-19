@@ -58,9 +58,10 @@ function SortableImageItem({ image, onDelete }) {
     );
 }
 
-export default function ManageVariantImages({ attributes, variants, setValue }) {
-    const [selectedAttributeId, setSelectedAttributeId] = useState(null);
-    const [selectedAttributeName, setSelectedAttributeName] = useState("");
+export default function ManageVariantImages({ attributes, variants, setValue, watch }) {
+    console.log("watch ??", watch("variantImages"));
+    const [selectedAttributeId, setSelectedAttributeId] = useState(attributes.find(attr => attr.name === watch("variantImages")?.selectedAttribute)?.id);
+    const [selectedAttributeName, setSelectedAttributeName] = useState(watch("variantImages")?.selectedAttribute || "");
     const [isLinkImagesOpen, setIsLinkImagesOpen] = useState(false);
     const [page, setPage] = useState(1);
     const [variantVisibility, setVariantVisibility] = useState({});
@@ -95,11 +96,24 @@ export default function ManageVariantImages({ attributes, variants, setValue }) 
             const selectedAttribute = attributes.find((attr) => attr.id === selectedAttributeId);
             if (selectedAttribute) {
                 setSelectedAttributeName(selectedAttribute.name);
-
-                setOptionImages(prev => {
+    
+                // Get existing variantImages from watch
+                const variantImages = watch("variantImages");
+    
+                setOptionImages((prev) => {
                     const initialOptionImages = {};
                     selectedAttribute.options.forEach((option) => {
-                        initialOptionImages[option] = prev[option] || [];
+                        // Check if this option has images in variantImages
+                        const existingImages =
+                            variantImages?.attributeValues
+                                ?.find((attrVal) => attrVal.value === option)
+                                ?.image.map((img) => ({
+                                    id: img.imageId,
+                                    imageLink: img.url,
+                                    name: img.url.split("/").pop(), // Extract name from URL or adjust as needed
+                                })) || [];
+    
+                        initialOptionImages[option] = existingImages.length > 0 ? existingImages : prev[option] || [];
                     });
                     return initialOptionImages;
                 });
@@ -140,7 +154,7 @@ export default function ManageVariantImages({ attributes, variants, setValue }) 
     const toggleVariantVisibility = useCallback((variantName) => {
         setVariantVisibility((prev) => {
             const newVisibility = { ...prev, [variantName]: !prev[variantName] };
-            
+
             // Update local variant data
             setVariantData(prevData => {
                 const updatedVariants = prevData.map(variant => {
@@ -152,10 +166,10 @@ export default function ManageVariantImages({ attributes, variants, setValue }) 
                     }
                     return variant;
                 });
-                
+
                 // Update form value
                 setValue("productVariants", updatedVariants);
-                
+
                 return updatedVariants;
             });
 
@@ -187,10 +201,10 @@ export default function ManageVariantImages({ attributes, variants, setValue }) 
                 }
                 return variant;
             });
-            
+
             // Update form value
             setValue("productVariants", updatedVariants);
-            
+
             return updatedVariants;
         });
     }, [setValue]);
@@ -341,7 +355,7 @@ export default function ManageVariantImages({ attributes, variants, setValue }) 
                                     discountPrice: variant.discountPrice || "",
                                     sku: variant.sku || ""
                                 };
-                                
+
                                 return (
                                     <TableRow
                                         key={index}

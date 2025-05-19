@@ -13,3 +13,13 @@ export const AddProductApi = async (data) => {
     const response = await ApiClient().post("/product/create", data);
     return response.data;
 }
+
+export const getProductApi = async (productId) => {
+    const response = await ApiClient().get(`/product/get/${productId}`);
+    return response.data;
+}
+
+export const updateProductApi = async (productId, data) => {
+    const response = await ApiClient().put(`/product/update/${productId}`, data);
+    return response.data;
+}

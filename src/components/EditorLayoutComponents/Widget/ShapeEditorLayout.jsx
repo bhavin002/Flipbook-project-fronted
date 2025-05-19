@@ -107,7 +107,7 @@ function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, 
     }
     if (selectedSubMenu === "shopping-list") {
         return (
-            <ShoppingList />
+            <ShoppingList selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "product-tag") {

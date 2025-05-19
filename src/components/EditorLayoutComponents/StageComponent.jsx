@@ -677,7 +677,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
 
     const handleDrag = (e) => {
         if (isCropping) return;
-        console.log(selectedIndex);
         const layer = e.target.getLayer();
         layer.find('.guid-line').forEach((l) => l.destroy());
         const newMainStageString = generateMainStageString(mainStage);

@@ -31,11 +31,12 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [mainStage, setMainStage] = useState([]);
     const navigate = useNavigate();
 
+    console.log("mainStage ??", mainStage)
+
     useEffect(() => {
         const getFlipbook = async () => {
             try {
                 const response = await GetFlipbookApi(id);
-                console.log("response ??", response);
                 setFlipbookName(response.data.name);
                 setStageWidth(response.data.width);
                 setStageHeight(response.data.height);
@@ -59,7 +60,6 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
             const temp = JSON.parse(JSON.stringify(mainStage))
             temp.forEach(e => {
                 e.selectedShapes = [];
-                console.log(e);
                 e.shapes = e.temp;
                 delete e.temp;
                 e.stageref = null;

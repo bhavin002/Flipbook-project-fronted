@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
@@ -13,7 +13,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Info } from "lucide-react";
 import {
     Tooltip,
@@ -39,14 +39,14 @@ import {
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import AdvancedOptions from "./AdvancedOptions";
-import { AddProductApi, ProductImageUploadApi } from "@/service/product.service";
+import { AddProductApi, ProductImageUploadApi, getProductApi, updateProductApi } from "@/service/product.service";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoadingButton from "@/utils/LoadingButton";
 import { useCurrency } from "@/context/CurrencyContext";
-import { restrictNumericInput } from "@/utils/Helper";
+import { addIntercationDataToMainStage, restrictNumericInput } from "@/utils/Helper";
 
 const stringToNumberOrNull = (value) => {
     if (value === "" || value === null || value === undefined) return null;
@@ -100,7 +100,7 @@ const productSchema = z.object({
     charLimit: strictlyPositiveNumberAsStringSchema,
     productAttributes: z.array(z.object({
         attributeName: z.string().min(1, "Attribute name is required"),
-        optionValues: z.array(z.string().min(1, "Option value is required"))
+        optionValues: z.array(z.string().min(1, "Option value is required")),
     })),
     productVariants: z.array(z.object({
         variantName: z.string().min(1, "Variant name is required"),
@@ -234,17 +234,17 @@ function SortableImageItem({ image, onDelete }) {
 }
 
 export default function ProductDialog({
-    isProductDialogOpen,
-    setIsProductDialogOpen
+    mainStage, setMainStage, selectedShape, selectedIndex, isProductDialogOpen, setIsProductDialogOpen
 }) {
     const { currencies, loading } = useCurrency();
     const [productImages, setProductImages] = useState([]);
-    console.log("productImages ??", productImages)
     const [isUploading, setIsUploading] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [productId, setProductId] = useState(null);
     const fileInputRef = useRef(null);
 
-    const { register, handleSubmit, watch, setValue, formState: { errors }, clearErrors } = useForm({
+    const { register, handleSubmit, watch, setValue, formState: { errors }, clearErrors, reset } = useForm({
         resolver: zodResolver(productSchema),
         defaultValues: {
             productTitle: "",
@@ -273,9 +273,110 @@ export default function ProductDialog({
         }
     });
 
-    console.log("errors ??",errors)
-
     const onSale = watch("onSale");
+
+    console.log("onSale ??", onSale)
+
+    // Detect edit mode and fetch product data
+    useEffect(() => {
+        const htmlData = selectedShape[0]?.attrs?.htmlData;
+        console.log("htmlData ??", htmlData);
+        if (htmlData?.productId) {
+            setIsEditMode(true);
+            setProductId(htmlData.productId);
+            fetchProductData(htmlData.productId);
+        } else {
+            console.log("Not in edit mode");
+            setIsEditMode(false);
+            setProductId(null);
+            reset({
+                productTitle: "",
+                sku: "",
+                description: "",
+                currencyId: currencies[0]?.value || "",
+                price: "",
+                onSale: false,
+                discountPrice: "",
+                images: [],
+                quantityOption: false,
+                enableMinMaxQuantity: false,
+                minQuantity: "0",
+                maxQuantity: "0",
+                restrictToMoqMultiples: false,
+                customizableProduct: false,
+                instructionMessage: "",
+                instructionMessageRequired: false,
+                paidPersonalization: false,
+                pricingMethod: "FLAT_FEE",
+                personalizationPrice: "2.5",
+                charLimit: "4",
+                productAttributes: [],
+                productVariants: [],
+                variantImages: null
+            });
+            setProductImages([]);
+        }
+    }, [selectedShape, reset]);
+
+    const fetchProductData = async (productId) => {
+        try {
+            setIsLoading(true);
+            const response = await getProductApi(productId);
+            const product = response.data;
+
+            // Transform product data to match form schema
+            const formData = {
+                productTitle: product.productTitle || "",
+                sku: product.sku || "",
+                description: product.description || "",
+                currencyId: product.currencyId || currencies[0]?.value || "",
+                price: product.price?.toString() || "",
+                onSale: !!product.discountPrice,
+                discountPrice: product.discountPrice?.toString() || "",
+                images: product.images.map(img => ({
+                    imageId: img.imageId,
+                    url: img.url
+                })),
+                quantityOption: product.quantityOption || false,
+                enableMinMaxQuantity: product.enableMinMaxQuantity || false,
+                minQuantity: product.minQuantity?.toString() || "0",
+                maxQuantity: product.maxQuantity?.toString() || "0",
+                restrictToMoqMultiples: product.restrictToMoqMultiples || false,
+                customizableProduct: product.customizableProduct || false,
+                instructionMessage: product.instructionMessage || "",
+                instructionMessageRequired: product.instructionMessageRequired || false,
+                paidPersonalization: product.paidPersonalization || false,
+                pricingMethod: product.pricingMethod || "FLAT_FEE",
+                personalizationPrice: product.personalizationPrice?.toString() || "2.5",
+                charLimit: product.charLimit?.toString() || "4",
+                productAttributes: product.productAttributes,
+                productVariants: product.productVariants.map(variant => ({
+                    variantName: variant.variantName,
+                    price: variant.price?.toString(),
+                    discountPrice: variant.discountPrice?.toString(),
+                    sku: variant.sku || "",
+                    visibility: variant.visibility
+                })),
+                variantImages: product.variantImages || null
+            };
+
+            // Set form values
+            reset(formData);
+
+            // Set product images for UI
+            setProductImages(product.images.map(img => ({
+                id: img.imageId,
+                imageLink: img.url,
+                name: img.url.split('/').pop() // Extract filename from URL
+            })));
+        } catch (error) {
+            toast.error("Failed to fetch product", {
+                description: error.message || "Oops! Something went wrong.",
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleNumberInputChange = (e, fieldName) => {
         let { value } = e.target;
@@ -368,13 +469,41 @@ export default function ProductDialog({
     const onSubmit = async (data) => {
         try {
             setIsLoading(true);
-            const response = await AddProductApi(data);
-            toast.success("Product created", {
+            let response;
+            if (isEditMode) {
+                // Update existing product
+                response = await updateProductApi(productId, data);
+            } else {
+                // Create new product
+                response = await AddProductApi(data);
+            }
+
+            const output = {
+                data: {
+                    productId: response.data._id,
+                    productTitle: response.data.productTitle,
+                    sku: response.data.sku,
+                    productImage: response.data.images[0]?.url || "",
+                    customizeButton: {
+                        buttonLabel: "Shop this item",
+                        buttonColor: "#ffffff",
+                        labelColor: "#000000",
+                        tooltip: "Click to view this product",
+                        secondaryButton: false,
+                        secondaryButtonLink: "",
+                        secondaryButtonLabel: "View more"
+                    }
+                }
+            };
+
+            addIntercationDataToMainStage(mainStage, setMainStage, selectedShape, selectedIndex, output);
+
+            toast.success(isEditMode ? "Product updated" : "Product created", {
                 description: response.message
             });
             setIsProductDialogOpen(false);
         } catch (error) {
-            toast.error("Failed to create product", {
+            toast.error(isEditMode ? "Failed to update product" : "Failed to create product", {
                 description: error.message || "Oops! Something went wrong.",
             });
         } finally {
@@ -386,7 +515,7 @@ export default function ProductDialog({
         <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
             <DialogContent className="sm:max-w-[640px] w-[90vw]">
                 <DialogHeader>
-                    <DialogTitle>Product details</DialogTitle>
+                    <DialogTitle>{isEditMode ? "Edit Product" : "Product Details"}</DialogTitle>
                     <DialogDescription className="sr-only">
                         Description
                     </DialogDescription>
@@ -438,7 +567,6 @@ export default function ProductDialog({
                                         {...register("price")}
                                         onChange={(e) => handleNumberInputChange(e, "price")}
                                         onKeyDown={(e) => restrictNumericInput(e, false)}
-
                                     />
                                     {errors.price && <p className="text-red-500 text-xs">{errors.price.message}</p>}
                                 </div>
@@ -462,7 +590,7 @@ export default function ProductDialog({
                                     </div>
                                     <Select
                                         onValueChange={(value) => setValue("currencyId", value)}
-                                        defaultValue={currencies.length > 0 ? currencies[0].value : "loading"}
+                                        value={watch("currencyId")}
                                     >
                                         <SelectTrigger id="currency">
                                             <SelectValue placeholder="Select currency" />
@@ -565,7 +693,7 @@ export default function ProductDialog({
                         />
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsProductDialogOpen(false)}>
+                        <Button type="button" variant="outline" onClick={() => setIsProductDialogOpen(false)}>
                             Cancel
                         </Button>
                         <Button type="submit" disabled={isLoading}>
@@ -573,7 +701,7 @@ export default function ProductDialog({
                                 <>
                                     <LoadingButton />
                                 </>
-                            ) : 'Save product'}
+                            ) : isEditMode ? 'Update Product' : 'Save Product'}
                         </Button>
                     </DialogFooter>
                 </form>

@@ -84,7 +84,14 @@ function SortableAttributeItem({ attribute, onDelete, onAttributeChange, onOptio
 
 
 export default function ProductAttributes({ setValue, errors, watch }) {
-  const [attributes, setAttributes] = useState([]);
+  const [attributes, setAttributes] = useState(() => {
+    const productAttrs = watch("productAttributes") || [];
+    return productAttrs.map((attr, index) => ({
+      id: attr._id,
+      name: attr.attributeName,
+      options: attr.optionValues || [],
+    }));
+  });
   const [selectedAttributeId, setSelectedAttributeId] = useState(null);
 
   const price = watch("price");
@@ -172,13 +179,21 @@ export default function ProductAttributes({ setValue, errors, watch }) {
     const validAttributes = attributes.filter(attr => attr.options.length > 0);
     if (validAttributes.length === 0) return [];
 
-    let combinations = validAttributes[0].options.map(option => ({
-      variant: option,
-      price: price || null, 
-      discountPrice: discountPrice || null, 
-      sku: sku || "", 
-      visible: true,
-    }));
+    // Get existing product variants to preserve visibility settings
+    const existingVariants = watch("productVariants") || [];
+    
+    let combinations = validAttributes[0].options.map(option => {
+      // Find existing variant with this option to preserve visibility
+      const existingVariant = existingVariants.find(v => v.variantName === option);
+      
+      return {
+        variant: option,
+        price: price || null, 
+        discountPrice: discountPrice || null, 
+        sku: sku || "", 
+        visibility: existingVariant ? existingVariant.visibility : true,
+      };
+    });
 
     for (let i = 1; i < validAttributes.length; i++) {
       const newCombinations = [];
@@ -186,12 +201,18 @@ export default function ProductAttributes({ setValue, errors, watch }) {
 
       combinations.forEach(comb => {
         currentOptions.forEach(option => {
+          // Create the new variant name
+          const newVariantName = `${comb.variant} | ${option}`;
+          
+          // Find existing variant with this name to preserve visibility
+          const existingVariant = existingVariants.find(v => v.variantName === newVariantName);
+          
           newCombinations.push({
-            variant: `${comb.variant} | ${option}`,
+            variant: newVariantName,
             price: comb.price, 
             discountPrice: comb.discountPrice, 
             sku: comb.sku, 
-            visible: comb.visible,
+            visibility: existingVariant ? existingVariant.visibility : comb.visibility,
           });
         });
       });
@@ -204,11 +225,11 @@ export default function ProductAttributes({ setValue, errors, watch }) {
       price: comb.price,
       discountPrice: comb.discountPrice,
       sku: comb.sku,
-      visibility: comb.visible,
+      visibility: comb.visibility,
     })));
 
     return combinations;
-  }, [attributes, setValue]);
+  }, [attributes, setValue, price, discountPrice, sku, watch]);
 
   return (
     <div className="space-y-6">
@@ -263,7 +284,6 @@ export default function ProductAttributes({ setValue, errors, watch }) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <p className="text-sm text-muted-foreground">Option limit {variants.length}/90</p>
         </div>
       </div>
 
@@ -271,6 +291,7 @@ export default function ProductAttributes({ setValue, errors, watch }) {
         attributes={attributes}
         variants={variants}
         setValue={setValue}
+        watch={watch}
       />
     </div>
   );
