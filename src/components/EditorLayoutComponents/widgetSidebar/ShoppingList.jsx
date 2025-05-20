@@ -1,4 +1,3 @@
-
 import { Label } from "@/components/ui/label";
 import ProductDialog from "./ShoppingList/ProductDialog";
 import ShopSettings from "./ShoppingList/ShopSettings/ShopSettings";
@@ -6,9 +5,34 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import ProductCustomize from "./ShoppingList/ProductCustomize";
+import { toast } from "sonner";
+import { getProductApi } from "@/service/product.service";
 
 export default function ShoppingList({ mainStage, setMainStage, selectedShape, selectedIndex }) {
     const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [productData, setProductData] = useState(null);
+
+    const fetchProductData = async (productId) => {
+        if (!productId) {
+            toast.error("Product ID is required", {
+                description: "Please select a product to view details.",
+            });
+            return;
+        }
+        try {
+            setIsLoading(true);
+            const response = await getProductApi(productId);
+            setProductData(response.data);
+            setIsProductDialogOpen(true);
+        } catch (error) {
+            toast.error("Failed to fetch product", {
+                description: error.message || "Oops! Something went wrong.",
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return (
         <>
@@ -24,14 +48,25 @@ export default function ShoppingList({ mainStage, setMainStage, selectedShape, s
                             >
                                 <Plus /> Add product
                             </Button> :
-                                <ProductCustomize selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} setIsProductDialogOpen={setIsProductDialogOpen} />
+                                <ProductCustomize selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} setIsProductDialogOpen={setIsProductDialogOpen} fetchProductData={fetchProductData} isLoading={isLoading} />
                         }
                     </div>
                     <ShopSettings />
                 </div>
             </div>
-            <ProductDialog selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} isProductDialogOpen={isProductDialogOpen} setIsProductDialogOpen={setIsProductDialogOpen} />
+            {
+                isProductDialogOpen && (
+                    <ProductDialog
+                        mainStage={mainStage}
+                        setMainStage={setMainStage}
+                        selectedShape={selectedShape}
+                        selectedIndex={selectedIndex}
+                        isProductDialogOpen={isProductDialogOpen}
+                        setIsProductDialogOpen={setIsProductDialogOpen}
+                        productData={productData}
+                    />
+                )
+            }
         </>
-
     )
 }
