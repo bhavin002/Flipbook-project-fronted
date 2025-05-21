@@ -13,7 +13,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Info } from "lucide-react";
 import {
     Tooltip,
@@ -39,7 +39,7 @@ import {
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import AdvancedOptions from "./AdvancedOptions";
-import { AddProductApi, ProductImageUploadApi, getProductApi, updateProductApi } from "@/service/product.service";
+import { AddProductApi, ProductImageUploadApi, updateProductApi } from "@/service/product.service";
 import { toast } from "sonner";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -84,8 +84,7 @@ const productSchema = z.object({
     discountPrice: positiveNumberAsStringSchema,
     images: z.array(z.object({
         imageId: z.string(),
-        url: z.string().url()
-    })).max(3, "Maximum 3 images allowed"),
+    })).max(3, "Maximum 3 images allowed").optional().default([]),
     quantityOption: z.boolean(),
     enableMinMaxQuantity: z.boolean(),
     minQuantity: positiveNumberAsStringSchema,
@@ -101,14 +100,14 @@ const productSchema = z.object({
     productAttributes: z.array(z.object({
         attributeName: z.string().min(1, "Attribute name is required"),
         optionValues: z.array(z.string().min(1, "Option value is required")),
-    })),
+    })).optional().default([]),
     productVariants: z.array(z.object({
         variantName: z.string().min(1, "Variant name is required"),
         price: numberAsStringSchema,
         discountPrice: numberAsStringSchema,
         sku: z.string().optional(),
         visibility: z.boolean()
-    })),
+    })).optional().default([]),
     variantImages: z.union([
         z.object({
             selectedAttribute: z.string().optional(),
@@ -118,7 +117,6 @@ const productSchema = z.object({
                     image: z.array(
                         z.object({
                             imageId: z.string().min(1, "Image ID is required"),
-                            url: z.string().url(),
                         })
                     ).optional()
                 })
@@ -190,8 +188,6 @@ const productSchema = z.object({
     }
 });
 
-
-
 function SortableImageItem({ image, onDelete }) {
     const {
         attributes,
@@ -234,149 +230,58 @@ function SortableImageItem({ image, onDelete }) {
 }
 
 export default function ProductDialog({
-    mainStage, setMainStage, selectedShape, selectedIndex, isProductDialogOpen, setIsProductDialogOpen
+    mainStage, setMainStage, selectedShape, selectedIndex, isProductDialogOpen, setIsProductDialogOpen, productData
 }) {
     const { currencies, loading } = useCurrency();
-    const [productImages, setProductImages] = useState([]);
+    const [productImages, setProductImages] = useState(productData?.images.map(img => ({
+        id: img.imageId,
+        imageLink: img.imageLink,
+        name: img.name
+    })) || []);
     const [isUploading, setIsUploading] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false);
-    const [productId, setProductId] = useState(null);
     const fileInputRef = useRef(null);
 
     const { register, handleSubmit, watch, setValue, formState: { errors }, clearErrors, reset } = useForm({
         resolver: zodResolver(productSchema),
         defaultValues: {
-            productTitle: "",
-            sku: "",
-            description: "",
-            currencyId: currencies[0]?.value || "",
-            price: "",
-            onSale: false,
-            discountPrice: "",
-            images: [],
-            quantityOption: false,
-            enableMinMaxQuantity: false,
-            minQuantity: "0",
-            maxQuantity: "0",
-            restrictToMoqMultiples: false,
-            customizableProduct: false,
-            instructionMessage: "",
-            instructionMessageRequired: false,
-            paidPersonalization: false,
-            pricingMethod: "FLAT_FEE",
-            personalizationPrice: "2.5",
-            charLimit: "4",
-            productAttributes: [],
-            productVariants: [],
-            variantImages: null
+            productTitle: productData?.productTitle || "",
+            sku: productData?.sku || "",
+            description: productData?.description || "",
+            currencyId: productData?.currencyId || currencies[0]?.value || "",
+            price: productData?.price?.toString() || "",
+            onSale: !!productData?.discountPrice,
+            discountPrice: productData?.discountPrice?.toString() || "",
+            images: productData?.images.map(img => ({
+                imageId: img.imageId,
+            })),
+            quantityOption: productData?.quantityOption || false,
+            enableMinMaxQuantity: productData?.enableMinMaxQuantity || false,
+            minQuantity: productData?.minQuantity?.toString() || "0",
+            maxQuantity: productData?.maxQuantity?.toString() || "0",
+            restrictToMoqMultiples: productData?.restrictToMoqMultiples || false,
+            customizableProduct: productData?.customizableProduct || false,
+            instructionMessage: productData?.instructionMessage || "",
+            instructionMessageRequired: productData?.instructionMessageRequired || false,
+            paidPersonalization: productData?.paidPersonalization || false,
+            pricingMethod: productData?.pricingMethod || "FLAT_FEE",
+            personalizationPrice: productData?.personalizationPrice?.toString() || "2.5",
+            charLimit: productData?.charLimit?.toString() || "4",
+            productAttributes: productData?.productAttributes,
+            productVariants: productData?.productVariants.map(variant => ({
+                variantName: variant.variantName,
+                price: variant.price?.toString(),
+                discountPrice: variant.discountPrice?.toString(),
+                sku: variant.sku || "",
+                visibility: variant.visibility
+            })),
+            variantImages: productData?.variantImages || null
         }
     });
 
+    console.log("errors ??",errors)
+
     const onSale = watch("onSale");
-
-    console.log("onSale ??", onSale)
-
-    // Detect edit mode and fetch product data
-    useEffect(() => {
-        const htmlData = selectedShape[0]?.attrs?.htmlData;
-        console.log("htmlData ??", htmlData);
-        if (htmlData?.productId) {
-            setIsEditMode(true);
-            setProductId(htmlData.productId);
-            fetchProductData(htmlData.productId);
-        } else {
-            console.log("Not in edit mode");
-            setIsEditMode(false);
-            setProductId(null);
-            reset({
-                productTitle: "",
-                sku: "",
-                description: "",
-                currencyId: currencies[0]?.value || "",
-                price: "",
-                onSale: false,
-                discountPrice: "",
-                images: [],
-                quantityOption: false,
-                enableMinMaxQuantity: false,
-                minQuantity: "0",
-                maxQuantity: "0",
-                restrictToMoqMultiples: false,
-                customizableProduct: false,
-                instructionMessage: "",
-                instructionMessageRequired: false,
-                paidPersonalization: false,
-                pricingMethod: "FLAT_FEE",
-                personalizationPrice: "2.5",
-                charLimit: "4",
-                productAttributes: [],
-                productVariants: [],
-                variantImages: null
-            });
-            setProductImages([]);
-        }
-    }, [selectedShape, reset]);
-
-    const fetchProductData = async (productId) => {
-        try {
-            setIsLoading(true);
-            const response = await getProductApi(productId);
-            const product = response.data;
-
-            // Transform product data to match form schema
-            const formData = {
-                productTitle: product.productTitle || "",
-                sku: product.sku || "",
-                description: product.description || "",
-                currencyId: product.currencyId || currencies[0]?.value || "",
-                price: product.price?.toString() || "",
-                onSale: !!product.discountPrice,
-                discountPrice: product.discountPrice?.toString() || "",
-                images: product.images.map(img => ({
-                    imageId: img.imageId,
-                    url: img.url
-                })),
-                quantityOption: product.quantityOption || false,
-                enableMinMaxQuantity: product.enableMinMaxQuantity || false,
-                minQuantity: product.minQuantity?.toString() || "0",
-                maxQuantity: product.maxQuantity?.toString() || "0",
-                restrictToMoqMultiples: product.restrictToMoqMultiples || false,
-                customizableProduct: product.customizableProduct || false,
-                instructionMessage: product.instructionMessage || "",
-                instructionMessageRequired: product.instructionMessageRequired || false,
-                paidPersonalization: product.paidPersonalization || false,
-                pricingMethod: product.pricingMethod || "FLAT_FEE",
-                personalizationPrice: product.personalizationPrice?.toString() || "2.5",
-                charLimit: product.charLimit?.toString() || "4",
-                productAttributes: product.productAttributes,
-                productVariants: product.productVariants.map(variant => ({
-                    variantName: variant.variantName,
-                    price: variant.price?.toString(),
-                    discountPrice: variant.discountPrice?.toString(),
-                    sku: variant.sku || "",
-                    visibility: variant.visibility
-                })),
-                variantImages: product.variantImages || null
-            };
-
-            // Set form values
-            reset(formData);
-
-            // Set product images for UI
-            setProductImages(product.images.map(img => ({
-                id: img.imageId,
-                imageLink: img.url,
-                name: img.url.split('/').pop() // Extract filename from URL
-            })));
-        } catch (error) {
-            toast.error("Failed to fetch product", {
-                description: error.message || "Oops! Something went wrong.",
-            });
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     const handleNumberInputChange = (e, fieldName) => {
         let { value } = e.target;
@@ -399,8 +304,7 @@ export default function ProductDialog({
         const newImages = productImages.filter(image => image.id !== id);
         setProductImages(newImages);
         setValue("images", newImages.map(img => ({
-            imageId: img.id,
-            url: img.imageLink
+            imageId: img.id
         })));
     };
 
@@ -422,7 +326,6 @@ export default function ProductDialog({
                 setProductImages(newImages);
                 setValue("images", newImages.map(img => ({
                     imageId: img.id,
-                    url: img.imageLink
                 })));
 
                 if (fileInputRef.current) {
@@ -459,7 +362,6 @@ export default function ProductDialog({
                 const newItems = arrayMove(items, oldIndex, newIndex);
                 setValue("images", newItems.map(img => ({
                     imageId: img.id,
-                    url: img.imageLink
                 })));
                 return newItems;
             });
@@ -470,20 +372,18 @@ export default function ProductDialog({
         try {
             setIsLoading(true);
             let response;
-            if (isEditMode) {
-                // Update existing product
-                response = await updateProductApi(productId, data);
+            if (selectedShape[0].attrs?.htmlData?.variantId) {
+                response = await updateProductApi(selectedShape[0].attrs?.htmlData?.variantId, data);
             } else {
-                // Create new product
                 response = await AddProductApi(data);
             }
 
             const output = {
                 data: {
-                    productId: response.data._id,
+                    variantId: response.data._id,
                     productTitle: response.data.productTitle,
                     sku: response.data.sku,
-                    productImage: response.data.images[0]?.url || "",
+                    productImage: response.data.images[0]?.imageLink || "",
                     customizeButton: {
                         buttonLabel: "Shop this item",
                         buttonColor: "#ffffff",
@@ -497,13 +397,9 @@ export default function ProductDialog({
             };
 
             addIntercationDataToMainStage(mainStage, setMainStage, selectedShape, selectedIndex, output);
-
-            toast.success(isEditMode ? "Product updated" : "Product created", {
-                description: response.message
-            });
             setIsProductDialogOpen(false);
         } catch (error) {
-            toast.error(isEditMode ? "Failed to update product" : "Failed to create product", {
+            toast.error("Failed to update or create product", {
                 description: error.message || "Oops! Something went wrong.",
             });
         } finally {
@@ -515,7 +411,7 @@ export default function ProductDialog({
         <Dialog open={isProductDialogOpen} onOpenChange={setIsProductDialogOpen}>
             <DialogContent className="sm:max-w-[640px] w-[90vw]">
                 <DialogHeader>
-                    <DialogTitle>{isEditMode ? "Edit Product" : "Product Details"}</DialogTitle>
+                    <DialogTitle>Product Details</DialogTitle>
                     <DialogDescription className="sr-only">
                         Description
                     </DialogDescription>
@@ -701,7 +597,7 @@ export default function ProductDialog({
                                 <>
                                     <LoadingButton />
                                 </>
-                            ) : isEditMode ? 'Update Product' : 'Save Product'}
+                            ) : 'Save Product'}
                         </Button>
                     </DialogFooter>
                 </form>

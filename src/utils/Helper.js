@@ -1,3 +1,5 @@
+import { duplicateProductApi } from "@/service/product.service";
+import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 
 
@@ -93,12 +95,73 @@ export function addIntercationDataToMainStage(mainStage, setMainStage, selectedS
 export const restrictNumericInput = (e, allowDecimal = true) => {
     const allowedKeys = ['Backspace', 'Tab', 'ArrowLeft', 'ArrowRight', 'Delete'];
     const isValidKey = allowDecimal ? /[0-9.]/.test(e.key) : /[0-9]/.test(e.key);
-  
+
     if (!isValidKey && !allowedKeys.includes(e.key)) {
-      e.preventDefault();
+        e.preventDefault();
     }
-  
+
     if (allowDecimal && e.key === '.' && e.target.value.includes('.')) {
-      e.preventDefault();
+        e.preventDefault();
     }
-  };
+};
+
+const addEntryInDB = async (htmlType, id, setIsLoading) => {
+    switch (htmlType) {
+        case "shop-area":
+            try {
+                setIsLoading(true);
+                const response = await duplicateProductApi(id);
+                return response;
+            } catch (error) {
+                toast.error("Failed to duplicate product", {
+                    description: error.message || "Oops! Something went wrong.",
+                });
+                return null;
+            } finally {
+                setIsLoading(false);
+            }
+        default:
+            return { data: true };
+    }
+}
+
+export const duplicateShapes = async (mainStage, selectedIndex, setMainStage, setIsLoading, selectedShape) => {
+    const response = await addEntryInDB(selectedShape[0].attrs.htmlType, selectedShape[0].attrs.htmlData?.variantId, setIsLoading);
+    
+    if (!response?.data) return;
+
+    const selectedShapes = mainStage[selectedIndex]?.selectedShapes
+        .map((e) => e.attrs)
+        .map((e) => e.id);
+    const tempShapes = mainStage[selectedIndex].stageref.current.children[0].children[1].children
+        .filter((e, index) => selectedShapes.includes(e.attrs.id))
+        .map((e) => e.attrs);
+    const newShapes = tempShapes.map((e) => {
+        const newID = uuid();
+        return {
+            ...e,
+            id: newID,
+            x: e.x,
+            y: e.y,
+            htmlData: {
+                ...e.htmlData,
+                variantId: response.data
+            }
+        };
+    });
+    mainStage[selectedIndex].shapes = mainStage[selectedIndex].stageref.current.children[0].children[1].children.map((e) =>
+        JSON.parse(JSON.stringify(e.attrs))
+    );
+    newShapes.forEach((e) => {
+        let index = mainStage[selectedIndex].shapes.findIndex((shape) => shape.id === e.id);
+        mainStage[selectedIndex].shapes.splice(index, 0, e);
+    });
+    mainStage[selectedIndex].shapes.find((e, index) => {
+        if (selectedShapes.includes(e.id)) {
+            e.x += 30;
+            e.y += 30;
+        }
+    });
+    mainStage.splice(selectedIndex, 1, mainStage[selectedIndex]);
+    setMainStage([...mainStage]);
+};

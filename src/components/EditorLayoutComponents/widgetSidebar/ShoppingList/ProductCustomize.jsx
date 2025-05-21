@@ -12,6 +12,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormItem, FormField } from "@/components/ui/form";
 import { addIntercationDataToMainStage } from "@/utils/Helper";
+import LoadingButton from "@/utils/LoadingButton";
 
 // Zod schema for validation
 const COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
@@ -57,7 +58,8 @@ export default function ProductCustomize({
     setMainStage,
     selectedShape,
     selectedIndex,
-    setIsProductDialogOpen,
+    fetchProductData,
+    isLoading,
 }) {
     const initialData = selectedShape[0]?.attrs?.htmlData?.customizeButton || {
         buttonLabel: "Shop this item",
@@ -234,9 +236,16 @@ export default function ProductCustomize({
                                 size="sm"
                                 variant="outline"
                                 className="w-full text-black hover:text-primary"
-                                onClick={() => setIsProductDialogOpen(true)}
+                                onClick={() => fetchProductData(selectedShape[0].attrs.htmlData.variantId)}
+                                disabled={isLoading}
                             >
-                                <Pencil /> Edit product
+                                {isLoading ? (
+                                    <LoadingButton />
+                                ) : (
+                                    <>
+                                        <Pencil /> Edit product
+                                    </>
+                                )}
                             </Button>
                         </div>
                     </div>
@@ -264,8 +273,8 @@ export default function ProductCustomize({
                                                         id="primary-button-label"
                                                         placeholder="Shop this item"
                                                         className={`placeholder:text-[#d8dce3] ${isTouched.buttonLabel && formState.errors.buttonLabel
-                                                                ? "border-red-500 focus:outline-none focus-visible:ring-0"
-                                                                : ""
+                                                            ? "border-red-500 focus:outline-none focus-visible:ring-0"
+                                                            : ""
                                                             }`}
                                                         value={field.value}
                                                         onChange={(e) => handleInputChange("buttonLabel", e.target.value)}
@@ -293,8 +302,8 @@ export default function ProductCustomize({
                                                             value={field.value}
                                                             onChange={(e) => handleInputChange("buttonColor", e.target.value)}
                                                             className={`pr-12 ${isTouched.buttonColor && formState.errors.buttonColor
-                                                                    ? "border-red-500 focus:outline-none focus-visible:ring-0"
-                                                                    : ""
+                                                                ? "border-red-500 focus:outline-none focus-visible:ring-0"
+                                                                : ""
                                                                 }`}
                                                             onBlur={() => {
                                                                 setIsTouched((prev) => ({ ...prev, buttonColor: true }));
@@ -341,8 +350,8 @@ export default function ProductCustomize({
                                                             value={field.value}
                                                             onChange={(e) => handleInputChange("labelColor", e.target.value)}
                                                             className={`pr-12 ${isTouched.labelColor && formState.errors.labelColor
-                                                                    ? "border-red-500 focus:outline-none focus-visible:ring-0"
-                                                                    : ""
+                                                                ? "border-red-500 focus:outline-none focus-visible:ring-0"
+                                                                : ""
                                                                 }`}
                                                             onBlur={() => {
                                                                 setIsTouched((prev) => ({ ...prev, labelColor: true }));
@@ -390,8 +399,8 @@ export default function ProductCustomize({
                                                         id="primary-button-tooltip"
                                                         placeholder="Click to view this product"
                                                         className={`placeholder:text-[#d8dce3] ${isTouched.tooltip && formState.errors.tooltip
-                                                                ? "border-red-500 focus:outline-none focus-visible:ring-0"
-                                                                : ""
+                                                            ? "border-red-500 focus:outline-none focus-visible:ring-0"
+                                                            : ""
                                                             }`}
                                                         value={field.value}
                                                         onChange={(e) => handleInputChange("tooltip", e.target.value)}
@@ -424,66 +433,70 @@ export default function ProductCustomize({
                                             </FormItem>
                                         )}
                                     />
-                                    <FormField
-                                        control={form.control}
-                                        name="secondaryButtonLink"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <Label htmlFor="button-link" className="text-xs">
-                                                    Button link
-                                                </Label>
-                                                <FormControl>
-                                                    <Input
-                                                        type="text"
-                                                        id="button-link"
-                                                        placeholder="https://example.com/example"
-                                                        className={`placeholder:text-[#d8dce3] ${isTouched.secondaryButtonLink && formState.errors.secondaryButtonLink
-                                                                ? "border-red-500 focus:outline-none focus-visible:ring-0"
-                                                                : ""
-                                                            }`}
-                                                        value={field.value}
-                                                        onChange={(e) => handleInputChange("secondaryButtonLink", e.target.value)}
-                                                        onBlur={() => {
-                                                            setIsTouched((prev) => ({ ...prev, secondaryButtonLink: true }));
-                                                            if (isFormValid) {
-                                                                form.handleSubmit(onSubmit)();
-                                                            }
-                                                        }}
-                                                    />
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="secondaryButtonLabel"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <Label htmlFor="secondary-button-label" className="text-xs">
-                                                    Secondary button label
-                                                </Label>
-                                                <FormControl>
-                                                    <Input
-                                                        type="text"
-                                                        id="secondary-button-label"
-                                                        placeholder="View more"
-                                                        className={`placeholder:text-[#d8dce3] ${isTouched.secondaryButtonLabel && formState.errors.secondaryButtonLabel
-                                                                ? "border-red-500 focus:outline-none focus-visible:ring-0"
-                                                                : ""
-                                                            }`}
-                                                        value={field.value}
-                                                        onChange={(e) => handleInputChange("secondaryButtonLabel", e.target.value)}
-                                                        onBlur={() => {
-                                                            setIsTouched((prev) => ({ ...prev, secondaryButtonLabel: true }));
-                                                            if (isFormValid) {
-                                                                form.handleSubmit(onSubmit)();
-                                                            }
-                                                        }}
-                                                    />
-                                                </FormControl>
-                                            </FormItem>
-                                        )}
-                                    />
+                                    {formValues.secondaryButton &&
+                                        <>
+                                            <FormField
+                                                control={form.control}
+                                                name="secondaryButtonLink"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <Label htmlFor="button-link" className="text-xs">
+                                                            Button link
+                                                        </Label>
+                                                        <FormControl>
+                                                            <Input
+                                                                type="text"
+                                                                id="button-link"
+                                                                placeholder="https://example.com/example"
+                                                                className={`placeholder:text-[#d8dce3] ${isTouched.secondaryButtonLink && formState.errors.secondaryButtonLink
+                                                                    ? "border-red-500 focus:outline-none focus-visible:ring-0"
+                                                                    : ""
+                                                                    }`}
+                                                                value={field.value}
+                                                                onChange={(e) => handleInputChange("secondaryButtonLink", e.target.value)}
+                                                                onBlur={() => {
+                                                                    setIsTouched((prev) => ({ ...prev, secondaryButtonLink: true }));
+                                                                    if (isFormValid) {
+                                                                        form.handleSubmit(onSubmit)();
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="secondaryButtonLabel"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <Label htmlFor="secondary-button-label" className="text-xs">
+                                                            Secondary button label
+                                                        </Label>
+                                                        <FormControl>
+                                                            <Input
+                                                                type="text"
+                                                                id="secondary-button-label"
+                                                                placeholder="View more"
+                                                                className={`placeholder:text-[#d8dce3] ${isTouched.secondaryButtonLabel && formState.errors.secondaryButtonLabel
+                                                                    ? "border-red-500 focus:outline-none focus-visible:ring-0"
+                                                                    : ""
+                                                                    }`}
+                                                                value={field.value}
+                                                                onChange={(e) => handleInputChange("secondaryButtonLabel", e.target.value)}
+                                                                onBlur={() => {
+                                                                    setIsTouched((prev) => ({ ...prev, secondaryButtonLabel: true }));
+                                                                    if (isFormValid) {
+                                                                        form.handleSubmit(onSubmit)();
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </FormControl>
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </>
+                                    }
                                 </Form>
                             </AccordionContent>
                         </AccordionItem>
@@ -510,9 +523,19 @@ export default function ProductCustomize({
                                 size="sm"
                                 variant="outline"
                                 className="w-full text-black hover:text-primary"
-                                onClick={() => setIsProductDialogOpen(true)}
+                                onClick={() => fetchProductData(selectedShape[0].attrs.htmlData.variantId)}
+                                disabled={isLoading}
                             >
-                                <Pencil /> Edit product
+                                {isLoading ? (
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                                        <span>Loading...</span>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <Pencil /> Edit product
+                                    </>
+                                )}
                             </Button>
                         </div>
                     </div>

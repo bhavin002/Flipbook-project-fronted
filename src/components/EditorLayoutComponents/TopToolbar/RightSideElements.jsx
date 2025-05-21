@@ -5,17 +5,16 @@ import {
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
 import { Trash2, Lock, Unlock, BringToFront, SendToBack } from "lucide-react";
-import { deleteShape } from "@/utils/Helper";
+import { deleteShape, duplicateShapes } from "@/utils/Helper";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useEffect, useState } from 'react';
-import { v4 as uuid } from "uuid";
 
 export default function RightSideElements({ selectedShape, setMainStage, mainStage, selectedIndex, setSelectedSubMenu }) {
     const [opacity, setOpacity] = useState(30);
     const selectedShapes = mainStage[selectedIndex]?.selectedShapes.map(e => e.attrs).map(e => e.id);
-
+    const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {
         if (selectedShape && selectedShape.length) {
             const shape = mainStage[selectedIndex].shapes.find(e => e.id === selectedShape[0].attrs.id);
@@ -70,39 +69,6 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
         }
     };
 
-    const duplicateShapes = () => {
-        const selectedShapes = mainStage[selectedIndex]?.selectedShapes
-            .map((e) => e.attrs)
-            .map((e) => e.id);
-        const tempShapes = mainStage[selectedIndex].stageref.current.children[0].children[1].children
-            .filter((e, index) => selectedShapes.includes(e.attrs.id))
-            .map((e) => e.attrs);
-        const newShapes = tempShapes.map((e) => {
-            const newID = uuid();
-            return {
-                ...e,
-                id: newID,
-                x: e.x,
-                y: e.y,
-            };
-        });
-        mainStage[selectedIndex].shapes = mainStage[selectedIndex].stageref.current.children[0].children[1].children.map((e) =>
-            JSON.parse(JSON.stringify(e.attrs))
-        );
-        newShapes.forEach((e) => {
-            let index = mainStage[selectedIndex].shapes.findIndex((shape) => shape.id === e.id);
-            mainStage[selectedIndex].shapes.splice(index, 0, e);
-        });
-        mainStage[selectedIndex].shapes.find((e, index) => {
-            if (selectedShapes.includes(e.id)) {
-                e.x += 30;
-                e.y += 30;
-            }
-        });
-        mainStage.splice(selectedIndex, 1, mainStage[selectedIndex]);
-        setMainStage([...mainStage]);
-    };
-
     const handleForward = () => {
         const selectedShapes = mainStage[selectedIndex]?.selectedShapes.map((e) => e.attrs.id);
         if (!selectedShapes?.length) return;
@@ -135,8 +101,8 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
             {selectedShape && selectedShape.length == 1 && ["shape-widget", "stock-photo"].includes(selectedShape[0].attrs.title) && <Button variant="ghost" size="sm" onClick={() => setSelectedSubMenu(selectedShape[0].attrs.sidebar)}>
                 Action
             </Button>}
-            <Button variant="ghost" size="sm" onClick={() => {
-                duplicateShapes();
+            <Button variant="ghost" size="sm" disabled={isLoading} onClick={() => {
+                duplicateShapes(mainStage, selectedIndex, setMainStage, setIsLoading,selectedShape);
             }}>
                 Copy
             </Button>
