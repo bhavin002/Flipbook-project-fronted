@@ -738,14 +738,14 @@ export default function Editor() {
                 }
                 {isPageShow == 'Layers' &&
                     <div className="absolute lg:hidden top-0 right-0 z-10 bottom-0">
-                        <LateralPanelRightLayer setIsPageShow={setIsPageShow} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} setSelectedAlignType={setSelectedAlignType} isExpanded={isExpanded} setIsExpanded={setIsExpanded} setIsRightLateralCollapse={setIsRightLateralCollapse} />
+                        <LateralPanelRightLayer selectedShape={selectedShape} setIsPageShow={setIsPageShow} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} setSelectedAlignType={setSelectedAlignType} isExpanded={isExpanded} setIsExpanded={setIsExpanded} setIsRightLateralCollapse={setIsRightLateralCollapse} />
                     </div>
                 }
                 {isRightLateralCollapse && currentRightPanel == 'Pages' &&
                     <LateralPanelRightPages isSidebarOpen={isSidebarOpen} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} isExpanded={isExpanded} index={selectedIndex} setIsExpanded={setIsExpanded} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} setIsRightLateralCollapse={setIsRightLateralCollapse} setMainStage={setMainStage} />
                 }
                 {isRightLateralCollapse && currentRightPanel == 'Layers' &&
-                    <LateralPanelRightLayer setIsPageShow={setIsPageShow} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} setSelectedAlignType={setSelectedAlignType} isExpanded={isExpanded} setIsExpanded={setIsExpanded} setIsRightLateralCollapse={setIsRightLateralCollapse} />
+                    <LateralPanelRightLayer selectedShape={selectedShape} setIsPageShow={setIsPageShow} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} setSelectedAlignType={setSelectedAlignType} isExpanded={isExpanded} setIsExpanded={setIsExpanded} setIsRightLateralCollapse={setIsRightLateralCollapse} />
                 }
                 <PanelRight isCropping={isCropping} currentRightPanel={currentRightPanel} setCurrentRightPanel={setCurrentRightPanel} isRightLateralCollapse={isRightLateralCollapse} setIsRightLateralCollapse={setIsRightLateralCollapse} />
                 {!isCropping && <div className="fixed flex items-center bottom-[10px] right-[80px] gap-2 max-lg:hidden">

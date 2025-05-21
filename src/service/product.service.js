@@ -23,3 +23,8 @@ export const updateProductApi = async (productId, data) => {
     const response = await ApiClient().put(`/product/update/${productId}`, data);
     return response.data;
 }
+
+export const duplicateProductApi = async (productId) => {
+    const response = await ApiClient().get(`/product/duplicate/${productId}`);
+    return response.data;
+}

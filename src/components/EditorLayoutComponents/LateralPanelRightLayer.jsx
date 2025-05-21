@@ -1,15 +1,16 @@
 
-import { deleteShape } from '@/utils/Helper';
-import { X, Lock, Unlock, Eye, EyeOff, Copy, Files, Trash2, AlignStartHorizontal, AlignCenterHorizontal, AlignEndHorizontal, AlignStartVertical, AlignCenterVertical, AlignEndVertical, ChevronsLeft, AlignVerticalJustifyCenter, SquareMousePointer, Shapes, Image, MousePointerClick, SquareDashedBottomCode, Youtube, SquarePlay, ShoppingBag, Mail, SquareDot, CircleHelp } from 'lucide-react';
+import { deleteShape, duplicateShapes } from '@/utils/Helper';
+import { X, Lock, Unlock, Eye, EyeOff, Copy, Files, Trash2, AlignStartHorizontal, AlignCenterHorizontal, AlignEndHorizontal, AlignStartVertical, AlignEndVertical, ChevronsLeft, AlignVerticalJustifyCenter, SquareMousePointer, Shapes, Image, MousePointerClick, SquareDashedBottomCode, Youtube, SquarePlay, ShoppingBag, Mail, SquareDot, CircleHelp } from 'lucide-react';
 import { ReactSortable } from 'react-sortablejs';
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from "uuid";
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 
-export default function LateralPanelRightLayer({ setIsPageShow, setCurrentRightPanel, mainStage, setMainStage, selectedIndex, setIsRightLateralCollapse, isExpanded, setIsExpanded, setSelectedAlignType }) {
+export default function LateralPanelRightLayer({ selectedShape, setIsPageShow, setCurrentRightPanel, mainStage, setMainStage, selectedIndex, setIsRightLateralCollapse, isExpanded, setIsExpanded, setSelectedAlignType }) {
     const [shapes, setShapes] = useState([]);
     const [isToggle, setIsToggle] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const selectedShapes = mainStage[selectedIndex]?.selectedShapes.map(e => e.attrs).map(e => e.id);
     useEffect(() => {
         setTimeout(() => {
@@ -134,32 +135,6 @@ export default function LateralPanelRightLayer({ setIsPageShow, setCurrentRightP
         }
     }
 
-    const duplicateShapes = () => {
-        const tempShapes = mainStage[selectedIndex].stageref.current.children[0].children[1].children.filter((e, index) => selectedShapes.includes(e.attrs.id)).map(e => e.attrs);
-        const newShapes = tempShapes.map((e) => {
-            const newID = uuid();
-            return {
-                ...e,
-                id: newID,
-                x: e.x,
-                y: e.y,
-            }
-        })
-        mainStage[selectedIndex].shapes = mainStage[selectedIndex].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)));
-        newShapes.forEach((e) => {
-            let index = mainStage[selectedIndex].shapes.findIndex(shape => shape.id == e.id);
-            mainStage[selectedIndex].shapes.splice(index, 0, e);
-        })
-        mainStage[selectedIndex].shapes.find((e, index) => {
-            if (selectedShapes.includes(e.id)) {
-                e.x += 30;
-                e.y += 30;
-            }
-        })
-        mainStage.splice(selectedIndex, 1, mainStage[selectedIndex]);
-        setMainStage([...mainStage]);
-    }
-
     const copyInAllPages = () => {
         const tempSelectedShapes = mainStage[selectedIndex].selectedShapes;
 
@@ -260,7 +235,7 @@ export default function LateralPanelRightLayer({ setIsPageShow, setCurrentRightP
                 </div>
                 <div className="border-t border-b p-2">
                     <div className="flex justify-between">
-                        <Button size="sm" variant="ghost" disabled={!selectedShapes.length} onClick={() => { duplicateShapes() }}>
+                        <Button size="sm" variant="ghost" disabled={!selectedShapes.length || isLoading} onClick={() => { duplicateShapes(mainStage, selectedIndex, setMainStage, setIsLoading, selectedShape) }}>
                             <Copy className='h-4 w-4' />
                         </Button>
                         <Button size="sm" variant="ghost" disabled={!selectedShapes.length} onClick={() => { copyInAllPages() }}>

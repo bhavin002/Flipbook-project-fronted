@@ -84,7 +84,7 @@ const productSchema = z.object({
     discountPrice: positiveNumberAsStringSchema,
     images: z.array(z.object({
         imageId: z.string(),
-    })).max(3, "Maximum 3 images allowed"),
+    })).max(3, "Maximum 3 images allowed").optional().default([]),
     quantityOption: z.boolean(),
     enableMinMaxQuantity: z.boolean(),
     minQuantity: positiveNumberAsStringSchema,
@@ -100,14 +100,14 @@ const productSchema = z.object({
     productAttributes: z.array(z.object({
         attributeName: z.string().min(1, "Attribute name is required"),
         optionValues: z.array(z.string().min(1, "Option value is required")),
-    })),
+    })).optional().default([]),
     productVariants: z.array(z.object({
         variantName: z.string().min(1, "Variant name is required"),
         price: numberAsStringSchema,
         discountPrice: numberAsStringSchema,
         sku: z.string().optional(),
         visibility: z.boolean()
-    })),
+    })).optional().default([]),
     variantImages: z.union([
         z.object({
             selectedAttribute: z.string().optional(),
@@ -188,8 +188,6 @@ const productSchema = z.object({
     }
 });
 
-
-
 function SortableImageItem({ image, onDelete }) {
     const {
         attributes,
@@ -239,7 +237,7 @@ export default function ProductDialog({
         id: img.imageId,
         imageLink: img.imageLink,
         name: img.name
-    })));
+    })) || []);
     const [isUploading, setIsUploading] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef(null);
@@ -280,6 +278,8 @@ export default function ProductDialog({
             variantImages: productData?.variantImages || null
         }
     });
+
+    console.log("errors ??",errors)
 
     const onSale = watch("onSale");
 
@@ -372,15 +372,15 @@ export default function ProductDialog({
         try {
             setIsLoading(true);
             let response;
-            if (selectedShape[0].attrs?.htmlData?.productId) {
-                response = await updateProductApi(selectedShape[0].attrs?.htmlData?.productId, data);
+            if (selectedShape[0].attrs?.htmlData?.variantId) {
+                response = await updateProductApi(selectedShape[0].attrs?.htmlData?.variantId, data);
             } else {
                 response = await AddProductApi(data);
             }
 
             const output = {
                 data: {
-                    productId: response.data._id,
+                    variantId: response.data._id,
                     productTitle: response.data.productTitle,
                     sku: response.data.sku,
                     productImage: response.data.images[0]?.imageLink || "",

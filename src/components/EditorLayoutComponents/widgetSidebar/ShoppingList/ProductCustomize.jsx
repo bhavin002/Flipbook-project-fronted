@@ -236,7 +236,7 @@ export default function ProductCustomize({
                                 size="sm"
                                 variant="outline"
                                 className="w-full text-black hover:text-primary"
-                                onClick={() => fetchProductData(selectedShape[0].attrs.htmlData.productId)}
+                                onClick={() => fetchProductData(selectedShape[0].attrs.htmlData.variantId)}
                                 disabled={isLoading}
                             >
                                 {isLoading ? (
@@ -523,7 +523,7 @@ export default function ProductCustomize({
                                 size="sm"
                                 variant="outline"
                                 className="w-full text-black hover:text-primary"
-                                onClick={() => fetchProductData(selectedShape[0].attrs.htmlData.productId)}
+                                onClick={() => fetchProductData(selectedShape[0].attrs.htmlData.variantId)}
                                 disabled={isLoading}
                             >
                                 {isLoading ? (

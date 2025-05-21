@@ -109,8 +109,8 @@ export default function ManageVariantImages({ attributes, variants, setValue, wa
                                 ?.find((attrVal) => attrVal.value === option)
                                 ?.image.map((img) => ({
                                     id: img.imageId,
-                                    imageLink: img.url,
-                                    name: img.url.split("/").pop(), // Extract name from URL or adjust as needed
+                                    imageLink: img.imageLink,
+                                    name: img.name,
                                 })) || [];
     
                         initialOptionImages[option] = existingImages.length > 0 ? existingImages : prev[option] || [];

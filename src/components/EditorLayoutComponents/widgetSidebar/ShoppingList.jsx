@@ -41,7 +41,7 @@ export default function ShoppingList({ mainStage, setMainStage, selectedShape, s
                 <div className="space-y-2 flex flex-col flex-grow overflow-y-auto">
                     <div className="h-full flex flex-col items-start flex-grow overflow-y-auto">
                         {
-                            !selectedShape[0].attrs?.htmlData?.productId ? <Button
+                            !selectedShape[0].attrs?.htmlData?.variantId ? <Button
                                 className="w-full text-black hover:text-primary"
                                 variant="outline"
                                 onClick={() => setIsProductDialogOpen(true)}
