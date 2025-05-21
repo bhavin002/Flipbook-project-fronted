@@ -242,7 +242,7 @@ export default function ProductDialog({
     const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef(null);
 
-    const { register, handleSubmit, watch, setValue, formState: { errors }, clearErrors, reset } = useForm({
+    const { register, handleSubmit, watch, setValue, formState: { errors }, clearErrors } = useForm({
         resolver: zodResolver(productSchema),
         defaultValues: {
             productTitle: productData?.productTitle || "",
