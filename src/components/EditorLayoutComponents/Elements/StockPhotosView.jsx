@@ -224,38 +224,140 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
             const dropX = (groupWidth / 2) / group.scaleX() - (item.attrs.width || 50) / 2;
             const dropY = (groupHeight / 2) / group.scaleY() - (item.attrs.height || 50) / 2;
 
+            let isOverShapeWidget = false;
+            let isOverMaskedImage = false;
+            let shapeWidget = null;
+            let shapeWidgetData = [];
+
+            // Check if the drop position overlaps with a shape-widget
+            mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(shape => {
+                if (mainStage[selectedIndex].selectedShapes.length == 1) {
+                    if (shape.attrs.id == mainStage[selectedIndex].selectedShapes[0].attrs.id) {
+                        if (shape.attrs.title === 'shape-widget') {
+                            isOverShapeWidget = true;
+                            shapeWidget = shape.attrs;
+                            shapeWidgetData = shape.children[0].dataArray;
+                        }
+                        else if (shape.attrs.title === 'masked-image') {
+                            isOverMaskedImage = true;
+                            shapeWidget = shape.attrs;
+                        }
+                    }
+
+                }
+            });
+
+
             // Create new shape at the center of the group
             let newShape = {
                 x: dropX,
                 y: dropY,
                 ...item.attrs,
                 id: uuid()
-            };
-            // Add the new shape at the center of the group
-            setMainStage(prevState => {
-                const updatedState = [...prevState];
-                updatedState[selectedIndex] = {
-                    ...updatedState[selectedIndex],
-                    shapes: [...updatedState[selectedIndex].shapes, newShape]
-                };
-                return updatedState;
-            });
 
-            // Select the newly added shape
-            setTimeout(() => {
-                mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach((child) => {
-                    if (child.attrs.id === newShape.id) {
-                        setMainStage(prevState => {
-                            const updatedState = [...prevState];
-                            updatedState[selectedIndex] = {
-                                ...updatedState[selectedIndex],
-                                selectedShapes: [child]
-                            };
-                            return updatedState;
-                        });
-                    }
+            };
+            // Handle masked image case
+            if (isOverMaskedImage) {
+                mainStage[selectedIndex].selectedShapes = [];
+                const htmlType = imageData.htmlType;
+                const typeMapping = {
+                    'upload-photo': 'masked-image',
+                    'stock-gif': 'masked-gif',
+                    'stock-photo': 'masked-image',
+                    'stock-sticker': 'masked-sticker'
+                };
+                const shapeType = typeMapping[htmlType] || 'masked-sticker'; // Default to 'masked-sticker' for unknown types
+                setMainStage(prevState => {
+                    const updatedState = [...prevState];
+                    const updatedShapes = updatedState[selectedIndex].shapes.map((shape, idx) => {
+                        if (shape.id !== shapeWidget.id) return shape;
+                        const shapeNode = updatedState[selectedIndex].stageref.current.children[0].children[1].children[idx].attrs;
+                        return {
+                            ...shape,
+                            title: shapeType,
+                            layer: shapeType,
+                            htmlType: shapeType,
+                            x: shapeNode.x,
+                            y: shapeNode.y,
+                            scaleX: shapeNode.scaleX,
+                            scaleY: shapeNode.scaleY,
+                            width: shapeNode.width,
+                            height: shapeNode.height,
+                            src: imageData.src,
+                            type: 'img',
+                        };
+                    });
+                    updatedState[selectedIndex] = {
+                        ...updatedState[selectedIndex],
+                        shapes: updatedShapes,
+                    };
+                    return updatedState;
                 });
-            }, 100);
+                return;
+            }
+            if (isOverShapeWidget && shapeWidget?.isMasked) {
+                newShape = {
+                    src: imageData.src,
+                    height: Number(shapeWidget.height),
+                    width: Number(shapeWidget.width),
+                    x: shapeWidget.x,
+                    y: shapeWidget.y,
+                    scaleX: shapeWidget.scaleX,
+                    scaleY: shapeWidget.scaleY,
+                    skewX: shapeWidget.skewX,
+                    skewY: shapeWidget.skewY,
+                    title: 'masked-image',
+                    layer: 'masked-image',
+                    htmlType: 'masked-image',
+                    type: 'img',
+                    isMasked: true,
+                    data: shapeWidget.data,
+                    maskData: shapeWidgetData,
+                    maskType: shapeWidget.maskType,
+                    draggable: true,
+                    visible: true,
+                    id: uuid(),
+                };
+                mainStage[selectedIndex].selectedShapes = [];
+                setMainStage(prevState => {
+                    const updatedState = [...prevState];
+                    const updatedShapes = updatedState[selectedIndex].shapes.filter(shape => shape.id !== shapeWidget.id);
+                    updatedState[selectedIndex] = {
+                        ...updatedState[selectedIndex],
+                        shapes: [...updatedShapes, newShape],
+                    };
+                    return updatedState;
+                });
+            } else {
+                // Add the new shape at the center of the group
+                setMainStage(prevState => {
+                    const updatedState = [...prevState];
+                    updatedState[selectedIndex] = {
+                        ...updatedState[selectedIndex],
+                        shapes: [...updatedState[selectedIndex].shapes, newShape]
+                    };
+                    return updatedState;
+                });
+            }
+            // Select the newly added shape
+            if (newShape) {
+                setTimeout(() => {
+                    mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach((child) => {
+                        if (child.attrs.id === newShape.id) {
+                            setMainStage(prevState => {
+                                const updatedState = [...prevState];
+                                updatedState[selectedIndex] = {
+                                    ...updatedState[selectedIndex],
+                                    selectedShapes: [child],
+                                };
+                                return updatedState;
+                            });
+                        }
+                    });
+                }, 100);
+            }
+
+            // stage.dragRect.current = null;
 
             setIsEditorDrawerOpen(false);
         }

@@ -300,7 +300,7 @@ export default function ManageVariantImages({ attributes, variants, setValue, wa
                         By default, product variations use parent images. Choose an attribute for custom variant images that link images to all associated variants.{" "}
                         <a className="text-primary cursor-pointer">Learn more</a>
                     </p>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center flex-wrap gap-2">
                         <div className="w-32">
                             <Label>Select attribute</Label>
                         </div>

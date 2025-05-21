@@ -59,11 +59,11 @@ export default function MaskInput({
     <div className={`w-full ${className}`}>
       <div className={`flex flex-wrap items-start gap-2 p-2 rounded-md border ${isFocused ? 'border-primary' : 'border-input'} bg-transparent`}>
         {keywords.map((keyword, index) => (
-          <span
+          <div
             key={index}
             className="inline-flex items-center gap-1 text-black bg-[#FAFBFB] text-sm px-2 py-1 rounded-md"
           >
-            {keyword}
+              <div className="max-w-16 truncate font-semibold">{keyword}</div>
             <button
               type="button"
               onClick={() => removeKeyword(index)}
@@ -72,7 +72,7 @@ export default function MaskInput({
             >
               <X size={14} />
             </button>
-          </span>
+          </div>
         ))}
         <input
           type="text"
@@ -82,7 +82,7 @@ export default function MaskInput({
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholder={keywords.length === 0 ? placeholder : ""}
-          className={`flex-1 bg-transparent outline-none text-sm min-w-[120px] placeholder:text-muted-foreground`}
+          className={`flex-1 bg-transparent outline-none w-full text-sm placeholder:text-muted-foreground`}
           aria-label="Add keyword"
         />
       </div>
