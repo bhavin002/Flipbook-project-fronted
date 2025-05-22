@@ -16,6 +16,7 @@ import { addIntercationDataToMainStage } from "@/utils/Helper";
 export default function QuizDialog({ selectedShape, mainStage, setMainStage, selectedIndex }) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isFetching, setIsFetching] = useState(false);
     const variantId = selectedShape[0].attrs?.htmlData?.variantId || null;
 
     const form = useForm({
@@ -43,15 +44,15 @@ export default function QuizDialog({ selectedShape, mainStage, setMainStage, sel
                 allowRetake: false,
                 collectEmail: false,
                 addPrivacyPolicy: false,
-                companyName: "",
-                privacyPolicyLink: "",
+                companyName: "Flipnova",
+                privacyPolicyLink: "https://legal.flipnova.com/privacy-policy",
                 addGDPRCompliance: false,
-                gdprMessage: ""
+                gdprMessage: "By clicking on the button below, you agree to our Privacy Policy and Terms of Service."
             }
         }
     });
 
-    const { formState: { errors } } = form;
+    const { formState: { errors }, clearErrors } = form;
 
     console.log("errors ??", errors);
 
@@ -62,7 +63,7 @@ export default function QuizDialog({ selectedShape, mainStage, setMainStage, sel
         }
 
         try {
-            setIsLoading(true);
+            setIsFetching(true);
             const response = await getQuizApi(variantId);
             console.log("response", response);
 
@@ -88,7 +89,7 @@ export default function QuizDialog({ selectedShape, mainStage, setMainStage, sel
                 description: error.message || "Oops! Something went wrong.",
             });
         } finally {
-            setIsLoading(false);
+            setIsFetching(false);
         }
     };
 
@@ -106,7 +107,7 @@ export default function QuizDialog({ selectedShape, mainStage, setMainStage, sel
             const output = {
                 data: {
                     variantId: response.data.quiz._id,
-                    makeElementMandatory: true,
+                    isMandatory: false,
                 }
             };
 
@@ -127,9 +128,9 @@ export default function QuizDialog({ selectedShape, mainStage, setMainStage, sel
                 className="w-full text-black hover:text-primary"
                 variant="outline"
                 onClick={fetchQuiz}
-                disabled={isLoading}
+                disabled={isFetching}
             >
-                {isLoading ? <LoadingButton /> : <>
+                {isFetching ? <LoadingButton /> : <>
                     <Pencil /> Edit quiz
                 </>}
             </Button>
@@ -158,7 +159,7 @@ export default function QuizDialog({ selectedShape, mainStage, setMainStage, sel
                                             <QuizQuestions form={form} />
                                         </TabsContent>
                                         <TabsContent value="settings" className="my-4 px-2">
-                                            <QuizSettings form={form} />
+                                            <QuizSettings form={form} clearErrors={clearErrors} />
                                         </TabsContent>
                                     </div>
                                 </Tabs>

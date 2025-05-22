@@ -15,21 +15,22 @@ export const quizSchema = z.object({
   questions: z.array(questionSchema).min(1, "At least one question is required"),
   settings: z.object({
     isShowCorrectAnswer: z.boolean(),
-    tooltip: z.string().default("Click to answer question").optional(),
-    quizName: z.string().default("Untitled quiz").optional(),
-    quizButtonLabel: z.string().default("Submit").optional(),
+    tooltip: z.string().optional(),
+    quizName: z.string().min(1, "Quiz name is required"),
+    quizButtonLabel: z.string().min(1, "Button label is required"),
     useDifferentMessages: z.boolean(),
-    passedQuizMessage: z.string().default("Your response has been submitted.").optional(),
-    failedQuizMessage: z.string().default("Your response has been submitted.").optional(),
-    messageText: z.string().default("Your response has been submitted.").optional(),
+    passedQuizMessage: z.string().optional(),
+    failedQuizMessage: z.string().optional(),
+    messageText: z.string().optional(),
     allowRetake: z.boolean(),
     collectEmail: z.boolean(),
     addPrivacyPolicy: z.boolean(),
-    companyName: z.string().default("Flipnova").optional(),
-    privacyPolicyLink: z.string().default("https://legal.flipsnack.com/privacy-policy").optional(),
+    companyName: z.string().optional(),
+    privacyPolicyLink: z.string().optional(),
     addGDPRCompliance: z.boolean(),
-    gdprMessage: z.string().default("By clicking on the button below, you agree to our Privacy Policy and Terms of Service.").optional(),
+    gdprMessage: z.string().optional(),
   }).superRefine((data, ctx) => {
+    // Privacy policy validation
     if (data.addPrivacyPolicy) {
       if (!data.privacyPolicyLink) {
         ctx.addIssue({
@@ -46,6 +47,43 @@ export const quizSchema = z.object({
             message: 'Please enter a valid URL (e.g., https://example.com)',
           });
         }
+      }
+    }
+
+    // Message validation based on useDifferentMessages
+    if (data.useDifferentMessages) {
+      if (!data.passedQuizMessage) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['passedQuizMessage'],
+          message: 'Passed quiz message is required when using different messages',
+        });
+      }
+      if (!data.failedQuizMessage) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['failedQuizMessage'],
+          message: 'Failed quiz message is required when using different messages',
+        });
+      }
+    } else {
+      if (!data.messageText) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['messageText'],
+          message: 'Message text is required when not using different messages',
+        });
+      }
+    }
+
+    // GDPR compliance validation
+    if (data.addGDPRCompliance) {
+      if (!data.gdprMessage) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['gdprMessage'],
+          message: 'GDPR message is required when GDPR compliance is enabled',
+        });
       }
     }
   }),

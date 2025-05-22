@@ -11,7 +11,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { useFieldArray } from "react-hook-form";
 
@@ -20,10 +19,6 @@ export default function QuizQuestions({ form }) {
     control: form.control,
     name: "questions"
   });
-
-  const generateLetters = () => {
-    return Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i));
-  };
 
   const addQuestion = () => {
     append({
@@ -66,7 +61,6 @@ export default function QuizQuestions({ form }) {
                 form={form}
                 questionIndex={index}
                 removeQuestion={removeQuestion}
-                generateLetters={generateLetters}
               />
             </CardContent>
           </Card>
@@ -86,7 +80,7 @@ export default function QuizQuestions({ form }) {
   );
 }
 
-function Question({ form, questionIndex, removeQuestion, generateLetters }) {
+function Question({ form, questionIndex, removeQuestion }) {
   const { fields: options, append, remove } = useFieldArray({
     control: form.control,
     name: `questions.${questionIndex}.options`

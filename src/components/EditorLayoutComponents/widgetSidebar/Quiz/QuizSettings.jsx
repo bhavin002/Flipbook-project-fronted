@@ -12,8 +12,42 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 
-export default function QuizSettings({ form }) {
+export default function QuizSettings({ form, clearErrors }) {
     const { formState: { errors } } = form;
+
+    // Set default values when privacy policy is enabled
+    const handlePrivacyPolicyChange = (checked) => {
+        clearErrors("settings.companyName");
+        clearErrors("settings.privacyPolicyLink");
+        form.setValue("settings.addPrivacyPolicy", checked);
+        if (checked) {
+            form.setValue("settings.companyName", "Flipnova");
+            form.setValue("settings.privacyPolicyLink", "https://legal.flipsnack.com/privacy-policy");
+        }
+    };
+
+    // Set default value when GDPR compliance is enabled
+    const handleGDPRComplianceChange = (checked) => {
+        clearErrors("settings.gdprMessage");
+        form.setValue("settings.addGDPRCompliance", checked);
+        if (checked) {
+            form.setValue("settings.gdprMessage", "By clicking on the button below, you agree to our Privacy Policy and Terms of Service.");
+        }
+    };
+
+    // Set default values for passed and failed quiz messages
+    const handleDifferentMessagesChange = (checked) => {
+        clearErrors("settings.passedQuizMessage");
+        clearErrors("settings.failedQuizMessage");
+        clearErrors("settings.messageText");
+        form.setValue("settings.useDifferentMessages", checked);
+        if (checked) {
+            form.setValue("settings.passedQuizMessage", "Congratulations! You have passed the quiz.");
+            form.setValue("settings.failedQuizMessage", "Sorry, you did not pass the quiz. Please try again.");
+        } else {
+            form.setValue("settings.messageText", "Your response has been submitted.");
+        }
+    };
 
     return (
         <>
@@ -119,7 +153,7 @@ export default function QuizSettings({ form }) {
                     <Switch
                         {...form.register("settings.useDifferentMessages")}
                         checked={form.watch("settings.useDifferentMessages")}
-                        onCheckedChange={(checked) => form.setValue("settings.useDifferentMessages", checked)}
+                        onCheckedChange={handleDifferentMessagesChange}
                     />
                     <Label htmlFor="question-tooltip" className="text-gray-500">
                         Use different messages for passed and failed quizzes
@@ -244,7 +278,7 @@ export default function QuizSettings({ form }) {
                             <Switch
                                 {...form.register("settings.addPrivacyPolicy")}
                                 checked={form.watch("settings.addPrivacyPolicy")}
-                                onCheckedChange={(checked) => form.setValue("settings.addPrivacyPolicy", checked)}
+                                onCheckedChange={handlePrivacyPolicyChange}
                             />
                         </div>
                         {form.watch("settings.addPrivacyPolicy") && (
@@ -306,7 +340,7 @@ export default function QuizSettings({ form }) {
                             <Switch
                                 {...form.register("settings.addGDPRCompliance")}
                                 checked={form.watch("settings.addGDPRCompliance")}
-                                onCheckedChange={(checked) => form.setValue("settings.addGDPRCompliance", checked)}
+                                onCheckedChange={handleGDPRComplianceChange}
                             />
                         </div>
                         {form.watch("settings.addGDPRCompliance") && (

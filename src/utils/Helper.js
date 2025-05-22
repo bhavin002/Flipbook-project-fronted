@@ -105,6 +105,7 @@ export const restrictNumericInput = (e, allowDecimal = true) => {
     }
 };
 
+
 const addEntryInDB = async (htmlType, id, setIsLoading) => {
     switch (htmlType) {
         case "shop-area":

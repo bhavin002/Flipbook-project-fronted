@@ -21,12 +21,14 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import ProductAttributes from "./ProductAttributes";
 import { restrictNumericInput } from "@/utils/Helper";
+import { useRef } from "react";
 
 export default function AdvancedOptions({ register, watch, setValue, errors, handleNumberInputChange, clearErrors }) {
     const quantityOption = watch("quantityOption");
     const minMaxQty = watch("enableMinMaxQuantity");
     const customizeProduct = watch("customizableProduct");
     const paidPersonalization = watch("paidPersonalization");
+    const accordionRef = useRef(null);
 
     // Handle clearing fields and errors when switches are toggled off
     const handleQuantityOptionToggle = (checked) => {
@@ -63,14 +65,29 @@ export default function AdvancedOptions({ register, watch, setValue, errors, han
         }
     };
 
+    // Handle accordion open/close with smooth scroll
+    const handleAccordionChange = (value) => {
+        if (value === "item-1" && accordionRef.current) {
+            setTimeout(() => {
+                accordionRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+            }, 100);
+        }
+    };
+
     return (
-        <div className="space-y-4">
-            <Accordion type="single" collapsible className="w-full">
+        <div className="space-y-4" ref={accordionRef}>
+            <Accordion 
+                type="single" 
+                collapsible 
+                className="w-full"
+                onValueChange={handleAccordionChange}
+            >
                 <AccordionItem value="item-1">
                     <AccordionTrigger className="text-md pt-0 pl-1 font-semibold" iconClassName="text-black">
                         Advanced options
                     </AccordionTrigger>
                     <AccordionContent>
+                        {/* Rest of the content remains the same */}
                         <div className="space-y-4 px-1">
                             <div className="flex justify-between">
                                 <Label className="text-sm">Quantity options</Label>
