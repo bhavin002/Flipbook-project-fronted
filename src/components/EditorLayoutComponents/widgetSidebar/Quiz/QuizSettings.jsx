@@ -285,7 +285,7 @@ export default function QuizSettings({ form, clearErrors }) {
                             <>
                                 <div>
                                     <Label htmlFor="company-name" className={`text-xs ${errors.settings?.companyName ? "text-red-500" : ""}`}>
-                                        Company name
+                                        Company name <span>*</span>
                                     </Label>
                                     <Input
                                         type="text"
@@ -298,7 +298,7 @@ export default function QuizSettings({ form, clearErrors }) {
                                 </div>
                                 <div>
                                     <Label htmlFor="privacy-policy" className={`text-xs ${errors.settings?.privacyPolicyLink ? "text-red-500" : ""}`}>
-                                        Privacy Policy link
+                                        Privacy Policy link <span>*</span>
                                     </Label>
                                     <Input
                                         type="text"
@@ -346,7 +346,7 @@ export default function QuizSettings({ form, clearErrors }) {
                         {form.watch("settings.addGDPRCompliance") && (
                             <div>
                                 <Label htmlFor="gdpr-message" className={`text-xs ${errors.settings?.gdprMessage ? "text-red-500" : ""}`}>
-                                    Formulate message
+                                    Formulate message <span>*</span>
                                 </Label>
                                 <Input
                                     type="text"

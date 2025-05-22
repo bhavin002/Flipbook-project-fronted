@@ -127,7 +127,7 @@ function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, 
     }
     if (selectedSubMenu === "contact-form") {
         return (
-            <ContactForm />
+            <ContactForm selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "page-options") {

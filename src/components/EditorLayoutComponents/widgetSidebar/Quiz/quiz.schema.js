@@ -32,6 +32,14 @@ export const quizSchema = z.object({
   }).superRefine((data, ctx) => {
     // Privacy policy validation
     if (data.addPrivacyPolicy) {
+      if (!data.companyName) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['companyName'],
+          message: 'Company name is required when privacy policy is enabled',
+        });
+      }
+
       if (!data.privacyPolicyLink) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
