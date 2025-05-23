@@ -10,26 +10,25 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { useState } from "react";
 
-export default function Settings() {
-    const [collectEmail, setCollectEmail] = useState(false);
-    const [addPrivacyPolicy, setAddPrivacyPolicy] = useState(false);
-    const [addGDPR, setAddGDPR] = useState(false);
+export default function Settings({ form, clearErrors }) {
+    const { formState: { errors } } = form;
 
     return (
         <>
             <div className="px-1 py-2">
                 <div>
-                    <Label htmlFor="question-tooltip" className="text-xs">
+                    <Label htmlFor="question-tooltip" className={`text-xs ${errors.tooltip ? "text-red-500" : ""}`}>
                         Tooltip
                     </Label>
                     <Input
                         type="text"
                         id="question-tooltip"
-                        defaultValue="Click to answer question"
+                        {...form.register("tooltip")}
                         placeholder="Click to answer question"
+                        className={errors.tooltip ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                     />
+                    {errors.tooltip && <p className="text-red-500 text-xs">{errors.tooltip.message}</p>}
                 </div>
                 <Separator className="my-4" />
                 <div className="space-y-2">
@@ -40,15 +39,17 @@ export default function Settings() {
                         </p>
                     </div>
                     <div>
-                        <Label htmlFor="button-label" className="text-xs">
-                            Button label
+                        <Label htmlFor="button-label" className={`text-xs ${errors.buttonLabel ? "text-red-500" : ""}`}>
+                            Button label <span>*</span>
                         </Label>
                         <Input
                             type="text"
                             id="button-label"
-                            defaultValue="Submit"
+                            {...form.register("buttonLabel")}
                             placeholder="Submit"
+                            className={errors.buttonLabel ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                         />
+                        {errors.buttonLabel && <p className="text-red-500 text-xs">{errors.buttonLabel.message}</p>}
                     </div>
                 </div>
                 <Separator className="my-4" />
@@ -60,17 +61,18 @@ export default function Settings() {
                         </p>
                     </div>
                     <div>
-                        <Label htmlFor="message-text" className="text-xs">
+                        <Label htmlFor="message-text" className={`text-xs ${errors.thankYouMessage ? "text-red-500" : ""}`}>
                             Message text <span>*</span>
                         </Label>
                         <Textarea
                             type="text"
                             id="message-text"
-                            defaultValue="Your response has been submitted."
+                            {...form.register("thankYouMessage")}
                             placeholder="Your response has been submitted."
                             rows={4}
-                            className="resize-none"
+                            className={`resize-none ${errors.thankYouMessage ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}`}
                         />
+                        {errors.thankYouMessage && <p className="text-red-500 text-xs">{errors.thankYouMessage.message}</p>}
                     </div>
                 </div>
                 <div className="my-4">
@@ -78,8 +80,14 @@ export default function Settings() {
                         <Label htmlFor="collect-email">Collect email address</Label>
                         <Switch
                             id="collect-email"
-                            checked={collectEmail}
-                            onCheckedChange={setCollectEmail}
+                            checked={form.watch("settings.collectEmail")}
+                            onCheckedChange={(checked) => {
+                                form.setValue("settings.collectEmail", checked);
+                                if (!checked) {
+                                    form.setValue("settings.addPrivacyPolicy", false);
+                                    form.setValue("settings.addGDPRCompliance", false);
+                                }
+                            }}
                         />
                     </div>
                     <p className="text-sm text-gray-500">
@@ -87,7 +95,7 @@ export default function Settings() {
                     </p>
                 </div>
 
-                {collectEmail && (
+                {form.watch("settings.collectEmail") && (
                     <>
                         <div className="my-6 space-y-2">
                             <div className="flex justify-between">
@@ -114,33 +122,42 @@ export default function Settings() {
                                     </TooltipProvider>
                                 </div>
                                 <Switch
-                                    checked={addPrivacyPolicy}
-                                    onCheckedChange={setAddPrivacyPolicy}
+                                    checked={form.watch("settings.addPrivacyPolicy")}
+                                    onCheckedChange={(checked) => {
+                                        form.setValue("settings.addPrivacyPolicy", checked);
+                                        if (!checked) {
+                                            form.setValue("settings.privacyPolicyLink", "");
+                                        }
+                                    }}
                                 />
                             </div>
-                            {addPrivacyPolicy && (
+                            {form.watch("settings.addPrivacyPolicy") && (
                                 <>
                                     <div>
-                                        <Label htmlFor="company-name" className="text-xs">
+                                        <Label htmlFor="company-name" className={`text-xs ${errors.settings?.companyName ? "text-red-500" : ""}`}>
                                             Company name
                                         </Label>
                                         <Input
                                             type="text"
                                             id="company-name"
-                                            defaultValue="Flipnova"
+                                            {...form.register("settings.companyName")}
                                             placeholder="E.g. Flipnova"
+                                            className={errors.settings?.companyName ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                         />
+                                        {errors.settings?.companyName && <p className="text-red-500 text-xs">{errors.settings.companyName.message}</p>}
                                     </div>
                                     <div>
-                                        <Label htmlFor="privacy-policy" className="text-xs">
-                                            Privacy Policy link
+                                        <Label htmlFor="privacy-policy" className={`text-xs ${errors.settings?.privacyPolicyLink ? "text-red-500" : ""}`}>
+                                            Privacy Policy link <span>*</span>
                                         </Label>
                                         <Input
                                             type="text"
                                             id="privacy-policy"
-                                            defaultValue="https://legal.flipnova.com/privacy-policy"
+                                            {...form.register("settings.privacyPolicyLink")}
                                             placeholder="E.g. www.flipsnack.com"
+                                            className={errors.settings?.privacyPolicyLink ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                         />
+                                        {errors.settings?.privacyPolicyLink && <p className="text-red-500 text-xs">{errors.settings.privacyPolicyLink.message}</p>}
                                     </div>
                                 </>
                             )}
@@ -171,21 +188,28 @@ export default function Settings() {
                                     </TooltipProvider>
                                 </div>
                                 <Switch
-                                    checked={addGDPR}
-                                    onCheckedChange={setAddGDPR}
+                                    checked={form.watch("settings.addGDPRCompliance")}
+                                    onCheckedChange={(checked) => {
+                                        form.setValue("settings.addGDPRCompliance", checked);
+                                        if (!checked) {
+                                            form.setValue("settings.gdprMessage", "");
+                                        }
+                                    }}
                                 />
                             </div>
-                            {addGDPR && (
+                            {form.watch("settings.addGDPRCompliance") && (
                                 <div>
-                                    <Label htmlFor="gdpr-message" className="text-xs">
-                                        Formulate message
+                                    <Label htmlFor="gdpr-message" className={`text-xs ${errors.settings?.gdprMessage ? "text-red-500" : ""}`}>
+                                        Formulate message <span>*</span>
                                     </Label>
                                     <Input
                                         type="text"
                                         id="gdpr-message"
-                                        defaultValue="I agree to receive marketing materials."
+                                        {...form.register("settings.gdprMessage")}
                                         placeholder="I agree to receive marketing materials."
+                                        className={errors.settings?.gdprMessage ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                     />
+                                    {errors.settings?.gdprMessage && <p className="text-red-500 text-xs">{errors.settings.gdprMessage.message}</p>}
                                 </div>
                             )}
                         </div>
@@ -193,5 +217,5 @@ export default function Settings() {
                 )}
             </div>
         </>
-    )
+    );
 }

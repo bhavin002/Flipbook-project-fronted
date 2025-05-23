@@ -92,7 +92,7 @@ export default function ProductAttributes({ setValue, errors, watch }) {
       options: attr.optionValues || [],
     }));
   });
-  const [selectedAttributeId, setSelectedAttributeId] = useState(null);
+  const [selectedAttributeId, setSelectedAttributeId] = useState(attributes.find(attr => attr.name === watch("variantImages")?.selectedAttribute)?.id);
 
   const price = watch("price");
   const discountPrice = watch("discountPrice");
@@ -121,8 +121,10 @@ export default function ProductAttributes({ setValue, errors, watch }) {
       attributeName: attr.name,
       optionValues: attr.options
     })));
+    // Reset selected attribute if the deleted attribute was selected
     if (selectedAttributeId === id) {
       setSelectedAttributeId(null);
+      setValue("selectedAttribute", null);
     }
   };
 
@@ -183,14 +185,16 @@ export default function ProductAttributes({ setValue, errors, watch }) {
     const existingVariants = watch("productVariants") || [];
     
     let combinations = validAttributes[0].options.map(option => {
+      console.log("option ??? validAttributes", option);
+
       // Find existing variant with this option to preserve visibility
       const existingVariant = existingVariants.find(v => v.variantName === option);
-      
+
       return {
         variant: option,
-        price: price || null, 
-        discountPrice: discountPrice || null, 
-        sku: sku || "", 
+        price: existingVariants.find(v => v.variantName === option)?.price || price, 
+        discountPrice: existingVariants.find(v => v.variantName === option)?.discountPrice || discountPrice, 
+        sku: existingVariants.find(v => v.variantName === option)?.sku || sku, 
         visibility: existingVariant ? existingVariant.visibility : true,
       };
     });
@@ -229,7 +233,7 @@ export default function ProductAttributes({ setValue, errors, watch }) {
     })));
 
     return combinations;
-  }, [attributes, setValue, price, discountPrice, sku, watch]);
+  }, [attributes, setValue, watch]);
 
   return (
     <div className="space-y-6">
@@ -292,6 +296,8 @@ export default function ProductAttributes({ setValue, errors, watch }) {
         variants={variants}
         setValue={setValue}
         watch={watch}
+        selectedAttributeId={selectedAttributeId}
+        setSelectedAttributeId={setSelectedAttributeId}
       />
     </div>
   );

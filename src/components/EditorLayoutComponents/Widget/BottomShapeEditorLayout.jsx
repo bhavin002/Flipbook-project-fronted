@@ -118,7 +118,7 @@ function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mai
     }
     if (selectedSubMenu === "quiz") {
         return (
-            <Quiz />
+            <Quiz selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "question") {
@@ -128,7 +128,7 @@ function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mai
     }
     if (selectedSubMenu === "contact-form") {
         return (
-            <ContactForm />
+            <ContactForm selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === "page-options") {

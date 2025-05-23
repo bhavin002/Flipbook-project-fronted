@@ -12,6 +12,7 @@ import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { CSS } from "@dnd-kit/utilities";
 import { toast } from "sonner";
 import { ProductImageUploadApi } from "@/service/product.service";
+import { restrictNumericInput } from "@/utils/Helper";
 
 function SortableImageItem({ image, onDelete }) {
     const {
@@ -58,9 +59,7 @@ function SortableImageItem({ image, onDelete }) {
     );
 }
 
-export default function ManageVariantImages({ attributes, variants, setValue, watch }) {
-    console.log("watch ??", watch("variantImages"));
-    const [selectedAttributeId, setSelectedAttributeId] = useState(attributes.find(attr => attr.name === watch("variantImages")?.selectedAttribute)?.id);
+export default function ManageVariantImages({ attributes, variants, setValue, watch, selectedAttributeId, setSelectedAttributeId }) {
     const [selectedAttributeName, setSelectedAttributeName] = useState(watch("variantImages")?.selectedAttribute || "");
     const [isLinkImagesOpen, setIsLinkImagesOpen] = useState(false);
     const [page, setPage] = useState(1);
@@ -71,6 +70,9 @@ export default function ManageVariantImages({ attributes, variants, setValue, wa
     const fileInputRefs = useRef({});
     const rowsPerPage = 10;
     const maxImagesPerOption = 3;
+
+    console.log("watch watch()?.selectedAttribute ??", selectedAttributeId);
+
 
     useEffect(() => {
         const initialVisibility = variants.reduce((acc, variant) => ({
@@ -96,10 +98,10 @@ export default function ManageVariantImages({ attributes, variants, setValue, wa
             const selectedAttribute = attributes.find((attr) => attr.id === selectedAttributeId);
             if (selectedAttribute) {
                 setSelectedAttributeName(selectedAttribute.name);
-    
+
                 // Get existing variantImages from watch
                 const variantImages = watch("variantImages");
-    
+
                 setOptionImages((prev) => {
                     const initialOptionImages = {};
                     selectedAttribute.options.forEach((option) => {
@@ -112,7 +114,6 @@ export default function ManageVariantImages({ attributes, variants, setValue, wa
                                     imageLink: img.imageLink,
                                     name: img.name,
                                 })) || [];
-    
                         initialOptionImages[option] = existingImages.length > 0 ? existingImages : prev[option] || [];
                     });
                     return initialOptionImages;
@@ -196,7 +197,7 @@ export default function ManageVariantImages({ attributes, variants, setValue, wa
                 if (variant.variantName === variantName) {
                     return {
                         ...variant,
-                        [field]: value
+                        [field]: value // Keep value as string
                     };
                 }
                 return variant;
@@ -372,9 +373,9 @@ export default function ManageVariantImages({ attributes, variants, setValue, wa
                                                 disabled={!variantVisibility[variant.variant]}
                                                 onChange={(e) => {
                                                     const newValue = e.target.value;
-                                                    const numericValue = newValue === "" ? "" : parseFloat(newValue);
-                                                    handleVariantDataChange(variant.variant, "price", numericValue);
+                                                    handleVariantDataChange(variant.variant, "price", newValue);
                                                 }}
+                                                onKeyDown={(e) => restrictNumericInput(e, false)}
                                             />
                                         </TableCell>
                                         <TableCell>
@@ -385,9 +386,9 @@ export default function ManageVariantImages({ attributes, variants, setValue, wa
                                                 disabled={!variantVisibility[variant.variant]}
                                                 onChange={(e) => {
                                                     const newValue = e.target.value;
-                                                    const numericValue = newValue === "" ? "" : parseFloat(newValue);
-                                                    handleVariantDataChange(variant.variant, "discountPrice", numericValue);
+                                                    handleVariantDataChange(variant.variant, "discountPrice", newValue);
                                                 }}
+                                                onKeyDown={(e) => restrictNumericInput(e, false)}
                                             />
                                         </TableCell>
                                         <TableCell>

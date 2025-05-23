@@ -1,4 +1,5 @@
 import { duplicateProductApi } from "@/service/product.service";
+import { duplicateQuizApi } from "@/service/quiz.service";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 
@@ -105,6 +106,7 @@ export const restrictNumericInput = (e, allowDecimal = true) => {
     }
 };
 
+
 const addEntryInDB = async (htmlType, id, setIsLoading) => {
     switch (htmlType) {
         case "shop-area":
@@ -114,6 +116,19 @@ const addEntryInDB = async (htmlType, id, setIsLoading) => {
                 return response;
             } catch (error) {
                 toast.error("Failed to duplicate product", {
+                    description: error.message || "Oops! Something went wrong.",
+                });
+                return null;
+            } finally {
+                setIsLoading(false);
+            }
+        case "quiz":
+            try {
+                setIsLoading(true);
+                const response = await duplicateQuizApi(id);
+                return response;
+            } catch (error) {
+                toast.error("Failed to duplicate quiz", {
                     description: error.message || "Oops! Something went wrong.",
                 });
                 return null;
