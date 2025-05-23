@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Trash2, GripVertical, Plus, Mail, Phone, Globe, AlertCircle, Star } from "lucide-react";
+import { Trash2, GripVertical, Plus, Mail, Phone, Globe, AlertCircle, Star, User } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -25,33 +25,46 @@ import {
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
+import { useWatch } from "react-hook-form";
+
+// Field type mapping
+const FIELD_TYPE_MAP = {
+    "Full name": "custom_input",
+    "Email address": "email", 
+    "Phone number": "phone_number",
+    "Country/region": "custom_input",
+    "Website": "website",
+    "Paragraph": "custom_input",
+    "Custom field": "custom_input"
+};
 
 // Field validation dropdown component
 function ValidationDropdown({ field, onValidationChange }) {
     const getIcon = (type) => {
         switch (type) {
             case "email": return <Mail className="h-4 w-4" />;
-            case "phone": return <Phone className="h-4 w-4" />;
+            case "phone_number": return <Phone className="h-4 w-4" />;
             case "website": return <Globe className="h-4 w-4" />;
-            default: return null;
+            case "custom_input": return <AlertCircle className="h-4 w-4" />;
+            default: return <AlertCircle className="h-4 w-4" />;
         }
     };
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                    {field.validation ? getIcon(field.validation) : <AlertCircle className="h-4 w-4" />}
+                <Button variant="ghost" className="h-8 w-8 p-0" type="button">
+                    {field.type ? getIcon(field.type) : <AlertCircle className="h-4 w-4" />}
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-40">
-                <DropdownMenuItem onClick={() => onValidationChange(field.id, null)}>
-                    <AlertCircle className="mr-2 h-4 w-4" /> No validation
+                <DropdownMenuItem onClick={() => onValidationChange(field.id, "custom_input")}>
+                    <AlertCircle className="mr-2 h-4 w-4" /> Custom field
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onValidationChange(field.id, "email")}>
                     <Mail className="mr-2 h-4 w-4" /> Email address
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onValidationChange(field.id, "phone")}>
+                <DropdownMenuItem onClick={() => onValidationChange(field.id, "phone_number")}>
                     <Phone className="mr-2 h-4 w-4" /> Phone number
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => onValidationChange(field.id, "website")}>
@@ -87,6 +100,7 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
         >
             <button
                 className="cursor-grab focus:outline-none"
+                type="button"
                 {...attributes}
                 {...listeners}
             >
@@ -96,8 +110,9 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
             <div className="flex-1">
                 <Input
                     type="text"
-                    value={field.name}
+                    value={field.label || ''}
                     onChange={(e) => onFieldChange(field.id, e.target.value)}
+                    placeholder="Field label"
                 />
             </div>
 
@@ -105,14 +120,18 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
 
             <Button
                 variant="ghost"
+                type="button"
                 size="sm"
                 onClick={() => onRequiredChange(field.id)}
-                className="h-8 px-2 text-xs"
+                className={`h-8 px-2 text-xs ${field.required ? 'text-primary' : 'text-gray-400'}`}
+                title={field.required ? 'Required field' : 'Optional field'}
             >
-                {field.required ? <Star /> : <Star color="#7b39ed" />}
+                <Star className={field.required ? 'fill-current' : ''} />
             </Button>
+            
             <Button
                 variant="ghost"
+                type="button"
                 onClick={() => onDelete(field.id)}
                 className="h-8 w-8 p-0"
             >
@@ -122,52 +141,80 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
     );
 }
 
-export default function CustomerDetailsFields() {
-    const [fields, setFields] = useState([
-        { id: "field-1", name: "Full name", validation: null, required: true },
-        { id: "field-2", name: "Email address", validation: "email", required: true },
-        { id: "field-3", name: "Phone number", validation: "phone", required: false },
-        { id: "field-4", name: "Country/region", validation: null, required: false }
-    ]);
+export default function CustomerDetailsFields({ form }) {
+    // Watch the customerFields from the form
+    const customerFields = useWatch({
+        control: form.control,
+        name: "customerFields"
+    }) || [];
 
-    const addField = (type) => {
+    // Convert form data to local state format for UI
+    const [fields, setFields] = useState([]);
+
+    useEffect(() => {
+        const convertedFields = customerFields.map((field, index) => ({
+            id: `field-${index}`,
+            label: field.label || '',
+            type: field.type || 'custom_input',
+            required: field.required || false
+        }));
+        setFields(convertedFields);
+    }, [customerFields]);
+
+    // Update form when local state changes
+    const updateFormFields = (newFields) => {
+        const formFields = newFields.map(field => ({
+            label: field.label,
+            type: field.type,
+            required: field.required
+        }));
+        form.setValue("customerFields", formFields, { shouldValidate: true });
+    };
+
+    const addField = (typeName) => {
+        const fieldType = FIELD_TYPE_MAP[typeName] || 'custom_input';
         const newId = `field-${Date.now()}`;
-
-        let validation = null;
-        if (type === "Email address") validation = "email";
-        else if (type === "Phone number") validation = "phone";
-        else if (type === "Website") validation = "website";
 
         const newField = {
             id: newId,
-            name: type,
-            validation: validation,
+            label: typeName,
+            type: fieldType,
             required: false
         };
 
-        setFields([...fields, newField]);
+        const newFields = [...fields, newField];
+        setFields(newFields);
+        updateFormFields(newFields);
     };
 
     const handleDeleteField = (id) => {
-        setFields(fields.filter(field => field.id !== id));
+        const newFields = fields.filter(field => field.id !== id);
+        setFields(newFields);
+        updateFormFields(newFields);
     };
 
-    const handleFieldNameChange = (id, newName) => {
-        setFields(fields.map(field =>
-            field.id === id ? { ...field, name: newName } : field
-        ));
+    const handleFieldNameChange = (id, newLabel) => {
+        const newFields = fields.map(field =>
+            field.id === id ? { ...field, label: newLabel } : field
+        );
+        setFields(newFields);
+        updateFormFields(newFields);
     };
 
-    const handleValidationChange = (id, validationType) => {
-        setFields(fields.map(field =>
-            field.id === id ? { ...field, validation: validationType } : field
-        ));
+    const handleValidationChange = (id, fieldType) => {
+        const newFields = fields.map(field =>
+            field.id === id ? { ...field, type: fieldType } : field
+        );
+        setFields(newFields);
+        updateFormFields(newFields);
     };
 
     const handleRequiredChange = (id) => {
-        setFields(fields.map(field =>
+        const newFields = fields.map(field =>
             field.id === id ? { ...field, required: !field.required } : field
-        ));
+        );
+        setFields(newFields);
+        updateFormFields(newFields);
     };
 
     // DnD setup
@@ -182,12 +229,13 @@ export default function CustomerDetailsFields() {
         const { active, over } = event;
 
         if (active.id !== over.id) {
-            setFields((items) => {
-                const oldIndex = items.findIndex(item => item.id === active.id);
-                const newIndex = items.findIndex(item => item.id === over.id);
-
-                return arrayMove(items, oldIndex, newIndex);
-            });
+            const newFields = [...fields];
+            const oldIndex = newFields.findIndex(item => item.id === active.id);
+            const newIndex = newFields.findIndex(item => item.id === over.id);
+            
+            const reorderedFields = arrayMove(newFields, oldIndex, newIndex);
+            setFields(reorderedFields);
+            updateFormFields(reorderedFields);
         }
     }
 
@@ -220,7 +268,7 @@ export default function CustomerDetailsFields() {
 
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" type="button">
                         <Plus className="mr-1 h-4 w-4" /> Add field
                     </Button>
                 </DropdownMenuTrigger>

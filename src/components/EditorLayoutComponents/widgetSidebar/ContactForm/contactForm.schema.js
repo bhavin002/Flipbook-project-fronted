@@ -1,26 +1,23 @@
 import { z } from "zod";
 
 const customerFieldSchema = z.object({
-    label: z.string().min(1, "Label is required"),
+    label: z.string().optional(),
     type: z.enum([
         "email",
-        "full_name",
         "phone_number",
-        "country_region",
-        "website",
-        "paragraph",
-        "custom_input"
+        "custom_input",
+        "website"
     ]),
     required: z.boolean()
 });
 
 export const contactFormSchema = z.object({
-    formTitle: z.string().min(1, "Form title is required"),
+    formTitle: z.string().optional(),
     description: z.string().optional(),
-    tooltip: z.string().optional(),
-    buttonLabel: z.string().min(1, "Button label is required"),
-    thankYouMessage: z.string().min(1, "Thank you message is required"),
     settings: z.object({
+        tooltip: z.string().optional(),
+        buttonLabel: z.string().min(1, "Button label is required"),
+        thankYouMessage: z.string().min(1, "Thank you message is required"),
         collectEmail: z.boolean(),
         addPrivacyPolicy: z.boolean(),
         companyName: z.string().optional(),
@@ -30,6 +27,14 @@ export const contactFormSchema = z.object({
     }).superRefine((data, ctx) => {
         // Privacy policy validation
         if (data.addPrivacyPolicy) {
+            if (!data.companyName) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    path: ['companyName'],
+                    message: 'Company name is required when privacy policy is enabled',
+                });
+            }
+
             if (!data.privacyPolicyLink) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
@@ -60,4 +65,4 @@ export const contactFormSchema = z.object({
         }
     }),
     customerFields: z.array(customerFieldSchema).min(1, "At least one customer field is required")
-}); 
+});

@@ -7,11 +7,12 @@ import Details from "./Details";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { contactFormSchema } from "./contactForm.schema";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createContactFormApi, getContactFormApi, updateContactFormApi } from "@/service/contactForm.service";
 import { toast } from "sonner";
 import LoadingButton from "@/utils/LoadingButton";
 import { addIntercationDataToMainStage } from "@/utils/Helper";
+import { Form } from "@/components/ui/form";
 
 export default function ContactFormDialog({ selectedShape, mainStage, setMainStage, selectedIndex }) {
     const [open, setOpen] = useState(false);
@@ -24,10 +25,10 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
         defaultValues: {
             formTitle: "Untitled form",
             description: "",
-            tooltip: "Click to answer question",
-            buttonLabel: "Submit",
-            thankYouMessage: "Your response has been submitted.",
             settings: {
+                tooltip: "Click to answer question",
+                buttonLabel: "Submit",
+                thankYouMessage: "Your response has been submitted.",
                 collectEmail: false,
                 addPrivacyPolicy: false,
                 companyName: "Flipnova",
@@ -37,23 +38,8 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
             },
             customerFields: [
                 {
-                    label: "Full Name",
-                    type: "full_name",
-                    required: true
-                },
-                {
                     label: "Email Address",
                     type: "email",
-                    required: true
-                },
-                {
-                    label: "Phone Number",
-                    type: "phone_number",
-                    required: false
-                },
-                {
-                    label: "Your Message",
-                    type: "paragraph",
                     required: true
                 }
             ]
@@ -61,6 +47,23 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
     });
 
     const { formState: { errors }, clearErrors } = form;
+
+    // Add form state watching
+    useEffect(() => {
+        const subscription = form.watch((value, { name, type }) => {
+            console.log("Form values changed:", value);
+            console.log("Current form errors:", form.formState.errors);
+        });
+        return () => subscription.unsubscribe();
+    }, [form.watch]);
+
+    // Add error logging
+    useEffect(() => {
+        if (Object.keys(errors).length > 0) {
+            console.log("Form validation errors:", errors);
+            console.log("Current form values:", form.getValues());
+        }
+    }, [errors, form]);
 
     console.log("errors ??", errors)
 
@@ -73,7 +76,26 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
         try {
             setIsFetching(true);
             const response = await getContactFormApi(variantId);
-            form.reset(response.data);
+            
+            // Transform the API response to match the form schema
+            const transformedData = {
+                formTitle: response.data.formTitle || "",
+                description: response.data.description || "",
+                settings: {
+                    tooltip: response.data.settings?.tooltip || "Click to answer question",
+                    buttonLabel: response.data.settings?.buttonLabel || "Submit",
+                    thankYouMessage: response.data.settings?.thankYouMessage || "Your response has been submitted.",
+                    collectEmail: response.data.settings?.collectEmail || false,
+                    addPrivacyPolicy: response.data.settings?.addPrivacyPolicy || false,
+                    companyName: response.data.settings?.companyName || "Flipnova",
+                    privacyPolicyLink: response.data.settings?.privacyPolicyLink || "https://legal.flipnova.com/privacy-policy",
+                    addGDPRCompliance: response.data.settings?.addGDPRCompliance || false,
+                    gdprMessage: response.data.settings?.gdprMessage || "I agree to receive marketing materials."
+                },
+                customerFields: response.data.customerFields || []
+            };
+            
+            form.reset(transformedData);
             setOpen(true);
         } catch (error) {
             toast.error("Failed to fetch contact form", {
@@ -87,19 +109,35 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
     const onSubmit = async (data) => {
         try {
             setIsLoading(true);
+            
+            // Transform the form data to match the expected API payload
+            const apiData = {
+                formTitle: data.formTitle,
+                description: data.description,
+                settings: {
+                    tooltip: data.settings.tooltip,
+                    buttonLabel: data.settings.buttonLabel,
+                    thankYouMessage: data.settings.thankYouMessage,
+                    collectEmail: data.settings.collectEmail,
+                    addPrivacyPolicy: data.settings.addPrivacyPolicy,
+                    companyName: data.settings.companyName,
+                    privacyPolicyLink: data.settings.privacyPolicyLink,
+                    addGDPRCompliance: data.settings.addGDPRCompliance,
+                    gdprMessage: data.settings.gdprMessage
+                },
+                customerFields: data.customerFields
+            };
+
             let response;
-
             if (variantId) {
-                response = await updateContactFormApi(variantId, data);
+                response = await updateContactFormApi(variantId, apiData);
             } else {
-                response = await createContactFormApi(data);
+                response = await createContactFormApi(apiData);
             }
-
-            console.log("response.data.contactForm._id ??", response.data.contactForm._id)
 
             const output = {
                 data: {
-                    variantId: response.data.contactForm._id,
+                    variantId: response.data.contactForm?._id || response.data._id,
                 }
             };
 
@@ -127,48 +165,51 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
                 }
             </Button>
 
-            {open && (<Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="sm:max-w-[640px] w-[90vw]">
-                    <DialogHeader>
-                        <DialogTitle>Contact Form</DialogTitle>
-                        <DialogDescription className="sr-only">
-                            Description
-                        </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="lg:max-h-[calc(100vh-150px)] max-lg:max-h-[calc(100vh-300px)] overflow-y-auto">
-                            <Tabs defaultValue="details" className="flex flex-col h-full align-items-start">
-                                <TabsList className="justify-start w-fit">
-                                    <TabsTrigger value="details">
-                                        Details
-                                    </TabsTrigger>
-                                    <TabsTrigger value="settings">
-                                        Settings
-                                    </TabsTrigger>
-                                </TabsList>
-                                <div className="flex-grow overflow-y-auto">
-                                    <TabsContent value="details" className="my-4 px-2">
-                                        <Details form={form} />
-                                    </TabsContent>
-                                    <TabsContent value="settings" className="my-4 px-2">
-                                        <Settings form={form} clearErrors={clearErrors} />
-                                    </TabsContent>
+            {open && (
+                <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogContent className="sm:max-w-[640px] w-[90vw]">
+                        <DialogHeader>
+                            <DialogTitle>Contact Form</DialogTitle>
+                            <DialogDescription className="sr-only">
+                                Description
+                            </DialogDescription>
+                        </DialogHeader>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)}>
+                                <div className="lg:max-h-[calc(100vh-150px)] max-lg:max-h-[calc(100vh-300px)] overflow-y-auto">
+                                    <Tabs defaultValue="details" className="flex flex-col h-full align-items-start">
+                                        <TabsList className="justify-start w-fit">
+                                            <TabsTrigger value="details">
+                                                Details
+                                            </TabsTrigger>
+                                            <TabsTrigger value="settings">
+                                                Settings
+                                            </TabsTrigger>
+                                        </TabsList>
+                                        <div className="flex-grow overflow-y-auto">
+                                            <TabsContent value="details" className="my-4 px-2">
+                                                <Details form={form} />
+                                            </TabsContent>
+                                            <TabsContent value="settings" className="my-4 px-2">
+                                                <Settings form={form} clearErrors={clearErrors} />
+                                            </TabsContent>
+                                        </div>
+                                    </Tabs>
                                 </div>
-                            </Tabs>
-                        </div>
-                        <DialogFooter>
-                            <Button variant="outline" type="button" onClick={() => setOpen(false)}>
-                                Cancel
-                            </Button>
-                            <Button type="submit" disabled={isLoading}>
-                                {
-                                    isLoading ? <LoadingButton isLoading={isLoading} /> : "Save changes"
-                                }
-                            </Button>
-                        </DialogFooter>
-                    </form>
-                </DialogContent>
-            </Dialog>
+                                <DialogFooter>
+                                    <Button variant="outline" type="button" onClick={() => setOpen(false)}>
+                                        Cancel
+                                    </Button>
+                                    <Button type="submit" disabled={isLoading}>
+                                        {
+                                            isLoading ? <LoadingButton isLoading={isLoading} /> : "Save changes"
+                                        }
+                                    </Button>
+                                </DialogFooter>
+                            </form>
+                        </Form>
+                    </DialogContent>
+                </Dialog>
             )}
         </>
     )

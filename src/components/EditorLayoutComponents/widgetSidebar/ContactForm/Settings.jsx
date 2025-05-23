@@ -14,21 +14,41 @@ import { Switch } from "@/components/ui/switch";
 export default function Settings({ form, clearErrors }) {
     const { formState: { errors } } = form;
 
+    // Set default values when privacy policy is enabled
+    const handlePrivacyPolicyChange = (checked) => {
+        clearErrors("settings.companyName");
+        clearErrors("settings.privacyPolicyLink");
+        form.setValue("settings.addPrivacyPolicy", checked);
+        if (checked) {
+            form.setValue("settings.companyName", "Flipnova");
+            form.setValue("settings.privacyPolicyLink", "https://legal.flipsnack.com/privacy-policy");
+        }
+    };
+
+    // Set default value when GDPR compliance is enabled
+    const handleGDPRComplianceChange = (checked) => {
+        clearErrors("settings.gdprMessage");
+        form.setValue("settings.addGDPRCompliance", checked);
+        if (checked) {
+            form.setValue("settings.gdprMessage", "By clicking on the button below, you agree to our Privacy Policy and Terms of Service.");
+        }
+    };
+
     return (
         <>
             <div className="px-1 py-2">
                 <div>
-                    <Label htmlFor="question-tooltip" className={`text-xs ${errors.tooltip ? "text-red-500" : ""}`}>
+                    <Label htmlFor="question-tooltip" className={`text-xs ${errors.settings?.tooltip ? "text-red-500" : ""}`}>
                         Tooltip
                     </Label>
                     <Input
                         type="text"
                         id="question-tooltip"
-                        {...form.register("tooltip")}
+                        {...form.register("settings.tooltip")}
                         placeholder="Click to answer question"
-                        className={errors.tooltip ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
+                        className={errors.settings?.tooltip ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                     />
-                    {errors.tooltip && <p className="text-red-500 text-xs">{errors.tooltip.message}</p>}
+                    {errors.settings?.tooltip && <p className="text-red-500 text-xs">{errors.settings.tooltip.message}</p>}
                 </div>
                 <Separator className="my-4" />
                 <div className="space-y-2">
@@ -39,17 +59,17 @@ export default function Settings({ form, clearErrors }) {
                         </p>
                     </div>
                     <div>
-                        <Label htmlFor="button-label" className={`text-xs ${errors.buttonLabel ? "text-red-500" : ""}`}>
+                        <Label htmlFor="button-label" className={`text-xs ${errors.settings?.buttonLabel ? "text-red-500" : ""}`}>
                             Button label <span>*</span>
                         </Label>
                         <Input
                             type="text"
                             id="button-label"
-                            {...form.register("buttonLabel")}
+                            {...form.register("settings.buttonLabel")}
                             placeholder="Submit"
-                            className={errors.buttonLabel ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
+                            className={errors.settings?.buttonLabel ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                         />
-                        {errors.buttonLabel && <p className="text-red-500 text-xs">{errors.buttonLabel.message}</p>}
+                        {errors.settings?.buttonLabel && <p className="text-red-500 text-xs">{errors.settings.buttonLabel.message}</p>}
                     </div>
                 </div>
                 <Separator className="my-4" />
@@ -61,18 +81,18 @@ export default function Settings({ form, clearErrors }) {
                         </p>
                     </div>
                     <div>
-                        <Label htmlFor="message-text" className={`text-xs ${errors.thankYouMessage ? "text-red-500" : ""}`}>
+                        <Label htmlFor="message-text" className={`text-xs ${errors.settings?.thankYouMessage ? "text-red-500" : ""}`}>
                             Message text <span>*</span>
                         </Label>
                         <Textarea
                             type="text"
                             id="message-text"
-                            {...form.register("thankYouMessage")}
+                            {...form.register("settings.thankYouMessage")}
                             placeholder="Your response has been submitted."
                             rows={4}
-                            className={`resize-none ${errors.thankYouMessage ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}`}
+                            className={`resize-none ${errors.settings?.thankYouMessage ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}`}
                         />
-                        {errors.thankYouMessage && <p className="text-red-500 text-xs">{errors.thankYouMessage.message}</p>}
+                        {errors.settings?.thankYouMessage && <p className="text-red-500 text-xs">{errors.settings.thankYouMessage.message}</p>}
                     </div>
                 </div>
                 <div className="my-4">
@@ -83,10 +103,6 @@ export default function Settings({ form, clearErrors }) {
                             checked={form.watch("settings.collectEmail")}
                             onCheckedChange={(checked) => {
                                 form.setValue("settings.collectEmail", checked);
-                                if (!checked) {
-                                    form.setValue("settings.addPrivacyPolicy", false);
-                                    form.setValue("settings.addGDPRCompliance", false);
-                                }
                             }}
                         />
                     </div>
@@ -122,26 +138,22 @@ export default function Settings({ form, clearErrors }) {
                                     </TooltipProvider>
                                 </div>
                                 <Switch
+                                    {...form.register("settings.addPrivacyPolicy")}
                                     checked={form.watch("settings.addPrivacyPolicy")}
-                                    onCheckedChange={(checked) => {
-                                        form.setValue("settings.addPrivacyPolicy", checked);
-                                        if (!checked) {
-                                            form.setValue("settings.privacyPolicyLink", "");
-                                        }
-                                    }}
+                                    onCheckedChange={handlePrivacyPolicyChange}
                                 />
                             </div>
                             {form.watch("settings.addPrivacyPolicy") && (
                                 <>
                                     <div>
                                         <Label htmlFor="company-name" className={`text-xs ${errors.settings?.companyName ? "text-red-500" : ""}`}>
-                                            Company name
+                                            Company name <span>*</span>
                                         </Label>
                                         <Input
                                             type="text"
                                             id="company-name"
                                             {...form.register("settings.companyName")}
-                                            placeholder="E.g. Flipnova"
+                                            placeholder="Flipnova"
                                             className={errors.settings?.companyName ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                         />
                                         {errors.settings?.companyName && <p className="text-red-500 text-xs">{errors.settings.companyName.message}</p>}
@@ -154,7 +166,7 @@ export default function Settings({ form, clearErrors }) {
                                             type="text"
                                             id="privacy-policy"
                                             {...form.register("settings.privacyPolicyLink")}
-                                            placeholder="E.g. www.flipsnack.com"
+                                            placeholder="https://legal.flipsnack.com/privacy-policy"
                                             className={errors.settings?.privacyPolicyLink ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                         />
                                         {errors.settings?.privacyPolicyLink && <p className="text-red-500 text-xs">{errors.settings.privacyPolicyLink.message}</p>}
@@ -188,13 +200,9 @@ export default function Settings({ form, clearErrors }) {
                                     </TooltipProvider>
                                 </div>
                                 <Switch
+                                    {...form.register("settings.addGDPRCompliance")}
                                     checked={form.watch("settings.addGDPRCompliance")}
-                                    onCheckedChange={(checked) => {
-                                        form.setValue("settings.addGDPRCompliance", checked);
-                                        if (!checked) {
-                                            form.setValue("settings.gdprMessage", "");
-                                        }
-                                    }}
+                                    onCheckedChange={handleGDPRComplianceChange}
                                 />
                             </div>
                             {form.watch("settings.addGDPRCompliance") && (
@@ -206,7 +214,7 @@ export default function Settings({ form, clearErrors }) {
                                         type="text"
                                         id="gdpr-message"
                                         {...form.register("settings.gdprMessage")}
-                                        placeholder="I agree to receive marketing materials."
+                                        placeholder="By clicking on the button below, you agree to our Privacy Policy and Terms of Service."
                                         className={errors.settings?.gdprMessage ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                     />
                                     {errors.settings?.gdprMessage && <p className="text-red-500 text-xs">{errors.settings.gdprMessage.message}</p>}
