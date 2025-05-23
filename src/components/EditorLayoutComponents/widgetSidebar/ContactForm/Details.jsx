@@ -2,29 +2,49 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import CustomerDetailsFields from "@/utils/CustomerDetailsFields";
 import { Separator } from "@/components/ui/separator";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 
-
-export default function Details() {
+export default function Details({ form }) {
     return (
         <div className="space-y-4">
             <div className="space-y-2">
-                <div>
-                    <Label htmlFor="form-title" className="text-xs">Form title</Label>
-                    <Input
-                        type="text"
-                        id="form-title"
-                        defaultValue="Untitled form"
-                        placeholder="Untitled form"
-                    />
-                </div>
-                <div>
-                    <Label htmlFor="form-description" className="text-xs">Description</Label>
-                    <Input
-                        type="text"
-                        id="form-description"
-                        placeholder="Use a maximum of 128 characters"
-                    />
-                </div>
+                <FormField
+                    control={form.control}
+                    name="formTitle"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-xs">Form title</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="text"
+                                    placeholder="Untitled form"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-xs">Description</FormLabel>
+                            <FormControl>
+                                <Textarea
+                                    placeholder="Use a maximum of 128 characters"
+                                    className="resize-none"
+                                    rows={2}
+                                    maxLength={128}
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
             </div>
             <Separator className="my-4" />
             <div className="space-y-2">
@@ -36,7 +56,7 @@ export default function Details() {
                         Add the contact fields that you want your customers to complete
                     </p>
                 </div>
-                <CustomerDetailsFields />
+                <CustomerDetailsFields form={form} />
             </div>
         </div>
     )

@@ -172,6 +172,19 @@ export default function ProductDialog({
         const files = e.target.files;
         if (!files.length) return;
 
+        const currentImageCount = productImages.length;
+        const newImageCount = files.length;
+
+        if (currentImageCount + newImageCount > 3) {
+            toast.error("Maximum 3 images allowed", {
+                description: `You already have ${currentImageCount} image(s). You can upload up to ${3 - currentImageCount} more.`,
+            });
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+            return;
+        }
+
         const formData = new FormData();
         Array.from(files).forEach(file => {
             formData.append('files', file);
