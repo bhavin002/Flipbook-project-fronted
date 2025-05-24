@@ -142,6 +142,9 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
 }
 
 export default function CustomerDetailsFields({ form }) {
+    if(!form){
+        return null;
+    }
     // Watch the customerFields from the form
     const customerFields = useWatch({
         control: form.control,
