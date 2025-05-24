@@ -9,20 +9,53 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { getData } from "@/utils/datas";
+import { GetActivityLogFilterApi } from "@/service/activityLog.service";
 
-export default function FilterActivity() {
-    const [fromDate, setFromDate] = useState(new Date())
+export default function FilterActivity({ onFilterChange }) {
+    const [fromDate, setFromDate] = useState(new Date("2025-04-16"))
     const [toDate, setToDate] = useState(new Date())
-    const activityOptions = getData("activityOptions")
-    const teammateOptions = getData("teammateOptions")
+    const [activityOptions, setActivityOptions] = useState([])
+    const [teammateOptions, setTeammateOptions] = useState([])
+    const [selectedActivity, setSelectedActivity] = useState("all")
+    const [selectedTeammate, setSelectedTeammate] = useState("all")
+
+    useEffect(() => {
+        const fetchFilterData = async () => {
+            try {
+                const response = await GetActivityLogFilterApi();
+                setActivityOptions(response.data.activity.map(activity => ({
+                    value: activity,
+                    label: activity
+                })));
+                setTeammateOptions(response.data.teammate.map(teammate => ({
+                    value: teammate.id,
+                    label: teammate.name
+                })));
+            } catch (error) {
+                console.error("Error fetching filter data:", error);
+            }
+        };
+        fetchFilterData();
+    }, []);
 
     const formatDateDisplay = (date) => {
         if (!date) return "Pick a date"
         return format(date, "MMM d, yyyy")
     }
+
+    const handleApplyFilter = () => {
+        onFilterChange({
+            activityType: selectedActivity,
+            from: format(fromDate, "yyyy-MM-dd"),
+            to: format(toDate, "yyyy-MM-dd"),
+            userId: selectedTeammate,
+            page: 1,
+            perPage: 30
+        });
+    }
+
     return (
          <Card>
             <CardHeader>
@@ -84,11 +117,12 @@ export default function FilterActivity() {
                     </div>
                     <div className="space-y-1">
                         <p className="text-xs">Activity</p>
-                        <Select defaultValue="all-activities">
+                        <Select value={selectedActivity} onValueChange={setSelectedActivity}>
                             <SelectTrigger id="activity" className="w-full sm:w-[180px] md:w-[200px]">
                                 <SelectValue placeholder="Select activity" />
                             </SelectTrigger>
                             <SelectContent>
+                                <SelectItem value="all">All Activities</SelectItem>
                                 {activityOptions.map(option => (
                                     <SelectItem key={option.value} value={option.value}>
                                         {option.label}
@@ -99,11 +133,12 @@ export default function FilterActivity() {
                     </div>
                     <div className="space-y-1">
                         <p className="text-xs">Teammates</p>
-                        <Select defaultValue="all-teammates">
+                        <Select value={selectedTeammate} onValueChange={setSelectedTeammate}>
                             <SelectTrigger id="teammates" className="w-full sm:w-[180px] md:w-[200px]">
                                 <SelectValue placeholder="Select teammate" />
                             </SelectTrigger>
                             <SelectContent>
+                                <SelectItem value="all">All Teammates</SelectItem>
                                 {teammateOptions.map(option => (
                                     <SelectItem key={option.value} value={option.value}>
                                         {option.label}
@@ -112,7 +147,7 @@ export default function FilterActivity() {
                             </SelectContent>
                         </Select>
                     </div>
-                    <Button className="h-10">Apply</Button>
+                    <Button className="h-10" onClick={handleApplyFilter}>Apply</Button>
                     <Button variant="outline" className="h-10">Download CSV</Button>
                 </div>
             </CardContent>
