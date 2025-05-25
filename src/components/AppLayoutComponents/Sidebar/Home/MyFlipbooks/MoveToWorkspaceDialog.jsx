@@ -16,14 +16,80 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertTriangle } from "lucide-react"
+import { AlertTriangle, Loader2 } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
+import { useWorkspaces } from "@/context/WorkspaceContext"
+import { MoveToWorkspaceApi } from "@/service/flipbook.service"
+import { toast } from "sonner"
+import LoadingButton from "@/utils/LoadingButton"
 
-export default function MoveToWorkspaceDialog({ isMoveToWorkspaceModalOpen, setIsMoveToWorkspaceModalOpen }) {
-    const [selectedWorkspace, setSelectedWorkspace] = useState("workspace1")
+export default function MoveToWorkspaceDialog({ isMoveToWorkspaceModalOpen, setIsMoveToWorkspaceModalOpen, flipbookId, setFlipbooks }) {
+    console.log("MoveToWorkspaceDialog rendered with flipbookId:", flipbookId)
+    const { workspaces } = useWorkspaces()
+    const [selectedWorkspace, setSelectedWorkspace] = useState("")
     const [agreed, setAgreed] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
+
+    // Find current workspace and set as default when dialog opens
+    useEffect(() => {
+        if (isMoveToWorkspaceModalOpen && workspaces && workspaces.length > 0) {
+            const currentWorkspace = workspaces.find(workspace => workspace.isCurrent)
+            if (currentWorkspace) {
+                setSelectedWorkspace(currentWorkspace._id)
+            }
+            // Reset states when dialog opens
+            setAgreed(false)
+        }
+    }, [isMoveToWorkspaceModalOpen, workspaces])
+
+    // Check if selected workspace is different from current workspace
+    const isWorkspaceChanged = () => {
+        if (!workspaces || !selectedWorkspace) return false
+        const currentWorkspace = workspaces.find(workspace => workspace.isCurrent)
+        return currentWorkspace && currentWorkspace._id !== selectedWorkspace
+    }
+
+    const handleMoveWorkspace = async () => {
+        console.log("!selectedWorkspace || !flipbookId || !isWorkspaceChanged() ????", !selectedWorkspace, !flipbookId, !isWorkspaceChanged())
+        if (!selectedWorkspace || !flipbookId || !isWorkspaceChanged()) return
+
+        setIsLoading(true)
+
+        try {
+            const data = {
+                workspaceId: selectedWorkspace,
+                flipbookId: flipbookId
+            }
+
+            const response = await MoveToWorkspaceApi(data)
+
+            setIsMoveToWorkspaceModalOpen(false)
+
+            setFlipbooks(prev => prev.filter(flipbook => flipbook._id !== flipbookId))
+
+            toast.success("Flipbook moved successfully", {
+                description: response.message || "Flipbook has been moved to the selected workspace"
+            })
+
+        } catch (err) {
+            toast.error("Failed to move flipbook", {
+                description: err.message || "Something went wrong"
+            })
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const handleCancel = () => {
+        setIsMoveToWorkspaceModalOpen(false)
+        setSelectedWorkspace("")
+        setAgreed(false)
+    }
+
+    // Check if move button should be enabled
+    const isMoveButtonEnabled = agreed && isWorkspaceChanged() && !isLoading
 
     return (
         <Dialog open={isMoveToWorkspaceModalOpen} onOpenChange={setIsMoveToWorkspaceModalOpen}>
@@ -39,24 +105,27 @@ export default function MoveToWorkspaceDialog({ isMoveToWorkspaceModalOpen, setI
                         <Label htmlFor="workspace-select">
                             Your workspaces
                         </Label>
-                        <Select value={selectedWorkspace} onValueChange={setSelectedWorkspace}>
+                        <Select value={selectedWorkspace} onValueChange={setSelectedWorkspace} disabled={isLoading}>
                             <SelectTrigger id="workspace-select">
                                 <SelectValue placeholder="Select a workspace" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value="workspace1">Workspace 1</SelectItem>
-                                    <SelectItem value="workspace2">Workspace 2</SelectItem>
-                                    <SelectItem value="workspace3">Workspace 3</SelectItem>
-                                    <SelectItem value="workspace4">Workspace 4</SelectItem>
-                                    <SelectItem value="workspace5">Workspace 5</SelectItem>
+                                    {workspaces && workspaces.map((workspace) => (
+                                        <SelectItem
+                                            key={workspace._id}
+                                            value={workspace._id}
+                                        >
+                                            {workspace.name}
+                                        </SelectItem>
+                                    ))}
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
                     </div>
 
                     <Alert variant="warning" className="bg-amber-50 border border-amber-400">
-                        <AlertTriangle className="h-4 w-4" color="#705a0e"/>
+                        <AlertTriangle className="h-4 w-4" color="#705a0e" />
                         <AlertDescription className="text-[#705a0e]" >
                             Any custom fonts used in this flipbook will be copied and transferred to the selected
                             workspace, and users of the workspace will have access to them. You agree that you
@@ -78,6 +147,7 @@ export default function MoveToWorkspaceDialog({ isMoveToWorkspaceModalOpen, setI
                             id="agree"
                             checked={agreed}
                             onCheckedChange={setAgreed}
+                            disabled={isLoading}
                         />
                         <Label htmlFor="agree" className="text-sm font-medium leading-none">
                             I understand and agree
@@ -85,11 +155,18 @@ export default function MoveToWorkspaceDialog({ isMoveToWorkspaceModalOpen, setI
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsMoveToWorkspaceModalOpen(false)}>
+                    <Button
+                        variant="outline"
+                        onClick={handleCancel}
+                        disabled={isLoading}
+                    >
                         Cancel
                     </Button>
-                    <Button disabled={!agreed}>
-                        Move now
+                    <Button
+                        disabled={!isMoveButtonEnabled}
+                        onClick={handleMoveWorkspace}
+                    >
+                        {isLoading ? <LoadingButton /> : "Move now"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

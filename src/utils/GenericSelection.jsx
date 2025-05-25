@@ -12,9 +12,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { ListFilter, Search, X } from "lucide-react"
 
-export default function GenericSelection({ 
-    options, 
-    selectedValues, 
+export default function GenericSelection({
+    options,
+    selectedValues,
     onChange,
     allLabel = "All items",
     searchPlaceholder = "Search...",
@@ -22,15 +22,19 @@ export default function GenericSelection({
     defaultAllSelected = true
 }) {
     const [open, setOpen] = useState(false);
-    const [allSelected, setAllSelected] = useState(selectedValues.length === 0 && defaultAllSelected);
+    // Initialize allSelected based on whether selectedValues is empty
+    const [allSelected, setAllSelected] = useState(defaultAllSelected && selectedValues.length === 0);
     const [searchQuery, setSearchQuery] = useState("");
     const searchInputRef = useRef(null);
 
+    // Update allSelected when selectedValues changes
     useEffect(() => {
-        if (selectedValues.length === 0 && !allSelected && defaultAllSelected) {
+        if (selectedValues.length === 0 && defaultAllSelected) {
             setAllSelected(true);
+        } else if (selectedValues.length > 0) {
+            setAllSelected(false);
         }
-    }, [selectedValues, allSelected, defaultAllSelected]);
+    }, [selectedValues, defaultAllSelected]);
 
     const handleSelect = (e) => {
         e.preventDefault();
@@ -61,14 +65,14 @@ export default function GenericSelection({
     const clearSelection = (e) => {
         e.stopPropagation();
         e.preventDefault();
+        onChange([]);
         if (defaultAllSelected) {
             setAllSelected(true);
         }
-        onChange([]);
     };
 
     const displayContent = () => {
-        if (allSelected) {
+        if (allSelected || selectedValues.length === 0) {
             return allLabel;
         }
 
@@ -94,10 +98,10 @@ export default function GenericSelection({
     const filteredCategories = options.map(category => {
         const categoryKey = Object.keys(category).find(key => key !== 'name') || 'items';
         const items = category[categoryKey] || [];
-        
+
         return {
             ...category,
-            [categoryKey]: items.filter(item => 
+            [categoryKey]: items.filter(item =>
                 item.label.toLowerCase().includes(searchQuery.toLowerCase())
             )
         };
@@ -113,14 +117,12 @@ export default function GenericSelection({
                     <DropdownMenuTrigger className="min-w-[10rem]" asChild>
                         <Button variant="outline" className="w-full justify-between">
                             <span className="truncate">{displayContent()}</span>
-                            {
-                                !selectedValues.length > 0 && <ListFilter/>
-                            }
+                            <ListFilter />
                         </Button>
                     </DropdownMenuTrigger>
-                    
-                    {!allSelected && selectedValues.length > 0 && (
-                        <div 
+
+                    {selectedValues.length > 0 && (
+                        <div
                             className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
                             onClick={clearSelection}
                         >
@@ -148,7 +150,7 @@ export default function GenericSelection({
                             onKeyDown={(e) => e.stopPropagation()}
                         />
                     </div>
-                    
+
                     <div className="max-h-52 overflow-auto">
                         {(searchQuery === "" && defaultAllSelected) && (
                             <div className="px-2 pt-1 pb-2 mb-1 border-b">
@@ -161,16 +163,16 @@ export default function GenericSelection({
                                 </DropdownMenuCheckboxItem>
                             </div>
                         )}
-                        
+
                         {filteredCategories.map((category, categoryIndex) => {
                             const categoryKey = Object.keys(category).find(key => key !== 'name') || 'items';
                             const items = category[categoryKey] || [];
-                            
+
                             if (items.length === 0) return null;
-                            
+
                             return (
-                                <div 
-                                    key={category.name || categoryIndex} 
+                                <div
+                                    key={category.name || categoryIndex}
                                     className={`px-2 pt-1 pb-1 ${categoryIndex < filteredCategories.length - 1 ? 'mb-1 border-b' : ''}`}
                                 >
                                     {category.name && (
@@ -189,7 +191,7 @@ export default function GenericSelection({
                                 </div>
                             );
                         })}
-                        
+
                         {searchQuery !== "" && filteredCategories.length === 0 && (
                             <div className="text-center py-2 text-sm text-muted-foreground">
                                 No items found
@@ -198,7 +200,7 @@ export default function GenericSelection({
                     </div>
                 </DropdownMenuContent>
             </DropdownMenu>
-            
+
             {checkboxes.map((checkbox, index) => (
                 <div key={index} className="flex items-center space-x-2">
                     <Checkbox

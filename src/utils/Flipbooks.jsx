@@ -20,6 +20,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
     const [isDeleteForeverModalOpen, setIsDeleteForeverModalOpen] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
+    const [flipbookId, setFlipbookId] = useState(null);
     const router = useNavigate();
     const location = useLocation();
 
@@ -35,6 +36,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
         if (action === 'share') {
             setIsShareModalOpen(true);
         } else if (action === 'publish') {
+            setFlipbookId(flipbookId);
             setIsPublishModalOpen(true);
         } else if (action === "details") {
             router(`/details/${flipbookId}`)
@@ -304,7 +306,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
         <>
             {renderContent()}
             <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
-            <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} />
+            <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} flipbookId={flipbookId}/>
 
             <ConfirmationDialog
                 isConfirmModalOpen={isTrashModalOpen}

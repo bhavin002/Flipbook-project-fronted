@@ -79,3 +79,8 @@ export const RecoverFlipbookApi = async (data) => {
     const response = await ApiClient().post(`/flipbook/recover-trash-flipbook`,data);
     return response.data;
 }
+
+export const MoveToWorkspaceApi = async (data) => {
+    const response = await ApiClient().post("/flipbook/move-to-workspace", data);
+    return response.data;
+}

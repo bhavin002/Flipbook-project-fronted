@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Globe, Lock, ListX, LockKeyhole, X, ChevronDown } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -24,29 +24,91 @@ import {
 } from "@/components/ui/dropdown-menu";
 import GenericSelection from "@/utils/GenericSelection";
 import { Checkbox } from "@/components/ui/checkbox";
+import { GetWorkspaceGroupsApi } from "@/service/workspace.group.service";
+import { GetWorkspaceReadersApi } from "@/service/workspace.reader.service";
+import { flipbookVisibility } from "@/utils/enum";
+import { PublishFlipbookApi } from "@/service/flipbook.publish.service";
+import { toast } from "sonner";
+import LoadingButton from "@/utils/LoadingButton";
 
-export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublishModalOpen }) {
+export default function PublishFlipbookDialog({
+    isPublishModalOpen,
+    setIsPublishModalOpen,
+    flipbookId, // Add flipbookId prop
+    onPublishSuccess // Optional callback for success handling
+}) {
+    console.log("PublishFlipbookDialog.jsx:225 FlipbookId ??", flipbookId);
     const [selectedRadio, setSelectedRadio] = useState("email");
     const [emailInput, setEmailInput] = useState("");
+    const [isEmailValid, setIsEmailValid] = useState(true);
     const [createdByFilter, setCreatedByFilter] = useState([]);
-    const [addedEmails, setAddedEmails] = useState([
-        "bvxx@xx.com",
-        "sgxx@xx.com",
-        "upxx@xx.com",
-        "nsxx@xx.com",
-        "ppxx@xx.com",
-        "psxx@xx.com",
-        "snxx@xx.com"
-    ]);
+    const [addedEmails, setAddedEmails] = useState([]);
+    const [password, setPassword] = useState("");
+    const [activeTab, setActiveTab] = useState("public");
+    const [title, setTitle] = useState("New flipbook");
+    const [description, setDescription] = useState("");
+
+    // New state for API data
+    const [groups, setGroups] = useState([]);
+    const [readers, setReaders] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [publishing, setPublishing] = useState(false);
+
+    // Additional state for checkboxes
+    const [sendNotification, setSendNotification] = useState(false);
+    const [trackReaders, setTrackReaders] = useState(false);
+
+    // Email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Fetch data when component mounts or modal opens
+    useEffect(() => {
+        if (isPublishModalOpen) {
+            fetchGroupsAndReaders();
+        }
+    }, [isPublishModalOpen]);
+
+    const fetchGroupsAndReaders = async () => {
+        setLoading(true);
+
+        try {
+            const [groupsResponse, readersResponse] = await Promise.all([
+                GetWorkspaceGroupsApi(),
+                GetWorkspaceReadersApi()
+            ]);
+
+            setGroups(groupsResponse.data || []);
+            setReaders(readersResponse.data || []);
+        } catch (err) {
+            toast.error("Failed to fetch groups and readers", {
+                description: err.message || "Something went wrong while fetching data."
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleRadioChange = (value) => {
         setSelectedRadio(value);
     };
 
+    const validateEmail = (email) => {
+        return emailRegex.test(email);
+    };
+
+    const handleEmailChange = (e) => {
+        const email = e.target.value;
+        setEmailInput(email);
+        setIsEmailValid(validateEmail(email) || email === "");
+    };
+
     const handleAddEmail = () => {
-        if (emailInput.trim() && !addedEmails.includes(emailInput)) {
+        if (emailInput.trim() && validateEmail(emailInput) && !addedEmails.includes(emailInput)) {
             setAddedEmails([...addedEmails, emailInput]);
             setEmailInput("");
+            setIsEmailValid(true);
+        } else {
+            setIsEmailValid(false);
         }
     };
 
@@ -54,30 +116,175 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
         setAddedEmails(addedEmails.filter(email => email !== emailToRemove));
     };
 
+    // Transform API data to match GenericSelection format
+    const transformDataForGenericSelection = () => {
+        const transformedGroups = groups.map(group => ({
+            value: group._id,
+            label: group.name
+        }));
+
+        // Filter only accepted readers
+        const transformedReaders = readers
+            .filter(reader => reader.isAccepted)
+            .map(reader => ({
+                value: reader._id,
+                label: reader.name || reader.email
+            }));
+
+        return [
+            {
+                name: "Groups",
+                groups: transformedGroups
+            },
+            {
+                name: "Readers",
+                readers: transformedReaders
+            }
+        ];
+    };
+
+    // Get selected reader and group IDs from createdByFilter
+    const getSelectedIds = () => {
+        const readerIds = [];
+        const groupIds = [];
+
+        createdByFilter.forEach(selectedLabel => {
+            // Check if it's a reader
+            const reader = readers.find(r => (r.name || r.email) === selectedLabel);
+            if (reader) {
+                readerIds.push(reader._id);
+                return;
+            }
+
+            // Check if it's a group
+            const group = groups.find(g => g.name === selectedLabel);
+            if (group) {
+                groupIds.push(group._id);
+            }
+        });
+
+        return { readerIds, groupIds };
+    };
+
+    // Build payload based on active tab
+    const buildPayload = () => {
+        const basePayload = {
+            flipbookId,
+            title: title.trim(),
+            description: description.trim()
+        };
+
+        switch (activeTab) {
+            case "public":
+                return {
+                    ...basePayload,
+                    visibility: flipbookVisibility.PUBLIC,
+                    isVisible: true
+                };
+
+            case "unlisted":
+                return {
+                    ...basePayload,
+                    visibility: flipbookVisibility.PUBLIC,
+                    isVisible: false
+                };
+
+            case "passwordLocked":
+                return {
+                    ...basePayload,
+                    visibility: flipbookVisibility.PASSWORD,
+                    password: password.trim()
+                };
+
+            case "private":
+                if (selectedRadio === "email") {
+                    return {
+                        ...basePayload,
+                        visibility: flipbookVisibility.PRIVATE,
+                        privateEmails: addedEmails
+                    };
+                } else {
+                    const { readerIds, groupIds } = getSelectedIds();
+                    return {
+                        ...basePayload,
+                        visibility: flipbookVisibility.READERS_ONLY,
+                        readerIds,
+                        readerGroupIds: groupIds,
+                        // Add optional notification and tracking flags if needed
+                        ...(sendNotification && { sendNotification: true }),
+                        ...(trackReaders && { trackReaders: true })
+                    };
+                }
+
+            default:
+                return basePayload;
+        }
+    };
+
+    // Handle publish action
+    const handlePublish = async () => {
+        if (!flipbookId) {
+            console.error('FlipbookId is required for publishing');
+            return;
+        }
+
+        setPublishing(true);
+
+        try {
+            const payload = buildPayload();
+            console.log('Publishing with payload:', payload);
+
+            const response = await PublishFlipbookApi(payload);
+
+            console.log('Publish response:', response);
+
+            // Call success callback if provided
+            if (onPublishSuccess) {
+                onPublishSuccess(response);
+            }
+
+            // Close modal on success
+            setIsPublishModalOpen(false);
+
+            // Reset form state
+            resetForm();
+
+        } catch (err) {
+            toast.error("Failed to publish flipbook", {
+                description: err.message || "Something went wrong while publishing."
+            });
+        } finally {
+            setPublishing(false);
+        }
+    };
+
+    // Reset form to initial state
+    const resetForm = () => {
+        setTitle("New flipbook");
+        setDescription("");
+        setPassword("");
+        setAddedEmails([]);
+        setCreatedByFilter([]);
+        setActiveTab("public");
+        setSelectedRadio("email");
+        setSendNotification(false);
+        setTrackReaders(false);
+    };
+
     const filters = [
         {
             id: 'createdBy',
-            options: [{
-                name: "Groups",
-                groups: [
-                    { value: 'group1', label: 'Group 1' },
-                    { value: 'group2', label: 'Group 2' },
-                ]
-            }, {
-                name: "Readers",
-                readers: [
-                    { value: 'bhavinv', label: 'BhavinV' },
-                    { value: 'satyamg', label: 'SatyamG' },
-                    { value: 'utsavp', label: 'UtsavP' },
-                    { value: 'nirav', label: 'Nirav' },
-                    { value: 'parth', label: 'Parth' },
-                    { value: 'pratik', label: 'Pratik' },
-                ]
-            }],
+            options: transformDataForGenericSelection(),
             selectedValues: createdByFilter,
             onChange: setCreatedByFilter
         }
     ];
+
+    const isPublishDisabled = !title.trim() ||
+        (activeTab === "passwordLocked" && !password.trim()) ||
+        (activeTab === "private" && selectedRadio === "email" && addedEmails.length === 0) ||
+        (activeTab === "private" && selectedRadio === "readers" && createdByFilter.length === 0) ||
+        publishing;
 
     return (
         <Dialog open={isPublishModalOpen} onOpenChange={setIsPublishModalOpen}>
@@ -96,7 +303,9 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                             </Label>
                             <Input
                                 id="title"
-                                defaultValue="New flipbook"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                className={!title.trim() ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}
                             />
                         </div>
                         <div className="grid gap-2">
@@ -107,10 +316,13 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                                 id="description"
                                 placeholder="Use a maximum of 256 character"
                                 className="resize-none"
+                                value={description}
+                                onChange={(e) => setDescription(e.target.value)}
+                                maxLength={256}
                             />
                         </div>
                     </div>
-                    <Tabs defaultValue="public">
+                    <Tabs defaultValue="public" onValueChange={setActiveTab}>
                         <TabsList className="grid w-full grid-cols-4">
                             <TabsTrigger value="public">
                                 <Globe className="w-4 h-4 mr-2 hidden md:block" /> Public
@@ -139,12 +351,15 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                         <TabsContent value="passwordLocked">
                             <div className="grid gap-2 my-4">
                                 <Label htmlFor="password">
-                                    Password
+                                    Password <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
                                     id="password"
                                     placeholder="Enter password"
                                     type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className={activeTab === "passwordLocked" && !password.trim() ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}
                                 />
                                 <p className="text-sm font-medium text-gray-600">Your catalog will not appear anywhere on the web. Your readers must enter the password you have set in order to read your flipbook.</p>
                             </div>
@@ -165,19 +380,16 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                                         <RadioGroupItem value="readers" id="readersOnly" />
                                         <Label htmlFor="readersOnly">Readers Only</Label>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <RadioGroupItem value="sso" id="ssoOnly" />
-                                        <Label htmlFor="ssoOnly">SSO only</Label>
-                                    </div>
                                 </RadioGroup>
+
                                 {selectedRadio === "email" && (
                                     <>
                                         <div className="flex w-full space-x-4">
                                             <Input
                                                 placeholder="Enter email addresses"
-                                                className="flex-grow"
+                                                className={`flex-grow ${!isEmailValid && emailInput ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
                                                 value={emailInput}
-                                                onChange={(e) => setEmailInput(e.target.value)}
+                                                onChange={handleEmailChange}
                                                 onKeyPress={(e) => {
                                                     if (e.key === 'Enter') {
                                                         e.preventDefault();
@@ -189,7 +401,6 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                                                 Add email
                                             </Button>
                                         </div>
-
                                         {addedEmails.length > 0 && (
                                             <div className="space-y-2">
                                                 <Label>Who has access</Label>
@@ -221,58 +432,66 @@ export default function PublishFlipbookDialog({ isPublishModalOpen, setIsPublish
                                 )}
 
                                 {selectedRadio === "readers" && (
-                                    filters.map((filter) => (
-                                        <>
-                                            <GenericSelection
-                                                key={filter.id}
-                                                options={filter.options}
-                                                selectedValues={filter.selectedValues}
-                                                onChange={filter.onChange}
-                                            />
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox
-                                                    id="notification"
-                                                />
-                                                <Label htmlFor="notification" className="text-sm font-medium leading-none">
-                                                    Send a notification to selected readers
-                                                </Label>
-                                            </div>
-                                            <div className="flex items-center space-x-2">
-                                                <Checkbox
-                                                    id="track"
-                                                />
-                                                <Label htmlFor="track" className="text-sm font-medium leading-none">
-                                                    Track each reader individually
-                                                </Label>
-                                            </div>
-                                        </>
+                                    <>
+                                        {loading && (
+                                            <div className="text-sm text-gray-500">Loading groups and readers...</div>
+                                        )}
 
-
-                                    ))
-                                )
-                                }
-
-                                {selectedRadio === "sso" && (
-                                    <div className="p-4 border rounded-md bg-violet-50">
-                                        <p>Access will be restricted to SSO users only.</p>
-                                        <p className="text-gray-500 text-sm mt-2">Users must authenticate through your organization's SSO provider.</p>
-                                    </div>
+                                        {!loading && (
+                                            filters.map((filter) => (
+                                                <div key={filter.id}>
+                                                    <GenericSelection
+                                                        options={filter.options}
+                                                        selectedValues={filter.selectedValues}
+                                                        onChange={filter.onChange}
+                                                        allLabel="All readers and groups"
+                                                        searchPlaceholder="Search readers and groups..."
+                                                        defaultAllSelected={false}
+                                                    />
+                                                    <div className="flex items-center space-x-2 mt-4">
+                                                        <Checkbox
+                                                            id="notification"
+                                                            checked={sendNotification}
+                                                            onCheckedChange={setSendNotification}
+                                                        />
+                                                        <Label htmlFor="notification" className="text-sm font-medium leading-none">
+                                                            Send a notification to selected readers
+                                                        </Label>
+                                                    </div>
+                                                    <div className="flex items-center space-x-2 mt-2">
+                                                        <Checkbox
+                                                            id="track"
+                                                            checked={trackReaders}
+                                                            onCheckedChange={setTrackReaders}
+                                                        />
+                                                        <Label htmlFor="track" className="text-sm font-medium leading-none">
+                                                            Track each reader individually
+                                                        </Label>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </>
                                 )}
                             </div>
                         </TabsContent>
                     </Tabs>
                 </div>
                 <DialogFooter>
-                    <Button variant="outline">
+                    <Button variant="outline" onClick={() => setIsPublishModalOpen(false)}>
                         Close
                     </Button>
                     <div className="flex items-center">
-                        <Button className="rounded-r-none flex-1 md:flex-none">
-                            Publish
+                        <Button
+                            className="rounded-r-none flex-1 md:flex-none"
+                            disabled={isPublishDisabled}
+                            onClick={handlePublish}
+                        >
+                            {publishing ? <LoadingButton /> : 'Publish'}
                         </Button>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button className="rounded-l-none">
+                                <Button className="rounded-l-none" disabled={isPublishDisabled}>
                                     <ChevronDown className="h-4 w-4" />
                                 </Button>
                             </DropdownMenuTrigger>

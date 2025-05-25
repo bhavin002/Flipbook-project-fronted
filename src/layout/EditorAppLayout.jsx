@@ -324,6 +324,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                     <PublishFlipbookDialog
                         isPublishModalOpen={isPublishModalOpen}
                         setIsPublishModalOpen={setIsPublishModalOpen}
+                        flipbookId={id}
                     />
                     <BottomEditorPanel isEditorDrawerOpen={isEditorDrawerOpen} setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} />
                     {
