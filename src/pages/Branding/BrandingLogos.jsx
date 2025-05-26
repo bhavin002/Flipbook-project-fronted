@@ -1,47 +1,142 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Trash2, Upload } from "lucide-react";
+import { UploadBrandLogoApi, GetBrandLogosApi, DeleteBrandLogoApi } from "@/service/brandLogo.service";
+import ConfirmationDialog from "@/utils/ConfirmationDialog";
+import LoadingButton from "@/utils/LoadingButton";
 
 export default function BrandingLogos() {
-    const [logos, setLogos] = useState([
-        { id: 1, src: "/src/assets/logo.png", alt: "Logo 1" },
-        { id: 2, src: "/src/assets/logo.png", alt: "Logo 2" }
-    ]);
+    const [logos, setLogos] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+    const [logoToDelete, setLogoToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const fileInputRef = useRef(null);
 
-    const handleDelete = (id) => {
-        setLogos(logos.filter(logo => logo.id !== id));
+    // Fetch logos on component mount
+    useEffect(() => {
+        fetchLogos();
+    }, []);
+
+    const fetchLogos = async () => {
+        try {
+            setIsLoading(true);
+            const response = await GetBrandLogosApi();
+            setLogos(response.data.map(logo => ({
+                id: logo._id,
+                src: logo.url,
+                alt: `Logo ${logo._id}`,
+                type: logo.fileType
+            })));
+        } catch (error) {
+            console.error("Error fetching logos:", error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
-    const handleUpload = () => {
-        const newLogo = {
-            id: Date.now(),
-            src: "/src/assets/logo.png",
-            alt: `Logo ${logos.length + 1}`
-        };
-        setLogos([...logos, newLogo]);
+    const handleFileUpload = async (event) => {
+        const files = event.target.files;
+        if (!files.length) return;
+
+        try {
+            setIsUploading(true);
+            const formData = new FormData();
+            Array.from(files).forEach(file => {
+                formData.append('files', file);
+            });
+
+            const response = await UploadBrandLogoApi(formData);
+            const newLogos = response.data.map(logo => ({
+                id: logo._id,
+                src: logo.url,
+                alt: `Logo ${logo._id}`,
+                type: logo.fileType
+            }));
+            setLogos(prevLogos => [...prevLogos, ...newLogos]);
+        } catch (error) {
+            console.error("Error uploading logos:", error);
+        } finally {
+            setIsUploading(false);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!logoToDelete) return;
+        
+        try {
+            setIsDeleting(true);
+            await DeleteBrandLogoApi(logoToDelete.id);
+            setLogos(logos.filter(logo => logo.id !== logoToDelete.id));
+            setLogoToDelete(null);
+        } catch (error) {
+            console.error("Error deleting logo:", error);
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
     };
 
     return (
-        <div className="p-6 max-w-[100vw] overflow-auto space-y-4 pt-0 flex-1 flex flex-col max-md:max-h-[calc(100vh-156px-80px)]">
-            <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
-                <h1 className="text-2xl font-bold mb-2">Brand Logos</h1>
-                <p className="text-gray-500">Manage your logos, images and visual brand assets</p>
+        <>
+            <div className="p-6 max-w-[100vw] overflow-auto space-y-4 pt-0 flex-1 flex flex-col max-md:max-h-[calc(100vh-156px-80px)]">
+                <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
+                    <h1 className="text-2xl font-bold mb-2">Brand Logos</h1>
+                    <p className="text-gray-500">Manage your logos, images and visual brand assets</p>
+                </div>
+
+                <div className="mb-6">
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileUpload}
+                        multiple
+                        accept="image/*"
+                        className="hidden"
+                    />
+                    <Button onClick={handleUploadClick} disabled={isUploading}>
+                        {isUploading ? <LoadingButton /> : (
+                            <>
+                                <Upload size={16} />
+                                Upload brand logo
+                            </>
+                        )}
+                    </Button>
+                </div>
+
+                {isLoading ? (
+                    <div className="flex justify-center items-center py-8">
+                        <LoadingButton />
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+                        {logos.map((logo) => (
+                            <LogoCard 
+                                key={logo.id} 
+                                logo={logo} 
+                                onDelete={() => setLogoToDelete(logo)} 
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
 
-            <div className="mb-6">
-                <Button onClick={handleUpload} >
-                    <Upload size={16} />
-                    Upload brand logo
-                </Button>
-            </div>
-
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-                {logos.map((logo) => (
-                    <LogoCard key={logo.id} logo={logo} onDelete={handleDelete} />
-                ))}
-            </div>
-        </div>
+            <ConfirmationDialog
+                isConfirmModalOpen={!!logoToDelete}
+                setIsConfirmModalOpen={() => setLogoToDelete(null)}
+                title="Delete Logo"
+                description="Are you sure you want to delete this logo? This action cannot be undone."
+                onConfirm={handleDelete}
+                isLoading={isDeleting}
+            />
+        </>
     );
 }
 
@@ -69,8 +164,8 @@ function LogoCard({ logo, onDelete }) {
             <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-1 right-1 text-gray-500 hover:bg-gray-200 hover:text-red-600 z-20 p-1 h-6 w-6 rounded-full"
-                onClick={() => onDelete(logo.id)}
+                className="absolute top-1 right-1 text-gray-500 bg-gray-200 hover:text-red-600 z-20 p-1 h-6 w-6 rounded-full"
+                onClick={() => onDelete(logo)}
             >
                 <Trash2 size={14} />
             </Button>

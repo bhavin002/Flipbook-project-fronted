@@ -7,7 +7,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Trash2, Download, MoreVertical, Check } from "lucide-react";
 import {
@@ -16,15 +16,87 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { UploadBrandLogoApi, GetBrandLogosApi, DeleteBrandLogoApi } from "@/service/brandLogo.service";
+import ConfirmationDialog from "@/utils/ConfirmationDialog";
+import LoadingButton from "@/utils/LoadingButton";
 
-export default function SelectLogoDialog() {
-    const [logos, setLogos] = useState([
-        { id: 1, src: "/src/assets/book_logo.png", alt: "Logo 1", selected: false, type: "PNG" },
-        { id: 2, src: "/src/assets/logo.png", alt: "Logo 2", selected: false, type: "PNG" },
-    ]);
+export default function SelectLogoDialog({ onLogoSelect, mode = "select" }) {
+    const [logos, setLogos] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [logoToDelete, setLogoToDelete] = useState(null);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const fileInputRef = useRef(null);
 
-    const handleDelete = (id) => {
-        setLogos(logos.filter(logo => logo.id !== id));
+    const fetchLogos = async () => {
+        try {
+            setIsLoading(true);
+            const response = await GetBrandLogosApi();
+            setLogos(response.data.map(logo => ({
+                id: logo._id,
+                src: logo.url,
+                alt: `Logo ${logo._id}`,
+                selected: false,
+                type: logo.fileType
+            })));
+        } catch (error) {
+            console.error("Error fetching logos:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleDialogOpen = async (open) => {
+        if (open) {
+            await fetchLogos();
+        }
+        setIsDialogOpen(open);
+    };
+
+    const handleFileUpload = async (event) => {
+        const files = event.target.files;
+        if (!files.length) return;
+
+        try {
+            setIsUploading(true);
+            const formData = new FormData();
+            Array.from(files).forEach(file => {
+                formData.append('files', file);
+            });
+
+            const response = await UploadBrandLogoApi(formData);
+            const newLogos = response.data.map(logo => ({
+                id: logo._id,
+                src: logo.url,
+                alt: `Logo ${logo._id}`,
+                selected: false,
+                type: logo.fileType
+            }));
+            setLogos(prevLogos => [...prevLogos, ...newLogos]);
+        } catch (error) {
+            console.error("Error uploading logos:", error);
+        } finally {
+            setIsUploading(false);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!logoToDelete) return;
+        
+        try {
+            setIsDeleting(true);
+            await DeleteBrandLogoApi(logoToDelete.id);
+            setLogos(logos.filter(logo => logo.id !== logoToDelete.id));
+            setLogoToDelete(null);
+        } catch (error) {
+            console.error("Error deleting logo:", error);
+        } finally {
+            setIsDeleting(false);
+        }
     };
 
     const toggleSelected = (id) => {
@@ -33,41 +105,77 @@ export default function SelectLogoDialog() {
         ));
     };
 
+    const handleInsert = () => {
+        const selectedLogo = logos.find(logo => logo.selected);
+        if (selectedLogo && onLogoSelect) {
+            onLogoSelect(selectedLogo);
+            setIsDialogOpen(false);
+        }
+    };
+
+    const hasSelectedLogo = logos.some(logo => logo.selected);
+
     return (
-        <Dialog>
-            <DialogTrigger asChild>
-                <Button variant="outline" className="text-primary">
-                    Select logo
-                </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[540px] w-[90vw]">
-                <DialogHeader>
-                    <DialogTitle>Brand logos</DialogTitle>
-                    <DialogDescription className="sr-only">
-                        Description
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="flex justify-end gap-2">
-                    <Button variant="outline">
-                        Upload logo
+        <>
+            <Dialog open={isDialogOpen} onOpenChange={handleDialogOpen}>
+                <DialogTrigger asChild>
+                    <Button variant="outline" className="text-primary">
+                        {isLoading ? <LoadingButton /> : (mode === "replace" ? "Replace logo" : "Select logo")}
                     </Button>
-                    <Button>
-                        Insert
-                    </Button>
-                </div>
-                <div className="max-h-[calc(100vh-300px)] flex flex-wrap overflow-auto">
-                    {logos.map((logo) => (
-                        <LogoCard 
-                            key={logo.id}
-                            logo={logo}
-                            onDelete={handleDelete}
-                            onToggleSelect={toggleSelected}
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[540px] w-[90vw]">
+                    <DialogHeader>
+                        <DialogTitle>Brand logos</DialogTitle>
+                        <DialogDescription className="sr-only">
+                            Description
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex justify-end gap-2">
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileUpload}
+                            multiple
+                            accept="image/*"
+                            className="hidden"
                         />
-                    ))}
-                </div>
-            </DialogContent>
-        </Dialog>
-    )
+                        <Button 
+                            variant="outline"
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={isUploading}
+                        >
+                            {isUploading ? <LoadingButton /> : "Upload logo"}
+                        </Button>
+                        <Button 
+                            onClick={handleInsert}
+                            disabled={!hasSelectedLogo}
+                        >
+                            Insert
+                        </Button>
+                    </div>
+                    <div className="max-h-[calc(100vh-300px)] flex flex-wrap overflow-auto">
+                        {logos.map((logo) => (
+                            <LogoCard 
+                                key={logo.id}
+                                logo={logo}
+                                onDelete={() => setLogoToDelete(logo)}
+                                onToggleSelect={toggleSelected}
+                            />
+                        ))}
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <ConfirmationDialog
+                isConfirmModalOpen={!!logoToDelete}
+                setIsConfirmModalOpen={() => setLogoToDelete(null)}
+                title="Delete Logo"
+                description="Are you sure you want to delete this logo? This action cannot be undone."
+                onConfirm={handleDelete}
+                isLoading={isDeleting}
+            />
+        </>
+    );
 }
 
 function LogoCard({ logo, onDelete, onToggleSelect }) {

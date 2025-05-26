@@ -89,7 +89,7 @@ function SortableImageItem({ image, onDelete, isLoading }) {
                 >
                     <GripVertical className="h-4 w-4 text-gray-400" />
                 </button>
-                <img src={image.imageLink} className="w-[50px] h-[40px] object-cover rounded-sm" alt={image.fileName} />
+                <img src={image.url} className="w-[50px] h-[40px] object-cover rounded-sm" alt={image.fileName} />
                 <p className="text-sm truncate">{image.fileName}</p>
             </div>
             <Button variant="ghost" onClick={() => onDelete(image.fileId)} disabled={isLoading}>

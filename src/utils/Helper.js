@@ -1,5 +1,6 @@
 import { duplicateContactFormApi } from "@/service/contactForm.service";
 import { duplicateProductApi } from "@/service/product.service";
+import { duplicateQuestionFormApi } from "@/service/question.service";
 import { duplicateQuizApi } from "@/service/quiz.service";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
@@ -143,6 +144,19 @@ const addEntryInDB = async (htmlType, id, setIsLoading) => {
                 return response;
             } catch (error) {
                 toast.error("Failed to duplicate contact form", {
+                    description: error.message || "Oops! Something went wrong.",
+                });
+                return null;
+            } finally {
+                setIsLoading(false);
+            }
+        case "question":
+            try {
+                setIsLoading(true);
+                const response = await duplicateQuestionFormApi(id);
+                return response;
+            } catch (error) {
+                toast.error("Failed to duplicate question", {
                     description: error.message || "Oops! Something went wrong.",
                 });
                 return null;

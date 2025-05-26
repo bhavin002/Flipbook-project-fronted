@@ -48,23 +48,6 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
 
     const { formState: { errors }, clearErrors } = form;
 
-    // Add form state watching
-    useEffect(() => {
-        const subscription = form.watch((value, { name, type }) => {
-            console.log("Form values changed:", value);
-            console.log("Current form errors:", form.formState.errors);
-        });
-        return () => subscription.unsubscribe();
-    }, [form.watch]);
-
-    // Add error logging
-    useEffect(() => {
-        if (Object.keys(errors).length > 0) {
-            console.log("Form validation errors:", errors);
-            console.log("Current form values:", form.getValues());
-        }
-    }, [errors, form]);
-
     console.log("errors ??", errors)
 
     const fetchContactForm = async () => {
