@@ -16,6 +16,7 @@ export const WorkspaceProvider = ({ children }) => {
   const [workspaces, setWorkspaces] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [lastFetched, setLastFetched] = useState(null);
+  const [isNeededRefetch, setIsNeededRefetch] = useState(false);
 
   const fetchWorkspaces = async (force = false) => {
     if (!lastFetched || force) {
@@ -35,11 +36,16 @@ export const WorkspaceProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchWorkspaces();
-  }, []);
+    if (isNeededRefetch) {
+      fetchWorkspaces(true);
+      setIsNeededRefetch(false);
+    } else {
+      fetchWorkspaces();
+    }
+  }, [isNeededRefetch]);
 
   return (
-    <WorkspaceContext.Provider value={{ workspaces, isLoading, fetchWorkspaces }}>
+    <WorkspaceContext.Provider value={{ workspaces, isLoading, fetchWorkspaces, setIsNeededRefetch }}>
       {children}
     </WorkspaceContext.Provider>
   );

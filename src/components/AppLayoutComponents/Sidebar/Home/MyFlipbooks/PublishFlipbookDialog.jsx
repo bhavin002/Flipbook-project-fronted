@@ -23,11 +23,11 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import GenericSelection from "@/utils/GenericSelection";
-import { Checkbox } from "@/components/ui/checkbox";
 import { GetWorkspaceGroupsApi } from "@/service/workspace.group.service";
 import { GetWorkspaceReadersApi } from "@/service/workspace.reader.service";
-import { flipbookVisibility } from "@/utils/enum";
+import { GetFlipbookPublishInfoApi, UpdatePublishFlipbookApi } from "@/service/flipbook.publish.service"; // Import the new API
 import { PublishFlipbookApi } from "@/service/flipbook.publish.service";
+import { flipbookVisibility } from "@/utils/enum";
 import { toast } from "sonner";
 import LoadingButton from "@/utils/LoadingButton";
 
@@ -47,40 +47,95 @@ export default function PublishFlipbookDialog({
     const [activeTab, setActiveTab] = useState("public");
     const [title, setTitle] = useState("New flipbook");
     const [description, setDescription] = useState("");
-
-    // New state for API data
     const [groups, setGroups] = useState([]);
     const [readers, setReaders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [publishing, setPublishing] = useState(false);
-
-    // Additional state for checkboxes
     const [sendNotification, setSendNotification] = useState(false);
     const [trackReaders, setTrackReaders] = useState(false);
+    const [isPublished, setIsPublished] = useState(false);
 
     // Email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Fetch data when component mounts or modal opens
     useEffect(() => {
-        if (isPublishModalOpen) {
-            fetchGroupsAndReaders();
+        if (isPublishModalOpen && flipbookId) {
+            fetchInitialData();
         }
-    }, [isPublishModalOpen]);
+    }, [isPublishModalOpen, flipbookId]);
 
-    const fetchGroupsAndReaders = async () => {
+    const fetchInitialData = async () => {
         setLoading(true);
-
         try {
-            const [groupsResponse, readersResponse] = await Promise.all([
+            const [groupsResponse, readersResponse, publishInfoResponse] = await Promise.all([
                 GetWorkspaceGroupsApi(),
-                GetWorkspaceReadersApi()
+                GetWorkspaceReadersApi(),
+                GetFlipbookPublishInfoApi(flipbookId)
             ]);
 
             setGroups(groupsResponse.data || []);
             setReaders(readersResponse.data || []);
+
+            // Process publish info response
+            const { publishFlipbookData, flipbookData, isPublished } = publishInfoResponse.data;
+            setIsPublished(isPublished);
+            if (isPublished && publishFlipbookData) {
+                // Set title from flipbookData
+                setTitle(publishFlipbookData.name);
+
+                // Set description (assuming it might be part of publishFlipbookData, adjust if stored elsewhere)
+                setDescription(publishFlipbookData.description);
+
+                // Determine active tab based on visibility and isVisible
+                const visibility = publishFlipbookData.visibility;
+                const isVisible = publishFlipbookData.isVisible;
+
+                if (visibility === flipbookVisibility.PUBLIC && isVisible) {
+                    setActiveTab("public");
+                } else if (visibility === flipbookVisibility.PUBLIC && !isVisible) {
+                    setActiveTab("unlisted");
+                } else if (visibility === flipbookVisibility.PASSWORD) {
+                    setActiveTab("passwordLocked");
+                    setPassword(publishFlipbookData.password || "");
+                } else if (visibility === flipbookVisibility.PRIVATE) {
+                    setActiveTab("private");
+                    setSelectedRadio("email");
+                    setAddedEmails(publishFlipbookData.privateEmails);
+                } else if (visibility === flipbookVisibility.READERS_ONLY) {
+                    setActiveTab("private");
+                    setSelectedRadio("readers");
+                    // Handle reader and group selection
+                    if (publishFlipbookData.allReaderGroups) {
+                        setCreatedByFilter(["All readers and groups"]);
+                    } else {
+                        const selectedLabels = [];
+                        // Map reader IDs to labels
+                        publishFlipbookData.readerIds.forEach(readerId => {
+                            const reader = readersResponse.data.find(r => r._id === readerId);
+                            if (reader) {
+                                selectedLabels.push(reader.name || reader.email);
+                            }
+                        });
+                        // Map group IDs to labels
+                        publishFlipbookData.readerGroupIds.forEach(groupId => {
+                            const group = groupsResponse.data.find(g => g._id === groupId);
+                            if (group) {
+                                selectedLabels.push(group.name);
+                            }
+                        });
+                        setCreatedByFilter(selectedLabels);
+                    }
+                }
+            } else {
+                // Set title from flipbookData
+                setTitle(flipbookData.name);
+
+                // Set description from flipbookData
+                setDescription(flipbookData.description || "");
+            }
         } catch (err) {
-            toast.error("Failed to fetch groups and readers", {
+            toast.error("Failed to fetch initial data", {
                 description: err.message || "Something went wrong while fetching data."
             });
         } finally {
@@ -143,12 +198,31 @@ export default function PublishFlipbookDialog({
         ];
     };
 
+    // Check if "All readers and groups" is selected
+    const isAllSelected = () => {
+        return createdByFilter.includes("All readers and groups");
+    };
+
     // Get selected reader and group IDs from createdByFilter
     const getSelectedIds = () => {
+        // If "All readers and groups" is selected, return all IDs
+        if (isAllSelected()) {
+            const allReaderIds = readers
+                .filter(reader => reader.isAccepted)
+                .map(reader => reader._id);
+            const allGroupIds = groups.map(group => group._id);
+
+            return { readerIds: allReaderIds, groupIds: allGroupIds };
+        }
+
+        // Otherwise, return only selected IDs
         const readerIds = [];
         const groupIds = [];
 
         createdByFilter.forEach(selectedLabel => {
+            // Skip "All readers and groups" label
+            if (selectedLabel === "All readers and groups") return;
+
             // Check if it's a reader
             const reader = readers.find(r => (r.name || r.email) === selectedLabel);
             if (reader) {
@@ -171,7 +245,7 @@ export default function PublishFlipbookDialog({
         const basePayload = {
             flipbookId,
             title: title.trim(),
-            description: description.trim()
+            description: description.trim(),
         };
 
         switch (activeTab) {
@@ -210,7 +284,7 @@ export default function PublishFlipbookDialog({
                         visibility: flipbookVisibility.READERS_ONLY,
                         readerIds,
                         readerGroupIds: groupIds,
-                        // Add optional notification and tracking flags if needed
+                        allReaderGroups: isAllSelected(),
                         ...(sendNotification && { sendNotification: true }),
                         ...(trackReaders && { trackReaders: true })
                     };
@@ -231,10 +305,11 @@ export default function PublishFlipbookDialog({
         setPublishing(true);
 
         try {
+
             const payload = buildPayload();
             console.log('Publishing with payload:', payload);
 
-            const response = await PublishFlipbookApi(payload);
+            const response = isPublished ? await UpdatePublishFlipbookApi(payload) : await PublishFlipbookApi(payload);
 
             console.log('Publish response:', response);
 
@@ -279,7 +354,7 @@ export default function PublishFlipbookDialog({
             onChange: setCreatedByFilter
         }
     ];
-
+    console.log("title ??", title)
     const isPublishDisabled = !title.trim() ||
         (activeTab === "passwordLocked" && !password.trim()) ||
         (activeTab === "private" && selectedRadio === "email" && addedEmails.length === 0) ||
@@ -296,6 +371,9 @@ export default function PublishFlipbookDialog({
                     </DialogDescription>
                 </DialogHeader>
                 <div className="px-1 max-h-[calc(100vh-300px)] overflow-y-auto">
+                    {loading && (
+                        <div className="text-sm text-gray-500">Loading flipbook details...</div>
+                    )}
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
                             <Label htmlFor="title">
@@ -322,7 +400,7 @@ export default function PublishFlipbookDialog({
                             />
                         </div>
                     </div>
-                    <Tabs defaultValue="public" onValueChange={setActiveTab}>
+                    <Tabs value={activeTab} onValueChange={setActiveTab}>
                         <TabsList className="grid w-full grid-cols-4">
                             <TabsTrigger value="public">
                                 <Globe className="w-4 h-4 mr-2 hidden md:block" /> Public
@@ -359,7 +437,6 @@ export default function PublishFlipbookDialog({
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className={activeTab === "passwordLocked" && !password.trim() ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}
                                 />
                                 <p className="text-sm font-medium text-gray-600">Your catalog will not appear anywhere on the web. Your readers must enter the password you have set in order to read your flipbook.</p>
                             </div>
@@ -447,27 +524,8 @@ export default function PublishFlipbookDialog({
                                                         allLabel="All readers and groups"
                                                         searchPlaceholder="Search readers and groups..."
                                                         defaultAllSelected={false}
+                                                        showAllAsOption={true}
                                                     />
-                                                    <div className="flex items-center space-x-2 mt-4">
-                                                        <Checkbox
-                                                            id="notification"
-                                                            checked={sendNotification}
-                                                            onCheckedChange={setSendNotification}
-                                                        />
-                                                        <Label htmlFor="notification" className="text-sm font-medium leading-none">
-                                                            Send a notification to selected readers
-                                                        </Label>
-                                                    </div>
-                                                    <div className="flex items-center space-x-2 mt-2">
-                                                        <Checkbox
-                                                            id="track"
-                                                            checked={trackReaders}
-                                                            onCheckedChange={setTrackReaders}
-                                                        />
-                                                        <Label htmlFor="track" className="text-sm font-medium leading-none">
-                                                            Track each reader individually
-                                                        </Label>
-                                                    </div>
                                                 </div>
                                             ))
                                         )}

@@ -9,7 +9,7 @@ import { useWorkspaces } from "@/context/WorkspaceContext";
 export default function ProfileDropDownCom() {
     const navigate = useNavigate();
     const { logout } = useAuth();
-    const { workspaces, isLoading } = useWorkspaces();
+    const { workspaces, isLoading, setIsNeededRefetch } = useWorkspaces();
 
     const currentWorkspace = workspaces.find(w => w.isCurrent) || workspaces[0];
 
@@ -27,6 +27,7 @@ export default function ProfileDropDownCom() {
     const switchWorkspace = (workspaceId) => {
         // Store selected workspace ID in session storage
         sessionStorage.setItem("fn_workspace_id", workspaceId);
+        setIsNeededRefetch(true)
         navigate("/auth/sign-in");
     };
 
@@ -70,10 +71,10 @@ export default function ProfileDropDownCom() {
                                     </Avatar>
                                 )}
                                 <span className="text-sm font-medium">
-                                    {isLoading 
-                                        ? "Loading workspaces..." 
-                                        : currentWorkspace 
-                                            ? currentWorkspace.name 
+                                    {isLoading
+                                        ? "Loading workspaces..."
+                                        : currentWorkspace
+                                            ? currentWorkspace.name
                                             : "No workspace selected"}
                                 </span>
                             </div>

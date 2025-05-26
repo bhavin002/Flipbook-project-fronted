@@ -302,11 +302,15 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
         );
     };
 
+    const onPublishSuccess = () => {
+        setFlipbooks(prev => prev.map(flipbook => flipbook._id === flipbookId ? { ...flipbook, flipbookState: 'Published' } : flipbook));
+    }
+
     return (
         <>
             {renderContent()}
             <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
-            <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} flipbookId={flipbookId}/>
+            <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} flipbookId={flipbookId} onPublishSuccess={onPublishSuccess}/>
 
             <ConfirmationDialog
                 isConfirmModalOpen={isTrashModalOpen}
