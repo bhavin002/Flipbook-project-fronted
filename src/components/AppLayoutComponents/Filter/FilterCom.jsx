@@ -45,6 +45,12 @@ export default function FilterCom() {
 
     useEffect(() => {
         setFilterCount(0);
+        // Reset filters when the path changes
+        setCreatedByFilter([]);
+        setVisibilityFilter([]);
+        setStatusFilter([]);
+        setDateCreatedFilter("anytime");
+        setLastUpdatedFilter("anytime");
     }, [location.pathname]);
 
     // Calculate active filter count
