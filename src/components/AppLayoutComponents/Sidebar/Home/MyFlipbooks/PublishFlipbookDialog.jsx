@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Globe, Lock, ListX, LockKeyhole, X, ChevronDown } from 'lucide-react'
+import { Globe, Lock, ListX, LockKeyhole, X, ChevronDown, Loader2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Badge } from "@/components/ui/badge"
@@ -37,7 +37,6 @@ export default function PublishFlipbookDialog({
     flipbookId, // Add flipbookId prop
     onPublishSuccess // Optional callback for success handling
 }) {
-    console.log("PublishFlipbookDialog.jsx:225 FlipbookId ??", flipbookId);
     const [selectedRadio, setSelectedRadio] = useState("email");
     const [emailInput, setEmailInput] = useState("");
     const [isEmailValid, setIsEmailValid] = useState(true);
@@ -354,12 +353,19 @@ export default function PublishFlipbookDialog({
             onChange: setCreatedByFilter
         }
     ];
-    console.log("title ??", title)
     const isPublishDisabled = !title.trim() ||
         (activeTab === "passwordLocked" && !password.trim()) ||
         (activeTab === "private" && selectedRadio === "email" && addedEmails.length === 0) ||
         (activeTab === "private" && selectedRadio === "readers" && createdByFilter.length === 0) ||
         publishing;
+
+    const LoadingOverlay = () => (
+        <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10">
+            <div className="flex flex-col items-center space-y-3">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        </div>
+    )
 
     return (
         <Dialog open={isPublishModalOpen} onOpenChange={setIsPublishModalOpen}>
@@ -371,9 +377,7 @@ export default function PublishFlipbookDialog({
                     </DialogDescription>
                 </DialogHeader>
                 <div className="px-1 max-h-[calc(100vh-300px)] overflow-y-auto">
-                    {loading && (
-                        <div className="text-sm text-gray-500">Loading flipbook details...</div>
-                    )}
+                    {loading && <LoadingOverlay />}
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
                             <Label htmlFor="title">
