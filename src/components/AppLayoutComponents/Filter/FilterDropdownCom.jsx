@@ -31,6 +31,7 @@ export default function FilterDropdownCom({ label, options, selectedValues, onCh
                             <DropdownMenuCheckboxItem
                                 key={option.value}
                                 checked={selectedValues.includes(option.label)}
+                                value={option.value}
                                 onCheckedChange={(checked) => {
                                     if (checked) {
                                         onChange([...selectedValues, option.label]);

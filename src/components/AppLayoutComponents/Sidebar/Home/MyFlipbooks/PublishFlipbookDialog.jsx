@@ -244,7 +244,7 @@ export default function PublishFlipbookDialog({
         const basePayload = {
             flipbookId,
             title: title.trim(),
-            description: description.trim(),
+            description: description?.trim() || "",
         };
 
         switch (activeTab) {
@@ -324,6 +324,7 @@ export default function PublishFlipbookDialog({
             resetForm();
 
         } catch (err) {
+            console.log('Publish error:', err);
             toast.error("Failed to publish flipbook", {
                 description: err.message || "Something went wrong while publishing."
             });
