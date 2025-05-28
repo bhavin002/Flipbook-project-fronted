@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { GetWorkspacesApi } from "@/service/workspace.service";
 import { toast } from "sonner";
+import { useAuth } from "./AuthContext";
 
 const WorkspaceContext = createContext();
 
@@ -17,6 +18,8 @@ export const WorkspaceProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [lastFetched, setLastFetched] = useState(null);
   const [isNeededRefetch, setIsNeededRefetch] = useState(false);
+  const { isAuthenticated } = useAuth();
+
 
   const fetchWorkspaces = async (force = false) => {
     if (!lastFetched || force) {
@@ -36,13 +39,14 @@ export const WorkspaceProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     if (isNeededRefetch) {
       fetchWorkspaces(true);
       setIsNeededRefetch(false);
     } else {
       fetchWorkspaces();
     }
-  }, [isNeededRefetch]);
+  }, [isNeededRefetch, isAuthenticated]);
 
   return (
     <WorkspaceContext.Provider value={{ workspaces, isLoading, fetchWorkspaces, setIsNeededRefetch }}>
