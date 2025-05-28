@@ -1,11 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { GetCurrencyApi } from "@/service/currency.service";
+import { useAuth } from "./AuthContext";
 
 const CurrencyContext = createContext();
 
 export function CurrencyProvider({ children }) {
+  const { isAuthenticated } = useAuth();
   const [currencies, setCurrencies] = useState([]);
-  console.log("currencies CurrencyProvider??", currencies)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -15,13 +16,13 @@ export function CurrencyProvider({ children }) {
         setLoading(true);
         const response = await GetCurrencyApi();
         console.log("response fetchCurrencies??", response);
-        
+
         // Transform API data to the format needed by components
         const formattedCurrencies = response.data.map(currency => ({
           value: currency._id,
           label: `${currency.code} (${currency.name})`
         }));
-        
+
         setCurrencies(formattedCurrencies);
       } catch (err) {
         setError(err.message || "Failed to fetch currencies");
@@ -29,8 +30,9 @@ export function CurrencyProvider({ children }) {
         setLoading(false);
       }
     };
-
-    fetchCurrencies();
+    if (isAuthenticated) {
+      fetchCurrencies();
+    }
   }, []);
 
   return (

@@ -18,8 +18,8 @@ export const useFolders = () => {
 export const FolderProvider = ({ children }) => {
   const [folders, setFolders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const {isAuthenticated} = useAuth();
-  
+  const { isAuthenticated } = useAuth();
+
   const fetchFolders = async () => {
     setIsLoading(true);
     try {
@@ -64,7 +64,7 @@ export const FolderProvider = ({ children }) => {
   // Get folders by scope
   const getNormalFolders = () => folders.filter(folder => folder.folderScope === 0);
   const getTemplateFolders = () => folders.filter(folder => folder.folderScope === 1);
-  
+
   // Function to refresh the folder list from the API
   const refreshFolders = () => {
     fetchFolders();

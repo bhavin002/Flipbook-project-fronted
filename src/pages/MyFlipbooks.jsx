@@ -3,7 +3,7 @@ import Flipbooks from '@/utils/Flipbooks';
 import ZeroState from '@/utils/ZeroState';
 
 export default function MyFlipbooks({ isSidebarOpen }) {
-    const { flipbooks, isLoading, isTemplateView } = useFlipbook();
+    const { flipbooks, isLoading, isTemplateView,setFlipbooks } = useFlipbook();
 
     if (flipbooks.length === 0 && !isLoading) {
         return (
@@ -20,6 +20,7 @@ export default function MyFlipbooks({ isSidebarOpen }) {
             flipbooks={flipbooks} 
             isSidebarOpen={isSidebarOpen} 
             view={isTemplateView ? 'template' : 'flipbook'} 
+            setFlipbooks={setFlipbooks}
         />
     );
 }
