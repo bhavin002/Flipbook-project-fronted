@@ -9,3 +9,9 @@ export const flipbookVisibility = {
     PASSWORD: 2,
     READERS_ONLY: 3
 }
+
+export const flipbookStatus = {
+    DRAFT: "draft",
+    PUBLISHED: "publish",
+    NOT_PUBLISHED: "unpublish"
+}

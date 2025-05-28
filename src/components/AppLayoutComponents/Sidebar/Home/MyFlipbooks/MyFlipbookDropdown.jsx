@@ -43,6 +43,10 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
         setIsDropdownOpen(false);
     };
 
+    const onPublishSuccess = () => {
+        setFlipbooks(prev => prev.map(item => item._id === flipbook._id ? { ...item, flipbookState: 'Published' } : item));    
+    }
+
     const handleItemClick = async (action, e) => {
 
         if (e) {
@@ -442,7 +446,7 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 onConfirm={() => handleDeleteForeverConfirmation(true)}
                 onCancel={() => handleDeleteForeverConfirmation(false)}
             />
-            <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} flipbookId={flipbook._id}/>
+            <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} flipbookId={flipbook._id} onPublishSuccess={onPublishSuccess}/>
         </>
     );
 }

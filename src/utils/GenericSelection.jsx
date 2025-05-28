@@ -19,44 +19,74 @@ export default function GenericSelection({
     allLabel = "All items",
     searchPlaceholder = "Search...",
     checkboxes = [],
-    defaultAllSelected = true
+    defaultAllSelected = true,
+    showAllAsOption = false // New prop to control showing "All" as a selectable option
 }) {
     const [open, setOpen] = useState(false);
-    // Initialize allSelected based on whether selectedValues is empty
-    const [allSelected, setAllSelected] = useState(defaultAllSelected && selectedValues.length === 0);
+    // Initialize allSelected based on whether selectedValues is empty or contains the allLabel
+    const [allSelected, setAllSelected] = useState(
+        defaultAllSelected &&
+        (selectedValues.length === 0 ||
+            (showAllAsOption && selectedValues.includes(allLabel)))
+    );
     const [searchQuery, setSearchQuery] = useState("");
     const searchInputRef = useRef(null);
 
     // Update allSelected when selectedValues changes
     useEffect(() => {
-        if (selectedValues.length === 0 && defaultAllSelected) {
-            setAllSelected(true);
-        } else if (selectedValues.length > 0) {
-            setAllSelected(false);
+        if (showAllAsOption) {
+            // When showAllAsOption is true, "All" is treated as a regular selectable option
+            setAllSelected(selectedValues.includes(allLabel));
+        } else {
+            // Original behavior - allSelected when no items are selected
+            if (selectedValues.length === 0 && defaultAllSelected) {
+                setAllSelected(true);
+            } else if (selectedValues.length > 0) {
+                setAllSelected(false);
+            }
         }
-    }, [selectedValues, defaultAllSelected]);
+    }, [selectedValues, defaultAllSelected, showAllAsOption, allLabel]);
 
     const handleSelect = (e) => {
         e.preventDefault();
     };
 
     const handleAllChange = (checked) => {
-        if (checked) {
-            setAllSelected(true);
-            onChange([]);
+        if (showAllAsOption) {
+            // When showAllAsOption is true, treat "All" as a regular option
+            if (checked) {
+                // Add "All" to selection and remove other items
+                onChange([allLabel]);
+            } else {
+                // Remove "All" from selection
+                const newSelection = selectedValues.filter(item => item !== allLabel);
+                onChange(newSelection);
+            }
         } else {
-            setAllSelected(false);
+            // Original behavior
+            if (checked) {
+                setAllSelected(true);
+                onChange([]);
+            } else {
+                setAllSelected(false);
+            }
         }
     };
 
     const handleItemChange = (option, checked) => {
         if (checked) {
-            setAllSelected(false);
-            onChange([...selectedValues, option.label]);
+            if (showAllAsOption) {
+                // Remove "All" if it was selected and add this specific item
+                const newSelection = selectedValues.filter(item => item !== allLabel);
+                onChange([...newSelection, option.label]);
+            } else {
+                setAllSelected(false);
+                onChange([...selectedValues, option.label]);
+            }
         } else {
             const newSelection = selectedValues.filter(item => item !== option.label);
             onChange(newSelection);
-            if (newSelection.length === 0 && defaultAllSelected) {
+            if (!showAllAsOption && newSelection.length === 0 && defaultAllSelected) {
                 setAllSelected(true);
             }
         }
@@ -66,26 +96,49 @@ export default function GenericSelection({
         e.stopPropagation();
         e.preventDefault();
         onChange([]);
-        if (defaultAllSelected) {
+        if (!showAllAsOption && defaultAllSelected) {
             setAllSelected(true);
         }
     };
 
     const displayContent = () => {
-        if (allSelected || selectedValues.length === 0) {
-            return allLabel;
-        }
+        if (showAllAsOption) {
+            // When showAllAsOption is true, display selected items normally
+            if (selectedValues.length === 0) {
+                return "Select items...";
+            }
 
-        if (selectedValues.length <= 3) {
-            return selectedValues.join(", ");
-        }
+            if (selectedValues.includes(allLabel)) {
+                return allLabel;
+            }
 
-        return (
-            <div className="flex items-center space-x-2">
-                <span className="truncate">{selectedValues.slice(0, 3).join(", ")}</span>
-                <Badge variant="secondary">+{selectedValues.length - 3}</Badge>
-            </div>
-        );
+            if (selectedValues.length <= 3) {
+                return selectedValues.join(", ");
+            }
+
+            return (
+                <div className="flex items-center space-x-2">
+                    <span className="truncate">{selectedValues.slice(0, 3).join(", ")}</span>
+                    <Badge variant="secondary">+{selectedValues.length - 3}</Badge>
+                </div>
+            );
+        } else {
+            // Original behavior
+            if (allSelected || selectedValues.length === 0) {
+                return allLabel;
+            }
+
+            if (selectedValues.length <= 3) {
+                return selectedValues.join(", ");
+            }
+
+            return (
+                <div className="flex items-center space-x-2">
+                    <span className="truncate">{selectedValues.slice(0, 3).join(", ")}</span>
+                    <Badge variant="secondary">+{selectedValues.length - 3}</Badge>
+                </div>
+            );
+        }
     };
 
     const handleOpenChange = (isOpen) => {
@@ -110,6 +163,8 @@ export default function GenericSelection({
         return category[categoryKey].length > 0;
     });
 
+    const shouldShowAllOption = showAllAsOption && (searchQuery === "" || allLabel.toLowerCase().includes(searchQuery.toLowerCase()));
+
     return (
         <div className="space-y-3">
             <DropdownMenu open={open} onOpenChange={handleOpenChange}>
@@ -117,7 +172,7 @@ export default function GenericSelection({
                     <DropdownMenuTrigger className="min-w-[10rem]" asChild>
                         <Button variant="outline" className="w-full justify-between">
                             <span className="truncate">{displayContent()}</span>
-                            <ListFilter />
+                            {(!selectedValues.length > 0) && <ListFilter />}
                         </Button>
                     </DropdownMenuTrigger>
 
@@ -152,7 +207,20 @@ export default function GenericSelection({
                     </div>
 
                     <div className="max-h-52 overflow-auto">
-                        {(searchQuery === "" && defaultAllSelected) && (
+                        {shouldShowAllOption && (
+                            <div className="px-2 pt-1 pb-2 mb-1 border-b">
+                                <DropdownMenuCheckboxItem
+                                    checked={selectedValues.includes(allLabel)}
+                                    onCheckedChange={handleAllChange}
+                                    onSelect={handleSelect}
+                                >
+                                    {allLabel}
+                                </DropdownMenuCheckboxItem>
+                            </div>
+                        )}
+
+                        {/* Show original "All" option only when not using showAllAsOption */}
+                        {(!showAllAsOption && searchQuery === "" && defaultAllSelected) && (
                             <div className="px-2 pt-1 pb-2 mb-1 border-b">
                                 <DropdownMenuCheckboxItem
                                     checked={allSelected}
@@ -192,7 +260,7 @@ export default function GenericSelection({
                             );
                         })}
 
-                        {searchQuery !== "" && filteredCategories.length === 0 && (
+                        {searchQuery !== "" && filteredCategories.length === 0 && !shouldShowAllOption && (
                             <div className="text-center py-2 text-sm text-muted-foreground">
                                 No items found
                             </div>
