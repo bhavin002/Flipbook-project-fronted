@@ -33,7 +33,7 @@ export function CurrencyProvider({ children }) {
     if (isAuthenticated) {
       fetchCurrencies();
     }
-  }, []);
+  }, [isAuthenticated]);
 
   return (
     <CurrencyContext.Provider value={{ currencies, loading, error }}>

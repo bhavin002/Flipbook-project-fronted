@@ -1,8 +1,7 @@
 import { Input } from "@/components/ui/input"
 import { Search } from 'lucide-react';
-import RecentSearchTabCom from "./RecentSearchTabCom";
 
-export default function SearchInputCom({ searchValue, setSearchValue, isFocused, setIsFocused }) {
+export default function SearchInputCom({ searchValue, setSearchValue, setIsFocused }) {
 
     const handleSearchChange = (e) => {
         setSearchValue(e.target.value);
@@ -31,11 +30,6 @@ export default function SearchInputCom({ searchValue, setSearchValue, isFocused,
                     />
                 </div>
             </div>
-            {/* {searchValue && (
-                <div className="absolute mt-1 top-10 left-0 z-20">
-                    <RecentSearchTabCom />
-                </div>
-            )} */}
         </>
     )
 }

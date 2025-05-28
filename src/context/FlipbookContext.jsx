@@ -7,7 +7,7 @@ import { useAuth } from './AuthContext';
 const FlipbookContext = createContext();
 
 export function FlipbookProvider({ children }) {
-  const { isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     const [flipbooks, setFlipbooks] = useState([]);
     const location = useLocation();
@@ -17,15 +17,15 @@ export function FlipbookProvider({ children }) {
         try {
             setIsLoading(true);
             let response;
-            
+
             if (filters) {
                 response = await GetFlipbooksApi(filters);
             } else {
-                response = isTemplateView 
-                    ? await GetWorkspaceTemplatesApi() 
+                response = isTemplateView
+                    ? await GetWorkspaceTemplatesApi()
                     : await GetWorkspaceFlipbooksApi();
             }
-            
+
             setFlipbooks(response.data);
         } catch (error) {
             toast.error("Flipbook fetch failed", {
@@ -39,7 +39,7 @@ export function FlipbookProvider({ children }) {
     useEffect(() => {
         if (!isAuthenticated) return;
         fetchFlipbooks();
-    }, [location.pathname]);
+    }, [location.pathname, isAuthenticated]);
 
     const value = {
         flipbooks,

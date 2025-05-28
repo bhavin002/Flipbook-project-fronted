@@ -38,7 +38,7 @@ export const FolderProvider = ({ children }) => {
   useEffect(() => {
     if (!isAuthenticated) return;
     fetchFolders();
-  }, []);
+  }, [isAuthenticated]);
 
   // Function to add a new folder
   const addFolder = (newFolder) => {
