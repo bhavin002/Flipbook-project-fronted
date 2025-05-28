@@ -61,7 +61,7 @@ export default function MaskInput({
         {keywords.map((keyword, index) => (
           <div
             key={index}
-            className="inline-flex items-center gap-1 text-black bg-[#FAFBFB] text-sm px-2 py-1 rounded-md"
+            className="inline-flex items-center gap-1 text-black bg-[#efefef] text-sm px-2 py-1 rounded-md"
           >
               <div className="max-w-16 truncate font-semibold">{keyword}</div>
             <button
@@ -82,7 +82,7 @@ export default function MaskInput({
           onFocus={handleFocus}
           onBlur={handleBlur}
           placeholder={keywords.length === 0 ? placeholder : ""}
-          className={`flex-1 bg-transparent outline-none w-full text-sm placeholder:text-muted-foreground`}
+          className={`flex-1 bg-transparent outline-none w-full text-sm placeholder:text-muted-foreground min-w-10 px-2 py-1`}
           aria-label="Add keyword"
         />
       </div>
