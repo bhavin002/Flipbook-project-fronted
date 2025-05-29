@@ -8,7 +8,8 @@ import { useWorkspaces } from "@/context/WorkspaceContext";
 
 export default function ProfileDropDownCom() {
     const navigate = useNavigate();
-    const { logout } = useAuth();
+    const { logout, userMeta } = useAuth();
+    console.log("userMeta ??",userMeta)
     const { workspaces, isLoading, setIsNeededRefetch } = useWorkspaces();
 
     const currentWorkspace = workspaces.find(w => w.isCurrent) || workspaces[0];
@@ -51,8 +52,8 @@ export default function ProfileDropDownCom() {
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                     <div>
-                        <DropdownMenuLabel className="p-0 px-2 pb-1.5">Bhavin Vasavada</DropdownMenuLabel>
-                        <p className="text-xs ml-2 text-muted-foreground truncate max-w-40 -mt-2">bhavin@gmail.com</p>
+                        <DropdownMenuLabel className="p-0 px-2 pb-1.5">{userMeta.firstName + userMeta.lastName}</DropdownMenuLabel>
+                        <p className="text-xs ml-2 text-muted-foreground truncate max-w-40 -mt-2">{userMeta.email}</p>
                     </div>
                 </div>
                 <DropdownMenuSeparator />

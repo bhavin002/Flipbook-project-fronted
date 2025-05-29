@@ -19,6 +19,11 @@ export function FlipbookProvider({ children }) {
             let response;
 
             if (filters) {
+                if (isTemplateView) {
+                    filters.type = [1]
+                } else {
+                    filters.type = [0];
+                }
                 response = await GetFlipbooksApi(filters);
             } else {
                 response = isTemplateView

@@ -21,7 +21,7 @@ export default function FilterCom() {
     const [isLoading, setIsLoading] = useState(false);
     const [teammates, setTeammates] = useState([]);
     const [filterCount, setFilterCount] = useState(0);
-    const { fetchFlipbooks, isTemplateView } = useFlipbook();
+    const { fetchFlipbooks } = useFlipbook();
     const location = useLocation();
 
     useEffect(() => {
@@ -213,13 +213,6 @@ export default function FilterCom() {
                 payload.lastUpdated = dateRange.start;
                 payload.lastUpdatedEnd = dateRange.end;
             }
-        }
-
-        // Handle flipbook type
-        if (isTemplateView) {
-            payload.type = [1];
-        } else {
-            payload.type = [0];
         }
 
         return payload;

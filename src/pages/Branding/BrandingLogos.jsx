@@ -5,6 +5,7 @@ import { Trash2, Upload } from "lucide-react";
 import { UploadBrandLogoApi, GetBrandLogosApi, DeleteBrandLogoApi } from "@/service/brandLogo.service";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import LoadingButton from "@/utils/LoadingButton";
+import { toast } from 'sonner';
 
 export default function BrandingLogos() {
     const [logos, setLogos] = useState([]);
@@ -14,7 +15,6 @@ export default function BrandingLogos() {
     const [isDeleting, setIsDeleting] = useState(false);
     const fileInputRef = useRef(null);
 
-    // Fetch logos on component mount
     useEffect(() => {
         fetchLogos();
     }, []);
@@ -56,7 +56,9 @@ export default function BrandingLogos() {
             }));
             setLogos(prevLogos => [...prevLogos, ...newLogos]);
         } catch (error) {
-            console.error("Error uploading logos:", error);
+            toast.error("Logo upload failed", {
+                description: error.message || "Oops! Something went wrong.",
+            });
         } finally {
             setIsUploading(false);
             if (fileInputRef.current) {
@@ -67,14 +69,16 @@ export default function BrandingLogos() {
 
     const handleDelete = async () => {
         if (!logoToDelete) return;
-        
+
         try {
             setIsDeleting(true);
             await DeleteBrandLogoApi(logoToDelete.id);
             setLogos(logos.filter(logo => logo.id !== logoToDelete.id));
             setLogoToDelete(null);
         } catch (error) {
-            console.error("Error deleting logo:", error);
+            toast.error("Logo deletion failed", {
+                description: error.message || "Oops! Something went wrong.",
+            });
         } finally {
             setIsDeleting(false);
         }
@@ -112,16 +116,18 @@ export default function BrandingLogos() {
                 </div>
 
                 {isLoading ? (
-                    <div className="flex justify-center items-center py-8">
-                        <LoadingButton />
+                    <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+                        {Array.from({ length: 3 }).map((_, index) => (
+                            <Card key={index} className="animate-pulse bg-gray-200 h-32 rounded-lg" />
+                        ))}
                     </div>
                 ) : (
                     <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
                         {logos.map((logo) => (
-                            <LogoCard 
-                                key={logo.id} 
-                                logo={logo} 
-                                onDelete={() => setLogoToDelete(logo)} 
+                            <LogoCard
+                                key={logo.id}
+                                logo={logo}
+                                onDelete={() => setLogoToDelete(logo)}
                             />
                         ))}
                     </div>
