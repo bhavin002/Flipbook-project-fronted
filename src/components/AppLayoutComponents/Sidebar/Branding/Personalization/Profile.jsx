@@ -8,15 +8,54 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { useBranding } from "@/context/BrandingContext";
+import { useRef } from "react";
+import { toast } from "sonner";
+
 export default function Profile() {
+    const { form, handleFileUpload, handleDeleteFile, handleInputChange, previewUrls } = useBranding();
+    const fileInputRef = useRef(null);
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            // Validate file size (15MB)
+            if (file.size > 15 * 1024 * 1024) {
+                toast.error("Failed to upload", {
+                    description: "File size should be less than 15MB",
+                });
+                return;
+            }
+            handleFileUpload("profileImage", file);
+        }
+    };
+
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleDelete = () => {
+        handleDeleteFile("profileImage");
+    };
+
+    const profileImage = form.watch("profileImage");
+    const isProfileInfoHidden = form.watch("isProfileInfoHidden");
+    const name = form.watch("name");
+    const description = form.watch("description");
+    const websiteLink = form.watch("websiteLink");
+
     return (
-         <Card>
+        <Card>
             <CardHeader>
                 <CardTitle>Profile information</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="flex items-center">
-                    <Switch id="hide-profile-info" />
+                    <Switch 
+                        id="hide-profile-info" 
+                        checked={isProfileInfoHidden}
+                        onCheckedChange={(checked) => handleInputChange("isProfileInfoHidden", checked)}
+                    />
                     <Label htmlFor="hide-profile-info" className="ml-3 text-gray-700">
                         Hide profile information
                     </Label>
@@ -25,14 +64,31 @@ export default function Profile() {
                     <Label className="font-medium flex items-center gap-2">
                         Profile Image
                     </Label>
-                    <Button variant="outline"><Trash2 /></Button>
+                    <Button 
+                        variant="outline" 
+                        onClick={handleDelete}
+                        disabled={!profileImage}
+                    >
+                        <Trash2 />
+                    </Button>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="flex justify-center items-center size-12 overflow-hidden border border-1 border-gray-100">
-                        <img src="/src/assets/profile.jpg" className="w-auto h-auto max-h-12 max-w-full" alt="Favicon" />
+                        <img 
+                            src={previewUrls.profileImage || "/src/assets/profile.jpg"} 
+                            className="w-auto h-auto max-h-12 max-w-full" 
+                            alt="Profile" 
+                        />
                     </div>
                     <div className="space-y-2">
-                        <Button variant="outline" size="sm">
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            accept="image/png,image/jpeg"
+                            className="hidden"
+                        />
+                        <Button variant="outline" size="sm" onClick={handleUploadClick}>
                             <Upload size={14} className="mr-2" />
                             Upload Image
                         </Button>
@@ -41,24 +97,33 @@ export default function Profile() {
                 </div>
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="name">Name</Label>
-                    <Input id="name" defaultValue="hopoleh620 hopoleh620" />
+                    <Input 
+                        id="name" 
+                        value={name}
+                        onChange={(e) => handleInputChange("name", e.target.value)}
+                    />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <Label htmlFor="description">
-                        Description
-                    </Label>
+                    <Label htmlFor="description">Description</Label>
                     <Textarea
                         id="description"
                         placeholder="Description"
                         className="resize-none"
                         rows={3}
+                        value={description}
+                        onChange={(e) => handleInputChange("description", e.target.value)}
                     />
                 </div>
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="link-to-website">Link to my website</Label>
-                    <Input id="link-to-website" placeholder="yourdomain.com" />
+                    <Input 
+                        id="link-to-website" 
+                        placeholder="yourdomain.com"
+                        value={websiteLink}
+                        onChange={(e) => handleInputChange("websiteLink", e.target.value)}
+                    />
                 </div>
             </CardContent>
         </Card>
-    )
+    );
 }

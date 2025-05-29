@@ -9,7 +9,6 @@ import { useWorkspaces } from "@/context/WorkspaceContext";
 export default function ProfileDropDownCom() {
     const navigate = useNavigate();
     const { logout, userMeta } = useAuth();
-    console.log("userMeta ??",userMeta)
     const { workspaces, isLoading, setIsNeededRefetch } = useWorkspaces();
 
     const currentWorkspace = workspaces.find(w => w.isCurrent) || workspaces[0];

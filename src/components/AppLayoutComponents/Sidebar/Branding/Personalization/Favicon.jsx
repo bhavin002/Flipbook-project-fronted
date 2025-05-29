@@ -12,13 +12,43 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Label } from "@/components/ui/label";
+import { useBranding } from "@/context/BrandingContext";
+import { useRef } from "react";
+import { toast } from "sonner";
+
 export default function Favicon() {
+    const { form, handleFileUpload, handleDeleteFile, previewUrls } = useBranding();
+    const fileInputRef = useRef(null);
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            if (file.size > 150 * 1024) {
+                toast.error("Failed to upload", {
+                    description: "File size should be less than 150kb",
+                });
+                return;
+            }
+            handleFileUpload("favicon", file);
+        }
+    };
+
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleDelete = () => {
+        handleDeleteFile("favicon");
+    };
+
+    const favicon = form.watch("favicon");
+
     return (
-         <Card>
+        <Card>
             <CardHeader>
                 <CardTitle>Set your favicon</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4 ">
+            <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                     <Label className="font-medium flex items-center gap-2">
                         Favicon
@@ -37,14 +67,31 @@ export default function Favicon() {
                             </Tooltip>
                         </TooltipProvider>
                     </Label>
-                    <Button variant="outline"><Trash2 /></Button>
+                    <Button
+                        variant="outline"
+                        onClick={handleDelete}
+                        disabled={!favicon}
+                    >
+                        <Trash2 />
+                    </Button>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className="flex justify-center items-center size-12 rounded-full overflow-hidden border border-1 border-gray-100">
-                        <img src="/src/assets/profile.jpg" className="w-auto h-auto max-h-12 max-w-full" alt="Favicon" />
+                    <div className="flex justify-center items-center size-12">
+                        <img
+                            src={previewUrls.favicon || "/src/assets/book_logo.png"}
+                            className="w-auto h-auto max-h-12 max-w-full"
+                            alt="Favicon"
+                        />
                     </div>
                     <div className="space-y-2">
-                        <Button variant="outline" size="sm">
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            accept="image/png,image/jpeg,image/x-icon"
+                            className="hidden"
+                        />
+                        <Button variant="outline" size="sm" onClick={handleUploadClick}>
                             <Upload size={14} className="mr-2" />
                             Upload Favicon
                         </Button>
@@ -53,5 +100,5 @@ export default function Favicon() {
                 </div>
             </CardContent>
         </Card>
-    )
+    );
 }

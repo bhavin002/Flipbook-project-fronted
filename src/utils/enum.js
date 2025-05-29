@@ -11,7 +11,7 @@ export const flipbookVisibility = {
 }
 
 export const flipbookStatus = {
-    DRAFT: "draft",
-    PUBLISHED: "publish",
-    NOT_PUBLISHED: "unpublish"
+    NOT_PUBLISHED: 0,
+    PUBLISHED: 1,
+    DRAFT: 2
 }

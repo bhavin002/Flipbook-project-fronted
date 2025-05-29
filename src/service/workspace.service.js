@@ -15,3 +15,10 @@ export const GetWorkspaceInfoApi = async () => {
     const response = await ApiClient().get("/workspace-profile/get-info");
     return response.data;
 }
+
+export const getWorkspaceProfileApi = async () => {
+    const response = await ApiClient().get(`/workspace-profile/get`, {
+        showLoader: true
+    });
+    return response.data;
+}

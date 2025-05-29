@@ -12,9 +12,40 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Label } from "@/components/ui/label";
+import { useBranding } from "@/context/BrandingContext";
+import { useRef } from "react";
+import { toast } from "sonner";
+
 export default function SocialThumnail() {
+    const { form, handleFileUpload, handleDeleteFile, previewUrls } = useBranding();
+    const fileInputRef = useRef(null);
+
+    const handleFileChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            // Validate file size (2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                toast.error("Failed to upload", {
+                    description: "File size should be less than 2MB",
+                });
+                return;
+            }
+            handleFileUpload("socialMediaImage", file);
+        }
+    };
+
+    const handleUploadClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleDelete = () => {
+        handleDeleteFile("socialMediaImage");
+    };
+
+    const socialMediaImage = form.watch("socialMediaImage");
+
     return (
-         <Card>
+        <Card>
             <CardHeader>
                 <CardTitle>Change your social media thumbnail</CardTitle>
             </CardHeader>
@@ -37,16 +68,33 @@ export default function SocialThumnail() {
                             </Tooltip>
                         </TooltipProvider>
                     </Label>
-                    <Button variant="outline"><Trash2 /></Button>
+                    <Button 
+                        variant="outline" 
+                        onClick={handleDelete}
+                        disabled={!socialMediaImage}
+                    >
+                        <Trash2 />
+                    </Button>
                 </div>
-                <Button variant="outline" size="sm">
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/png,image/jpeg"
+                    className="hidden"
+                />
+                <Button variant="outline" size="sm" onClick={handleUploadClick}>
                     <Upload size={14} className="mr-2" />
                     Upload Image
                 </Button>
                 <div className="flex justify-center items-center">
-                    <img src="/src/assets/social-media-thumbnail.png" className="w-auto" alt="Social Media Thumbnail" />
+                    <img 
+                        src={previewUrls.socialMediaImage || "/src/assets/social-media-thumbnail.png"} 
+                        className="w-auto" 
+                        alt="Social Media Thumbnail" 
+                    />
                 </div>
             </CardContent>
         </Card>
-    )
+    );
 }
