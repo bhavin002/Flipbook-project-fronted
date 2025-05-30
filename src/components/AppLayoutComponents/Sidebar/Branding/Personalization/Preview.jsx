@@ -5,24 +5,60 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search } from "lucide-react";
 import { useBranding } from "@/context/BrandingContext";
+import { toast } from "sonner";
+import { UpdateWorkspaceApi } from "@/service/workspace.service";
+import { useState } from "react";
 
 export default function Preview() {
-    const { form, handleSubmit, hasChanges, isLoading, previewUrls } = useBranding();
+    const { form, hasChanges, previewUrls, setHasChanges } = useBranding();
     const formValues = form.watch();
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSaveChanges = async () => {
+        try {
+            setIsLoading(true);
+            const formData = new FormData();
+            const values = form.getValues();
+
+            Object.keys(values).forEach(key => {
+                if (values[key] !== null && values[key] !== undefined) {
+                    if (key === 'footerLinks') {
+                        formData.append(key, JSON.stringify(values[key]));
+                    } else if (values[key] instanceof File) {
+                        formData.append(key, values[key]);
+                    } else {
+                        formData.append(key, values[key]);
+                    }
+                }
+            });
+
+            const response = await UpdateWorkspaceApi(formData);
+            toast.success("profile updated successfully", {
+                description: response.message || "Profile updated successfully",
+            });
+
+        } catch (error) {
+            toast.error("Failed to update profile", {
+                description: error.message || "Something went wrong while saving changes",
+            });
+        } finally {
+            setIsLoading(false);
+            setHasChanges(false);
+        }
+    };
 
     const getSocialIcon = (platform) => {
         const value = formValues[platform];
         if (!value) return null;
 
-        // Basic URL validation
         try {
-            new URL(value);
+            const url = new URL(value);
             return (
                 <Button variant="outline" className="px-2">
-                    <img 
-                        className="w-5 h-5" 
-                        src={`/src/assets/social/theme/${platform}.png`} 
-                        alt={platform} 
+                    <img
+                        className="w-5 h-5"
+                        src={`/src/assets/social/theme/${platform}.png`}
+                        alt={platform}
                     />
                 </Button>
             );
@@ -35,9 +71,9 @@ export default function Preview() {
         <Card>
             <CardHeader>
                 <div className="flex justify-between items-center">
-                    <Button 
+                    <Button
+                        onClick={handleSaveChanges}
                         disabled={!hasChanges || isLoading}
-                        onClick={handleSubmit}
                     >
                         {isLoading ? "Saving..." : "Save Changes"}
                     </Button>
@@ -55,10 +91,10 @@ export default function Preview() {
                     </div>
                     <div className="flex-1">
                         <div className="bg-white rounded-md p-1 text-xs flex items-center gap-1">
-                            <img 
-                                src={previewUrls.favicon || "/src/assets/book_logo.png"} 
-                                className="h-4 w-auto shrink-0" 
-                                alt="Logo" 
+                            <img
+                                src={previewUrls.favicon || "/src/assets/book_logo.png"}
+                                className="h-4 w-auto shrink-0"
+                                alt="Logo"
                             />
                             <span className="text-gray-500 truncate overflow-hidden whitespace-nowrap">
                                 https://www.flipnova.com/F9D7AD99E8C/
@@ -68,27 +104,27 @@ export default function Preview() {
                 </div>
                 {formValues.isHeaderVisible && (
                     <div className="p-4" style={{ backgroundColor: formValues.headerColor }}>
-                        <img 
-                            src={previewUrls.logo || "/src/assets/logo.png"} 
-                            width={200} 
-                            alt="Cover" 
+                        <img
+                            src={previewUrls.logo || "/src/assets/logo.png"}
+                            width={200}
+                            alt="Cover"
                         />
                     </div>
                 )}
                 {!formValues.isProfileInfoHidden && (
                     <div className="py-4 px-8 flex max-md:flex-wrap gap-4">
                         <div className="flex items-start">
-                            <img 
-                                className="w-28 rounded-full" 
-                                alt="profile" 
-                                src={previewUrls.profileImage || "/src/assets/profile.jpg"} 
+                            <img
+                                className="w-28 rounded-full"
+                                alt="profile"
+                                src={previewUrls.profileImage || "/src/assets/profile.jpg"}
                             />
                         </div>
                         <div className="w-fit space-y-2">
                             <p className="text-lg font-bold">{formValues.name}</p>
                             {formValues.websiteLink && (
-                                <a 
-                                    href={formValues.websiteLink} 
+                                <a
+                                    href={formValues.websiteLink}
                                     className="text-[12px] font-medium text-blue-600 hover:underline"
                                 >
                                     {formValues.websiteLink}
@@ -145,9 +181,9 @@ export default function Preview() {
                     {formValues.footerLinks
                         .filter(link => link.title && link.url)
                         .map((link, index) => (
-                            <a 
+                            <a
                                 key={index}
-                                href={link.url} 
+                                href={link.url}
                                 className="text-gray-500"
                             >
                                 {link.title}

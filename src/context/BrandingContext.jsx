@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { brandingSchema } from '@/schemas/branding.schema';
-import { getWorkspaceProfileApi, UpdateWorkspaceApi } from '@/service/workspace.service';
+import { getWorkspaceProfileApi } from '@/service/workspace.service';
 import { toast } from 'sonner';
 
 const BrandingContext = createContext();
@@ -16,7 +16,7 @@ export const useBranding = () => {
 };
 
 export const BrandingProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [previewUrls, setPreviewUrls] = useState({
     favicon: null,
@@ -53,8 +53,8 @@ export const BrandingProvider = ({ children }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const response = await getWorkspaceProfileApi();
-        console.log("response >?",response)
         form.reset({
           ...response.data,
           footerLinks: response.data.footerLinks.map(link => ({
@@ -62,7 +62,6 @@ export const BrandingProvider = ({ children }) => {
             url: link.url || '',
           })),
         });
-        // Set preview URLs from API response
         setPreviewUrls({
           favicon: response.data.favicon,
           logo: response.data.logo,
@@ -81,38 +80,29 @@ export const BrandingProvider = ({ children }) => {
     fetchData();
   }, []);
 
-  const handleSubmit = async (data) => {
-    try {
-      setIsLoading(true);
-      const formData = new FormData();
+  const handleInputChange = (field, value) => {
+    // Handle URL fields (social media links)
+    if (['facebook', 'twitter', 'youtube', 'instagram', 'linkedin', 'websiteLink'].includes(field)) {
+      // If empty, just set empty value
+      if (!value) {
+        form.setValue(field, '', { shouldDirty: true });
+        setHasChanges(true);
+        return;
+      }
+
+      // Remove any existing http:// or https://
+      let cleanUrl = value.replace(/^https?:\/\//, '');
       
-      // Append all form fields to FormData
-      Object.keys(data).forEach(key => {
-        if (data[key] !== null && data[key] !== undefined) {
-          if (key === 'footerLinks') {
-            formData.append(key, JSON.stringify(data[key]));
-          } else {
-            formData.append(key, data[key]);
-          }
-        }
-      });
+      // Add https:// if not present
+      if (cleanUrl && !cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+        cleanUrl = `https://${cleanUrl}`;
+      }
 
-      await UpdateWorkspaceApi(formData);
-      setHasChanges(false);
-    } catch (error) {
-      console.error('Error updating workspace profile:', error);
-    } finally {
-      setIsLoading(false);
+      form.setValue(field, cleanUrl, { shouldDirty: true });
+    } else {
+      form.setValue(field, value, { shouldDirty: true });
     }
-  };
-
-  const getBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
+    setHasChanges(true);
   };
 
   const handleFileUpload = async (field, file) => {
@@ -138,9 +128,13 @@ export const BrandingProvider = ({ children }) => {
     setHasChanges(true);
   };
 
-  const handleInputChange = (field, value) => {
-    form.setValue(field, value, { shouldDirty: true });
-    setHasChanges(true);
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
   };
 
   return (
@@ -149,11 +143,11 @@ export const BrandingProvider = ({ children }) => {
         form,
         isLoading,
         hasChanges,
+        setHasChanges,
         previewUrls,
-        handleSubmit: form.handleSubmit(handleSubmit),
+        handleInputChange,
         handleFileUpload,
         handleDeleteFile,
-        handleInputChange,
       }}
     >
       {children}

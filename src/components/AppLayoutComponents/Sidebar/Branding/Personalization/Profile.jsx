@@ -73,10 +73,10 @@ export default function Profile() {
                     </Button>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className="flex justify-center items-center size-12 overflow-hidden border border-1 border-gray-100">
+                    <div className="flex justify-center items-center size-20 rounded-full overflow-hidden">
                         <img 
                             src={previewUrls.profileImage || "/src/assets/profile.jpg"} 
-                            className="w-auto h-auto max-h-12 max-w-full" 
+                            className="w-auto h-auto max-w-full" 
                             alt="Profile" 
                         />
                     </div>

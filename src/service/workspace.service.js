@@ -7,7 +7,11 @@ export const GetWorkspacesApi = async () => {
 }
 
 export const UpdateWorkspaceApi = async (data) => {
-    const response = await ApiClient().post("/workspace-profile/update", data);
+    const response = await ApiClient().post("/workspace-profile/update", data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
     return response.data;
 }
 
