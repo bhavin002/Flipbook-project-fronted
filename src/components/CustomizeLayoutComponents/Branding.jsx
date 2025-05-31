@@ -13,21 +13,22 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { useState } from "react"
 import ColorPaletteSelector from "./Branding/ColorPaletteSelector"
 import { Button } from '@/components/ui/button';
+import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings";
 
 export default function Branding() {
+    const { isFieldEnabled } = useFlipbookPreviewSettings();
     const [selectedBackground, setSelectedBackground] = useState("solidcolor")
     const [playerAccentColor, setPlayerAccentColor] = useState('#c1080b');
-
 
     const renderBackgroundContent = (selectedBackground) => {
         switch (selectedBackground) {
             case "solidcolor":
-                return <ColorPaletteSelector />
+                return <ColorPaletteSelector disabled={!isFieldEnabled("backgroundColor")} />
             case "uploadimage":
                 return (
                     <div className="flex justify-between">
-                        <Button variant="outline" >Upload image</Button>
-                        <Select defaultValue="scale-crop">
+                        <Button variant="outline" disabled={!isFieldEnabled("backgroundColor")}>Upload image</Button>
+                        <Select defaultValue="scale-crop" disabled={!isFieldEnabled("backgroundColor")}>
                             <SelectTrigger id="background-color" className="w-[200px]">
                                 <SelectValue placeholder="Select a workspace" />
                             </SelectTrigger>
@@ -45,6 +46,7 @@ export default function Branding() {
                 return null
         }
     }
+
     return (
         <>
             <div className="space-y-4 ">
@@ -52,6 +54,7 @@ export default function Branding() {
                     <Checkbox
                         id="add-logo"
                         className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
+                        disabled={!isFieldEnabled("brandLogoId")}
                     />
                     <Label htmlFor="add-logo" className="text-sm font-medium leading-none">
                         Add your logo
@@ -71,19 +74,37 @@ export default function Branding() {
                         </Tooltip>
                     </TooltipProvider>
                 </div>
-                <SelectLogoDialog />
+                {
+                    isFieldEnabled("brandLogoId") ? (
+                        <SelectLogoDialog mode="replace" />
+                    ) : (
+                        <Button variant="outline" className="text-primary" disabled={true}>
+                            Select logo
+                        </Button>
+                    )
+                }
             </div>
             <div className="flex flex-col gap-2 text-white">
                 <Label htmlFor="logo-link" className="text-sm font-medium leading-none">
                     Add a link on your logo
                 </Label>
-                <Input type="text" id="logo-link" placeholder="Logo link" className="placeholder:text-[#d8dce3]"/>
+                <Input
+                    type="text"
+                    id="logo-link"
+                    placeholder="Logo link"
+                    className="placeholder:text-[#d8dce3]"
+                    disabled={!isFieldEnabled("logoLink")}
+                />
             </div>
             <div className="flex flex-col gap-2 text-white">
                 <Label htmlFor="background-color" className="text-sm font-medium leading-none">
                     Background color
                 </Label>
-                <Select defaultValue={selectedBackground} onValueChange={setSelectedBackground}>
+                <Select
+                    defaultValue={selectedBackground}
+                    onValueChange={setSelectedBackground}
+                    disabled={!isFieldEnabled("backgroundColor")}
+                >
                     <SelectTrigger id="background-color">
                         <SelectValue placeholder="Select a workspace" />
                     </SelectTrigger>
@@ -119,16 +140,16 @@ export default function Branding() {
                     type="text"
                     value={playerAccentColor}
                     onChange={(e) => setPlayerAccentColor(e.target.value)}
+                    disabled={!isFieldEnabled("playerAccentColorHash")}
                 />
                 <div className='flex gap-4 items-center'>
                     <div
                         className="w-8 h-8 rounded"
                         style={{ backgroundColor: playerAccentColor }}
                     />
-                    <Button variant="ghost">Revert</Button>
+                    <Button variant="ghost" disabled={!isFieldEnabled("playerAccentColorHash")}>Revert</Button>
                 </div>
             </div>
-            {/* based on selectedBackground value show content here   */}
         </>
     )
 }

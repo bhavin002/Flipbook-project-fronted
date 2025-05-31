@@ -23,7 +23,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getData } from '@/utils/datas';
 
 export default function Customize() {
-    const [activeValues, setActiveValues] = useState([]);
+    const [activeValues, setActiveValues] = useState(["appearance"]);
 
     const menuItems = getData('customizeMenuItems');
 

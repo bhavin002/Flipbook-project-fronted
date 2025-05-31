@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, ChevronRight, GripVertical, Trash2 } from 'lucide-react';
 import { getData } from '@/utils/datas';
+import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings";
 
 const SortableItem = ({ 
     id, 
@@ -35,7 +36,8 @@ const SortableItem = ({
     isCollapsed,
     onToggleCollapse,
     number,
-    onNumberChange
+    onNumberChange,
+    disabled
   }) => {
     const {
       attributes,
@@ -108,6 +110,7 @@ const SortableItem = ({
   };
 
 export default function TableOfContentsComponent() {
+  const { isFieldEnabled } = useFlipbookPreviewSettings();
   const [isActivated, setIsActivated] = useState(true);
   const [items, setItems] = useState(getData('tableOfContents'));
   const [collapsedChapters, setCollapsedChapters] = useState({});
@@ -204,6 +207,7 @@ export default function TableOfContentsComponent() {
   };
 
   return (
+    
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-white">
         <Checkbox 
@@ -216,6 +220,7 @@ export default function TableOfContentsComponent() {
               addNewItem();
             }
           }}
+          disabled={!isFieldEnabled("isTableOfContent")}
         />
         <Label htmlFor="activate" className="text-sm font-medium">
           Activate Table of Contents
@@ -223,48 +228,52 @@ export default function TableOfContentsComponent() {
       </div>
 
       {isActivated && (
-        <div className='text-white'>
-          <DndContext 
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-            modifiers={[restrictToVerticalAxis]}
-          >
-            <SortableContext 
-              items={items.map(item => item.id)} 
-              strategy={verticalListSortingStrategy}
+        <div className='text-white relative'>
+          <div className={!isFieldEnabled("tableOfContents") ? "pointer-events-none opacity-50" : ""}>
+            <DndContext 
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+              modifiers={[restrictToVerticalAxis]}
             >
-              {getSortedItems()
-                .filter(item => isItemVisible(item))
-                .map((item) => (
-                  <SortableItem
-                    key={item.id}
-                    id={item.id}
-                    type={item.type}
-                    title={item.title}
-                    depth={item.depth}
-                    number={item.number}
-                    onDelete={() => deleteItem(item.id)}
-                    onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
-                    onNumberChange={(newNumber) => updateItemNumber(item.id, newNumber)}
-                    onAddChild={() => addChildItem(item.id)}
-                    canAddChild={item.type === 'chapter'}
-                    hasChildren={item.type === 'chapter' && hasChildren(item.id)}
-                    isCollapsed={collapsedChapters[item.id]}
-                    onToggleCollapse={() => toggleCollapse(item.id)}
-                  />
-                ))}
-            </SortableContext>
-          </DndContext>
+              <SortableContext 
+                items={items.map(item => item.id)} 
+                strategy={verticalListSortingStrategy}
+              >
+                {getSortedItems()
+                  .filter(item => isItemVisible(item))
+                  .map((item) => (
+                    <SortableItem
+                      key={item.id}
+                      id={item.id}
+                      type={item.type}
+                      title={item.title}
+                      depth={item.depth}
+                      number={item.number}
+                      onDelete={() => deleteItem(item.id)}
+                      onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
+                      onNumberChange={(newNumber) => updateItemNumber(item.id, newNumber)}
+                      onAddChild={() => addChildItem(item.id)}
+                      canAddChild={item.type === 'chapter'}
+                      hasChildren={item.type === 'chapter' && hasChildren(item.id)}
+                      isCollapsed={collapsedChapters[item.id]}
+                      onToggleCollapse={() => toggleCollapse(item.id)}
+                      disabled={!isFieldEnabled("tableOfContents")}
+                    />
+                  ))}
+              </SortableContext>
+            </DndContext>
 
-          <Button 
-            variant="outline" 
-            className="mt-2 w-full text-primary"
-            onClick={() => addNewItem()}
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add New Chapter
-          </Button>
+            <Button 
+              variant="outline" 
+              className="mt-2 w-full text-primary"
+              onClick={() => addNewItem()}
+              disabled={!isFieldEnabled("tableOfContents")}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add New Chapter
+            </Button>
+          </div>
         </div>
       )}
     </div>

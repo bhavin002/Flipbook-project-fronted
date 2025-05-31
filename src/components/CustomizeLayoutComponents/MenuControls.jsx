@@ -10,20 +10,22 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useState } from "react"
 import { Alert, AlertDescription } from "../ui/alert"
 import { Button } from "../ui/button"
+import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings"
 
 export default function MenuControls() {
+    const { isFieldEnabled } = useFlipbookPreviewSettings();
 
     const checkboxOptions = [
-        { id: "controls-normal-mode", label: "Controls in normal mode", isShowTooltip: true, tooltip: "Display your control settings without having to enter fullscreen mode." },
-        { id: "navigation-bar", label: "Navigation bar", isShowTooltip: true, tooltip: "Hide and show bottom navigation bar." },
-        { id: "navigation-arrows", label: "Navigation arrows", isShowTooltip: true, tooltip: "Hide or show the navigation arrows" },
-        { id: "share-options", label: "Share options", isShowTooltip: false },
-        { id: "pages-overview", label: "Pages overview", isShowTooltip: false },
-        { id: "allow-fullscreen", label: "Allow fullscreen", isShowTooltip: false },
-        { id: "download-pdf", label: "Download PDF", isShowTooltip: true, tooltip: "Allow your readers to download your flipbook in PDF format." },
-        { id: "print-pdf", label: "Print PDF", isShowTooltip: true, tooltip: "Allow your readers to print your flipbook." },
-        { id: "search", label: "Search", isShowTooltip: true, tooltip: "Your readers can search for text in your flipbook" },
-        { id: "background-audio", label: "Background audio", isShowTooltip: true, tooltip: "Add mp3 audio that plays across pages in the background." }
+        { id: "controls-normal-mode", label: "Controls in normal mode", isShowTooltip: true, tooltip: "Display your control settings without having to enter fullscreen mode.", fieldKey: "controlInNormalMode" },
+        { id: "navigation-bar", label: "Navigation bar", isShowTooltip: true, tooltip: "Hide and show bottom navigation bar.", fieldKey: "navigationBar" },
+        { id: "navigation-arrows", label: "Navigation arrows", isShowTooltip: true, tooltip: "Hide or show the navigation arrows", fieldKey: "navigationArrow" },
+        { id: "share-options", label: "Share options", isShowTooltip: false, fieldKey: "shareOptions" },
+        { id: "pages-overview", label: "Pages overview", isShowTooltip: false, fieldKey: "pageOverview" },
+        { id: "allow-fullscreen", label: "Allow fullscreen", isShowTooltip: false, fieldKey: "allowFullScreen" },
+        { id: "download-pdf", label: "Download PDF", isShowTooltip: true, tooltip: "Allow your readers to download your flipbook in PDF format.", fieldKey: "downloadPDF" },
+        { id: "print-pdf", label: "Print PDF", isShowTooltip: true, tooltip: "Allow your readers to print your flipbook.", fieldKey: "printPDF" },
+        { id: "search", label: "Search", isShowTooltip: true, tooltip: "Your readers can search for text in your flipbook", fieldKey: "search" },
+        { id: "background-audio", label: "Background audio", isShowTooltip: true, tooltip: "Add mp3 audio that plays across pages in the background.", fieldKey: "backgroundAudio" }
     ]
 
     const [checkedItems, setCheckedItems] = useState({
@@ -45,6 +47,7 @@ export default function MenuControls() {
             [id]: !prev[id]
         }))
     }
+
     return (
         <>
             {checkboxOptions.map((option) => (
@@ -55,7 +58,7 @@ export default function MenuControls() {
                             checked={checkedItems[option.id]}
                             onCheckedChange={() => handleCheckboxChange(option.id)}
                             className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
-
+                            disabled={!isFieldEnabled(option.fieldKey)}
                         />
                         <Label htmlFor={option.id} className="text-sm font-medium leading-none">
                             {option.label}
@@ -87,19 +90,20 @@ export default function MenuControls() {
                     {option.id === "background-audio" && checkedItems["background-audio"] && (
                         <div className="space-y-4 text-white">
                             <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-2">
-                                    <Music2 className="h-5 w-5" />
-                                    <p className="text-sm">feed_8rjtifB1740372106515 (1).mp3</p>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Music2 className="h-5 w-5" />
+                                        <p className="text-sm text-gray-100">feed_8rjtifB1740372106515 (1).mp3</p>
+                                    </div>
+                                    <Button variant="ghost" className="hover:text-red-500 hover:bg-sidebar" disabled={!isFieldEnabled(option.fieldKey)}><Trash2 /></Button>
                                 </div>
-                                <Button variant="ghost" className="hover:text-red-500 hover:bg-sidebar"><Trash2 /></Button>
-                            </div>
-                            <Button variant="outline" className="text-primary">Replace audio</Button>
+                                <Button variant="outline" className="text-primary" disabled={!isFieldEnabled(option.fieldKey)}>Replace audio</Button>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Checkbox
                                     id="loop"
                                     className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
+                                    disabled={!isFieldEnabled(option.fieldKey)}
                                 />
                                 <Label htmlFor="loop" className="text-sm font-medium leading-none">
                                     Loop
@@ -123,7 +127,7 @@ export default function MenuControls() {
                                 <Checkbox
                                     id="autoplay"
                                     className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
-
+                                    disabled={!isFieldEnabled(option.fieldKey)}
                                 />
                                 <Label htmlFor="autoplay" className="text-sm font-medium leading-none">
                                     Autoplay

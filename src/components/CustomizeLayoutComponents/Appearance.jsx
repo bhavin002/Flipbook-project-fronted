@@ -11,16 +11,18 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
+import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings"
 
 export default function Appearance() {
+    const { isFieldEnabled } = useFlipbookPreviewSettings();
 
     const checkboxOptions = [
-        { id: "automatic-transition", label: "Automatic transition", isShowTooltip: false },
-        { id: "flip-sounds", label: "Flip sounds", isShowTooltip: true, tooltip: "Note: on mobile devices or when slide effect is selected, flip sounds will always be disabled." },
-        { id: "right-to-left", label: "Right to left orientation", isShowTooltip: false },
-        { id: "shadow", label: "Shadow on pages", isShowTooltip: true, tooltip: "Note: when slide effect is selected, shadow on pages will be disabled." },
-        { id: "animate", label: "Animate interactions", isShowTooltip: true, tooltip: "Make yur interations pop by animating them." },
-        { id: "highlights", label: "Highlights on links", isShowTooltip: true, tooltip: "Make your links pop by highlighting them." }
+        { id: "automatic-transition", label: "Automatic transition", isShowTooltip: false, fieldKey: "automaticTransition" },
+        { id: "flip-sounds", label: "Flip sounds", isShowTooltip: true, tooltip: "Note: on mobile devices or when slide effect is selected, flip sounds will always be disabled.", fieldKey: "flipSound" },
+        { id: "right-to-left", label: "Right to left orientation", isShowTooltip: false, fieldKey: "rigthToLeftOrientation" },
+        { id: "shadow", label: "Shadow on pages", isShowTooltip: true, tooltip: "Note: when slide effect is selected, shadow on pages will be disabled.", fieldKey: "shadowOnPages" },
+        { id: "animate", label: "Animate interactions", isShowTooltip: true, tooltip: "Make yur interations pop by animating them.", fieldKey: "animateInteraction" },
+        { id: "highlights", label: "Highlights on links", isShowTooltip: true, tooltip: "Make your links pop by highlighting them.", fieldKey: "highlightsOnLink" }
     ]
 
     const [checkedItems, setCheckedItems] = useState({
@@ -38,16 +40,17 @@ export default function Appearance() {
             [id]: !prev[id]
         }))
     }
+
     return (
         <>
             <div className="flex flex-col gap-2 text-white">
                 <Label>Player skin</Label>
-                <Tabs defaultValue="classic">
+                <Tabs defaultValue="classic" disabled={!isFieldEnabled("playerSkin")}>
                     <TabsList className="w-full">
-                        <TabsTrigger className="items-center gap-2 w-full" value="classic">
+                        <TabsTrigger className="items-center gap-2 w-full" value="classic" disabled={!isFieldEnabled("playerSkin")}>
                             Classic
                         </TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="modern">
+                        <TabsTrigger className="items-center gap-2 w-full" value="modern" disabled={!isFieldEnabled("playerSkin")}>
                             Modern
                         </TabsTrigger>
                     </TabsList>
@@ -55,15 +58,15 @@ export default function Appearance() {
             </div>
             <div className="flex flex-col gap-2 text-white">
                 <Label>Page transition</Label>
-                <Tabs defaultValue="flip">
+                <Tabs defaultValue="flip" disabled={!isFieldEnabled("pageTransition")}>
                     <TabsList className="w-full">
-                        <TabsTrigger className="items-center gap-2 w-full" value="flip">
+                        <TabsTrigger className="items-center gap-2 w-full" value="flip" disabled={!isFieldEnabled("pageTransition")}>
                             Flip
                         </TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="slide">
+                        <TabsTrigger className="items-center gap-2 w-full" value="slide" disabled={!isFieldEnabled("pageTransition")}>
                             Slide
                         </TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="scroll">
+                        <TabsTrigger className="items-center gap-2 w-full" value="scroll" disabled={!isFieldEnabled("pageTransition")}>
                             Scroll
                         </TabsTrigger>
                     </TabsList>
@@ -74,7 +77,7 @@ export default function Appearance() {
                     <Label>Layout style</Label>
                     <p className="text-sm cursor-pointer text-gray-300 hover:underline">Learn more</p>
                 </div>
-                <Select defaultValue="smart-view">
+                <Select defaultValue="smart-view" disabled={!isFieldEnabled("layoutStyle")}>
                     <SelectTrigger>
                         <SelectValue placeholder="Select a layout view" />
                     </SelectTrigger>
@@ -132,6 +135,7 @@ export default function Appearance() {
                         checked={checkedItems[option.id]}
                         onCheckedChange={() => handleCheckboxChange(option.id)}
                         className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
+                        disabled={!isFieldEnabled(option.fieldKey)}
                     />
                     <Label htmlFor={option.id} className="text-sm font-medium leading-none">
                         {option.label}
@@ -157,7 +161,7 @@ export default function Appearance() {
                             <Label htmlFor="delay" className="text-sm font-medium leading-none">
                                 Delay
                             </Label>
-                            <Input className="w-24" type="number" defaultValue="7" />
+                            <Input className="w-24" type="number" defaultValue="7" disabled={!isFieldEnabled(option.fieldKey)} />
                             <p className="text-sm">sec</p>
                         </div>
                     )}
