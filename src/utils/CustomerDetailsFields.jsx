@@ -191,6 +191,7 @@ export default function CustomerDetailsFields({ form }) {
     };
 
     const handleDeleteField = (id) => {
+        if (fields.length <= 1) return;
         const newFields = fields.filter(field => field.id !== id);
         setFields(newFields);
         updateFormFields(newFields);

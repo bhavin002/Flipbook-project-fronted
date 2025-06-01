@@ -233,7 +233,8 @@ function Question({ form, questionIndex, removeQuestion }) {
           type="button"
           size="sm"
           onClick={addOption}
-          disabled={options.length >= 26}
+
+          disabled={options.length >= 6}
           className="text-gray-600"
         >
           <Plus className="h-4 w-4 mr-1" />

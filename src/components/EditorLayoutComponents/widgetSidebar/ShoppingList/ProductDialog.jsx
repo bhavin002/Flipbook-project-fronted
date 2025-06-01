@@ -289,8 +289,8 @@ export default function ProductDialog({
                         Description
                     </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="lg:max-h-[calc(100vh-150px)] max-lg:max-h-[calc(100vh-300px)] overflow-auto">
+                <form className="overflow-auto" onSubmit={handleSubmit(onSubmit)}>
+                    <div className="lg:max-h-[calc(100vh-150px)]  max-lg:max-h-[calc(100vh-300px)] overflow-auto">
                         <div className="space-y-2 px-1">
                             <div className="flex gap-4">
                                 <div className="w-[60%]">
