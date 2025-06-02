@@ -15,7 +15,6 @@ export function CurrencyProvider({ children }) {
       try {
         setLoading(true);
         const response = await GetCurrencyApi();
-        console.log("response fetchCurrencies??", response);
 
         // Transform API data to the format needed by components
         const formattedCurrencies = response.data.map(currency => ({

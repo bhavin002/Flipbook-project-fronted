@@ -118,7 +118,7 @@ export default function SettingWorkspace() {
             setWorkspaceData(prev => ({ ...prev, logo: null }));
             
             toast.success("Logo removed successfully", {
-                description: response.message || "Logo removed successfully"
+                description: response.message
             });
         } catch (error) {
             toast.error("Failed to remove logo", {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Accordion,
     AccordionContent,
@@ -21,11 +21,37 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getData } from '@/utils/datas';
+import { GetFlipbookPreviewSettingByIdApi } from '@/service/flipbookPreviewSetting.service';
+import { toast } from 'sonner';
+import { useParams } from 'react-router-dom';
 
 export default function Customize() {
     const [activeValues, setActiveValues] = useState(["appearance"]);
+    const [settings, setSettings] = useState(null);
+    const [hasFetched, setHasFetched] = useState(false);
+    const { id: flipbookId } = useParams();
 
-    const menuItems = getData('customizeMenuItems');
+    const menuItems = getData('customizeMenuItems').map((item) => ({
+        ...item,
+        component: React.cloneElement(item.component, { flipbookId, settings }),
+    }));
+
+    useEffect(() => {
+        const fetchSettings = async () => {
+            if (!flipbookId || hasFetched || activeValues.length === 0) return;
+            try {
+                const response = await GetFlipbookPreviewSettingByIdApi(flipbookId);
+                setSettings(response.data);
+                setHasFetched(true);
+            } catch (error) {
+                toast.error('Failed to fetch flipbook settings', {
+                    description: error.message,
+                });
+            }
+        };
+
+        fetchSettings();
+    }, [flipbookId, activeValues, hasFetched]);
 
     const handleValueChange = (values) => {
         setActiveValues(values);
@@ -98,8 +124,7 @@ export default function Customize() {
                     </TabsList>
                     <TabsContent value="desktop" className="p-4 pb-0 flex-grow">
                         <div className="h-full w-full flex flex-col">
-                            <div className="h-[90%] w-full bg-gray-500">
-                            </div>
+                            <div className="h-[90%] w-full bg-gray-500"></div>
                             <div className="flex max-lg:p-4 flex-wrap md:justify-start justify-center items-center flex-grow gap-4">
                                 <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">View live</a>
                                 <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit</a>
@@ -111,8 +136,7 @@ export default function Customize() {
                     </TabsContent>
                     <TabsContent value="mobile" className="p-4 pb-0 flex-grow w-full">
                         <div className="h-full w-full flex flex-col">
-                            <div className="h-[90%] md:w-[50%] md:m-auto bg-gray-500">
-                            </div>
+                            <div className="h-[90%] md:w-[50%] md:m-auto bg-gray-500"></div>
                             <div className="flex p-4 flex-wrap justify-center items-center flex-grow gap-4">
                                 <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">View live</a>
                                 <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit</a>
