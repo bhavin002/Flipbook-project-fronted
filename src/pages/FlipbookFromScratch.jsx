@@ -25,7 +25,14 @@ export default function FlipbookFromScratch() {
             try {
                 setIsLoading(true);
                 const response = await GetPageLayoutsApi();
-                setTemplates(response.data);
+
+                if (response.data && response.data.length) {
+                    //  select the first template if no template is selected
+                    setSelectedTemplate(response.data[0].name);
+                    setWidth(response.data[0].width || 1224);
+                    setHeight(response.data[0].height || 792);
+                    setTemplates(response.data);
+                }
             } catch (error) {
                 toast.error("Page Layout fetch failed", {
                     description: error.message || "Oops! Something went wrong.",
@@ -39,9 +46,9 @@ export default function FlipbookFromScratch() {
 
     const pageLayoutData = getData("pageLayoutData");
 
-    const [width, setWidth] = useState(1123);
-    const [height, setHeight] = useState(793);
     const [selectedTemplate, setSelectedTemplate] = useState("Tabloid");
+    const [width, setWidth] = useState(selectedTemplate.width || 1224);
+    const [height, setHeight] = useState(selectedTemplate.height || 792);
 
     const handleTemplateSelect = (template) => {
         setSelectedTemplate(template.name);
