@@ -1,12 +1,11 @@
 import { Label } from "@/components/ui/label"
-import { Info } from "lucide-react"
+import { Info, Trash2 } from "lucide-react"
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Checkbox } from "@/components/ui/checkbox"
 import SelectLogoDialog from "../AppLayoutComponents/Sidebar/Setting/Workspace/SelectLogoDialog"
 import { Input } from "../ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -14,11 +13,34 @@ import { useState } from "react"
 import ColorPaletteSelector from "./Branding/ColorPaletteSelector"
 import { Button } from '@/components/ui/button';
 import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings";
+import { toast } from "sonner";
 
 export default function Branding() {
     const { isFieldEnabled } = useFlipbookPreviewSettings();
     const [selectedBackground, setSelectedBackground] = useState("solidcolor")
     const [playerAccentColor, setPlayerAccentColor] = useState('#c1080b');
+    const [selectedLogo, setSelectedLogo] = useState(null);
+    const [isLogoLoading, setIsLogoLoading] = useState(false);
+
+    const handleLogoSelect = (logo) => {
+        setSelectedLogo(logo);
+    };
+
+    const handleLogoDelete = async () => {
+        try {
+            setIsLogoLoading(true);
+            
+            // Simulate API call - replace with actual API
+            
+            setSelectedLogo(null);
+        } catch (error) {
+            toast.error("Failed to remove logo", {
+                description: error.message || "Something went wrong"
+            });
+        } finally {
+            setIsLogoLoading(false);
+        }
+    };
 
     const renderBackgroundContent = (selectedBackground) => {
         switch (selectedBackground) {
@@ -50,39 +72,52 @@ export default function Branding() {
     return (
         <>
             <div className="space-y-4 ">
-                <div className="flex items-center gap-2 text-white">
-                    <Checkbox
-                        id="add-logo"
-                        className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
-                        disabled={!isFieldEnabled("brandLogoId")}
-                    />
-                    <Label htmlFor="add-logo" className="text-sm font-medium leading-none">
-                        Add your logo
-                    </Label>
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Info className="h-4 w-4 cursor-pointer" />
-                            </TooltipTrigger>
-                            <TooltipContent
-                                side="right"
-                                align="center"
-                                className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                            >
-                                <p className="text-sm">Personalize your flipbook using your own logo.</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </div>
-                {
-                    isFieldEnabled("brandLogoId") ? (
-                        <SelectLogoDialog mode="replace" />
-                    ) : (
-                        <Button variant="outline" className="text-primary" disabled={true}>
-                            Select logo
-                        </Button>
-                    )
-                }
+                {selectedLogo ? (
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-4">
+                            <div className="relative w-16 h-12 bg-white border rounded overflow-hidden">
+                                <div
+                                    className="absolute inset-0 bg-center bg-repeat opacity-20"
+                                    style={{ backgroundImage: 'url(https://cdn.flipsnack.com/site/images/transparent-bg-pattern.png)' }}
+                                />
+                                <img
+                                    src={selectedLogo?.src || brandingData?.logo}
+                                    alt={selectedLogo?.alt || `${brandingData?.name} logo`}
+                                    className="w-full h-full object-contain relative z-10"
+                                />
+                            </div>
+                            <div className="flex gap-2 items-center">
+                                {isFieldEnabled("brandLogoId") ? (
+                                    <SelectLogoDialog 
+                                        onLogoSelect={handleLogoSelect}
+                                        mode="replace" 
+                                    />
+                                ) : (
+                                    <Button variant="outline" className="text-primary" disabled={true}>
+                                        Replace logo
+                                    </Button>
+                                )}
+                                <Button
+                                    variant="outline"
+                                    size="icon"
+                                    onClick={handleLogoDelete}
+                                    className="h-8 w-8"
+                                    disabled={isLogoLoading || !isFieldEnabled("brandLogoId")}
+                                >
+                                    <Trash2 size={16} />
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div>
+                        <SelectLogoDialog 
+                                onLogoSelect={handleLogoSelect}
+                                mode="select" 
+                                disabled={!isFieldEnabled("brandLogoId")}
+                            />
+                    </div>
+                )}
             </div>
             <div className="flex flex-col gap-2 text-white">
                 <Label htmlFor="logo-link" className="text-sm font-medium leading-none">

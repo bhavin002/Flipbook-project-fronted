@@ -37,7 +37,6 @@ const SortableItem = ({
     onToggleCollapse,
     number,
     onNumberChange,
-    disabled
   }) => {
     const {
       attributes,

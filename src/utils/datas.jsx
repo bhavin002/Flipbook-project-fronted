@@ -1127,12 +1127,12 @@ const customizeMenuItems = [
         label: "Lead form",
         component: <LeadForm />
     },
-    {
-        value: "accessibility",
-        icon: <PersonStanding />,
-        label: "Accessibility",
-        component: <Accessibility />
-    }
+    // {
+    //     value: "accessibility",
+    //     icon: <PersonStanding />,
+    //     label: "Accessibility",
+    //     component: <Accessibility />
+    // }
 ];
 
 const templates = [

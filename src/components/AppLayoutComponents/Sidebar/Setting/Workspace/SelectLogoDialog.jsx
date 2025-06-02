@@ -20,7 +20,7 @@ import { UploadBrandLogoApi, GetBrandLogosApi, DeleteBrandLogoApi } from "@/serv
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import LoadingButton from "@/utils/LoadingButton";
 
-export default function SelectLogoDialog({ onLogoSelect, mode = "select" }) {
+export default function SelectLogoDialog({ onLogoSelect, mode = "select", disabled = false }) {
     const [logos, setLogos] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
@@ -119,7 +119,7 @@ export default function SelectLogoDialog({ onLogoSelect, mode = "select" }) {
         <>
             <Dialog open={isDialogOpen} onOpenChange={handleDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="outline" className="text-primary">
+                    <Button variant="outline" className="text-primary" disabled={disabled}>
                         {isLoading ? <LoadingButton /> : (mode === "replace" ? "Replace logo" : "Select logo")}
                     </Button>
                 </DialogTrigger>
