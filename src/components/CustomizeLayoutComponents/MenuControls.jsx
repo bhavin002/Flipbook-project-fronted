@@ -78,7 +78,16 @@ export default function MenuControls({ flipbookId, settings }) {
         setCheckedItems((prev) => {
             const newState = { ...prev, [id]: !prev[id] };
             const fieldKey = checkboxOptions.find((opt) => opt.id === id).fieldKey;
-            handleUpdate({ [fieldKey]: newState[id] });
+            
+            // Special handling for background audio checkbox
+            if (id === "background-audio" && !newState[id]) {
+                // When unchecking background audio, also clear the audio file
+                handleUpdate({ [fieldKey]: newState[id], backgroundAudioFile: null });
+                setBackgroundAudioFile(null);
+            } else {
+                handleUpdate({ [fieldKey]: newState[id] });
+            }
+            
             return newState;
         });
     };
@@ -115,7 +124,9 @@ export default function MenuControls({ flipbookId, settings }) {
 
     const handleAudioDelete = async () => {
         try {
-            await UpdateFlipbookPreviewSettingApi(flipbookId, { backgroundAudioFile: null });
+            const formData = new FormData();
+            formData.append("backgroundAudioFile", null);
+            await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
             setBackgroundAudioFile(null);
         } catch (error) {
             toast.error("Failed to remove audio", { description: error.message });

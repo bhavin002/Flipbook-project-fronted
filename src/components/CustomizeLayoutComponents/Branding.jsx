@@ -313,7 +313,7 @@ export default function Branding({ flipbookId, settings }) {
                                             id="background-image-replace"
                                             disabled={!isFieldEnabled("backgroundColor") || isImageUploading}
                                         />
-                                        <p className="text-sm text-white w-[160px] truncate">{settings?.backgroundImageFileName}</p>
+                                        <p className="text-sm text-white w-[160px] truncate">{settings?.backgroundImageName}</p>
                                         <Select
                                             value={backgroundImageType}
                                             onValueChange={handleBackgroundImageTypeChange}
