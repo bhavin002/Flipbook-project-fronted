@@ -210,7 +210,7 @@ const SortableField = ({
     );
 };
 
-export default function DynamicForm({ fields: initialFields = [], onChange = () => onChange, disabled }) {
+export default function DynamicForm({ fields: initialFields = [], onChange = () => onChange, onBlur = () => onBlur, disabled }) {
     console.log("initialFields", initialFields);
     const [fields, setFields] = useState([]);
     const [dropdownOptions, setDropdownOptions] = useState({});
@@ -265,6 +265,7 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
                 const newIndex = items.findIndex((item) => item.id === over?.id);
                 const newFields = arrayMove(items, oldIndex, newIndex);
                 onChange(newFields);
+                onBlur();
                 return newFields;
             });
         }
@@ -287,6 +288,7 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
                             : field
                     );
                     onChange(newFields);
+                    onBlur();
                     return newFields;
                 });
                 return { ...prevOptions, [fieldId]: newOptions };
@@ -316,6 +318,7 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
         setFields(newFields);
         setNextFieldId(nextFieldId + 1);
         onChange(newFields);
+        onBlur();
 
         if (fieldConfig?.isDropdown) {
             setDropdownOptions({
@@ -333,6 +336,7 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
         const newFields = fields.map((field) => (field.id === id ? { ...field, [key]: value } : field));
         setFields(newFields);
         onChange(newFields);
+        onBlur();
     };
 
     const updateFieldType = (id, type) => {
@@ -340,8 +344,6 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
             const newFields = prevFields.map((field) => {
                 if (field.id === id) {
                     const newField = { ...field, type };
-                    // If changing to custom_input and no options exist, keep it as regular input
-                    // If changing away from custom_input that had dropdown options, clear them
                     if (type !== "custom_input" && field.options.length > 1) {
                         const newOptions = { ...dropdownOptions };
                         delete newOptions[id];
@@ -353,6 +355,7 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
                 return field;
             });
             onChange(newFields);
+            onBlur();
             return newFields;
         });
     };
@@ -363,12 +366,14 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
         );
         setFields(newFields);
         onChange(newFields);
+        onBlur();
     };
 
     const deleteField = (id) => {
         const newFields = fields.filter((field) => field.id !== id);
         setFields(newFields);
         onChange(newFields);
+        onBlur();
         if (dropdownOptions[id]) {
             const newDropdownOptions = { ...dropdownOptions };
             delete newDropdownOptions[id];
@@ -388,6 +393,7 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
                 field.id === fieldId ? { ...field, options: newOptions.map((opt) => opt.value) } : field
             );
             onChange(newFields);
+            onBlur();
             return newFields;
         });
         setNextOptionId(nextOptionId + 1);
@@ -407,6 +413,7 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
                 field.id === fieldId ? { ...field, options: updatedOptions.map((opt) => opt.value) } : field
             );
             onChange(newFields);
+            onBlur();
             return newFields;
         });
     };
@@ -424,6 +431,7 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
                 field.id === fieldId ? { ...field, options: updatedOptions.map((opt) => opt.value) } : field
             );
             onChange(newFields);
+            onBlur();
             return newFields;
         });
     };

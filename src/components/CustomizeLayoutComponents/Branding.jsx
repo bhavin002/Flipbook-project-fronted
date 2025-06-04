@@ -25,7 +25,7 @@ import { BackgroundColorType, BackgroundImageType } from "@/utils/enum";
 import { z } from "zod";
 import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
 
-const urlSchema = z.string().url();
+const urlSchema = z.string().regex(/^$|^(?!https?\.)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$|^https?:\/\/[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$/).or(z.literal(''));
 const colorSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid 6-character hex color code");
 
 export default function Branding() {
@@ -39,6 +39,7 @@ export default function Branding() {
     const [selectedLogo, setSelectedLogo] = useState(null);
     const [isLogoLoading, setIsLogoLoading] = useState(false);
     const [logoLink, setLogoLink] = useState("");
+    const [localChanges, setLocalChanges] = useState({});
 
     const [backgroundImage, setBackgroundImage] = useState(null);
     const [backgroundImageType, setBackgroundImageType] = useState("scale-crop");
@@ -187,18 +188,30 @@ export default function Branding() {
         }
         value = value.slice(0, 7);
         setPlayerAccentColor(value);
+        setLocalChanges(prev => ({ ...prev, playerAccentColor: value }));
+    };
 
-        if (isValidColor(value) && value !== originalPlayerAccentColor) {
-            setHasColorChanged(true);
-            updateSettings({ playerAccentColorHash: value });
-        } else {
-            setHasColorChanged(value !== originalPlayerAccentColor);
+    const handlePlayerAccentColorBlur = () => {
+        if (localChanges.playerAccentColor !== undefined) {
+            const value = localChanges.playerAccentColor;
+            if (isValidColor(value) && value !== originalPlayerAccentColor) {
+                setHasColorChanged(true);
+                updateSettings({ playerAccentColorHash: value });
+            } else {
+                setHasColorChanged(value !== originalPlayerAccentColor);
+            }
+            setLocalChanges(prev => {
+                const newChanges = { ...prev };
+                delete newChanges.playerAccentColor;
+                return newChanges;
+            });
         }
     };
 
     const handleColorPickerChange = (e) => {
         const value = e.target.value.toUpperCase();
         setPlayerAccentColor(value);
+        setLocalChanges(prev => ({ ...prev, playerAccentColor: value }));
 
         if (value !== originalPlayerAccentColor) {
             setHasColorChanged(true);
@@ -223,28 +236,23 @@ export default function Branding() {
     const handleLogoLinkChange = (e) => {
         const value = e.target.value;
         setLogoLink(value);
-
-        if (value && isValidUrl(value)) {
-            const formattedUrl = formatUrl(value);
-            updateSettings({ logoLink: formattedUrl });
-            if (formattedUrl !== value) {
-                setLogoLink(formattedUrl);
-            }
-        }
+        setLocalChanges(prev => ({ ...prev, logoLink: value }));
     };
 
     const handleLogoLinkBlur = (e) => {
         const value = e.target.value;
-        if (value && !value.startsWith('http')) {
+        if (value) {
             const formattedUrl = formatUrl(value);
-            setLogoLink(formattedUrl);
             if (isValidUrl(formattedUrl)) {
+                setLogoLink(formattedUrl);
                 updateSettings({ logoLink: formattedUrl });
             }
-        } else if (value && isValidUrl(value)) {
-            const formattedUrl = formatUrl(value);
-            updateSettings({ logoLink: formattedUrl });
         }
+        setLocalChanges(prev => {
+            const newChanges = { ...prev };
+            delete newChanges.logoLink;
+            return newChanges;
+        });
     };
 
     const renderBackgroundContent = (selectedBackground) => {
@@ -439,6 +447,7 @@ export default function Branding() {
                     type="text"
                     value={playerAccentColor}
                     onChange={handlePlayerAccentColorChange}
+                    onBlur={handlePlayerAccentColorBlur}
                     className={`${playerAccentColor && !isValidColor(playerAccentColor) ? 'border-red-500' : ''}`}
                     disabled={!isFieldEnabled("playerAccentColorHash")}
                     placeholder="#C1080B"
