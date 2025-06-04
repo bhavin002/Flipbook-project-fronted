@@ -21,8 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus, ChevronRight, GripVertical, Trash2 } from 'lucide-react';
 import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings";
-import { UpdateFlipbookPreviewSettingApi } from "@/service/flipbookPreviewSetting.service";
-import { toast } from "sonner";
+import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
 
 const SortableItem = ({
   id,
@@ -31,6 +30,7 @@ const SortableItem = ({
   depth,
   onDelete,
   onTitleChange,
+  onTitleBlur,
   onAddChild,
   canAddChild,
   hasChildren,
@@ -38,6 +38,7 @@ const SortableItem = ({
   onToggleCollapse,
   number,
   onNumberChange,
+  onNumberBlur,
 }) => {
   const {
       attributes,
@@ -62,13 +63,6 @@ const SortableItem = ({
       }
   };
 
-  // Handle blur event to set default value to "1" if empty
-  const handleBlur = () => {
-      if (number === '') {
-          onNumberChange('1');
-      }
-  };
-
   return (
       <div ref={setNodeRef} style={style} className="flex items-center gap-2 mb-2 group text-white">
           {hasChildren && (
@@ -89,7 +83,7 @@ const SortableItem = ({
               type="text"
               value={number}
               onChange={handleNumberChange}
-              onBlur={handleBlur}
+              onBlur={onNumberBlur}
               className="w-14 mr-2"
               placeholder="0"
               pattern="\d*\.?\d*"
@@ -99,12 +93,14 @@ const SortableItem = ({
               placeholder={type === 'chapter' ? 'Chapter title' : 'Subchapter title'}
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
+              onBlur={onTitleBlur}
               className="md:w-[300px] placeholder:text-[#d8dce3]"
           />
           {canAddChild && (
               <Button
                   variant="ghost"
                   size="icon"
+                  type="button"
                   className="h-8 w-8 hover:bg-sidebar hover:text-white"
                   onClick={() => onAddChild(id)}
               >
@@ -118,16 +114,21 @@ const SortableItem = ({
   );
 };
 
-export default function TableOfContentsComponent({ flipbookId, settings }) {
+export default function TableOfContentsComponent() {
+    const { settings, updateSettings, latestSettings } = useFlipbookSettings();
     const { isFieldEnabled } = useFlipbookPreviewSettings();
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
     const [isActivated, setIsActivated] = useState(true);
     const [items, setItems] = useState([]);
     const [collapsedChapters, setCollapsedChapters] = useState({});
+    const [localChanges, setLocalChanges] = useState({});
 
     useEffect(() => {
-        if (settings) {
-            setIsActivated(settings.isTableOfContent || false);
-            const tocItems = (settings.tableOfContents || []).flatMap((chapter, chapterIndex) => [
+        const dataToUse = isFirstLoad ? latestSettings : settings;
+        
+        if (dataToUse) {
+            setIsActivated(dataToUse.isTableOfContent || false);
+            const tocItems = (dataToUse.tableOfContents || []).flatMap((chapter, chapterIndex) => [
                 {
                     id: chapter._id,
                     type: 'chapter',
@@ -148,6 +149,10 @@ export default function TableOfContentsComponent({ flipbookId, settings }) {
                 })),
             ]);
             setItems(tocItems);
+
+            if (isFirstLoad) {
+                setIsFirstLoad(false);
+            }
         }
     }, [settings]);
 
@@ -156,22 +161,6 @@ export default function TableOfContentsComponent({ flipbookId, settings }) {
         useSensor(KeyboardSensor)
     );
 
-    const handleUpdate = async (payload) => {
-        try {
-            const formData = new FormData();
-            Object.entries(payload).forEach(([key, value]) => {
-                if (key === 'tableOfContents') {
-                    formData.append(key, JSON.stringify(value));
-                } else {
-                    formData.append(key, value);
-                }
-            });
-            await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
-        } catch (error) {
-            toast.error("Failed to update table of contents", { description: error.message });
-        }
-    };
-
     const handleDragEnd = (event) => {
         const { active, over } = event;
         if (active.id !== over?.id) {
@@ -179,7 +168,7 @@ export default function TableOfContentsComponent({ flipbookId, settings }) {
                 const oldIndex = items.findIndex((item) => item.id === active.id);
                 const newIndex = items.findIndex((item) => item.id === over?.id);
                 const newItems = arrayMove(items, oldIndex, newIndex);
-                handleUpdate({ tableOfContents: convertToApiFormat(newItems) });
+                updateSettings({ tableOfContents: convertToApiFormat(newItems) });
                 return newItems;
             });
         }
@@ -197,7 +186,7 @@ export default function TableOfContentsComponent({ flipbookId, settings }) {
         };
         const newItems = [...items, newItem];
         setItems(newItems);
-        handleUpdate({ tableOfContents: convertToApiFormat(newItems) });
+        updateSettings({ tableOfContents: convertToApiFormat(newItems) });
     };
 
     const deleteItem = (id) => {
@@ -207,21 +196,44 @@ export default function TableOfContentsComponent({ flipbookId, settings }) {
         const newCollapsed = { ...collapsedChapters };
         delete newCollapsed[id];
         setCollapsedChapters(newCollapsed);
-        handleUpdate({ tableOfContents: convertToApiFormat(newItems) });
+        updateSettings({ tableOfContents: convertToApiFormat(newItems) });
     };
 
     const updateItemTitle = (id, newTitle) => {
-        const newItems = items.map((item) => (item.id === id ? { ...item, title: newTitle } : item));
-        setItems(newItems);
-        handleUpdate({ tableOfContents: convertToApiFormat(newItems) });
+        setItems(items.map((item) => (item.id === id ? { ...item, title: newTitle } : item)));
+        setLocalChanges(prev => ({ ...prev, [id]: { ...prev[id], title: newTitle } }));
+    };
+
+    const handleTitleBlur = (id) => {
+        if (localChanges[id]?.title !== undefined) {
+            const newItems = items.map((item) => 
+                item.id === id ? { ...item, title: localChanges[id].title } : item
+            );
+            updateSettings({ tableOfContents: convertToApiFormat(newItems) });
+            setLocalChanges(prev => {
+                const newChanges = { ...prev };
+                delete newChanges[id];
+                return newChanges;
+            });
+        }
     };
 
     const updateItemNumber = (id, newNumber) => {
-        const newItems = items.map((item) => (item.id === id ? { ...item, number: newNumber } : item));
-        setItems(newItems);
-        // Only call API if the number is not empty or after blur it will be set to "1"
-        if (newNumber !== '') {
-            handleUpdate({ tableOfContents: convertToApiFormat(newItems) });
+        setItems(items.map((item) => (item.id === id ? { ...item, number: newNumber } : item)));
+        setLocalChanges(prev => ({ ...prev, [id]: { ...prev[id], number: newNumber } }));
+    };
+
+    const handleNumberBlur = (id) => {
+        if (localChanges[id]?.number !== undefined) {
+            const newItems = items.map((item) => 
+                item.id === id ? { ...item, number: localChanges[id].number || '1' } : item
+            );
+            updateSettings({ tableOfContents: convertToApiFormat(newItems) });
+            setLocalChanges(prev => {
+                const newChanges = { ...prev };
+                delete newChanges[id];
+                return newChanges;
+            });
         }
     };
 
@@ -290,7 +302,7 @@ export default function TableOfContentsComponent({ flipbookId, settings }) {
                     onCheckedChange={() => {
                         setIsActivated((prev) => {
                             const newState = !prev;
-                            handleUpdate({ isTableOfContent: newState });
+                            updateSettings({ isTableOfContent: newState });
                             if (newState && items.length === 0) {
                                 addNewItem();
                             }
@@ -327,7 +339,9 @@ export default function TableOfContentsComponent({ flipbookId, settings }) {
                                         number={item.number}
                                         onDelete={() => deleteItem(item.id)}
                                         onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
+                                        onTitleBlur={() => handleTitleBlur(item.id)}
                                         onNumberChange={(newNumber) => updateItemNumber(item.id, newNumber)}
+                                        onNumberBlur={() => handleNumberBlur(item.id)}
                                         onAddChild={() => addChildItem(item.id)}
                                         canAddChild={item.type === 'chapter'}
                                         hasChildren={item.type === 'chapter' && hasChildren(item.id)}
@@ -340,6 +354,7 @@ export default function TableOfContentsComponent({ flipbookId, settings }) {
                     </DndContext>
                     <Button
                         variant="outline"
+                        type="button"
                         className="mt-2 w-full text-primary"
                         onClick={() => addNewItem()}
                         disabled={!isFieldEnabled("tableOfContents")}

@@ -21,37 +21,10 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getData } from '@/utils/datas';
-import { GetFlipbookPreviewSettingByIdApi } from '@/service/flipbookPreviewSetting.service';
-import { toast } from 'sonner';
-import { useParams } from 'react-router-dom';
-
 export default function Customize() {
     const [activeValues, setActiveValues] = useState(["appearance"]);
-    const [settings, setSettings] = useState(null);
-    const [hasFetched, setHasFetched] = useState(false);
-    const { id: flipbookId } = useParams();
 
-    const menuItems = getData('customizeMenuItems').map((item) => ({
-        ...item,
-        component: React.cloneElement(item.component, { flipbookId, settings }),
-    }));
-
-    useEffect(() => {
-        const fetchSettings = async () => {
-            if (!flipbookId || hasFetched || activeValues.length === 0) return;
-            try {
-                const response = await GetFlipbookPreviewSettingByIdApi(flipbookId);
-                setSettings(response.data);
-                setHasFetched(true);
-            } catch (error) {
-                toast.error('Failed to fetch flipbook settings', {
-                    description: error.message,
-                });
-            }
-        };
-
-        fetchSettings();
-    }, [flipbookId, activeValues, hasFetched]);
+    const menuItems = getData('customizeMenuItems')
 
     const handleValueChange = (values) => {
         setActiveValues(values);

@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Info } from "lucide-react";
@@ -17,15 +18,14 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
-import { useState, useEffect } from "react";
 import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings";
-import { UpdateFlipbookPreviewSettingApi } from "@/service/flipbookPreviewSetting.service";
-import { toast } from "sonner";
 import { PlayerSkin, PageTransition, LayoutStyle } from "@/utils/enum";
+import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
 
-export default function Appearance({ flipbookId, settings }) {
-    console.log("Appearance settings >?>?>?>", settings)
+export default function Appearance() {
+    const { settings, updateSettings, latestSettings } = useFlipbookSettings();
     const { isFieldEnabled } = useFlipbookPreviewSettings();
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
 
     const checkboxOptions = [
         { id: "automatic-transition", label: "Automatic transition", isShowTooltip: false, fieldKey: "automaticTransition" },
@@ -36,7 +36,6 @@ export default function Appearance({ flipbookId, settings }) {
         { id: "highlights", label: "Highlights on links", isShowTooltip: true, tooltip: "Make your links pop by highlighting them.", fieldKey: "highlightsOnLink" },
     ];
 
-    // Create proper mappings between enum values and select values
     const layoutStyleMapping = {
         [LayoutStyle.SMART_VIEW]: "smart-view",
         [LayoutStyle.ONE_PAGE]: "single-page-view",
@@ -63,66 +62,57 @@ export default function Appearance({ flipbookId, settings }) {
     const [automaticTransitionDelay, setAutomaticTransitionDelay] = useState(7);
 
     useEffect(() => {
-        if (settings) {
+        const dataToUse = isFirstLoad ? latestSettings : settings;
+        
+        if (dataToUse) {
             setCheckedItems({
-                "automatic-transition": settings.automaticTransition || false,
-                "flip-sounds": settings.flipSound || false,
-                "right-to-left": settings.rigthToLeftOrientation || false,
-                "shadow": settings.shadowOnPages || false,
-                "animate": settings.animateInteraction || false,
-                "highlights": settings.highlightsOnLink || false,
+                "automatic-transition": dataToUse.automaticTransition || false,
+                "flip-sounds": dataToUse.flipSound || false,
+                "right-to-left": dataToUse.rigthToLeftOrientation || false,
+                "shadow": dataToUse.shadowOnPages || false,
+                "animate": dataToUse.animateInteraction || false,
+                "highlights": dataToUse.highlightsOnLink || false,
             });
-            setPlayerSkin(Object.keys(PlayerSkin)[settings.playerSkin]?.toLowerCase() || "classic");
-            setPageTransition(Object.keys(PageTransition)[settings.pageTransition]?.toLowerCase() || "flip");
-
-            // Fixed layout style mapping
-            setLayoutStyle(layoutStyleMapping[settings.layoutStyle] || "smart-view");
-
-            setAutomaticTransitionDelay(settings.automaticTransitionDelay || 7);
+            setPlayerSkin(Object.keys(PlayerSkin)[dataToUse.playerSkin]?.toLowerCase() || "classic");
+            setPageTransition(Object.keys(PageTransition)[dataToUse.pageTransition]?.toLowerCase() || "flip");
+            setLayoutStyle(layoutStyleMapping[dataToUse.layoutStyle] || "smart-view");
+            setAutomaticTransitionDelay(dataToUse.automaticTransitionDelay || 7);
+            
+            if (isFirstLoad) {
+                setIsFirstLoad(false);
+            }
         }
     }, [settings]);
 
-    const handleUpdate = async (payload) => {
-        try {
-            const formData = new FormData();
-            Object.entries(payload).forEach(([key, value]) => {
-                formData.append(key, value);
-            });
-            await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
-        } catch (error) {
-            toast.error("Failed to update settings", { description: error.message });
-        }
-    };
-
+    // Rest of the component remains the same...
     const handleCheckboxChange = (id) => {
         setCheckedItems((prev) => {
             const newState = { ...prev, [id]: !prev[id] };
             const fieldKey = checkboxOptions.find((opt) => opt.id === id).fieldKey;
-            handleUpdate({ [fieldKey]: newState[id] });
+            updateSettings({ [fieldKey]: newState[id] });
             return newState;
         });
     };
 
     const handlePlayerSkinChange = (value) => {
         setPlayerSkin(value);
-        handleUpdate({ playerSkin: PlayerSkin[value.toUpperCase()] });
+        updateSettings({ playerSkin: PlayerSkin[value.toUpperCase()] });
     };
 
     const handlePageTransitionChange = (value) => {
         setPageTransition(value);
-        handleUpdate({ pageTransition: PageTransition[value.toUpperCase()] });
+        updateSettings({ pageTransition: PageTransition[value.toUpperCase()] });
     };
 
     const handleLayoutStyleChange = (value) => {
         setLayoutStyle(value);
-        // Use the reverse mapping to get the correct enum value
-        handleUpdate({ layoutStyle: reverseLayoutStyleMapping[value] });
+        updateSettings({ layoutStyle: reverseLayoutStyleMapping[value] });
     };
 
     const handleDelayChange = (e) => {
         const value = Number(e.target.value);
         setAutomaticTransitionDelay(value);
-        handleUpdate({ automaticTransitionDelay: value });
+        updateSettings({ automaticTransitionDelay: value });
     };
 
     return (

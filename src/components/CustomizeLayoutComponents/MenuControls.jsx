@@ -6,11 +6,13 @@ import { useState, useEffect } from "react";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Button } from "../ui/button";
 import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings";
-import { UpdateFlipbookPreviewSettingApi } from "@/service/flipbookPreviewSetting.service";
 import { toast } from "sonner";
+import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
 
-export default function MenuControls({ flipbookId, settings }) {
+export default function MenuControls() {
+    const { settings, updateSettings, latestSettings } = useFlipbookSettings();
     const { isFieldEnabled } = useFlipbookPreviewSettings();
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
 
     const checkboxOptions = [
         { id: "controls-normal-mode", label: "Controls in normal mode", isShowTooltip: true, tooltip: "Display your control settings without having to enter fullscreen mode.", fieldKey: "controlInNormalMode" },
@@ -42,37 +44,31 @@ export default function MenuControls({ flipbookId, settings }) {
     const [backgroundAudioFile, setBackgroundAudioFile] = useState(null);
 
     useEffect(() => {
-        if (Object.keys(settings).length > 0) {
+        const dataToUse = isFirstLoad ? latestSettings : settings;
+        
+        if (dataToUse) {
             setCheckedItems({
-                "controls-normal-mode": settings.controlInNormalMode,
-                "navigation-bar": settings.navigationBar,
-                "navigation-arrows": settings.navigationArrow,
-                "share-options": settings.shareOptions,
-                "pages-overview": settings.pageOverview,
-                "allow-fullscreen": settings.allowFullScreen,
-                "download-pdf": settings.downloadPDF,
-                "print-pdf": settings.printPDF,
-                "search": settings.search,
-                "background-audio": settings.backgroundAudio,
+                "controls-normal-mode": dataToUse.controlInNormalMode,
+                "navigation-bar": dataToUse.navigationBar,
+                "navigation-arrows": dataToUse.navigationArrow,
+                "share-options": dataToUse.shareOptions,
+                "pages-overview": dataToUse.pageOverview,
+                "allow-fullscreen": dataToUse.allowFullScreen,
+                "download-pdf": dataToUse.downloadPDF,
+                "print-pdf": dataToUse.printPDF,
+                "search": dataToUse.search,
+                "background-audio": dataToUse.backgroundAudio,
             });
-            setIsAudioLoop(settings.isAudioLoop);
-            setIsAutoPlay(settings.isAutoPlay);
-            setBackgroundAudioFile(settings.backgroundAudioFileName && settings.backgroundAudioLink ? 
-                { name: settings.backgroundAudioFileName, url: settings.backgroundAudioLink } : null);
+            setIsAudioLoop(dataToUse.isAudioLoop);
+            setIsAutoPlay(dataToUse.isAutoPlay);
+            setBackgroundAudioFile(dataToUse.backgroundAudioFileName && dataToUse.backgroundAudioLink ? 
+                { name: dataToUse.backgroundAudioFileName, url: dataToUse.backgroundAudioLink } : null);
+
+            if (isFirstLoad) {
+                setIsFirstLoad(false);
+            }
         }
     }, [settings]);
-
-    const handleUpdate = async (payload) => {
-        try {
-            const formData = new FormData();
-            Object.entries(payload).forEach(([key, value]) => {
-                formData.append(key, value);
-            });
-            await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
-        } catch (error) {
-            toast.error("Failed to update settings", { description: error.message });
-        }
-    };
 
     const handleCheckboxChange = (id) => {
         setCheckedItems((prev) => {
@@ -82,10 +78,10 @@ export default function MenuControls({ flipbookId, settings }) {
             // Special handling for background audio checkbox
             if (id === "background-audio" && !newState[id]) {
                 // When unchecking background audio, also clear the audio file
-                handleUpdate({ [fieldKey]: newState[id], backgroundAudioFile: null });
+                updateSettings({ [fieldKey]: newState[id], backgroundAudioFile: null });
                 setBackgroundAudioFile(null);
             } else {
-                handleUpdate({ [fieldKey]: newState[id] });
+                updateSettings({ [fieldKey]: newState[id] });
             }
             
             return newState;
@@ -94,14 +90,14 @@ export default function MenuControls({ flipbookId, settings }) {
 
     const handleAudioLoopChange = () => {
         setIsAudioLoop((prev) => {
-            handleUpdate({ isAudioLoop: !prev });
+            updateSettings({ isAudioLoop: !prev });
             return !prev;
         });
     };
 
     const handleAutoPlayChange = () => {
         setIsAutoPlay((prev) => {
-            handleUpdate({ isAutoPlay: !prev });
+            updateSettings({ isAutoPlay: !prev });
             return !prev;
         });
     };
@@ -113,7 +109,7 @@ export default function MenuControls({ flipbookId, settings }) {
                 const formData = new FormData();
                 formData.append("backgroundAudioFile", file);
                 formData.append("backgroundAudio", true);
-                await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
+                updateSettings({ backgroundAudioFile: file, backgroundAudio: true });
                 setBackgroundAudioFile({ name: file.name, url: URL.createObjectURL(file) });
                 setCheckedItems(prev => ({ ...prev, "background-audio": true }));
             } catch (error) {
@@ -124,9 +120,7 @@ export default function MenuControls({ flipbookId, settings }) {
 
     const handleAudioDelete = async () => {
         try {
-            const formData = new FormData();
-            formData.append("backgroundAudioFile", null);
-            await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
+            updateSettings({ backgroundAudioFile: null });
             setBackgroundAudioFile(null);
         } catch (error) {
             toast.error("Failed to remove audio", { description: error.message });

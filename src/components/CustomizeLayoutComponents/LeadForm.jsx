@@ -10,16 +10,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import DynamicForm from "./LeadForm/DynamicForm";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings";
-import { UpdateFlipbookPreviewSettingApi } from "@/service/flipbookPreviewSetting.service";
-import { toast } from "sonner";
 import { z } from "zod";
+import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
 
 const urlSchema = z.string().url();
 
-export default function LeadForm({ flipbookId, settings }) {
+export default function LeadForm() {
+    const { settings, updateSettings, latestSettings } = useFlipbookSettings();
     const { isFieldEnabled } = useFlipbookPreviewSettings();
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
     const [isLeadFormActivated, setIsLeadFormActivated] = useState(false);
     const [leadFormState, setLeadFormState] = useState({
         title: "",
@@ -34,6 +35,7 @@ export default function LeadForm({ flipbookId, settings }) {
         gdprCompliancyCheck: false,
         allowSkip: false,
     });
+    const [localChanges, setLocalChanges] = useState({});
 
     const isValidUrl = (url) => {
         try {
@@ -73,20 +75,22 @@ export default function LeadForm({ flipbookId, settings }) {
     };
 
     useEffect(() => {
-        if (settings && settings.leadForm) {
-            setIsLeadFormActivated(settings.isLeadForm || false);
+        const dataToUse = isFirstLoad ? latestSettings : settings;
+        
+        if (dataToUse && dataToUse.leadForm) {
+            setIsLeadFormActivated(dataToUse.isLeadForm || false);
             setLeadFormState({
-                title: settings.leadForm.title || "",
-                submitButtonText: settings.leadForm.submitButtonText || "Submit",
-                setOnPage: settings.leadForm.setOnPage || 1,
-                companyName: settings.leadForm.companyName || "",
-                privacyPolicyLink: settings.leadForm.privacyPolicyLink || "",
-                gdprMessage: settings.leadForm.gdprMessage || "",
-                skipButtonText: settings.leadForm.skipButtonText || "",
-                addPrivacyPolicy: settings.leadForm.addPrivacyPolicy || false,
-                gdprCompliancyCheck: settings.leadForm.gdprCompliancyCheck || false,
-                allowSkip: settings.leadForm.allowSkip || false,
-                fields: settings.leadForm.fields.map((field) => ({
+                title: dataToUse.leadForm.title || "",
+                submitButtonText: dataToUse.leadForm.submitButtonText || "Submit",
+                setOnPage: dataToUse.leadForm.setOnPage || 1,
+                companyName: dataToUse.leadForm.companyName || "",
+                privacyPolicyLink: dataToUse.leadForm.privacyPolicyLink || "",
+                gdprMessage: dataToUse.leadForm.gdprMessage || "",
+                skipButtonText: dataToUse.leadForm.skipButtonText || "",
+                addPrivacyPolicy: dataToUse.leadForm.addPrivacyPolicy || false,
+                gdprCompliancyCheck: dataToUse.leadForm.gdprCompliancyCheck || false,
+                allowSkip: dataToUse.leadForm.allowSkip || false,
+                fields: dataToUse.leadForm.fields.map((field) => ({
                     id: field._id || `field-${Date.now()}`,
                     name: field.label,
                     type: field.type,
@@ -94,52 +98,38 @@ export default function LeadForm({ flipbookId, settings }) {
                     options: field.options || [],
                 })),
             });
+
+            if (isFirstLoad) {
+                setIsFirstLoad(false);
+            }
         }
     }, [settings]);
-
-    const handleUpdate = useCallback(async (payload) => {
-        try {
-            const formData = new FormData();
-            Object.entries(payload).forEach(([key, value]) => {
-                if (key === "leadForm") {
-                    const leadFormData = {
-                        ...value,
-                        fields: value.fields.map((field) => ({
-                            ...field,
-                            _id: undefined,
-                        })),
-                    };
-                    formData.append(key, JSON.stringify(leadFormData));
-                } else {
-                    formData.append(key, value);
-                }
-            });
-            await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
-        } catch (error) {
-            toast.error("Failed to update lead form", { description: error.message });
-        }
-    }, [flipbookId]);
 
     const handleLeadFormToggle = () => {
         setIsLeadFormActivated((prev) => {
             const newState = !prev;
-            handleUpdate({ isLeadForm: newState });
-            return newState;
-        });
-    };
-
-    const updateLeadFormState = (updates) => {
-        setLeadFormState((prevState) => {
-            const newState = { ...prevState, ...updates };
-            handleUpdate({
-                leadForm: createLeadFormPayload(newState),
-            });
+            updateSettings({ isLeadForm: newState });
             return newState;
         });
     };
 
     const handleFieldChange = (field, value) => {
-        updateLeadFormState({ [field]: value });
+        setLeadFormState(prev => ({ ...prev, [field]: value }));
+        setLocalChanges(prev => ({ ...prev, [field]: value }));
+    };
+
+    const handleFieldBlur = (field) => {
+        if (localChanges[field] !== undefined) {
+            const updatedState = { ...leadFormState, [field]: localChanges[field] };
+            updateSettings({
+                leadForm: createLeadFormPayload(updatedState),
+            });
+            setLocalChanges(prev => {
+                const newChanges = { ...prev };
+                delete newChanges[field];
+                return newChanges;
+            });
+        }
     };
 
     const handlePrivacyPolicyToggle = () => {
@@ -153,7 +143,10 @@ export default function LeadForm({ flipbookId, settings }) {
             updates.privacyPolicyLink = leadFormState.privacyPolicyLink || "https://example.com/privacy-policy";
         }
 
-        updateLeadFormState(updates);
+        setLeadFormState(prev => ({ ...prev, ...updates }));
+        updateSettings({
+            leadForm: createLeadFormPayload({ ...leadFormState, ...updates }),
+        });
     };
 
     const handleGDPRToggle = () => {
@@ -166,7 +159,10 @@ export default function LeadForm({ flipbookId, settings }) {
             updates.gdprMessage = leadFormState.gdprMessage || "I agree to receive marketing materials.";
         }
 
-        updateLeadFormState(updates);
+        setLeadFormState(prev => ({ ...prev, ...updates }));
+        updateSettings({
+            leadForm: createLeadFormPayload({ ...leadFormState, ...updates }),
+        });
     };
 
     const handleAllowSkipToggle = () => {
@@ -179,27 +175,35 @@ export default function LeadForm({ flipbookId, settings }) {
             updates.skipButtonText = leadFormState.skipButtonText || "Maybe Later";
         }
 
-        updateLeadFormState(updates);
+        setLeadFormState(prev => ({ ...prev, ...updates }));
+        updateSettings({
+            leadForm: createLeadFormPayload({ ...leadFormState, ...updates }),
+        });
     };
 
     const handleDynamicFormChange = (newFields) => {
-        updateLeadFormState({ fields: newFields });
+        setLeadFormState(prev => ({ ...prev, fields: newFields }));
+        setLocalChanges(prev => ({ ...prev, fields: newFields }));
+    };
+
+    const handleDynamicFormBlur = () => {
+        if (localChanges.fields !== undefined) {
+            const updatedState = { ...leadFormState, fields: localChanges.fields };
+            updateSettings({
+                leadForm: createLeadFormPayload(updatedState),
+            });
+            setLocalChanges(prev => {
+                const newChanges = { ...prev };
+                delete newChanges.fields;
+                return newChanges;
+            });
+        }
     };
 
     const handlePrivacyPolicyLinkChange = (e) => {
         const value = e.target.value;
         setLeadFormState(prev => ({ ...prev, privacyPolicyLink: value }));
-
-        if (value && isValidUrl(value)) {
-            const formattedUrl = formatUrl(value);
-            const updatedState = { ...leadFormState, privacyPolicyLink: formattedUrl };
-            handleUpdate({
-                leadForm: createLeadFormPayload(updatedState),
-            });
-            if (formattedUrl !== value) {
-                setLeadFormState(prev => ({ ...prev, privacyPolicyLink: formattedUrl }));
-            }
-        }
+        setLocalChanges(prev => ({ ...prev, privacyPolicyLink: value }));
     };
 
     const handlePrivacyPolicyLinkBlur = (e) => {
@@ -210,17 +214,22 @@ export default function LeadForm({ flipbookId, settings }) {
             setLeadFormState(prev => ({ ...prev, privacyPolicyLink: formattedUrl }));
             
             if (isValidUrl(formattedUrl)) {
-                handleUpdate({
+                updateSettings({
                     leadForm: createLeadFormPayload(updatedState),
                 });
             }
         } else if (value && isValidUrl(value)) {
             const formattedUrl = formatUrl(value);
             const updatedState = { ...leadFormState, privacyPolicyLink: formattedUrl };
-            handleUpdate({
+            updateSettings({
                 leadForm: createLeadFormPayload(updatedState),
             });
         }
+        setLocalChanges(prev => {
+            const newChanges = { ...prev };
+            delete newChanges.privacyPolicyLink;
+            return newChanges;
+        });
     };
 
     return (
@@ -260,6 +269,7 @@ export default function LeadForm({ flipbookId, settings }) {
                             placeholder="Fill out this form to keep reading"
                             value={leadFormState.title}
                             onChange={(e) => handleFieldChange("title", e.target.value)}
+                            onBlur={() => handleFieldBlur("title")}
                             className="resize-none placeholder:text-[#d8dce3]"
                         />
                     </div>
@@ -270,6 +280,7 @@ export default function LeadForm({ flipbookId, settings }) {
                             id="submit-button-text"
                             value={leadFormState.submitButtonText}
                             onChange={(e) => handleFieldChange("submitButtonText", e.target.value)}
+                            onBlur={() => handleFieldBlur("submitButtonText")}
                         />
                     </div>
                     <div className="flex flex-col gap-2 text-white">
@@ -279,6 +290,7 @@ export default function LeadForm({ flipbookId, settings }) {
                             id="set-on-page"
                             value={leadFormState.setOnPage}
                             onChange={(e) => handleFieldChange("setOnPage", Number(e.target.value))}
+                            onBlur={() => handleFieldBlur("setOnPage")}
                             min={1}
                         />
                     </div>
@@ -303,6 +315,7 @@ export default function LeadForm({ flipbookId, settings }) {
                         <DynamicForm
                             fields={leadFormState.fields}
                             onChange={handleDynamicFormChange}
+                            onBlur={handleDynamicFormBlur}
                             disabled={!isFieldEnabled("leadForm")}
                         />
                     </div>
@@ -344,6 +357,7 @@ export default function LeadForm({ flipbookId, settings }) {
                                     placeholder="Your company"
                                     value={leadFormState.companyName}
                                     onChange={(e) => handleFieldChange("companyName", e.target.value)}
+                                    onBlur={() => handleFieldBlur("companyName")}
                                     className="placeholder:text-[#d8dce3]"
                                 />
                             </div>
@@ -398,6 +412,7 @@ export default function LeadForm({ flipbookId, settings }) {
                                 placeholder="I agree to receive marketing materials."
                                 value={leadFormState.gdprMessage}
                                 onChange={(e) => handleFieldChange("gdprMessage", e.target.value)}
+                                onBlur={() => handleFieldBlur("gdprMessage")}
                                 className="placeholder:text-[#d8dce3]"
                             />
                         </div>
@@ -423,6 +438,7 @@ export default function LeadForm({ flipbookId, settings }) {
                                 placeholder="Maybe Later"
                                 value={leadFormState.skipButtonText}
                                 onChange={(e) => handleFieldChange("skipButtonText", e.target.value)}
+                                onBlur={() => handleFieldBlur("skipButtonText")}
                                 className="placeholder:text-[#d8dce3]"
                             />
                         </div>

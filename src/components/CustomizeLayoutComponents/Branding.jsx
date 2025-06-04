@@ -20,16 +20,18 @@ import { useState, useEffect, useRef } from "react";
 import ColorPaletteSelector from "./Branding/ColorPaletteSelector";
 import { Button } from '@/components/ui/button';
 import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings";
-import { UpdateFlipbookPreviewSettingApi } from "@/service/flipbookPreviewSetting.service";
 import { toast } from "sonner";
 import { BackgroundColorType, BackgroundImageType } from "@/utils/enum";
 import { z } from "zod";
+import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
 
 const urlSchema = z.string().url();
 const colorSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid 6-character hex color code");
 
-export default function Branding({ flipbookId, settings }) {
+export default function Branding() {
+    const { settings, updateSettings, latestSettings } = useFlipbookSettings();
     const { isFieldEnabled } = useFlipbookPreviewSettings();
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
     const [selectedBackground, setSelectedBackground] = useState("transparent");
     const [playerAccentColor, setPlayerAccentColor] = useState('#C1080B');
     const [originalPlayerAccentColor, setOriginalPlayerAccentColor] = useState('#C1080B');
@@ -96,47 +98,37 @@ export default function Branding({ flipbookId, settings }) {
     };
 
     useEffect(() => {
-        if (settings) {
-            const accentColor = settings.playerAccentColorHash?.toUpperCase() || '#C1080B';
-            setSelectedBackground(backgroundColorMapping[settings.backgroundColor] || "transparent");
+        const dataToUse = isFirstLoad ? latestSettings : settings;
+        
+        if (dataToUse) {
+            const accentColor = dataToUse.playerAccentColorHash?.toUpperCase() || '#C1080B';
+            setSelectedBackground(backgroundColorMapping[dataToUse.backgroundColor] || "transparent");
             setPlayerAccentColor(accentColor);
             setOriginalPlayerAccentColor(accentColor);
             setSelectedLogo(
-                settings.brandLogoId ? { src: settings.brandLogoLink, id: settings.brandLogoId } : null
+                dataToUse.brandLogoId ? { src: dataToUse.brandLogoLink, id: dataToUse.brandLogoId } : null
             );
-            setLogoLink(settings.logoLink || "");
+            setLogoLink(dataToUse.logoLink || "");
             setHasColorChanged(false);
 
-            setBackgroundImage(settings.backgroundImageURL || null);
-            setBackgroundImageType(backgroundImageTypeMapping[settings.backgroundImageType] || "scale-crop");
+            setBackgroundImage(dataToUse.backgroundImageURL || null);
+            setBackgroundImageType(backgroundImageTypeMapping[dataToUse.backgroundImageType] || "scale-crop");
+
+            if (isFirstLoad) {
+                setIsFirstLoad(false);
+            }
         }
     }, [settings]);
 
-    const handleUpdate = async (payload) => {
-        try {
-            const formData = new FormData();
-            Object.entries(payload).forEach(([key, value]) => {
-                if (value === null) {
-                    formData.append(key, null);
-                } else {
-                    formData.append(key, value);
-                }
-            });
-            await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
-        } catch (error) {
-            toast.error("Failed to update settings", { description: error.message });
-        }
-    };
-
     const handleLogoSelect = (logo) => {
         setSelectedLogo(logo);
-        handleUpdate({ brandLogoId: logo.id });
+        updateSettings({ brandLogoId: logo.id });
     };
 
     const handleLogoDelete = async () => {
         try {
             setIsLogoLoading(true);
-            await handleUpdate({ brandLogoId: null });
+            updateSettings({ brandLogoId: null });
             setSelectedLogo(null);
         } catch (error) {
             toast.error("Failed to remove logo", { description: error.message });
@@ -147,10 +139,10 @@ export default function Branding({ flipbookId, settings }) {
 
     const handleBackgroundChange = (value) => {
         setSelectedBackground(value);
-        handleUpdate({ backgroundColor: reverseBackgroundColorMapping[value] });
+        updateSettings({ backgroundColor: reverseBackgroundColorMapping[value] });
 
         if (value !== "uploadimage" && backgroundImage) {
-            handleUpdate({ backgroundImage: null });
+            updateSettings({ backgroundImage: null });
             setBackgroundImage(null);
         }
     };
@@ -161,16 +153,9 @@ export default function Branding({ flipbookId, settings }) {
 
         try {
             setIsImageUploading(true);
-
             const formData = new FormData();
             formData.append('backgroundImage', file);
-
-            const response = await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
-
-            if (response && response.data.backgroundImageURL) {
-                setBackgroundImage(response.data.backgroundImageURL);
-            }
-
+            updateSettings({ backgroundImage: file });
         } catch (error) {
             toast.error("Failed to upload background image", { description: error.message });
         } finally {
@@ -180,7 +165,7 @@ export default function Branding({ flipbookId, settings }) {
 
     const handleImageDelete = async () => {
         try {
-            await handleUpdate({ backgroundImage: null });
+            updateSettings({ backgroundImage: null });
             setBackgroundImage(null);
         } catch (error) {
             toast.error("Failed to remove background image", { description: error.message });
@@ -190,7 +175,7 @@ export default function Branding({ flipbookId, settings }) {
     const handleBackgroundImageTypeChange = (value) => {
         setBackgroundImageType(value);
         const numericValue = reverseBackgroundImageTypeMapping[value];
-        handleUpdate({ backgroundImageType: numericValue });
+        updateSettings({ backgroundImageType: numericValue });
     };
 
     const handlePlayerAccentColorChange = (e) => {
@@ -205,7 +190,7 @@ export default function Branding({ flipbookId, settings }) {
 
         if (isValidColor(value) && value !== originalPlayerAccentColor) {
             setHasColorChanged(true);
-            handleUpdate({ playerAccentColorHash: value });
+            updateSettings({ playerAccentColorHash: value });
         } else {
             setHasColorChanged(value !== originalPlayerAccentColor);
         }
@@ -217,7 +202,7 @@ export default function Branding({ flipbookId, settings }) {
 
         if (value !== originalPlayerAccentColor) {
             setHasColorChanged(true);
-            handleUpdate({ playerAccentColorHash: value });
+            updateSettings({ playerAccentColorHash: value });
         } else {
             setHasColorChanged(false);
         }
@@ -232,7 +217,7 @@ export default function Branding({ flipbookId, settings }) {
     const handleRevertColor = () => {
         setPlayerAccentColor(originalPlayerAccentColor);
         setHasColorChanged(false);
-        handleUpdate({ playerAccentColorHash: originalPlayerAccentColor });
+        updateSettings({ playerAccentColorHash: originalPlayerAccentColor });
     };
 
     const handleLogoLinkChange = (e) => {
@@ -241,7 +226,7 @@ export default function Branding({ flipbookId, settings }) {
 
         if (value && isValidUrl(value)) {
             const formattedUrl = formatUrl(value);
-            handleUpdate({ logoLink: formattedUrl });
+            updateSettings({ logoLink: formattedUrl });
             if (formattedUrl !== value) {
                 setLogoLink(formattedUrl);
             }
@@ -254,11 +239,11 @@ export default function Branding({ flipbookId, settings }) {
             const formattedUrl = formatUrl(value);
             setLogoLink(formattedUrl);
             if (isValidUrl(formattedUrl)) {
-                handleUpdate({ logoLink: formattedUrl });
+                updateSettings({ logoLink: formattedUrl });
             }
         } else if (value && isValidUrl(value)) {
             const formattedUrl = formatUrl(value);
-            handleUpdate({ logoLink: formattedUrl });
+            updateSettings({ logoLink: formattedUrl });
         }
     };
 
@@ -267,7 +252,7 @@ export default function Branding({ flipbookId, settings }) {
             case "solidcolor":
                 return <ColorPaletteSelector
                     disabled={!isFieldEnabled("backgroundColor")}
-                    onChange={(color) => handleUpdate({ backgroundColorHash: color })}
+                    onChange={(color) => updateSettings({ backgroundColorHash: color })}
                 />
             case "uploadimage":
                 return (
