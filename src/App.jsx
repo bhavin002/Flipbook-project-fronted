@@ -57,6 +57,7 @@ import { CurrencyProvider } from "./context/CurrencyContext";
 import VerifyReader from "./pages/Settings/VerifyReader";
 import { WorkspaceProvider } from "./context/WorkspaceContext";
 import { FlipbookProvider } from "./context/FlipbookContext";
+import { FlipbookSettingsProvider } from "./context/FlipbookSettingsProvider";
 
 // Route configurations
 const brandingRoutes = [
@@ -233,7 +234,9 @@ export default function App() {
 
                 <Route path="/customize/:id" element={
                   <PrivateRoute>
-                    <CustomizeAppLayout />
+                    <FlipbookSettingsProvider>
+                      <CustomizeAppLayout />
+                    </FlipbookSettingsProvider>
                   </PrivateRoute>
                 }>
                   <Route index element={<Customize />} />

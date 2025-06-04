@@ -57,6 +57,9 @@ export const flipbookPreviewFieldKey = {
     isLeadForm: 37,
     leadForm: 38,
     automaticTransitionDelay: 39,
+    isAudioLoop: 40,
+    isAutoPlay: 41,
+    backgroundImageType: 42,
 }
 
 export const BackgroundColorType = {
@@ -80,4 +83,10 @@ export const LayoutStyle = {
     SMART_VIEW: 0,
     ONE_PAGE: 1,
     TWO_PAGE: 2,
+}
+
+export const BackgroundImageType = {
+    SCALE_CROP: 0,
+    CENTER: 1,
+    TILE: 2,
 }

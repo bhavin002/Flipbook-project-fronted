@@ -8,12 +8,35 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-export default function ColorPaletteSelector() {
+export default function ColorPaletteSelector({ disabled, onChange }) {
     const [isNewColorAdded, setIsNewColorAdded] = useState(false);
+    const [selectedColor, setSelectedColor] = useState(null);
     const colorInputRef = useRef(null);
+
     const handleAddColor = () => {
+        if (disabled) return;
         setIsNewColorAdded(true);
         setTimeout(() => colorInputRef.current?.click(), 10);
+    };
+
+    const handleColorSelect = (color) => {
+        if (disabled) return;
+        setSelectedColor(color);
+        if (onChange) {
+            onChange(color);
+        }
+    };
+
+    const handleColorPickerChange = (e) => {
+        const color = e.target.value.toUpperCase();
+        setSelectedColor(color);
+        if (onChange) {
+            onChange(color);
+        }
+    };
+
+    const handleColorPickerClick = (e) => {
+        e.stopPropagation();
     };
 
     const brandColors = [
@@ -49,8 +72,11 @@ export default function ColorPaletteSelector() {
                     {brandColors.map((color, index) => (
                         <div
                             key={index}
-                            className="w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed]"
+                            className={`w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed] ${
+                                selectedColor === color ? 'border-2 border-[#7b39ed]' : ''
+                            } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
                             style={{ backgroundColor: color }}
+                            onClick={() => handleColorSelect(color)}
                         />
                     ))}
                 </div>
@@ -60,25 +86,34 @@ export default function ColorPaletteSelector() {
                 <Label>Default Palette</Label>
                 <div className="flex flex-wrap gap-2">
                     <div className='relative w-fit'>
-                        <div onClick={handleAddColor}
-                            className="w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed] bg-gray-500 flex items-center justify-center"
+                        <div 
+                            onClick={handleAddColor}
+                            className={`w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed] bg-gray-500 flex items-center justify-center ${
+                                disabled ? 'cursor-not-allowed opacity-50' : ''
+                            }`}
                         >
                             <Plus color='white' />
                         </div>
-                        {
-                            isNewColorAdded && <input
+                        {isNewColorAdded && (
+                            <input
                                 ref={colorInputRef}
                                 type="color"
                                 value={'#FFFFFF'}
+                                onChange={handleColorPickerChange}
+                                onClick={handleColorPickerClick}
                                 className="opacity-0 absolute w-1 h-1 left-0 right-0 m-auto bottom-0"
+                                disabled={disabled}
                             />
-                        }
+                        )}
                     </div>
                     {defaultPalette.map((color, index) => (
                         <div
                             key={index}
-                            className="w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed]"
+                            className={`w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed] ${
+                                selectedColor === color ? 'border-2 border-[#7b39ed]' : ''
+                            } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
                             style={{ backgroundColor: color }}
+                            onClick={() => handleColorSelect(color)}
                         />
                     ))}
                 </div>
