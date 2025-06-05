@@ -32,6 +32,7 @@ import {
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { CSS } from "@dnd-kit/utilities";
 import { Input } from "@/components/ui/input";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const SortableDropdownOption = ({
     fieldId,
@@ -210,12 +211,13 @@ const SortableField = ({
     );
 };
 
-export default function DynamicForm({ fields: initialFields = [], onChange = () => onChange, onBlur = () => onBlur, disabled }) {
-    console.log("initialFields", initialFields);
+export default function DynamicForm({ fields: initialFields = [], onChange = () => {}, disabled }) {
     const [fields, setFields] = useState([]);
     const [dropdownOptions, setDropdownOptions] = useState({});
     const [nextFieldId, setNextFieldId] = useState(1);
     const [nextOptionId, setNextOptionId] = useState(1);
+
+    const debouncedFields = useDebounce(fields, 500);
 
     useEffect(() => {
         if (initialFields.length > 0) {
@@ -236,6 +238,12 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
             setNextFieldId(initialFields.length + 1);
         }
     }, [initialFields]);
+
+    useEffect(() => {
+        if (debouncedFields.length > 0) {
+            onChange(debouncedFields);
+        }
+    }, [debouncedFields]);
 
     const fieldTypes = [
         { label: "Email", value: "email", icon: <Mail className="h-4 w-4" /> },
@@ -264,8 +272,6 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
                 const oldIndex = items.findIndex((item) => item.id === active.id);
                 const newIndex = items.findIndex((item) => item.id === over?.id);
                 const newFields = arrayMove(items, oldIndex, newIndex);
-                onChange(newFields);
-                onBlur();
                 return newFields;
             });
         }
@@ -281,16 +287,6 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
                 const oldIndex = options.findIndex((option) => option.id === activeOptionId);
                 const newIndex = options.findIndex((option) => option.id === overOptionId);
                 const newOptions = arrayMove(options, oldIndex, newIndex);
-                setFields((prevFields) => {
-                    const newFields = prevFields.map((field) =>
-                        field.id === fieldId
-                            ? { ...field, options: newOptions.map((opt) => opt.value) }
-                            : field
-                    );
-                    onChange(newFields);
-                    onBlur();
-                    return newFields;
-                });
                 return { ...prevOptions, [fieldId]: newOptions };
             });
         }
@@ -317,8 +313,6 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
         const newFields = [...fields, newField];
         setFields(newFields);
         setNextFieldId(nextFieldId + 1);
-        onChange(newFields);
-        onBlur();
 
         if (fieldConfig?.isDropdown) {
             setDropdownOptions({
@@ -335,8 +329,6 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
     const updateField = (id, key, value) => {
         const newFields = fields.map((field) => (field.id === id ? { ...field, [key]: value } : field));
         setFields(newFields);
-        onChange(newFields);
-        onBlur();
     };
 
     const updateFieldType = (id, type) => {
@@ -354,8 +346,6 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
                 }
                 return field;
             });
-            onChange(newFields);
-            onBlur();
             return newFields;
         });
     };
@@ -365,15 +355,11 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
             field.id === id ? { ...field, required: !field.required } : field
         );
         setFields(newFields);
-        onChange(newFields);
-        onBlur();
     };
 
     const deleteField = (id) => {
         const newFields = fields.filter((field) => field.id !== id);
         setFields(newFields);
-        onChange(newFields);
-        onBlur();
         if (dropdownOptions[id]) {
             const newDropdownOptions = { ...dropdownOptions };
             delete newDropdownOptions[id];
@@ -388,15 +374,6 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
             ...dropdownOptions,
             [fieldId]: newOptions,
         });
-        setFields((prevFields) => {
-            const newFields = prevFields.map((field) =>
-                field.id === fieldId ? { ...field, options: newOptions.map((opt) => opt.value) } : field
-            );
-            onChange(newFields);
-            onBlur();
-            return newFields;
-        });
-        setNextOptionId(nextOptionId + 1);
     };
 
     const updateDropdownOption = (fieldId, optionId, value) => {
@@ -408,14 +385,6 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
             ...dropdownOptions,
             [fieldId]: updatedOptions,
         });
-        setFields((prevFields) => {
-            const newFields = prevFields.map((field) =>
-                field.id === fieldId ? { ...field, options: updatedOptions.map((opt) => opt.value) } : field
-            );
-            onChange(newFields);
-            onBlur();
-            return newFields;
-        });
     };
 
     const deleteDropdownOption = (fieldId, optionId) => {
@@ -425,14 +394,6 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
         setDropdownOptions({
             ...dropdownOptions,
             [fieldId]: updatedOptions,
-        });
-        setFields((prevFields) => {
-            const newFields = prevFields.map((field) =>
-                field.id === fieldId ? { ...field, options: updatedOptions.map((opt) => opt.value) } : field
-            );
-            onChange(newFields);
-            onBlur();
-            return newFields;
         });
     };
 

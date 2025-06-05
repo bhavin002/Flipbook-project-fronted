@@ -22,6 +22,7 @@ export default function ConfirmAccount() {
   const [otp, setOtp] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isVerifyLoading, setIsVerifyLoading] = useState(false);
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,6 +35,7 @@ export default function ConfirmAccount() {
           return;
         }
         const response = await ValidateEmailApi(confirmToken);
+        setEmail(response.data.email);
         if (!response.data.success) {
           navigate("/auth/sign-up");
         }
@@ -83,7 +85,7 @@ export default function ConfirmAccount() {
                 <CardTitle>Check your email</CardTitle>
                 <CardDescription>
                   Excited to have you here! We've sent you a six-digit confirmation code to{" "}
-                  <span className="font-medium">demo001@yopmail.com</span>. Please enter the code
+                  <span className="font-medium">{email}</span>. Please enter the code
                   below to confirm your email address. Keep in mind that the code is active for 15 minutes.
                 </CardDescription>
               </CardHeader>
@@ -113,7 +115,7 @@ export default function ConfirmAccount() {
                       <Button
                         type="submit"
                         className="w-full gap-1"
-                        disabled={isVerifyLoading}
+                        disabled={isVerifyLoading || otp.length !== 6}
                       >
                         {isVerifyLoading ? (
                           <LoadingButton />

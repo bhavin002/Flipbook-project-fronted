@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, ChevronRight, GripVertical, Trash2 } from 'lucide-react';
 import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings";
 import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const SortableItem = ({
   id,
@@ -30,7 +31,6 @@ const SortableItem = ({
   depth,
   onDelete,
   onTitleChange,
-  onTitleBlur,
   onAddChild,
   canAddChild,
   hasChildren,
@@ -38,7 +38,6 @@ const SortableItem = ({
   onToggleCollapse,
   number,
   onNumberChange,
-  onNumberBlur,
 }) => {
   const {
       attributes,
@@ -83,7 +82,6 @@ const SortableItem = ({
               type="text"
               value={number}
               onChange={handleNumberChange}
-              onBlur={onNumberBlur}
               className="w-14 mr-2"
               placeholder="0"
               pattern="\d*\.?\d*"
@@ -93,7 +91,6 @@ const SortableItem = ({
               placeholder={type === 'chapter' ? 'Chapter title' : 'Subchapter title'}
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
-              onBlur={onTitleBlur}
               className="md:w-[300px] placeholder:text-[#d8dce3]"
           />
           {canAddChild && (
@@ -121,7 +118,8 @@ export default function TableOfContentsComponent() {
     const [isActivated, setIsActivated] = useState(true);
     const [items, setItems] = useState([]);
     const [collapsedChapters, setCollapsedChapters] = useState({});
-    const [localChanges, setLocalChanges] = useState({});
+
+    const debouncedItems = useDebounce(items, 500);
 
     useEffect(() => {
         const dataToUse = isFirstLoad ? latestSettings : settings;
@@ -156,6 +154,12 @@ export default function TableOfContentsComponent() {
         }
     }, [settings]);
 
+    useEffect(() => {
+        if (!isFirstLoad && debouncedItems.length > 0) {
+            updateSettings({ tableOfContents: convertToApiFormat(debouncedItems) });
+        }
+    }, [debouncedItems]);
+
     const sensors = useSensors(
         useSensor(PointerSensor),
         useSensor(KeyboardSensor)
@@ -167,9 +171,7 @@ export default function TableOfContentsComponent() {
             setItems((items) => {
                 const oldIndex = items.findIndex((item) => item.id === active.id);
                 const newIndex = items.findIndex((item) => item.id === over?.id);
-                const newItems = arrayMove(items, oldIndex, newIndex);
-                updateSettings({ tableOfContents: convertToApiFormat(newItems) });
-                return newItems;
+                return arrayMove(items, oldIndex, newIndex);
             });
         }
     };
@@ -184,9 +186,7 @@ export default function TableOfContentsComponent() {
             number: '1', // Default to "1"
             sequence: parentId ? items.filter((item) => item.parentId === parentId).length + 1 : items.filter((item) => !item.parentId).length + 1,
         };
-        const newItems = [...items, newItem];
-        setItems(newItems);
-        updateSettings({ tableOfContents: convertToApiFormat(newItems) });
+        setItems([...items, newItem]);
     };
 
     const deleteItem = (id) => {
@@ -196,45 +196,14 @@ export default function TableOfContentsComponent() {
         const newCollapsed = { ...collapsedChapters };
         delete newCollapsed[id];
         setCollapsedChapters(newCollapsed);
-        updateSettings({ tableOfContents: convertToApiFormat(newItems) });
     };
 
     const updateItemTitle = (id, newTitle) => {
         setItems(items.map((item) => (item.id === id ? { ...item, title: newTitle } : item)));
-        setLocalChanges(prev => ({ ...prev, [id]: { ...prev[id], title: newTitle } }));
-    };
-
-    const handleTitleBlur = (id) => {
-        if (localChanges[id]?.title !== undefined) {
-            const newItems = items.map((item) => 
-                item.id === id ? { ...item, title: localChanges[id].title } : item
-            );
-            updateSettings({ tableOfContents: convertToApiFormat(newItems) });
-            setLocalChanges(prev => {
-                const newChanges = { ...prev };
-                delete newChanges[id];
-                return newChanges;
-            });
-        }
     };
 
     const updateItemNumber = (id, newNumber) => {
         setItems(items.map((item) => (item.id === id ? { ...item, number: newNumber } : item)));
-        setLocalChanges(prev => ({ ...prev, [id]: { ...prev[id], number: newNumber } }));
-    };
-
-    const handleNumberBlur = (id) => {
-        if (localChanges[id]?.number !== undefined) {
-            const newItems = items.map((item) => 
-                item.id === id ? { ...item, number: localChanges[id].number || '1' } : item
-            );
-            updateSettings({ tableOfContents: convertToApiFormat(newItems) });
-            setLocalChanges(prev => {
-                const newChanges = { ...prev };
-                delete newChanges[id];
-                return newChanges;
-            });
-        }
     };
 
     const addChildItem = (parentId) => {
@@ -339,9 +308,7 @@ export default function TableOfContentsComponent() {
                                         number={item.number}
                                         onDelete={() => deleteItem(item.id)}
                                         onTitleChange={(newTitle) => updateItemTitle(item.id, newTitle)}
-                                        onTitleBlur={() => handleTitleBlur(item.id)}
                                         onNumberChange={(newNumber) => updateItemNumber(item.id, newNumber)}
-                                        onNumberBlur={() => handleNumberBlur(item.id)}
                                         onAddChild={() => addChildItem(item.id)}
                                         canAddChild={item.type === 'chapter'}
                                         hasChildren={item.type === 'chapter' && hasChildren(item.id)}

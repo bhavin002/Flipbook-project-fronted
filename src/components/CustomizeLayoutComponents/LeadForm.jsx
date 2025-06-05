@@ -14,6 +14,7 @@ import { useState, useEffect } from "react";
 import { useFlipbookPreviewSettings } from "@/hooks/useFlipbookPreviewSettings";
 import { z } from "zod";
 import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const urlSchema = z.string().url();
 
@@ -35,7 +36,18 @@ export default function LeadForm() {
         gdprCompliancyCheck: false,
         allowSkip: false,
     });
-    const [localChanges, setLocalChanges] = useState({});
+    const [isUrlValid, setIsUrlValid] = useState(true);
+
+    const debouncedTitle = useDebounce(leadFormState.title, 500);
+    const debouncedSubmitButtonText = useDebounce(leadFormState.submitButtonText, 500);
+    const debouncedSetOnPage = useDebounce(leadFormState.setOnPage, 500);
+    const debouncedCompanyName = useDebounce(leadFormState.companyName, 500);
+    const debouncedGdprMessage = useDebounce(leadFormState.gdprMessage, 500);
+    const debouncedSkipButtonText = useDebounce(leadFormState.skipButtonText, 500);
+    const debouncedFields = useDebounce(leadFormState.fields, 500);
+    const debouncedAddPrivacyPolicy = useDebounce(leadFormState.addPrivacyPolicy, 500);
+    const debouncedGdprCompliancyCheck = useDebounce(leadFormState.gdprCompliancyCheck, 500);
+    const debouncedAllowSkip = useDebounce(leadFormState.allowSkip, 500);
 
     const isValidUrl = (url) => {
         try {
@@ -105,6 +117,37 @@ export default function LeadForm() {
         }
     }, [settings]);
 
+    useEffect(() => {
+        if (!isFirstLoad) {
+            updateSettings({
+                leadForm: createLeadFormPayload({
+                    ...leadFormState,
+                    title: debouncedTitle,
+                    submitButtonText: debouncedSubmitButtonText,
+                    setOnPage: debouncedSetOnPage,
+                    companyName: debouncedCompanyName,
+                    gdprMessage: debouncedGdprMessage,
+                    skipButtonText: debouncedSkipButtonText,
+                    fields: debouncedFields,
+                    addPrivacyPolicy: debouncedAddPrivacyPolicy,
+                    gdprCompliancyCheck: debouncedGdprCompliancyCheck,
+                    allowSkip: debouncedAllowSkip,
+                }),
+            });
+        }
+    }, [
+        debouncedTitle,
+        debouncedSubmitButtonText,
+        debouncedSetOnPage,
+        debouncedCompanyName,
+        debouncedGdprMessage,
+        debouncedSkipButtonText,
+        debouncedFields,
+        debouncedAddPrivacyPolicy,
+        debouncedGdprCompliancyCheck,
+        debouncedAllowSkip,
+    ]);
+
     const handleLeadFormToggle = () => {
         setIsLeadFormActivated((prev) => {
             const newState = !prev;
@@ -115,21 +158,6 @@ export default function LeadForm() {
 
     const handleFieldChange = (field, value) => {
         setLeadFormState(prev => ({ ...prev, [field]: value }));
-        setLocalChanges(prev => ({ ...prev, [field]: value }));
-    };
-
-    const handleFieldBlur = (field) => {
-        if (localChanges[field] !== undefined) {
-            const updatedState = { ...leadFormState, [field]: localChanges[field] };
-            updateSettings({
-                leadForm: createLeadFormPayload(updatedState),
-            });
-            setLocalChanges(prev => {
-                const newChanges = { ...prev };
-                delete newChanges[field];
-                return newChanges;
-            });
-        }
     };
 
     const handlePrivacyPolicyToggle = () => {
@@ -144,9 +172,6 @@ export default function LeadForm() {
         }
 
         setLeadFormState(prev => ({ ...prev, ...updates }));
-        updateSettings({
-            leadForm: createLeadFormPayload({ ...leadFormState, ...updates }),
-        });
     };
 
     const handleGDPRToggle = () => {
@@ -160,9 +185,6 @@ export default function LeadForm() {
         }
 
         setLeadFormState(prev => ({ ...prev, ...updates }));
-        updateSettings({
-            leadForm: createLeadFormPayload({ ...leadFormState, ...updates }),
-        });
     };
 
     const handleAllowSkipToggle = () => {
@@ -176,60 +198,32 @@ export default function LeadForm() {
         }
 
         setLeadFormState(prev => ({ ...prev, ...updates }));
-        updateSettings({
-            leadForm: createLeadFormPayload({ ...leadFormState, ...updates }),
-        });
     };
 
     const handleDynamicFormChange = (newFields) => {
         setLeadFormState(prev => ({ ...prev, fields: newFields }));
-        setLocalChanges(prev => ({ ...prev, fields: newFields }));
-    };
-
-    const handleDynamicFormBlur = () => {
-        if (localChanges.fields !== undefined) {
-            const updatedState = { ...leadFormState, fields: localChanges.fields };
-            updateSettings({
-                leadForm: createLeadFormPayload(updatedState),
-            });
-            setLocalChanges(prev => {
-                const newChanges = { ...prev };
-                delete newChanges.fields;
-                return newChanges;
-            });
-        }
     };
 
     const handlePrivacyPolicyLinkChange = (e) => {
         const value = e.target.value;
         setLeadFormState(prev => ({ ...prev, privacyPolicyLink: value }));
-        setLocalChanges(prev => ({ ...prev, privacyPolicyLink: value }));
+        setIsUrlValid(isValidUrl(value));
     };
 
     const handlePrivacyPolicyLinkBlur = (e) => {
         const value = e.target.value;
+        let formattedUrl = value;
         if (value && !value.startsWith('http')) {
-            const formattedUrl = formatUrl(value);
-            const updatedState = { ...leadFormState, privacyPolicyLink: formattedUrl };
+            formattedUrl = formatUrl(value);
             setLeadFormState(prev => ({ ...prev, privacyPolicyLink: formattedUrl }));
-            
-            if (isValidUrl(formattedUrl)) {
-                updateSettings({
-                    leadForm: createLeadFormPayload(updatedState),
-                });
-            }
-        } else if (value && isValidUrl(value)) {
-            const formattedUrl = formatUrl(value);
-            const updatedState = { ...leadFormState, privacyPolicyLink: formattedUrl };
+        }
+        const valid = isValidUrl(formattedUrl);
+        setIsUrlValid(valid);
+        if (leadFormState.addPrivacyPolicy && valid) {
             updateSettings({
-                leadForm: createLeadFormPayload(updatedState),
+                leadForm: createLeadFormPayload({ ...leadFormState, privacyPolicyLink: formattedUrl }),
             });
         }
-        setLocalChanges(prev => {
-            const newChanges = { ...prev };
-            delete newChanges.privacyPolicyLink;
-            return newChanges;
-        });
     };
 
     return (
@@ -269,7 +263,6 @@ export default function LeadForm() {
                             placeholder="Fill out this form to keep reading"
                             value={leadFormState.title}
                             onChange={(e) => handleFieldChange("title", e.target.value)}
-                            onBlur={() => handleFieldBlur("title")}
                             className="resize-none placeholder:text-[#d8dce3]"
                         />
                     </div>
@@ -280,7 +273,6 @@ export default function LeadForm() {
                             id="submit-button-text"
                             value={leadFormState.submitButtonText}
                             onChange={(e) => handleFieldChange("submitButtonText", e.target.value)}
-                            onBlur={() => handleFieldBlur("submitButtonText")}
                         />
                     </div>
                     <div className="flex flex-col gap-2 text-white">
@@ -290,7 +282,6 @@ export default function LeadForm() {
                             id="set-on-page"
                             value={leadFormState.setOnPage}
                             onChange={(e) => handleFieldChange("setOnPage", Number(e.target.value))}
-                            onBlur={() => handleFieldBlur("setOnPage")}
                             min={1}
                         />
                     </div>
@@ -315,7 +306,6 @@ export default function LeadForm() {
                         <DynamicForm
                             fields={leadFormState.fields}
                             onChange={handleDynamicFormChange}
-                            onBlur={handleDynamicFormBlur}
                             disabled={!isFieldEnabled("leadForm")}
                         />
                     </div>
@@ -357,7 +347,6 @@ export default function LeadForm() {
                                     placeholder="Your company"
                                     value={leadFormState.companyName}
                                     onChange={(e) => handleFieldChange("companyName", e.target.value)}
-                                    onBlur={() => handleFieldBlur("companyName")}
                                     className="placeholder:text-[#d8dce3]"
                                 />
                             </div>
@@ -370,7 +359,7 @@ export default function LeadForm() {
                                     value={leadFormState.privacyPolicyLink}
                                     onChange={handlePrivacyPolicyLinkChange}
                                     onBlur={handlePrivacyPolicyLinkBlur}
-                                    className={`placeholder:text-[#d8dce3] ${leadFormState.privacyPolicyLink && !isValidUrl(leadFormState.privacyPolicyLink) ? 'border-red-500' : ''}`}
+                                    className={`placeholder:text-[#d8dce3] ${!isUrlValid ? 'border-red-500' : ''}`}
                                 />
                             </div>
                         </>
@@ -412,7 +401,6 @@ export default function LeadForm() {
                                 placeholder="I agree to receive marketing materials."
                                 value={leadFormState.gdprMessage}
                                 onChange={(e) => handleFieldChange("gdprMessage", e.target.value)}
-                                onBlur={() => handleFieldBlur("gdprMessage")}
                                 className="placeholder:text-[#d8dce3]"
                             />
                         </div>
@@ -438,7 +426,6 @@ export default function LeadForm() {
                                 placeholder="Maybe Later"
                                 value={leadFormState.skipButtonText}
                                 onChange={(e) => handleFieldChange("skipButtonText", e.target.value)}
-                                onBlur={() => handleFieldBlur("skipButtonText")}
                                 className="placeholder:text-[#d8dce3]"
                             />
                         </div>
