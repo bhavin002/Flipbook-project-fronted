@@ -226,6 +226,7 @@ export default function Appearance() {
                             <Input
                                 className="w-24"
                                 type="number"
+                                min={0}
                                 value={automaticTransitionDelay}
                                 onChange={handleDelayChange}
                                 disabled={!isFieldEnabled(option.fieldKey)}
