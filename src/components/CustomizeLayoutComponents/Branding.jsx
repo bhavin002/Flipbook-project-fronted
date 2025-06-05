@@ -27,7 +27,13 @@ import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
 
 const urlSchema = z.string().regex(/^$|^(?!https?\.)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$|^https?:\/\/[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$/).or(z.literal(''));
 const colorSchema = z.string().regex(/^#[0-9A-Fa-f]{6}$/, "Must be a valid 6-character hex color code");
-
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
 export default function Branding() {
     const { settings, updateSettings, latestSettings } = useFlipbookSettings();
     const { isFieldEnabled } = useFlipbookPreviewSettings();
@@ -100,7 +106,7 @@ export default function Branding() {
 
     useEffect(() => {
         const dataToUse = isFirstLoad ? latestSettings : settings;
-        
+
         if (dataToUse) {
             const accentColor = dataToUse.playerAccentColorHash?.toUpperCase() || '#C1080B';
             setSelectedBackground(backgroundColorMapping[dataToUse.backgroundColor] || "transparent");
@@ -207,7 +213,11 @@ export default function Branding() {
             });
         }
     };
-
+    const debouncedUpdateSettings = useRef(
+        debounce((newSettings) => {
+            updateSettings(newSettings);
+        }, 500) // 500ms debounce delay
+    ).current;
     const handleColorPickerChange = (e) => {
         const value = e.target.value.toUpperCase();
         setPlayerAccentColor(value);
@@ -215,9 +225,11 @@ export default function Branding() {
 
         if (value !== originalPlayerAccentColor) {
             setHasColorChanged(true);
-            updateSettings({ playerAccentColorHash: value });
+            // Call the debounced function instead of directly calling updateSettings
+            debouncedUpdateSettings({ playerAccentColorHash: value });
         } else {
             setHasColorChanged(false);
+            debouncedUpdateSettings({ playerAccentColorHash: value });
         }
     };
 

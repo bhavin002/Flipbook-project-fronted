@@ -8,10 +8,28 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+// Custom debounce function
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
 export default function ColorPaletteSelector({ disabled, onChange }) {
     const [isNewColorAdded, setIsNewColorAdded] = useState(false);
     const [selectedColor, setSelectedColor] = useState(null);
     const colorInputRef = useRef(null);
+
+    // Debounced onChange
+    const debouncedOnChange = useRef(
+        debounce((color) => {
+            if (onChange) {
+                onChange(color);
+            }
+        }, 500) // 500ms delay
+    ).current;
 
     const handleAddColor = () => {
         if (disabled) return;
@@ -22,17 +40,13 @@ export default function ColorPaletteSelector({ disabled, onChange }) {
     const handleColorSelect = (color) => {
         if (disabled) return;
         setSelectedColor(color);
-        if (onChange) {
-            onChange(color);
-        }
+        debouncedOnChange(color); // Use debounced onChange
     };
 
     const handleColorPickerChange = (e) => {
         const color = e.target.value.toUpperCase();
         setSelectedColor(color);
-        if (onChange) {
-            onChange(color);
-        }
+        debouncedOnChange(color); // Use debounced onChange
     };
 
     const handleColorPickerClick = (e) => {
@@ -72,9 +86,8 @@ export default function ColorPaletteSelector({ disabled, onChange }) {
                     {brandColors.map((color, index) => (
                         <div
                             key={index}
-                            className={`w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed] ${
-                                selectedColor === color ? 'border-2 border-[#7b39ed]' : ''
-                            } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                            className={`w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed] ${selectedColor === color ? 'border-2 border-[#7b39ed]' : ''
+                                } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
                             style={{ backgroundColor: color }}
                             onClick={() => handleColorSelect(color)}
                         />
@@ -86,11 +99,10 @@ export default function ColorPaletteSelector({ disabled, onChange }) {
                 <Label>Default Palette</Label>
                 <div className="flex flex-wrap gap-2">
                     <div className='relative w-fit'>
-                        <div 
+                        <div
                             onClick={handleAddColor}
-                            className={`w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed] bg-gray-500 flex items-center justify-center ${
-                                disabled ? 'cursor-not-allowed opacity-50' : ''
-                            }`}
+                            className={`w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed] bg-gray-500 flex items-center justify-center ${disabled ? 'cursor-not-allowed opacity-50' : ''
+                                }`}
                         >
                             <Plus color='white' />
                         </div>
@@ -109,9 +121,8 @@ export default function ColorPaletteSelector({ disabled, onChange }) {
                     {defaultPalette.map((color, index) => (
                         <div
                             key={index}
-                            className={`w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed] ${
-                                selectedColor === color ? 'border-2 border-[#7b39ed]' : ''
-                            } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
+                            className={`w-8 h-8 rounded cursor-pointer hover:border-2 border-[#7b39ed] ${selectedColor === color ? 'border-2 border-[#7b39ed]' : ''
+                                } ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}
                             style={{ backgroundColor: color }}
                             onClick={() => handleColorSelect(color)}
                         />
@@ -120,4 +131,4 @@ export default function ColorPaletteSelector({ disabled, onChange }) {
             </div>
         </div>
     );
-};
+}
