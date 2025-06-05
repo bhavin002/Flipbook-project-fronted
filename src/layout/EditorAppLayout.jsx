@@ -15,9 +15,11 @@ import { GetFlipbookApi, UpdateFlipbookPageDataApi } from "@/service/flipbook.se
 import { toast } from "sonner";
 import useWindowWidth from "@/hooks/use-window-width";
 import EditFlipbookName from "@/utils/EditFlipbookName";
+import PreviewDialog from "@/components/EditorLayoutComponents/Preview/PreviewDialog";
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [selectedShape, setSelectedShape] = useState([]);
@@ -284,7 +286,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                     <Button variant="outline">
                                         <Download />
                                     </Button>
-                                    <Button variant="outline">
+                                    <Button variant="outline" onClick={() => setIsPreviewOpen(true)}>
                                         <Eye /> Preview
                                     </Button>
                                 </div>
@@ -324,6 +326,11 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                     <PublishFlipbookDialog
                         isPublishModalOpen={isPublishModalOpen}
                         setIsPublishModalOpen={setIsPublishModalOpen}
+                        flipbookId={id}
+                    />
+                    <PreviewDialog 
+                        open={isPreviewOpen}
+                        onOpenChange={setIsPreviewOpen}
                         flipbookId={id}
                     />
                     <BottomEditorPanel isEditorDrawerOpen={isEditorDrawerOpen} setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} />
