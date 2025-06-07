@@ -133,6 +133,7 @@ export default function FlipBook({ flipbookId }) {
                                                     <div
                                                         key={index}
                                                         style={{ 'cursor': 'pointer' }}
+                                                        title={`${data.shape?.htmlData?.tooltip}`}
                                                         onClick={() => handleShapeClick(data.shape)}
                                                         dangerouslySetInnerHTML={{ __html: data.html }}
                                                     />
