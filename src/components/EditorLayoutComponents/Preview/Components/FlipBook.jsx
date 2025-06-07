@@ -1,6 +1,6 @@
 import "turn.js";
 import Turn from "../Helper/Turn.jsx";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import JsonToHtml from "../Helper/JsonToHtml.jsx";
 import ClickToDynamic from "../Helper/ClickToDynamic.jsx";
 import SlideShow from "../Widget/SlideShow.jsx";
@@ -8,14 +8,24 @@ import AudioButton from "../Widget/AudioButton.jsx";
 import { GetFlipbookApi } from "@/service/flipbook.service.js";
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader.jsx";
+import $ from "jquery";
 
-export default function FlipBook({ flipbookId }) {
+const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func(...args), delay);
+    };
+};
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange }, ref) {
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
     const [divWidth, setDivWidth] = useState(793);
     const [divHeight, setDivHeight] = useState(793);
     const [pageType, setPageType] = useState("double");
     const [pageContent, setPageContent] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
 
     const myRef = useRef(null);
 
@@ -43,29 +53,23 @@ export default function FlipBook({ flipbookId }) {
     }
 
     useEffect(() => {
-        window.addEventListener("resize", () => {
+        const handleResize = () => {
             const previewDialog = document.getElementById("preview-dialog");
             if (previewDialog?.clientWidth < 768) {
                 setPageType("single");
-            }
-            else {
+            } else {
                 setPageType("double");
             }
             const ratioDta = calculateNewDivSize(previewDialog?.clientWidth, previewDialog?.clientHeight, divWidth, divHeight);
             setHeight(ratioDta.height);
             setWidth(ratioDta.width);
-        });
-        const previewDialog = document.getElementById("preview-dialog");
-
-        if (previewDialog?.clientWidth < 768) {
-            setPageType("single");
-        }
-        else {
-            setPageType("double");
-        }
-        const ratioDta = calculateNewDivSize(previewDialog?.clientWidth, previewDialog?.clientHeight, divWidth, divHeight);
-        setHeight(ratioDta.height);
-        setWidth(ratioDta.width);
+        };
+        const debouncedResize = debounce(handleResize, 150);
+        handleResize();
+        window.addEventListener("resize", debouncedResize);
+        return () => {
+            window.removeEventListener("resize", debouncedResize);
+        };
     }, [pageType, divWidth, divHeight]);
 
     useEffect(() => {
@@ -79,6 +83,7 @@ export default function FlipBook({ flipbookId }) {
                 htmlData.map((data) => {
                     setPageContent((prev) => [...prev, data]);
                 });
+                setTotalPages(response.data.pages.length);
             } catch (error) {
                 toast.error("Failed to load flipbook", {
                     description: error.message,
@@ -86,13 +91,39 @@ export default function FlipBook({ flipbookId }) {
             }
         }
         getPageData();
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        const flipbookEL = myRef.current;
+        if (!flipbookEL) return;
+        const handleTurned = (e, page) => {
+            setCurrentPage(page);
+            if (onPageChange) onPageChange(page, totalPages);
+        };
+        $(flipbookEL).on('turned', handleTurned);
+        setTimeout(() => {
+            const page = $(flipbookEL).turn('page');
+            setCurrentPage(page);
+            if (onPageChange) onPageChange(page, totalPages);
+        }, 500);
+        return () => {
+            $(flipbookEL).off('turned', handleTurned);
+        };
+    }, [pageContent, totalPages, onPageChange]);
+
+    useImperativeHandle(ref, () => ({
+        setPage: (page) => {
+            if (myRef.current) {
+                $(myRef.current).turn("page", page);
+            }
+        }
+    }));
 
     if (pageContent.length === 0) {
         return (
             <div className="w-full h-full flex items-center justify-center mt-10">
                 <div className="flex flex-col items-center gap-4">
-                    <Loader/>
+                    <Loader />
                 </div>
             </div>
         );
@@ -149,4 +180,6 @@ export default function FlipBook({ flipbookId }) {
             </div>
         </>
     );
-}
+});
+
+export default FlipBook;
