@@ -6,8 +6,7 @@ import PhotoSlideShow from "../Widget/PhotoSlideShow";
 import VideoButtonModal from "../Widget/VideoButtonModal";
 import { PageNavigationActions } from './PageNavigationActions';
 
-// Action handlers
-const actionHandlers = {
+const linkAreaActionHandlers = {
     "send-email": (htmlData) => {
         const { email } = htmlData || {};
         if (email) {
@@ -65,9 +64,34 @@ const actionHandlers = {
     },
 };
 
-// Modal handlers
+const linkAreaModalHandlers = {
+    'popup-frame': (htmlData) => {
+        showModal(PopupFrameModal, htmlData);
+    },
+    'spotlight': (htmlData) => {
+        console.log("spotlight htmlData ??", htmlData)
+        showModal(SpotlightModal, htmlData);
+    },
+    'photo-slideshow': (htmlData) => {
+        showModal(PhotoSlideShow, htmlData);
+    },
+};
+
+const actionHandlers = {
+    'go-to-button-link': (htmlData) => {
+        const { url, openIn } = htmlData || {};
+        if (url) {
+            if (openIn === "new-tab") {
+                window.open(url, "_blank");
+            } else {
+                window.location.href = url;
+            }
+        }
+    },
+};
+
 const modalHandlers = { 
-    'tag': (htmlData) => {
+    'link-tag': (htmlData) => {
         showModal(LinkModal, htmlData);
     },
     'square-caption': (htmlData) => {
@@ -76,20 +100,11 @@ const modalHandlers = {
     'rounded-caption': (htmlData) => {
         showModal(LinkModal, htmlData);
     },
-    'popup-frame': (htmlData) => {
-        showModal(PopupFrameModal, htmlData);
-    },
-    'spotlight': (htmlData) => {
-        console.log("spotlight htmlData ??",htmlData)
-        showModal(SpotlightModal, htmlData);
-    },
-    'photo-slideshow': (htmlData) => {
-        showModal(PhotoSlideShow, htmlData);
-    },
     'video-button': (htmlData) => {
         showModal(VideoButtonModal, htmlData);
     }
 };
+
 
 function showModal(ModalComponent, htmlData) {
     const modalRoot = document.createElement('div');
@@ -97,16 +112,16 @@ function showModal(ModalComponent, htmlData) {
     modalRoot.style.position = 'relative';
     modalRoot.style.zIndex = '100';
     document.body.appendChild(modalRoot);
-    
+
     const root = createRoot(modalRoot);
-    
+
     const handleClose = () => {
         root.unmount();
         document.body.removeChild(modalRoot);
     };
-    
+
     root.render(
-        <ModalComponent 
+        <ModalComponent
             open={true}
             onOpenChange={(open) => {
                 if (!open) handleClose();
@@ -117,18 +132,27 @@ function showModal(ModalComponent, htmlData) {
 }
 
 export default function ClickToDynamic(shape, flipbookRef) {
-    console.log("ClickToDynamic shape ???",shape)
-    const { htmlData } = shape;
+    console.log("ClickToDynamic shape ???", shape)
+    const { htmlType, htmlData } = shape;
 
-    // Handle action-based clicks
-    if (htmlData?.action && actionHandlers[htmlData.action]) {
-        actionHandlers[htmlData.action](htmlData, flipbookRef);
+    if (htmlType === 'link-area') {
+        if (htmlData?.action && linkAreaActionHandlers[htmlData.action]) {
+            linkAreaActionHandlers[htmlData.action](htmlData, flipbookRef);
+            return;
+        }
+        if (htmlData?.action && linkAreaModalHandlers[htmlData.action]) {
+            linkAreaModalHandlers[htmlData.action](htmlData);
+            return;
+        }
+    }
+
+    if (htmlType && actionHandlers[htmlType]) {
+        actionHandlers[htmlType](htmlData);
         return;
     }
 
-    // Handle modal-based clicks
-    if (htmlData?.action && modalHandlers[htmlData.action]) {
-        modalHandlers[htmlData.action](htmlData);
+    if (htmlType && modalHandlers[htmlType]) {
+        modalHandlers[htmlType](htmlData);
         return;
     }
 }

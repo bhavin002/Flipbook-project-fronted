@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function SlideShow({ shape }) {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
     const intervalRef = useRef(null);
     const { htmlData } = shape || {};
     
     const images = htmlData?.images || [];
     const hideControls = htmlData?.hideControls ?? false;
     const autoplaySlideshow = htmlData?.autoplaySlideshow ?? false;
-    const slideDuration = htmlData?.slideDuration || 6;
-    const imageProperties = htmlData?.imagePropeties || "fit-to-frame";
+    const slideDuration = htmlData?.slideDuration?.[0] || 6;
+    const imageProperties = htmlData?.imageProperties || "fit-to-frame";
 
     useEffect(() => {
-        if (!autoplaySlideshow || isPaused || images.length <= 1) {
+        if (!autoplaySlideshow || images.length <= 1) {
             clearInterval(intervalRef.current);
             return;
         }
@@ -23,11 +23,10 @@ export default function SlideShow({ shape }) {
         }, slideDuration * 1000);
 
         return () => clearInterval(intervalRef.current);
-    }, [autoplaySlideshow, isPaused, slideDuration, images.length]);
+    }, [autoplaySlideshow, slideDuration, images.length]);
 
     const goToNextSlide = () => setCurrentIndex((prev) => (prev + 1) % images.length);
     const goToPrevSlide = () => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
-    const togglePause = () => setIsPaused((prev) => !prev);
 
     const getImageFitClass = () => {
         return {
@@ -56,68 +55,47 @@ export default function SlideShow({ shape }) {
         justifyContent: "center",
         alignItems: "center"
     };
+    const iconColor = imageProperties === 'scale-to-fill' ? 'text-white' : 'text-gray-800';
 
     return (
-        <div style={shapeStyles} className="slideshow-container">
+        <div style={shapeStyles} className={`slideshow-container`}>
             {images.length > 0 && (
-                <div className="relative w-full h-full">
+                <div className="relative w-full h-full flex items-center justify-center">
                     <img
                         src={images[currentIndex]?.url}
                         alt={images[currentIndex]?.fileName || "Slideshow image"}
-                        className={`w-full h-full ${getImageFitClass()}`}
+                        className={`w-full h-full ${getImageFitClass()} rounded-md`}
                         onError={(e) => { e.target.src = "/fallback-image.png"; }}
                     />
                     
                     {!hideControls && images.length > 1 && (
-                        <div className="absolute inset-0 flex items-center justify-between p-2 pointer-events-none">
+                        <div className="absolute inset-0 flex items-center justify-between px-4">
                             <button 
                                 onClick={goToPrevSlide}
-                                className="pointer-events-auto bg-black bg-opacity-40 text-white rounded-full p-2 hover:bg-opacity-60 focus:outline-none"
+                                className=""
                                 aria-label="Previous slide"
                             >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                </svg>
+                                <ChevronLeft className={`w-6 h-6 ${iconColor}`} />
                             </button>
                             <button 
                                 onClick={goToNextSlide}
-                                className="pointer-events-auto bg-black bg-opacity-40 text-white rounded-full p-2 hover:bg-opacity-60 focus:outline-none"
+                                className=""
                                 aria-label="Next slide"
                             >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
+                                <ChevronRight className={`w-6 h-6 ${iconColor}`} />
                             </button>
                         </div>
                     )}
 
-                    {autoplaySlideshow && images.length > 1 && (
-                        <button 
-                            onClick={togglePause}
-                            className="absolute bottom-2 right-2 bg-black bg-opacity-40 text-white rounded-full p-2 hover:bg-opacity-60 focus:outline-none"
-                            aria-label={isPaused ? "Play" : "Pause"}
-                        >
-                            {isPaused ? (
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M8 5v14l11-7z" />
-                                </svg>
-                            ) : (
-                                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                                </svg>
-                            )}
-                        </button>
-                    )}
-
                     {images.length > 1 && (
-                        <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5 p-2">
+                        <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
                             {images.map((_, index) => (
                                 <button
                                     key={images[index]?.fileId || index}
                                     onClick={() => setCurrentIndex(index)}
-                                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
                                         currentIndex === index 
-                                            ? "bg-white scale-125" 
+                                            ? "bg-primary scale-125" 
                                             : "bg-white bg-opacity-50 hover:bg-opacity-75"
                                     }`}
                                     aria-label={`Go to slide ${index + 1}`}

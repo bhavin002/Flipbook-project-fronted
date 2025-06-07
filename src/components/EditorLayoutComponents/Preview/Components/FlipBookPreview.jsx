@@ -19,18 +19,11 @@ export default function FlipBookPreview({ flipbookId }) {
     const progress = totalPages > 1 ? ((currentPage - 1) / (totalPages - 1)) * 100 : 0;
 
     const handlePageChange = (page, total) => {
-        // Validate page and total to prevent NaN
         const validPage = isNaN(page) || page < 1 ? 1 : page;
         const validTotal = isNaN(total) || total < 1 ? 1 : total;
         
         setCurrentPage(validPage);
         setTotalPages(validTotal);
-        
-        // Update the state for the current tab
-        setPageState(prev => ({
-            ...prev,
-            [activeTab]: { currentPage: validPage, totalPages: validTotal }
-        }));
     };
 
     const setPage = (page) => {
