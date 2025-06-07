@@ -195,7 +195,7 @@ export default function FlipBookPreview({ flipbookId }) {
                 className="w-full h-full flex flex-col items-center justify-center"
             >
                 <div className="w-full h-[10%] mt-5 flex items-center justify-center">
-                    <TabsList className="grid w-[200px] grid-cols-2 bg-gray-100 rounded-lg">
+                    <TabsList className="grid grid-cols-2 bg-gray-100 rounded-lg">
                         <TabsTrigger
                             value="desktop"
                             className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
@@ -212,7 +212,7 @@ export default function FlipBookPreview({ flipbookId }) {
                         </TabsTrigger>
                     </TabsList>
                 </div>
-                <div className="w-full h-full flex-grow flex items-center justify-center pb-16">
+                <div className="w-full h-full flex-grow flex items-center justify-center pb-5">
                     <TabsContent
                         value="desktop"
                         className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden"
@@ -232,13 +232,13 @@ export default function FlipBookPreview({ flipbookId }) {
                     </TabsContent>
                     <TabsContent
                         value="mobile"
-                        className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden"
+                        className="w-full h-full  flex items-center justify-center data-[state=inactive]:hidden"
                     >
                         <div
-                            className="w-[90%] max-w-[400px] flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg shadow-md overflow-hidden"
+                            className="w-[90%] max-w-[400px] h-full flex flex-col items-center justify-center overflow-hidden"
                             id="preview-dialog"
                         >
-                            <div className="w-full h-[70vh] flex items-center justify-center">
+                            <div className="w-full h-full flex items-center justify-center">
                                 <FlipBook
                                     ref={flipBookRef}
                                     flipbookId={flipbookId}
