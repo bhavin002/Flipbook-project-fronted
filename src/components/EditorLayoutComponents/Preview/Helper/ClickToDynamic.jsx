@@ -55,11 +55,18 @@ const actionHandlers = {
         if (htmlData?.pageNumber) {
             PageNavigationActions.goToPage(flipbookRef, htmlData.pageNumber);
         }
-    }
+    },
+
+    'phone-number': (htmlData) => {
+        const { phoneNumber } = htmlData || {};
+        if (phoneNumber) {
+            window.location.href = `tel:${phoneNumber}`;
+        }
+    },
 };
 
 // Modal handlers
-const modalHandlers = {
+const modalHandlers = { 
     'tag': (htmlData) => {
         showModal(LinkModal, htmlData);
     },
@@ -76,7 +83,7 @@ const modalHandlers = {
         console.log("spotlight htmlData ??",htmlData)
         showModal(SpotlightModal, htmlData);
     },
-    'popup-slideshow': (htmlData) => {
+    'photo-slideshow': (htmlData) => {
         showModal(PhotoSlideShow, htmlData);
     },
     'video-button': (htmlData) => {
