@@ -100,12 +100,6 @@ export default function InteractionsSidebarPanel({ setIsEditorDrawerOpen, setMai
                     ? `${attrs.cornerRadius}px`
                     : "0";
                 break;
-            case "popup-frame":
-                dragMask.style.width = `100px`;
-                dragMask.style.height = `100px`;
-                dragMask.style.background = attrs.fill || "#7bc2ff";
-                dragMask.style.opacity = attrs.opacity || "0.3";
-                break;
             case "spotlight":
                 dragMask.style.width = `100px`;
                 dragMask.style.height = `100px`;

@@ -45,25 +45,25 @@ export default function FlipBook({ flipbookId }) {
     useEffect(() => {
         window.addEventListener("resize", () => {
             const previewDialog = document.getElementById("preview-dialog");
-            if (previewDialog.clientWidth < 768) {
+            if (previewDialog?.clientWidth < 768) {
                 setPageType("single");
             }
             else {
                 setPageType("double");
             }
-            const ratioDta = calculateNewDivSize(previewDialog.clientWidth, previewDialog.clientHeight, divWidth, divHeight);
+            const ratioDta = calculateNewDivSize(previewDialog?.clientWidth, previewDialog?.clientHeight, divWidth, divHeight);
             setHeight(ratioDta.height);
             setWidth(ratioDta.width);
         });
         const previewDialog = document.getElementById("preview-dialog");
 
-        if (previewDialog.clientWidth < 768) {
+        if (previewDialog?.clientWidth < 768) {
             setPageType("single");
         }
         else {
             setPageType("double");
         }
-        const ratioDta = calculateNewDivSize(previewDialog.clientWidth, previewDialog.clientHeight, divWidth, divHeight);
+        const ratioDta = calculateNewDivSize(previewDialog?.clientWidth, previewDialog?.clientHeight, divWidth, divHeight);
         setHeight(ratioDta.height);
         setWidth(ratioDta.width);
     }, [pageType, divWidth, divHeight]);
@@ -99,15 +99,19 @@ export default function FlipBook({ flipbookId }) {
     }
 
     const handleShapeClick = (data) => {
-        ClickToDynamic(data);
+        ClickToDynamic(data, myRef);
     }
+
+    const handleBookLoad = () => {
+        console.log("The book content is fully loaded!");
+    };
 
     return (
         <>
             <div className="wrapper flex flex-col items-center justify-center">
                 <div className="aspect" style={{ width: width, height: height }}>
                     <div className="aspect-inner">
-                        <Turn className="flipbook" id="flipbook" width={width} height={height} pageType={pageType} myRef={myRef} >
+                        <Turn className="flipbook" id="flipbook" width={width} height={height} pageType={pageType} myRef={myRef} onLoad={handleBookLoad}>
                             {pageContent.map((page, index) => (
                                 <div key={index} className="page">
                                     <div style={{
@@ -141,7 +145,7 @@ export default function FlipBook({ flipbookId }) {
                         </Turn>
                     </div>
                 </div>
-            </div >
+            </div>
         </>
     );
 }

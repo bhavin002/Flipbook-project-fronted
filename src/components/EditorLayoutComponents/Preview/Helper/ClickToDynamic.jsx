@@ -4,71 +4,94 @@ import PopupFrameModal from "../Widget/PopupFrameModal";
 import SpotlightModal from "../Widget/SpotlightModal";
 import PhotoSlideShow from "../Widget/PhotoSlideShow";
 import VideoButtonModal from "../Widget/VideoButtonModal";
+import { PageNavigationActions } from './PageNavigationActions';
 
-export default function ClickToDynamic(shape) {
-    if (shape.htmlType === "go-to-url") {
-        goToUrl(shape.htmlData);
-    }
-    if(shape.htmlType === "go-to-button-link"){
-        goToButtonLink(shape.htmlData);
-    }
-    if(shape.htmlType === "tag"){
-        goToTag(shape.htmlData);
-    }
-    if(shape.htmlType === "square-caption"){
-        squareCaption(shape.htmlData);
-    }
-    if(shape.htmlType === "rounded-caption"){
-        roundedCaption(shape.htmlData);
-    }
-    if(shape.htmlType === "popup-frame"){
-        popupFrame(shape.htmlData);
-    }
-    if(shape.htmlType === "spotlight"){
-        spotlight(shape.htmlData);
-    }
-    if(shape.htmlType === "popup-slideshow"){
-        popupSlideshow(shape.htmlData);
-    }
-    if(shape.htmlType === "video-button"){
-        videoButton(shape.htmlData);
-    }
-}
+// Action handlers
+const actionHandlers = {
+    "send-email": (htmlData) => {
+        const { email } = htmlData || {};
+        if (email) {
+            window.location.href = `mailto:${email}`;
+        }
+    },
 
-function goToUrl(htmlData) {
-    const { url, openIn } = htmlData || {};
-    if (url) {
-        if (openIn === "new-tab") {
-            window.open(url, "_blank");
-        } else {
-            window.location.href = url;
+    'go-to-url': (htmlData) => {
+        const { url, openIn } = htmlData || {};
+        if (url) {
+            if (openIn === "new-tab") {
+                window.open(url, "_blank");
+            } else {
+                window.location.href = url;
+            }
+        }
+    },
+
+    'go-to-profile': (htmlData) => {
+        const url = import.meta.env.VITE_APP_URL + "/account/details";
+        window.open(url, "_blank");
+    },
+
+    'download-pdf': (htmlData) => {
+        console.log('Download PDF action triggered');
+    },
+
+    'go-to-next-page': (htmlData, flipbookRef) => {
+        PageNavigationActions.goToNextPage(flipbookRef);
+    },
+
+    'go-to-previous-page': (htmlData, flipbookRef) => {
+        PageNavigationActions.goToPreviousPage(flipbookRef);
+    },
+
+    'go-to-first-page': (htmlData, flipbookRef) => {
+        PageNavigationActions.goToFirstPage(flipbookRef);
+    },
+
+    'go-to-last-page': (htmlData, flipbookRef) => {
+        PageNavigationActions.goToLastPage(flipbookRef);
+    },
+
+    'go-to-page': (htmlData, flipbookRef) => {
+        if (htmlData?.pageNumber) {
+            PageNavigationActions.goToPage(flipbookRef, htmlData.pageNumber);
         }
     }
-}
+};
 
-function goToButtonLink(htmlData) {
-    const { url, openIn } = htmlData || {};
-    if (url) {
-        if (openIn === "new-tab") {
-            window.open(url, "_blank");
-        } else {
-            window.location.href = url;
-        }
+// Modal handlers
+const modalHandlers = {
+    'tag': (htmlData) => {
+        showModal(LinkModal, htmlData);
+    },
+    'square-caption': (htmlData) => {
+        showModal(LinkModal, htmlData);
+    },
+    'rounded-caption': (htmlData) => {
+        showModal(LinkModal, htmlData);
+    },
+    'popup-frame': (htmlData) => {
+        showModal(PopupFrameModal, htmlData);
+    },
+    'spotlight': (htmlData) => {
+        console.log("spotlight htmlData ??",htmlData)
+        showModal(SpotlightModal, htmlData);
+    },
+    'popup-slideshow': (htmlData) => {
+        showModal(PhotoSlideShow, htmlData);
+    },
+    'video-button': (htmlData) => {
+        showModal(VideoButtonModal, htmlData);
     }
-}
+};
 
-function goToTag(htmlData) {
+function showModal(ModalComponent, htmlData) {
     const modalRoot = document.createElement('div');
     modalRoot.id = 'dynamic-modal-root';
+    modalRoot.style.position = 'relative';
+    modalRoot.style.zIndex = '100';
     document.body.appendChild(modalRoot);
     
     const root = createRoot(modalRoot);
-    
-    const handleButtonClick = () => {
-        if (htmlData.url) {
-            window.open(htmlData.url, "_blank");
-        }
-    };
     
     const handleClose = () => {
         root.unmount();
@@ -76,157 +99,29 @@ function goToTag(htmlData) {
     };
     
     root.render(
-        <LinkModal 
-            isOpen={true}
-            onClose={handleClose}
-            content={htmlData}
-            buttonLabel={htmlData?.buttonLabel || "Redirect"}
-            onButtonClick={handleButtonClick}
-        />
-    );
-}
-
-function squareCaption(htmlData) {
-    const modalRoot = document.createElement('div');
-    modalRoot.id = 'dynamic-modal-root';
-    document.body.appendChild(modalRoot);
-    
-    const root = createRoot(modalRoot);
-    
-    const handleButtonClick = () => {
-        if (htmlData.url) {
-            window.open(htmlData.url, "_blank");
-        }
-    };
-    
-    const handleClose = () => {
-        root.unmount();
-        document.body.removeChild(modalRoot);
-    };
-    
-    root.render(
-        <LinkModal 
-            isOpen={true}
-            onClose={handleClose}
-            content={htmlData}
-            buttonLabel={htmlData?.buttonLabel || ""}
-            onButtonClick={handleButtonClick}
-        />
-    );
-}
-
-function roundedCaption(htmlData) {
-    const modalRoot = document.createElement('div');
-    modalRoot.id = 'dynamic-modal-root';
-    document.body.appendChild(modalRoot);
-    
-    const root = createRoot(modalRoot);
-    
-    const handleButtonClick = () => {
-        if (htmlData.url) {
-            window.open(htmlData.url, "_blank");
-        }
-    };
-    
-    const handleClose = () => {
-        root.unmount();
-        document.body.removeChild(modalRoot);
-    };
-    
-    root.render(
-        <LinkModal 
-            isOpen={true}
-            onClose={handleClose}
-            content={htmlData}
-            buttonLabel={htmlData?.buttonLabel || ""}
-            onButtonClick={handleButtonClick}
-        />
-    );
-}
-
-function popupFrame(htmlData) {
-    console.log("htmlData", htmlData);
-    
-    const modalRoot = document.createElement('div');
-    modalRoot.id = 'dynamic-modal-root';
-    document.body.appendChild(modalRoot);
-    
-    const root = createRoot(modalRoot);
-
-    const handleClose = () => {
-        root.unmount();
-        document.body.removeChild(modalRoot);
-    };
-    
-    root.render(
-        <PopupFrameModal 
-            isOpen={true}
-            onClose={handleClose}
-            embedCode={htmlData.embedCode}
-        />
-    );
-}
-
-function spotlight(htmlData) {
-    console.log("htmlData", htmlData);
-    const modalRoot = document.createElement('div');
-    modalRoot.id = 'dynamic-modal-root';
-    document.body.appendChild(modalRoot);
-    
-    const root = createRoot(modalRoot);
-
-    const handleClose = () => {
-        root.unmount();
-        document.body.removeChild(modalRoot);
-    };
-    
-    root.render(
-        <SpotlightModal 
-            isOpen={true}
-            onClose={handleClose}
+        <ModalComponent 
+            open={true}
+            onOpenChange={(open) => {
+                if (!open) handleClose();
+            }}
             htmlData={htmlData}
         />
     );
 }
 
-function popupSlideshow(htmlData){
-    const modalRoot = document.createElement('div');
-    modalRoot.id = 'dynamic-modal-root';
-    document.body.appendChild(modalRoot);
-    
-    const root = createRoot(modalRoot);
+export default function ClickToDynamic(shape, flipbookRef) {
+    console.log("ClickToDynamic shape ???",shape)
+    const { htmlData } = shape;
 
-    const handleClose = () => {
-        root.unmount();
-        document.body.removeChild(modalRoot);
-    };
-    
-    root.render(
-        <PhotoSlideShow 
-            isOpen={true}
-            onClose={handleClose}
-            htmlData={htmlData}
-        />
-    );
-}
+    // Handle action-based clicks
+    if (htmlData?.action && actionHandlers[htmlData.action]) {
+        actionHandlers[htmlData.action](htmlData, flipbookRef);
+        return;
+    }
 
-function videoButton(htmlData){
-    const modalRoot = document.createElement('div');
-    modalRoot.id = 'dynamic-modal-root';
-    document.body.appendChild(modalRoot);
-    
-    const root = createRoot(modalRoot);
-
-    const handleClose = () => {
-        root.unmount();
-        document.body.removeChild(modalRoot);
-    };
-    
-    root.render(
-        <VideoButtonModal 
-            isOpen={true}
-            onClose={handleClose}
-            htmlData={htmlData}
-        />
-    );
+    // Handle modal-based clicks
+    if (htmlData?.action && modalHandlers[htmlData.action]) {
+        modalHandlers[htmlData.action](htmlData);
+        return;
+    }
 }

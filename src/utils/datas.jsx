@@ -1485,8 +1485,8 @@ const interactions = [
                 icon: `<div class="w-2 h-2 border-t-2 border-l-2 absolute top-0 left-0 rounded-tl-md"> </div><div class="w-2 h-2 border-t-2 border-r-2 absolute top-0 right-0 rounded-tr-md"> </div><div class="w-2 h-2 border-b-2 border-l-2 absolute bottom-0 left-0 rounded-bl-md"> </div><div class="w-2 h-2 border-b-2 border-r-2 absolute bottom-0 right-0 rounded-br-md"> </div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image-icon lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>`,
                 isUpgrade: true,
                 attrs: {
-                    width: 160,
-                    height: 160,
+                    width: 320,
+                    height: 52,
                     fill: "#7bc2ff",
                     opacity: 0.3,
                     effect: { opacity: 0.3 * 100 },
@@ -1494,7 +1494,7 @@ const interactions = [
                     title: "hyperlink",
                     visible: true,
                     layer: "Link",
-                    htmlType: "popup-frame",
+                    htmlType: "link-area",
                     htmlData: {
                         action: "popup-frame"
                     }

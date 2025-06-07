@@ -290,6 +290,17 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                         <Eye /> Preview
                                     </Button>
                                 </div>
+                                <div className="hidden max-lg:block space-x-2">
+                                    <Button variant="outline">
+                                        <SlidersHorizontal />
+                                    </Button>
+                                    <Button variant="outline">
+                                        <Download />
+                                    </Button>
+                                    <Button variant="outline" onClick={() => setIsPreviewOpen(true)}>
+                                        <Eye />
+                                    </Button>
+                                </div>
                                 <Button className="hidden max-lg:block">
                                     <ShareDropDownCom />
                                 </Button>

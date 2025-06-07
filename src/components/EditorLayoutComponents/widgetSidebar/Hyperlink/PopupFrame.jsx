@@ -8,13 +8,15 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 
+const embedCodePattern = /^(<(iframe|embed)[\s\S]*?>([\s\S]*?<\/(iframe|embed)>)?|<div[\s\S]*?<\/div>[\s\S]*<script[\s\S]*?<\/script>)$/;
+
 const popupFrameSchema = z.object({
     tooltip: z.string().optional(),
     embedCode: z.string()
         .refine(code => {
-            return code === "" || /^<(iframe|embed)[\s\S]*?>([\s\S]*?<\/(iframe|embed)>)?$/.test(code);
+            return code === "" || embedCodePattern.test(code);
         }, {
-            message: "Please enter a valid embed code (iframe or embed tags)"
+            message: "Please enter a valid embed code (iframe, embed tags, or div with script)"
         })
 });
 
@@ -42,7 +44,7 @@ export default function PopupFrame({ mainStage, setMainStage, selectedShape, sel
             form.setValue("tooltip", newTooltip);
             form.setValue("embedCode", newEmbedCode, { shouldValidate: true });
 
-            setIsEmbedCodeValid(!!newEmbedCode && /^<(iframe|embed)[\s\S]*?>([\s\S]*?<\/(iframe|embed)>)?$/.test(newEmbedCode));
+            setIsEmbedCodeValid(!!newEmbedCode && embedCodePattern.test(newEmbedCode));
             setIsEmbedCodeTouched(false);
         } else {
             form.setValue("tooltip", "");
@@ -71,13 +73,13 @@ export default function PopupFrame({ mainStage, setMainStage, selectedShape, sel
 
     useEffect(() => {
         const currentEmbedCode = formValues.embedCode;
-        const isValid = currentEmbedCode && /^<(iframe|embed)[\s\S]*?>([\s\S]*?<\/(iframe|embed)>)?$/.test(currentEmbedCode);
+        const isValid = currentEmbedCode && embedCodePattern.test(currentEmbedCode);
         setIsEmbedCodeValid(isValid);
 
         if (isEmbedCodeTouched && !isValid && currentEmbedCode) {
             form.setError("embedCode", {
                 type: "manual",
-                message: "Please enter a valid embed code (iframe or embed tags)"
+                message: "Please enter a valid embed code (iframe, embed tags, or div with script)"
             });
         } else if (isValid || !currentEmbedCode) {
             form.clearErrors("embedCode");
@@ -92,14 +94,14 @@ export default function PopupFrame({ mainStage, setMainStage, selectedShape, sel
         const value = e.target.value;
         form.setValue("embedCode", value, { shouldValidate: true });
 
-        const isValid = value && /^<(iframe|embed)[\s\S]*?>([\s\S]*?<\/(iframe|embed)>)?$/.test(value);
+        const isValid = value && embedCodePattern.test(value);
         setIsEmbedCodeValid(isValid);
     };
 
     const handleEmbedCodeBlur = () => {
         setIsEmbedCodeTouched(true);
         const values = form.getValues();
-        const isValid = values.embedCode && /^<(iframe|embed)[\s\S]*?>([\s\S]*?<\/(iframe|embed)>)?$/.test(values.embedCode);
+        const isValid = values.embedCode && embedCodePattern.test(values.embedCode);
         setIsEmbedCodeValid(isValid);
 
         if (isValid || !values.embedCode) {
@@ -147,7 +149,7 @@ export default function PopupFrame({ mainStage, setMainStage, selectedShape, sel
                             <FormControl>
                                 <Textarea
                                     id="popup-frame-code"
-                                    placeholder="Embed code"
+                                    placeholder="Embed code (iframe, embed, or div with script)"
                                     className={`resize-none placeholder:text-[#d8dce3] ${showEmbedCodeError ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
                                     rows={4}
                                     {...field}

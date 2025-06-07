@@ -26,9 +26,6 @@ function convertToHtml(page) {
         if (shape.htmlType === "embed-code") {
             return { html: ReactDOMServer.renderToStaticMarkup(embedCode(shape)), shape };
         }
-        if (shape.htmlType === "popup-frame") {
-            return { html: ReactDOMServer.renderToStaticMarkup(popUpFrame(shape)), shape };
-        }
         if (shape.htmlType === "spotlight") {
             return { html: ReactDOMServer.renderToStaticMarkup(spotlight(shape)), shape };
         }
@@ -109,14 +106,11 @@ function convertToHtml(page) {
         }
         return "";
     })
-    // .join("");
 }
 
 function goToUrl(shape) {
     return (
         <a
-            href={shape.htmlData?.url}
-            target={shape.htmlData?.openIn == "new-tab" ? "_blank" : "_self"}
             style={{
                 width: `${shape.width}px`,
                 height: `${shape.height}px`,

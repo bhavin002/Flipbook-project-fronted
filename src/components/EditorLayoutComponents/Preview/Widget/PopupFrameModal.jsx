@@ -1,49 +1,38 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 
-const PopupFrameModal = ({ isOpen, onClose, embedCode }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  
+const PopupFrameModal = ({ open, onOpenChange, htmlData }) => {
+
+  const { embedCode } = htmlData;
+
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => setIsVisible(true), 10);
-    } else {
-      setIsVisible(false);
+    if (open && embedCode) {
+      const script = document.createElement('script');
+      script.src = "https://js.feedspace.io/v1/embed/embed.min.js";
+      script.async = true;
+      document.body.appendChild(script);
+
+      return () => {
+        document.body.removeChild(script);
+      };
     }
-  }, [isOpen]);
-  
-  if (!isOpen) return null;
+  }, [open, embedCode]);
 
   return (
-    <div 
-      className="fixed inset-0 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 ease-in-out"
-      style={{ opacity: isVisible ? 1 : 0 }}
-      onClick={onClose}
-    >
-      <div 
-        className="bg-white p-5 rounded-lg shadow-lg flex flex-col gap-5 transform transition-all duration-300 ease-in-out"
-        style={{ 
-          width: "600px", 
-          transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-16px)'
-        }}
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="flex justify-between items-center">
-          <button 
-            className="text-2xl cursor-pointer p-0 w-6 h-6 leading-6 hover:text-gray-500 transition-colors duration-200"
-            onClick={onClose}
-          >
-            ×
-          </button>
-        </div>
-        <div className="flex justify-center w-full">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-h-[80vh] max-w-[80vw] z-[100] overflow-scroll">
+        <div className="flex justify-center w-full mt-4">
           {embedCode && (
-            <div 
-              dangerouslySetInnerHTML={{ __html: embedCode }} 
+            <div
+              dangerouslySetInnerHTML={{ __html: embedCode }}
             />
           )}
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 
