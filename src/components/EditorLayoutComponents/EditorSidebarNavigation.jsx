@@ -39,7 +39,7 @@ export default function EditorSidebarNavigation({ currentView, setCurrentView, m
             setSelectedSubMenu(null);
             return;
         }
-        if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "link-area" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "spotlight" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "photo-slideshow")) {
+        if (mainStage[selectedIndex].selectedShapes.length === 1 && (mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "link-area" || mainStage[selectedIndex].selectedShapes[0].attrs.htmlType === "photo-slideshow")) {
             setSelectedShape(mainStage[selectedIndex].selectedShapes)
             if (!isSidebarOpen) {
                 setSelectedItem("interactions")

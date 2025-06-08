@@ -26,9 +26,6 @@ function convertToHtml(page) {
         if (shape.htmlType === "embed-code") {
             return { html: ReactDOMServer.renderToStaticMarkup(embedCode(shape)), shape };
         }
-        if (shape.htmlType === "spotlight") {
-            return { html: ReactDOMServer.renderToStaticMarkup(spotlight(shape)), shape };
-        }
         if (shape.htmlType === "slideshow") {
             return { html: ReactDOMServer.renderToStaticMarkup(slideshow(shape)), shape };
         }
@@ -343,31 +340,6 @@ function embedCode(shape) {
             </div>
         );
     }
-}
-
-function spotlight(shape) {
-    return (
-        <div
-            title={shape.htmlData?.tooltip}
-            style={{
-                width: `${shape.width}px`,
-                height: `${shape.height}px`,
-                backgroundColor: shape.fill,
-                opacity: shape.opacity,
-                position: "absolute",
-                left: `${shape.x}px`,
-                top: `${shape.y}px`,
-                transformOrigin: "0 0",
-                transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX || 1})
-          scaleY(${shape.scaleY || 1})
-          skewX(${shape.skewX || 0}deg)
-          skewY(${shape.skewY || 0}deg)
-          translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
-                display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
-            }}
-        />
-    );
 }
 
 function slideshow(shape) {
