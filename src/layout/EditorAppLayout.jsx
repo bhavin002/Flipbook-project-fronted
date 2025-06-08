@@ -32,6 +32,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const { id } = useParams();
     const [mainStage, setMainStage] = useState([]);
     const navigate = useNavigate();
+    const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
     console.log("mainStage ??", mainStage)
 
@@ -95,6 +96,20 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [selectedSubMenu, setSelectedSubMenu] = useState(null);
     const [isShapeDrawerOpen, setIsShapeDrawerOpen] = useState(false);
     const [isEditorDrawerOpen, setIsEditorDrawerOpen] = useState(false);
+
+    const handlePreviewClick = async () => {
+        try {
+            setIsPreviewLoading(true);
+            await updatePageData();
+            setIsPreviewOpen(true);
+        } catch (error) {
+            toast.error("Failed to update page data before preview", {
+                description: error.message || "Something went wrong"
+            });
+        } finally {
+            setIsPreviewLoading(false);
+        }
+    };
 
     return (
         <>
@@ -286,8 +301,8 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                     <Button variant="outline">
                                         <Download />
                                     </Button>
-                                    <Button variant="outline" onClick={() => setIsPreviewOpen(true)}>
-                                        <Eye /> Preview
+                                    <Button variant="outline" onClick={handlePreviewClick} disabled={isPreviewLoading}>
+                                    <Eye /> Preview
                                     </Button>
                                 </div>
                                 <div className="hidden max-lg:block space-x-2">
@@ -297,8 +312,8 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                     <Button variant="outline">
                                         <Download />
                                     </Button>
-                                    <Button variant="outline" onClick={() => setIsPreviewOpen(true)}>
-                                        <Eye />
+                                    <Button variant="outline" onClick={handlePreviewClick} disabled={isPreviewLoading}>
+                                        {isPreviewLoading ? "Loading..." : <Eye />}
                                     </Button>
                                 </div>
                                 <Button className="hidden max-lg:block">
