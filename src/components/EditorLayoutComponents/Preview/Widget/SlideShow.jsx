@@ -55,12 +55,11 @@ export default function SlideShow({ shape }) {
         justifyContent: "center",
         alignItems: "center"
     };
-    const iconColor = imageProperties === 'scale-to-fill' ? 'text-white' : 'text-gray-800';
 
     return (
         <div style={shapeStyles} className={`slideshow-container`}>
             {images.length > 0 && (
-                <div className="relative w-full h-full flex items-center justify-center">
+                <div className="relative w-full h-full flex items-center justify-center p-2">
                     <img
                         src={images[currentIndex]?.url}
                         alt={images[currentIndex]?.fileName || "Slideshow image"}
@@ -72,17 +71,17 @@ export default function SlideShow({ shape }) {
                         <div className="absolute inset-0 flex items-center justify-between px-4">
                             <button 
                                 onClick={goToPrevSlide}
-                                className=""
+                                className="bg-[#ffffff40] rounded-full p-1"
                                 aria-label="Previous slide"
                             >
-                                <ChevronLeft className={`w-6 h-6 ${iconColor}`} />
+                                <ChevronLeft className="w-6 h-6 text-black" />
                             </button>
                             <button 
                                 onClick={goToNextSlide}
-                                className=""
+                                className="bg-[#ffffff40] rounded-full p-1"
                                 aria-label="Next slide"
                             >
-                                <ChevronRight className={`w-6 h-6 ${iconColor}`} />
+                                <ChevronRight className="w-6 h-6 text-black" />
                             </button>
                         </div>
                     )}

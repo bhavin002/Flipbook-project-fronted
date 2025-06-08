@@ -5,13 +5,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const getImageSizeClass = (size) => {
   switch (size) {
     case 'small':
-      return 'max-w-[200px] max-h-[200px]';
+      return 'max-h-[200px]';
     case 'medium':
-      return 'max-w-[300px] max-h-[300px]';
+      return 'max-h-[300px]';
     case 'large':
-      return 'max-w-[500px] max-h-[500px]';
+      return 'h-[calc(80vh-48px-20px)]';
     default:
-      return 'max-w-[500px] max-h-[500px]';
+      return 'h-[calc(80vh-48px-20px)]';
   }
 };
 
@@ -20,7 +20,7 @@ const getImageFitClass = (properties) => {
     case 'fit-to-frame':
       return 'object-contain';
     case 'scale-to-fill':
-      return 'object-cover';
+      return 'object-cover w-full h-full';
     default:
       return 'object-contain';
   }
@@ -42,7 +42,6 @@ const PhotoSlideShow = ({ open, onOpenChange, htmlData }) => {
     const backgroundClass = showBackground 
         ? 'bg-white border border-gray-200 shadow-lg' 
         : 'bg-transparent shadow-none border-0 text-white';
-    const iconColor = showBackground ? 'text-gray-800' : 'text-white';
 
     useEffect(() => {
         if (!autoplaySlideshow || images.length <= 1 || !open) return;
@@ -61,11 +60,11 @@ const PhotoSlideShow = ({ open, onOpenChange, htmlData }) => {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className={`max-h-[80vh] max-w-[80vw] z-[100] overflow-hidden rounded-lg ${backgroundClass}`}>
                 {images.length > 0 && (
-                    <div className="relative w-full h-full flex items-center justify-center">
+                    <div className="relative w-full h-full flex items-center justify-center p-2">
                         <img
                             src={images[currentIndex]?.url}
                             alt={images[currentIndex]?.fileName || "Slideshow image"}
-                            className={`${imageSizeClass} ${imageFitClass} w-full h-full rounded-md`}
+                            className={`${imageSizeClass} ${imageFitClass} rounded-md`}
                             onError={(e) => { e.target.src = "/fallback-image.png"; }}
                         />
 
@@ -73,17 +72,17 @@ const PhotoSlideShow = ({ open, onOpenChange, htmlData }) => {
                             <div className="absolute inset-0 flex items-center justify-between px-4">
                                 <button
                                     onClick={goToPrevSlide}
-                                    className=""
+                                    className="bg-[#ffffff40] rounded-full p-1"
                                     aria-label="Previous slide"
                                 >
-                                    <ChevronLeft className={`w-6 h-6 ${iconColor}`} />
+                                    <ChevronLeft className="w-6 h-6 text-black" />
                                 </button>
                                 <button
                                     onClick={goToNextSlide}
-                                    className=""
+                                    className="bg-[#ffffff40] rounded-full p-1"
                                     aria-label="Next slide"
                                 >
-                                    <ChevronRight className={`w-6 h-6 ${iconColor}`} />
+                                    <ChevronRight className="w-6 h-6 text-black" />
                                 </button>
                             </div>
                         )}
