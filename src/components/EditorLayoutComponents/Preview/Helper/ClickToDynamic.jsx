@@ -5,6 +5,7 @@ import SpotlightModal from "../Widget/SpotlightModal";
 import PhotoSlideShow from "../Widget/PhotoSlideShow";
 import VideoButtonModal from "../Widget/VideoButtonModal";
 import { PageNavigationActions } from './PageNavigationActions';
+import ShopAreaModal from "../Widget/ShopAreaModal";
 
 const linkAreaActionHandlers = {
     "send-email": (htmlData) => {
@@ -73,7 +74,7 @@ const linkAreaModalHandlers = {
     },
     'photo-slideshow': (htmlData) => {
         showModal(PhotoSlideShow, htmlData);
-    }
+    },
 };
 
 const actionHandlers = {
@@ -119,7 +120,10 @@ const modalHandlers = {
     },
     'video-button': (htmlData) => {
         showModal(VideoButtonModal, htmlData);
-    }
+    },
+    'shop-area':(htmlData) => {
+        showModal(ShopAreaModal, htmlData);
+    },
 };
 
 
