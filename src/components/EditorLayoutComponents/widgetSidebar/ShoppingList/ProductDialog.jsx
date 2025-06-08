@@ -259,8 +259,8 @@ export default function ProductDialog({
                     productImage: response.data.images[0]?.imageLink || "",
                     customizeButton: {
                         buttonLabel: "Shop this item",
-                        buttonColor: "#ffffff",
-                        labelColor: "#000000",
+                        buttonColor: "#000000",
+                        labelColor: "#ffffff",
                         tooltip: "Click to view this product",
                         secondaryButton: false,
                         secondaryButtonLink: "",

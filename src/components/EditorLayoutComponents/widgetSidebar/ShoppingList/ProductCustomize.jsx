@@ -63,8 +63,8 @@ export default function ProductCustomize({
 }) {
     const initialData = selectedShape[0]?.attrs?.htmlData?.customizeButton || {
         buttonLabel: "Shop this item",
-        buttonColor: "#ffffff",
-        labelColor: "#000000",
+        buttonColor: "#000000",
+        labelColor: "#ffffff",
         tooltip: "Click to view this product",
         secondaryButton: false,
         secondaryButtonLink: "",
@@ -123,8 +123,8 @@ export default function ProductCustomize({
         } else {
             form.reset({
                 buttonLabel: "Shop this item",
-                buttonColor: "#ffffff",
-                labelColor: "#000000",
+                buttonColor: "#000000",
+                labelColor: "#ffffff",
                 tooltip: "Click to view this product",
                 secondaryButton: false,
                 secondaryButtonLink: "",

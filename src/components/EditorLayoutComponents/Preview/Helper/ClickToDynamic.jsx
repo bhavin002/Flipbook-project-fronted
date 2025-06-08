@@ -6,6 +6,8 @@ import PhotoSlideShow from "../Widget/PhotoSlideShow";
 import VideoButtonModal from "../Widget/VideoButtonModal";
 import { PageNavigationActions } from './PageNavigationActions';
 import ShopAreaModal from "../Widget/ShopAreaModal";
+import ProductTagModal from "../Widget/ProductTagModal";
+import QuizModel from "../Widget/QuizModel";
 
 const linkAreaActionHandlers = {
     "send-email": (htmlData) => {
@@ -111,7 +113,7 @@ const actionHandlers = {
     },
 };
 
-const modalHandlers = { 
+const modalHandlers = {
     'link-tag': (htmlData) => {
         showModal(LinkModal, htmlData);
     },
@@ -121,8 +123,17 @@ const modalHandlers = {
     'video-button': (htmlData) => {
         showModal(VideoButtonModal, htmlData);
     },
-    'shop-area':(htmlData) => {
+    'shop-area': (htmlData) => {
         showModal(ShopAreaModal, htmlData);
+    },
+    'shop-button': (htmlData) => {
+        showModal(ShopAreaModal, htmlData);
+    },
+    'product-tag': (htmlData) => {
+        showModal(ProductTagModal, htmlData);
+    },
+    'quiz': (htmlData) => {
+        showModal(QuizModel, htmlData);
     },
 };
 
@@ -168,7 +179,7 @@ export default function ClickToDynamic(shape, flipbookRef) {
     }
 
     if (htmlType && actionHandlers[htmlType]) {
-        actionHandlers[htmlType](htmlData,flipbookRef);
+        actionHandlers[htmlType](htmlData, flipbookRef);
         return;
     }
 

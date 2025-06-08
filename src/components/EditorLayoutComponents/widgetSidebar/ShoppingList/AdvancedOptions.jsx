@@ -244,8 +244,8 @@ export default function AdvancedOptions({ register, watch, setValue, errors, han
                                         <div className="w-[36%]">
                                             <Label className="text-xs">Select pricing method</Label>
                                             <Select
+                                                value={watch("pricingMethod")}
                                                 onValueChange={(value) => setValue("pricingMethod", value)}
-                                                defaultValue="FLAT_FEE"
                                             >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select a pricing method" />
@@ -296,7 +296,7 @@ export default function AdvancedOptions({ register, watch, setValue, errors, han
                                             {errors.pricingMethod && <p className="text-red-500 text-xs">{errors.pricingMethod.message}</p>}
                                         </div>
                                         <div className="w-[32%]">
-                                            <Label htmlFor="paid-personalization-price" className={`text-xs ${errors.personalizationPrice ? "text-red-500" : ""}`}>Price (USD)</Label>
+                                            <Label htmlFor="paid-personalization-price" className={`text-xs ${errors.personalizationPrice ? "text-red-500" : ""}`}>Price</Label>
                                             <Input
                                                 type="text"
                                                 id="paid-personalization-price"

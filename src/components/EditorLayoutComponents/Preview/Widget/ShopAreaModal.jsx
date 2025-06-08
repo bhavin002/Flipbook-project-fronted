@@ -36,7 +36,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
                     setIsLoading(true);
                     const response = await getProductApi(htmlData.variantId);
                     setProductInfo(response.data);
-                    
+
                     if (response.data?.productAttributes?.length > 0) {
                         const defaultVariant = {};
                         response.data.productAttributes.forEach(attr => {
@@ -47,7 +47,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
                     } else {
                         setCurrentImages(response.data?.images || []);
                     }
-                    
+
                     if (response.data?.minQuantity) {
                         setQuantity(response.data.minQuantity);
                     }
@@ -86,30 +86,30 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
         const newQuantity = quantity + change;
         const minQty = productInfo?.minQuantity || 1;
         const maxQty = productInfo?.maxQuantity || 100;
-        
+
         if (newQuantity >= minQty && newQuantity <= maxQty) {
             setQuantity(newQuantity);
         }
     };
 
     const getCurrentPrice = () => {
-        if (!productInfo) return { price: 0, discountPrice: 0 };
-        
+        if (!productInfo) return { price: 0, discountPrice: null };
+
         const variantKey = Object.entries(selectedVariant)
             .map(([key, value]) => `${value}`)
             .join(' | ');
-        
+
         const matchingVariant = productInfo.productVariants?.find(
             variant => variant.variantName.includes(variantKey)
         );
-        
+
         if (matchingVariant) {
             return {
                 price: matchingVariant.price,
                 discountPrice: matchingVariant.discountPrice
             };
         }
-        
+
         return {
             price: productInfo.price,
             discountPrice: productInfo.discountPrice
@@ -117,20 +117,21 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
     };
 
     const getFinalPrice = () => {
-        const { discountPrice } = getCurrentPrice();
-        const personalizationCost = productInfo?.paidPersonalization ? 
+        const { discountPrice, price } = getCurrentPrice();
+        const personalizationCost = productInfo?.paidPersonalization ?
             (productInfo.personalizationPrice || 0) : 0;
-        return discountPrice + personalizationCost;
+        const basePrice = discountPrice != null ? discountPrice : price;
+        return basePrice + personalizationCost;
     };
 
     const nextImage = () => {
-        setCurrentImageIndex((prev) => 
+        setCurrentImageIndex((prev) =>
             prev === currentImages.length - 1 ? 0 : prev + 1
         );
     };
 
     const prevImage = () => {
-        setCurrentImageIndex((prev) => 
+        setCurrentImageIndex((prev) =>
             prev === 0 ? currentImages.length - 1 : prev - 1
         );
     };
@@ -144,12 +145,12 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
                     <Skeleton className="w-16 h-16 rounded" />
                 </div>
             </div>
-            
+
             <div className="space-y-4 overflow-y-auto p-2">
                 <Skeleton className="h-8 w-3/4" />
                 <Skeleton className="h-4 w-1/2" />
                 <Skeleton className="h-20 w-full" />
-                
+
                 <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
@@ -162,12 +163,12 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
                         </div>
                     </div>
                 </div>
-                
+
                 <div className="space-y-2">
                     <Skeleton className="h-4 w-24" />
                     <Skeleton className="h-20 w-full" />
                 </div>
-                
+
                 <div className="space-y-4">
                     <Skeleton className="h-6 w-20" />
                     <Skeleton className="h-8 w-24" />
@@ -175,8 +176,8 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
                         <Skeleton className="h-10 w-32" />
                     </div>
                 </div>
-                
-                <div className="space-y-3">
+
+                <div className="space-x-3">
                     <Skeleton className="h-12 w-full" />
                     <Skeleton className="h-12 w-full" />
                 </div>
@@ -184,73 +185,85 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
         </div>
     );
 
+    const hasImages = currentImages?.length > 0;
+    const hasPrice = productInfo?.price != null || productInfo?.discountPrice != null;
+    const hasQuantityControls = productInfo?.minQuantity > 0 && productInfo?.maxQuantity > 0;
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-6xl overflow-y-auto">
                 {isLoading ? (
                     <LoadingSkeleton />
                 ) : productInfo ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto max-h-[calc(80vh-48px)]">
-                        <div className="space-y-4">
-                            <div className="relative">
-                                <img
-                                    src={currentImages[currentImageIndex]?.imageLink || htmlData?.productImage}
-                                    alt={productInfo.productTitle}
-                                    className="w-full h-80 object-contain rounded-lg"
-                                />
-                                
+                    <div className={`grid ${hasImages ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'} gap-6 overflow-y-auto max-h-[calc(80vh-48px)]`}>
+                        {hasImages && (
+                            <div className="space-y-4">
+                                <div className="relative">
+                                    <img
+                                        src={currentImages[currentImageIndex]?.imageLink || htmlData?.productImage}
+                                        alt={productInfo.productTitle || 'Product Image'}
+                                        className="w-full h-80 object-contain rounded-lg"
+                                    />
+
+                                    {currentImages.length > 1 && (
+                                        <>
+                                            <Button
+                                                variant="outline"
+                                                size="icon"
+                                                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80"
+                                                onClick={prevImage}
+                                            >
+                                                <ChevronLeft className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="icon"
+                                                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80"
+                                                onClick={nextImage}
+                                            >
+                                                <ChevronRight className="h-4 w-4" />
+                                            </Button>
+                                        </>
+                                    )}
+                                </div>
+
                                 {currentImages.length > 1 && (
-                                    <>
-                                        <Button
-                                            variant="outline"
-                                            size="icon"
-                                            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80"
-                                            onClick={prevImage}
-                                        >
-                                            <ChevronLeft className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="icon"
-                                            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80"
-                                            onClick={nextImage}
-                                        >
-                                            <ChevronRight className="h-4 w-4" />
-                                        </Button>
-                                    </>
+                                    <div className="flex gap-2 overflow-x-auto">
+                                        {currentImages.map((image, index) => (
+                                            <img
+                                                key={image.imageId}
+                                                src={image.imageLink}
+                                                alt={`${productInfo.productTitle || 'Product'} ${index + 1}`}
+                                                className={`w-16 h-16 object-cover rounded cursor-pointer border-2 ${index === currentImageIndex ? 'border-black' : 'border-gray-200'}`}
+                                                onClick={() => setCurrentImageIndex(index)}
+                                            />
+                                        ))}
+                                    </div>
                                 )}
                             </div>
-                            
-                            {currentImages.length > 1 && (
-                                <div className="flex gap-2 overflow-x-auto">
-                                    {currentImages.map((image, index) => (
-                                        <img
-                                            key={image.imageId}
-                                            src={image.imageLink}
-                                            alt={`${productInfo.productTitle} ${index + 1}`}
-                                            className={`w-16 h-16 object-cover rounded cursor-pointer border-2 ${
-                                                index === currentImageIndex ? 'border-black' : 'border-gray-200'
-                                            }`}
-                                            onClick={() => setCurrentImageIndex(index)}
-                                        />
-                                    ))}
-                                </div>
-                            )}
-                        </div>
+                        )}
 
                         <div className="space-y-4 overflow-y-auto p-2">
-                            <div>
-                                <h2 className="text-xl font-semibold text-gray-900">
-                                    {productInfo.productTitle}
-                                </h2>
-                                <p className="text-sm text-gray-500 mt-1">
-                                    {productInfo.sku}
-                                </p>
-                            </div>
+                            {(productInfo.productTitle || productInfo.sku) && (
+                                <div>
+                                    {productInfo.productTitle && (
+                                        <h2 className="text-xl font-semibold text-gray-900">
+                                            {productInfo.productTitle}
+                                        </h2>
+                                    )}
+                                    {productInfo.sku && (
+                                        <p className="text-sm text-gray-500 mt-1">
+                                            {productInfo.sku}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
 
-                            <p className="text-sm text-gray-700 leading-relaxed">
-                                {productInfo.description}
-                            </p>
+                            {productInfo.description && (
+                                <p className="text-sm text-gray-700 leading-relaxed">
+                                    {productInfo.description}
+                                </p>
+                            )}
 
                             {productInfo.productAttributes && productInfo.productAttributes.length > 0 && (
                                 <div className="grid grid-cols-2 gap-4">
@@ -261,7 +274,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
                                             </Label>
                                             <Select
                                                 value={selectedVariant[attribute.attributeName] || ''}
-                                                onValueChange={(value) => 
+                                                onValueChange={(value) =>
                                                     handleVariantChange(attribute.attributeName, value)
                                                 }
                                             >
@@ -285,7 +298,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <Label className="text-sm font-medium">Personalization</Label>
-                                        {productInfo.paidPersonalization && (
+                                        {productInfo.paidPersonalization && productInfo.personalizationPrice != null && (
                                             <Badge variant="secondary" className="text-xs">
                                                 + {productInfo.personalizationPrice} INR
                                             </Badge>
@@ -311,16 +324,18 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
                                 </div>
                             )}
 
-                            <div>
-                                {getCurrentPrice().price > getCurrentPrice().discountPrice && (
-                                    <p className="text-sm text-gray-500 line-through">
-                                        {getCurrentPrice().price} INR
+                            {hasPrice && (
+                                <div>
+                                    {getCurrentPrice().discountPrice != null && getCurrentPrice().price > getCurrentPrice().discountPrice && (
+                                        <p className="text-sm text-gray-500 line-through">
+                                            {getCurrentPrice().price} INR
+                                        </p>
+                                    )}
+                                    <p className="text-xl font-bold text-gray-900">
+                                        {getFinalPrice()} INR
                                     </p>
-                                )}
-                                <p className="text-xl font-bold text-gray-900">
-                                    {getFinalPrice()} INR
-                                </p>
-                            </div>
+                                </div>
+                            )}
 
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center border rounded-md p-1">
@@ -354,30 +369,29 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
                                         <Plus className="h-4 w-4" />
                                     </Button>
                                 </div>
-                                <div className="text-xs text-gray-500">
-                                    {productInfo.minQuantity} / {productInfo.maxQuantity}
-                                </div>
+                                {hasQuantityControls && (
+                                    <div className="text-xs text-gray-500">
+                                        {productInfo.minQuantity} / {productInfo.maxQuantity}
+                                    </div>)}
                             </div>
 
-                            <div className="space-y-3">
+                            <div className="space-x-3">
                                 {htmlData?.customizeButton?.secondaryButton && (
                                     <Button
                                         variant="outline"
-                                        className="w-full"
                                         onClick={() => window.open(htmlData.customizeButton.secondaryButtonLink, '_blank')}
                                     >
                                         {htmlData.customizeButton.secondaryButtonLabel}
                                     </Button>
                                 )}
                                 <Button
-                                    className="w-full"
                                     style={{
                                         backgroundColor: htmlData?.customizeButton?.buttonColor || '#774B15',
                                         color: htmlData?.customizeButton?.labelColor || '#DD400E'
                                     }}
                                     onClick={() => {
                                         toast.success('Product added to cart', {
-                                            description: `${quantity}x ${productInfo.productTitle}`
+                                            description: `${quantity}x ${productInfo.productTitle || 'Product'}`
                                         });
                                     }}
                                 >
