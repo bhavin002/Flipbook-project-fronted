@@ -293,7 +293,7 @@ function embedCode(shape) {
                 skewX(${shape.skewX || 0}deg)
                 skewY(${shape.skewY || 0}deg)
                 translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
-                overflow:"hidden"
+                overflow: "hidden"
             }}>
                 <div
                     className="embed-code-1"
@@ -343,31 +343,6 @@ function embedCode(shape) {
             </div>
         );
     }
-}
-
-function popUpFrame(shape) {
-    return (
-        <div
-            title={shape.htmlData.popupFrameTooltip}
-            style={{
-                width: `${shape.width}px`,
-                height: `${shape.height}px`,
-                backgroundColor: shape.fill,
-                opacity: shape.opacity,
-                position: "absolute",
-                left: `${shape.x}px`,
-                top: `${shape.y}px`,
-                transformOrigin: "0 0",
-                transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
-          skewX(${shape.skewX || 0}deg)
-          skewY(${shape.skewY || 0}deg)
-          translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
-                display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
-            }}
-        />
-    );
 }
 
 function spotlight(shape) {
@@ -464,6 +439,23 @@ function popupSlideShow(shape) {
 }
 
 function videoEmbed(shape) {
+    console.log("videoEmbed ??", shape);
+    
+    let embedUrl = null;
+    
+    if (shape.htmlData?.url) {
+        const url = shape.htmlData.url;
+        const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const match = url.match(youtubeRegex);
+        
+        if (match) {
+            const videoId = match[1];
+            embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
+        } else {
+            embedUrl = url;
+        }
+    }
+    
     return (
         <div
             style={{
@@ -477,15 +469,24 @@ function videoEmbed(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
-          skewX(${shape.skewX || 0}deg)
-          skewY(${shape.skewY || 0}deg)
-          translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
-                background: "black"
+                    scaleX(${shape.scaleX})
+                    scaleY(${shape.scaleY})
+                    skewX(${shape.skewX || 0}deg)
+                    skewY(${shape.skewY || 0}deg)
+                    translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
             }}>
             {
-                shape.htmlData.url ? <iframe src={shape.htmlData.url} allowfullscreen="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" title="Long Drive Mashup 4 | Non-Stop JukeBox | AK Music | Road Trip Mashup | Romantic LoFi, Chill" data-gtm-yt-inspected-21="true" width="100%" height="100%" /> :
+                embedUrl ? 
+                    <iframe 
+                        src={embedUrl}
+                        allowFullScreen
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        referrerPolicy="strict-origin-when-cross-origin"
+                        title={shape.title || "Embedded Video"}
+                        width="100%"
+                        height="100%"
+                    /> :
                     <>
                         <div
                             style={{
@@ -513,7 +514,7 @@ function videoEmbed(shape) {
 }
 
 function videoButton(shape) {
-    console.log("videoButton ??",videoButton)
+    console.log("videoButton ??", videoButton)
     return (
         <div id={shape.id}>
             <div
