@@ -5,23 +5,37 @@ export default function AudioButton({ shape }) {
   const audioRef = useRef(null);
   
   useEffect(() => {
-    if (shape.htmlData?.audioData?.url) {
-      audioRef.current = new Audio(shape.htmlData.audioData.url);
+    if (shape.htmlData?.audioFile?.url) {
+      audioRef.current = new Audio(shape.htmlData.audioFile.url);
+      
+      if (shape.htmlData.trimEnabled) {
+        audioRef.current.currentTime = shape.htmlData.startTime;
+      }
+      
+      audioRef.current.addEventListener('timeupdate', () => {
+        if (shape.htmlData.trimEnabled && audioRef.current.currentTime >= shape.htmlData.endTime) {
+          audioRef.current.pause();
+          audioRef.current.currentTime = shape.htmlData.startTime;
+          setIsPlaying(false);
+        }
+      });
       
       audioRef.current.addEventListener('ended', () => {
+        if (shape.htmlData.trimEnabled) {
+          audioRef.current.currentTime = shape.htmlData.startTime;
+        }
         setIsPlaying(false);
       });
       
       return () => {
         if (audioRef.current) {
           audioRef.current.pause();
-          audioRef.current.removeEventListener('ended', () => {
-            setIsPlaying(false);
-          });
+          audioRef.current.removeEventListener('timeupdate', () => {});
+          audioRef.current.removeEventListener('ended', () => {});
         }
       };
     }
-  }, [shape.htmlData?.audioData?.url]);
+  }, [shape.htmlData?.audioFile?.url, shape.htmlData?.trimEnabled, shape.htmlData?.startTime, shape.htmlData?.endTime]);
   
   const handleClick = () => {
     if (!audioRef.current) return;
@@ -29,6 +43,9 @@ export default function AudioButton({ shape }) {
     if (isPlaying) {
       audioRef.current.pause();
     } else {
+      if (shape.htmlData.trimEnabled) {
+        audioRef.current.currentTime = shape.htmlData.startTime;
+      }
       audioRef.current.play();
     }
     
@@ -48,13 +65,14 @@ export default function AudioButton({ shape }) {
       skewX(${shape.skewX || 0}deg)
       skewY(${shape.skewY || 0}deg)
       translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
-    display: shape.visible ? "block" : "none"
+    display: shape.visible ? "block" : "none",
+    borderRadius: shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
   };
   
   return (
     <div 
       className="cursor-pointer" 
-      title={shape.htmlData.audioButtonTooltip}
+      title={shape.htmlData.tooltip}
       onClick={handleClick}
     >
       <div

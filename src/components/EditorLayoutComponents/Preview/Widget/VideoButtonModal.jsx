@@ -1,69 +1,57 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
 
-const VideoButtonModal = ({ isOpen, onClose, htmlData }) => {
-    const [isVisible, setIsVisible] = useState(false);
-
-    useEffect(() => {
-        if (isOpen) {
-            setTimeout(() => setIsVisible(true), 10);
-        } else {
-            setIsVisible(false);
-        }
-    }, [isOpen]);
-
+const VideoButtonModal = ({ open, onOpenChange, htmlData }) => {
     const getDimensions = () => {
-        const size = htmlData?.size || "853x480";
-        const [width, height] = size.split('x').map(Number);
+        const size = htmlData?.size || "853-480";
+        const [width, height] = size.split('-').map(Number);
         return { width: width || 853, height: height || 480 };
     };
 
-    const { width, height } = getDimensions();
+    const getEmbedUrl = () => {
+        if (!htmlData?.url) return null;
+        
+        const url = htmlData.url;
+        const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const match = url.match(youtubeRegex);
+        
+        if (match) {
+            const videoId = match[1];
+            return `https://www.youtube-nocookie.com/embed/${videoId}`;
+        }
+        return url;
+    };
 
-    if (!isOpen) return null;
+    const { width, height } = getDimensions();
+    const embedUrl = getEmbedUrl();
 
     return (
-        <div
-            className="fixed inset-0 backdrop-blur-sm flex justify-center items-center transition-opacity duration-300 ease-in-out"
-            style={{ opacity: isVisible ? 1 : 0 }}
-            onClick={onClose}
-        >
-            <div
-                className="bg-white p-5 rounded-lg shadow-lg flex flex-col gap-5 transform transition-all duration-300 ease-in-out"
-                style={{
-                    transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(-16px)',
-                    width: `${width + 40}px`,
-                    maxWidth: '90vw',
-                    maxHeight: '90vh',
-                }}
-                onClick={e => e.stopPropagation()}
-            >
-                <div className="flex justify-between items-center">
-                    <span className="text-base text-gray-800">
-                        {htmlData?.videoButtonTooltip || "YouTube Video"}
-                    </span>
-                    <button
-                        className="text-2xl cursor-pointer p-0 w-6 h-6 leading-6 hover:text-gray-500 transition-colors duration-200"
-                        onClick={onClose}
-                        aria-label="Close video modal"
-                    >
-                        ×
-                    </button>
-                </div>
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="max-w-[90vw] z-[100]">
                 <div className="flex justify-center w-full overflow-hidden">
-                    <iframe
-                        src={htmlData?.url}
-                        allowFullScreen
-                        frameBorder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        referrerPolicy="strict-origin-when-cross-origin"
-                        title={htmlData?.videoButtonTooltip || "Video"}
-                        width={width}
-                        height={height}
-                        className="rounded-md"
-                    />
+                    {embedUrl ? (
+                        <iframe
+                            src={embedUrl}
+                            allowFullScreen
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerPolicy="strict-origin-when-cross-origin"
+                            title={htmlData?.tooltip || "Video"}
+                            width={htmlData?.size === "full-screen" ? "100%" : width}
+                            height={height}
+                            className="rounded-md pt-5"
+                        />
+                    ) : (
+                        <div className="flex items-center justify-center w-full h-[480px] bg-gray-100 rounded-md">
+                            <p className="text-gray-500">Invalid video URL</p>
+                        </div>
+                    )}
                 </div>
-            </div>
-        </div>
+            </DialogContent>
+        </Dialog>
     );
 };
 
