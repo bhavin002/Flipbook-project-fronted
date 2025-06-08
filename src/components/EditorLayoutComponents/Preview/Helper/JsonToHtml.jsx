@@ -121,8 +121,8 @@ function goToUrl(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-                scaleX(${shape.scaleX})
-                scaleY(${shape.scaleY})
+                scaleX(${shape.scaleX || 1})
+                scaleY(${shape.scaleY || 1})
                 skewX(${shape.skewX || 0}deg)
                 skewY(${shape.skewY || 0}deg)
                 translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -207,8 +207,8 @@ function squareCaption(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -242,8 +242,8 @@ function roundedCaption(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -262,8 +262,8 @@ function roundedCaption(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -288,8 +288,8 @@ function embedCode(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-                scaleX(${shape.scaleX})
-                scaleY(${shape.scaleY})
+                scaleX(${shape.scaleX || 1})
+                scaleY(${shape.scaleY || 1})
                 skewX(${shape.skewX || 0}deg)
                 skewY(${shape.skewY || 0}deg)
                 translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -314,8 +314,8 @@ function embedCode(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-              scaleX(${shape.scaleX})
-              scaleY(${shape.scaleY})
+              scaleX(${shape.scaleX || 1})
+              scaleY(${shape.scaleY || 1})
               skewX(${shape.skewX || 0}deg)
               skewY(${shape.skewY || 0}deg)
               translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -348,7 +348,7 @@ function embedCode(shape) {
 function spotlight(shape) {
     return (
         <div
-            title={shape.htmlData.spotLightTooltip}
+            title={shape.htmlData?.tooltip}
             style={{
                 width: `${shape.width}px`,
                 height: `${shape.height}px`,
@@ -359,8 +359,8 @@ function spotlight(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -383,8 +383,8 @@ function slideshow(shape) {
             top: `${shape.y}px`,
             transformOrigin: "0 0",
             transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -416,7 +416,7 @@ function slideshow(shape) {
 function popupSlideShow(shape) {
     return (
         <div
-            title={shape.htmlData.photoSlideShowTooltip}
+            title={shape.htmlData?.tooltip}
             style={{
                 width: `${shape.width}px`,
                 height: `${shape.height}px`,
@@ -427,8 +427,8 @@ function popupSlideShow(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -439,15 +439,13 @@ function popupSlideShow(shape) {
 }
 
 function videoEmbed(shape) {
-    console.log("videoEmbed ??", shape);
-    
     let embedUrl = null;
-    
+
     if (shape.htmlData?.url) {
         const url = shape.htmlData.url;
         const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
         const match = url.match(youtubeRegex);
-        
+
         if (match) {
             const videoId = match[1];
             embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
@@ -455,7 +453,7 @@ function videoEmbed(shape) {
             embedUrl = url;
         }
     }
-    
+
     return (
         <div
             style={{
@@ -469,15 +467,15 @@ function videoEmbed(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-                    scaleX(${shape.scaleX})
-                    scaleY(${shape.scaleY})
+                    scaleX(${shape.scaleX || 1})
+                    scaleY(${shape.scaleY || 1})
                     skewX(${shape.skewX || 0}deg)
                     skewY(${shape.skewY || 0}deg)
                     translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
             }}>
             {
-                embedUrl ? 
-                    <iframe 
+                embedUrl ?
+                    <iframe
                         src={embedUrl}
                         allowFullScreen
                         frameBorder="0"
@@ -514,11 +512,9 @@ function videoEmbed(shape) {
 }
 
 function videoButton(shape) {
-    console.log("videoButton ??", videoButton)
     return (
         <div id={shape.id}>
             <div
-                title={shape.htmlData.videoButtonTooltip}
                 style={{
                     width: `${shape.width}px`,
                     height: `${shape.height}px`,
@@ -529,12 +525,13 @@ function videoButton(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                    borderRadius: shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
                 }}
             />
             <img
@@ -548,8 +545,8 @@ function videoButton(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -574,8 +571,8 @@ function audioButton(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -593,8 +590,8 @@ function audioButton(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -619,8 +616,8 @@ function productTag(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-            scaleX(${shape.scaleX})
-            scaleY(${shape.scaleY})
+            scaleX(${shape.scaleX || 1})
+            scaleY(${shape.scaleY || 1})
             skewX(${shape.skewX || 0}deg)
             skewY(${shape.skewY || 0}deg)
             translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -647,8 +644,8 @@ function shopArea(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -671,8 +668,8 @@ function shopButton(shape) {
             top: `${shape.y}px`,
             transformOrigin: "0 0",
             transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -702,7 +699,7 @@ function shopButton(shape) {
 
 function goToPreviousPage(shape) {
     return (
-        <div>
+        <>
             <div
                 style={{
                     width: `${shape.width}px`,
@@ -714,15 +711,17 @@ function goToPreviousPage(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                    borderRadius: shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
                 }}
             />
             <img
+             title={shape.htmlData?.tooltip || "Go to previous page"}
                 src={shape.src}
                 alt={shape.title}
                 style={{
@@ -733,21 +732,22 @@ function goToPreviousPage(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                 }}
             />
-        </div>
+        </>
+
     );
 }
 
 function goToNextPage(shape) {
     return (
-        <div>
+        <>
             <div
                 style={{
                     width: `${shape.width}px`,
@@ -759,15 +759,17 @@ function goToNextPage(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                    borderRadius: shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
                 }}
             />
             <img
+                title={shape.htmlData?.tooltip || "Go to next page"}
                 src={shape.src}
                 alt={shape.title}
                 style={{
@@ -778,21 +780,21 @@ function goToNextPage(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                 }}
             />
-        </div>
+        </>
     );
 }
 
 function goToPage(shape) {
     return (
-        <div>
+        <>
             <div
                 style={{
                     width: `${shape.width}px`,
@@ -804,15 +806,17 @@ function goToPage(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                    borderRadius: shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
                 }}
             />
             <img
+                title={shape.htmlData?.tooltip || "Go to page"}
                 src={shape.src}
                 alt={shape.title}
                 style={{
@@ -823,21 +827,21 @@ function goToPage(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                 }}
             />
-        </div>
+        </>
     );
 }
 
 function goToFirstPage(shape) {
     return (
-        <div>
+        <>
             <div
                 style={{
                     width: `${shape.width}px`,
@@ -849,15 +853,17 @@ function goToFirstPage(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                    borderRadius: shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
                 }}
             />
             <img
+                title={shape.htmlData?.tooltip || "Go to first page"}
                 src={shape.src}
                 alt={shape.title}
                 style={{
@@ -868,21 +874,21 @@ function goToFirstPage(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                 }}
             />
-        </div>
+        </>
     );
 }
 
 function goToLastPage(shape) {
     return (
-        <div>
+        <>
             <div
                 style={{
                     width: `${shape.width}px`,
@@ -894,15 +900,17 @@ function goToLastPage(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                    borderRadius: shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
                 }}
             />
             <img
+                title={shape.htmlData?.tooltip || "Go to last page"}
                 src={shape.src}
                 alt={shape.title}
                 style={{
@@ -913,15 +921,15 @@ function goToLastPage(shape) {
                     top: `${shape.y}px`,
                     transformOrigin: "0 0",
                     transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                 }}
             />
-        </div>
+        </>
     );
 }
 
@@ -938,8 +946,8 @@ function quiz(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -962,8 +970,8 @@ function question(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -986,8 +994,8 @@ function contactForm(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -1010,8 +1018,8 @@ function text(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-              scaleX(${shape.scaleX})
-              scaleY(${shape.scaleY})
+              scaleX(${shape.scaleX || 1})
+              scaleY(${shape.scaleY || 1})
               skewX(${shape.skewX || 0}deg)
               skewY(${shape.skewY || 0}deg)
               translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -1049,8 +1057,8 @@ function uploadPhoto(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-            scaleX(${shape.scaleX})
-            scaleY(${shape.scaleY})
+            scaleX(${shape.scaleX || 1})
+            scaleY(${shape.scaleY || 1})
             skewX(${shape.skewX || 0}deg)
             skewY(${shape.skewY || 0}deg)
             translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -1077,8 +1085,8 @@ function uploadVideo(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-            scaleX(${shape.scaleX})
-            scaleY(${shape.scaleY})
+            scaleX(${shape.scaleX || 1})
+            scaleY(${shape.scaleY || 1})
             skewX(${shape.skewX || 0}deg)
             skewY(${shape.skewY || 0}deg)
             translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -1101,8 +1109,8 @@ function stockPhoto(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-            scaleX(${shape.scaleX})
-            scaleY(${shape.scaleY})
+            scaleX(${shape.scaleX || 1})
+            scaleY(${shape.scaleY || 1})
             skewX(${shape.skewX || 0}deg)
             skewY(${shape.skewY || 0}deg)
             translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -1129,8 +1137,8 @@ function stockVideo(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-            scaleX(${shape.scaleX})
-            scaleY(${shape.scaleY})
+            scaleX(${shape.scaleX || 1})
+            scaleY(${shape.scaleY || 1})
             skewX(${shape.skewX || 0}deg)
             skewY(${shape.skewY || 0}deg)
             translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -1153,8 +1161,8 @@ function stockGif(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-            scaleX(${shape.scaleX})
-            scaleY(${shape.scaleY})
+            scaleX(${shape.scaleX || 1})
+            scaleY(${shape.scaleY || 1})
             skewX(${shape.skewX || 0}deg)
             skewY(${shape.skewY || 0}deg)
             translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -1177,8 +1185,8 @@ function stockSticker(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-            scaleX(${shape.scaleX})
-            scaleY(${shape.scaleY})
+            scaleX(${shape.scaleX || 1})
+            scaleY(${shape.scaleY || 1})
             skewX(${shape.skewX || 0}deg)
             skewY(${shape.skewY || 0}deg)
             translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
@@ -1202,8 +1210,8 @@ function shapeWidget(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-          scaleX(${shape.scaleX})
-          scaleY(${shape.scaleY})
+          scaleX(${shape.scaleX || 1})
+          scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,

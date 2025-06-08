@@ -71,7 +71,6 @@ export default function Video({ mainStage, setMainStage, selectedShape, selected
         { value: "560-315", label: "560 x 315" },
         { value: "640-360", label: "640 x 360" },
         { value: "853-480", label: "853 x 480" },
-        { value: "1280-720", label: "1280 x 720" },
         { value: "full-screen", label: "Open in full screen" },
     ];
 

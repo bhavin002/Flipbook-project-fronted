@@ -122,9 +122,7 @@ export default function FlipBookPreview({ flipbookId }) {
         if (isMobile) {
             return (
                 <div className="w-full flex flex-col items-center justify-center py-4">
-                    {/* Combined Progress Bar and Icons Section */}
                     <div className="w-[90%] max-w-[400px] bg-gradient-to-r from-primary/90 to-primary p-3 flex flex-col items-center justify-center shadow-lg space-y-3">
-                        {/* Progress Bar Section */}
                         <div className="flex items-center text-primary-foreground text-sm w-full">
                             <div
                                 ref={progressBarRef}

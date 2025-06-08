@@ -74,7 +74,7 @@ const linkAreaModalHandlers = {
     },
     'photo-slideshow': (htmlData) => {
         showModal(PhotoSlideShow, htmlData);
-    },
+    }
 };
 
 const actionHandlers = {
@@ -86,6 +86,27 @@ const actionHandlers = {
             } else {
                 window.location.href = url;
             }
+        }
+    },
+    'go-to-next-page': (htmlData, flipbookRef) => {
+        PageNavigationActions.goToNextPage(flipbookRef);
+    },
+
+    'go-to-previous-page': (htmlData, flipbookRef) => {
+        PageNavigationActions.goToPreviousPage(flipbookRef);
+    },
+
+    'go-to-first-page': (htmlData, flipbookRef) => {
+        PageNavigationActions.goToFirstPage(flipbookRef);
+    },
+
+    'go-to-last-page': (htmlData, flipbookRef) => {
+        PageNavigationActions.goToLastPage(flipbookRef);
+    },
+
+    'go-to-page': (htmlData, flipbookRef) => {
+        if (htmlData?.pageNumber) {
+            PageNavigationActions.goToPage(flipbookRef, htmlData.pageNumber);
         }
     },
 };
@@ -144,7 +165,7 @@ export default function ClickToDynamic(shape, flipbookRef) {
     }
 
     if (htmlType && actionHandlers[htmlType]) {
-        actionHandlers[htmlType](htmlData);
+        actionHandlers[htmlType](htmlData,flipbookRef);
         return;
     }
 
