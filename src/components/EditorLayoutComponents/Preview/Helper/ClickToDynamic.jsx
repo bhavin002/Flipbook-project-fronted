@@ -97,9 +97,6 @@ const modalHandlers = {
     'square-caption': (htmlData) => {
         showModal(LinkModal, htmlData);
     },
-    'rounded-caption': (htmlData) => {
-        showModal(LinkModal, htmlData);
-    },
     'video-button': (htmlData) => {
         showModal(VideoButtonModal, htmlData);
     }
