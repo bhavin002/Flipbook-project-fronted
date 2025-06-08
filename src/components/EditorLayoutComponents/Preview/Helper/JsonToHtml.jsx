@@ -135,9 +135,6 @@ function goToUrl(shape) {
 function goToButtonLink(shape) {
     return (
         <a title={shape.htmlData?.tooltip}
-            href={shape.htmlData?.url}
-            target={shape.htmlData?.openIn == "new-tab" ? "_blank" : "_self"}
-
             style={{
                 width: `${shape.width}px`,
                 height: `${shape.height}px`,
@@ -172,8 +169,6 @@ function goToButtonLink(shape) {
 function tag(shape) {
     return (
         <a
-            href={shape.htmlData?.url}
-            target={shape.htmlData?.openIn == "new-tab" ? "_blank" : "_self"}
             style={{
                 width: `${shape.outerRadius * 2}px`,
                 height: `${shape.outerRadius * 2}px`,
@@ -280,7 +275,6 @@ function roundedCaption(shape) {
 }
 
 function embedCode(shape) {
-
     if (shape?.htmlData?.embedCode) {
         return (
             <div style={{
@@ -294,11 +288,12 @@ function embedCode(shape) {
                 top: `${shape.y}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-      scaleX(${shape.scaleX})
-      scaleY(${shape.scaleY})
-      skewX(${shape.skewX || 0}deg)
-      skewY(${shape.skewY || 0}deg)
-      translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
+                scaleX(${shape.scaleX})
+                scaleY(${shape.scaleY})
+                skewX(${shape.skewX || 0}deg)
+                skewY(${shape.skewY || 0}deg)
+                translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
+                overflow:"hidden"
             }}>
                 <div
                     className="embed-code-1"
@@ -518,6 +513,7 @@ function videoEmbed(shape) {
 }
 
 function videoButton(shape) {
+    console.log("videoButton ??",videoButton)
     return (
         <div id={shape.id}>
             <div

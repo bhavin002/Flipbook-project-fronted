@@ -97,7 +97,7 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 toast.success("Flipbook copied", {
                     description: response.message
                 });
-                setFlipbooks(prev => [...prev, response.data]);
+                setFlipbooks(prev => [response.data, ...prev]);
                 closeDropdown();
             } catch (error) {
                 toast.error("Failed to copy flipbook", {

@@ -164,7 +164,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange }, ref)
                                                     <div
                                                         key={index}
                                                         style={{ 'cursor': 'pointer' }}
-                                                        title={`${data.shape?.htmlData?.tooltip}`}
+                                                        title={data.shape?.htmlData?.tooltip || ''}
                                                         onClick={() => handleShapeClick(data.shape)}
                                                         dangerouslySetInnerHTML={{ __html: data.html }}
                                                     />
