@@ -69,7 +69,6 @@ const linkAreaModalHandlers = {
         showModal(PopupFrameModal, htmlData);
     },
     'spotlight': (htmlData) => {
-        console.log("spotlight htmlData ??", htmlData)
         showModal(SpotlightModal, htmlData);
     },
     'photo-slideshow': (htmlData) => {
