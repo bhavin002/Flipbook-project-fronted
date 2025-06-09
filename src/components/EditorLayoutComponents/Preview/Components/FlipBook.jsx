@@ -24,7 +24,6 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange }, ref)
     const [divHeight, setDivHeight] = useState(793);
     const [pageType, setPageType] = useState("double");
     const [pageContent, setPageContent] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
     const myRef = useRef(null);
@@ -97,13 +96,11 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange }, ref)
         const flipbookEL = myRef.current;
         if (!flipbookEL) return;
         const handleTurned = (e, page) => {
-            setCurrentPage(page);
             if (onPageChange) onPageChange(page, totalPages);
         };
         $(flipbookEL).on('turned', handleTurned);
         setTimeout(() => {
             const page = $(flipbookEL).turn('page');
-            setCurrentPage(page);
             if (onPageChange) onPageChange(page, totalPages);
         }, 500);
         return () => {

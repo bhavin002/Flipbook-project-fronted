@@ -87,7 +87,7 @@ const PhotoSlideShow = ({ open, onOpenChange, htmlData }) => {
                             </div>
                         )}
 
-                        {images.length > 1 && (
+                        {images.length > 1 && !hideControls && (
                             <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2">
                                 {images.map((_, index) => (
                                     <button

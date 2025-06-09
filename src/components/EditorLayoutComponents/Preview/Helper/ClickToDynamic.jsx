@@ -8,6 +8,8 @@ import { PageNavigationActions } from './PageNavigationActions';
 import ShopAreaModal from "../Widget/ShopAreaModal";
 import ProductTagModal from "../Widget/ProductTagModal";
 import QuizModel from "../Widget/QuizModel";
+import QuestionModel from "../Widget/QuestionModel";
+import ContactFormModel from "../Widget/ContactFormModel";
 
 const linkAreaActionHandlers = {
     "send-email": (htmlData) => {
@@ -134,6 +136,12 @@ const modalHandlers = {
     },
     'quiz': (htmlData) => {
         showModal(QuizModel, htmlData);
+    },
+    'question': (htmlData) => {
+        showModal(QuestionModel, htmlData);
+    },
+    'contact-form': (htmlData) => {
+        showModal(ContactFormModel, htmlData);
     },
 };
 

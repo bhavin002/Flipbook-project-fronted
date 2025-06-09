@@ -80,13 +80,11 @@ function convertToHtml(page) {
         if (shape.htmlType === "upload-photo") {
             return { html: ReactDOMServer.renderToStaticMarkup(uploadPhoto(shape)), shape };
         }
-        if (shape.htmlType === "upload-video") {
-            return { html: ReactDOMServer.renderToStaticMarkup(uploadVideo(shape)), shape };
-        }
         if (shape.htmlType === "stock-photo") {
             return { html: ReactDOMServer.renderToStaticMarkup(stockPhoto(shape)), shape };
         }
         if (shape.htmlType === "stock-video") {
+            console.log("stock-video ??",shape)
             return { html: ReactDOMServer.renderToStaticMarkup(stockVideo(shape)), shape };
         }
         if (shape.htmlType === "stock-gif") {
@@ -1040,34 +1038,6 @@ function uploadPhoto(shape) {
     );
 }
 
-function uploadVideo(shape) {
-    return (
-        <video
-            src={shape.src}
-            alt={shape.title}
-            height={shape.height}
-            width={shape.width}
-            controls="true"
-            playsInline="true"
-            muted="true"
-            volume="1"
-            style={{
-                position: "absolute",
-                left: `${shape.x}px`,
-                top: `${shape.y}px`,
-                transformOrigin: "0 0",
-                transform: `rotate(${shape.rotation || 0}deg)
-            scaleX(${shape.scaleX || 1})
-            scaleY(${shape.scaleY || 1})
-            skewX(${shape.skewX || 0}deg)
-            skewY(${shape.skewY || 0}deg)
-            translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
-                display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
-            }}
-        ></video>
-    );
-}
-
 function stockPhoto(shape) {
     return (
         <img
@@ -1093,6 +1063,7 @@ function stockPhoto(shape) {
 }
 
 function stockVideo(shape) {
+    console.log("stockVideo 2222 ???",shape);
     return (
         <video
             src={shape.src}

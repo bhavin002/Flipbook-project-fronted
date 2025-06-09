@@ -263,7 +263,7 @@ export default function UploadSection({
       width: width,
       height: height,
       type: "img",
-      src: imgSrc,
+      src: media.mediaType === "video/mp4" ? media.url : imgSrc,
       visible: true,
       bgImage: media?.thumbnailUrl,
       iconSrc: "/src/assets/icons/PlayVideo.svg",
@@ -290,27 +290,6 @@ export default function UploadSection({
       const dropX = (groupWidth / 2) / group.scaleX() - (item.attrs.width || 50) / 2;
       const dropY = (groupHeight / 2) / group.scaleY() - (item.attrs.height || 50) / 2;
 
-      // let isOverShapeWidget = false;
-      // let shapeWidget = null;
-      // let shapeWidgetData = [];
-
-      // // Check if the drop position overlaps with a shape-widget
-      // mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(shape => {
-      //   if (shape.attrs.title === 'shape-widget') {
-      //     const shapeLeft = shape.attrs.x;
-      //     const shapeTop = shape.attrs.y;
-      //     const shapeRight = shape.attrs.x + (shape.attrs.width * (shape.attrs.scaleX || 1));
-      //     const shapeBottom = shape.attrs.y + (shape.attrs.height * (shape.attrs.scaleY || 1));
-
-      //     // Check if drop position is within shape-widget bounds
-      //     if (dropX >= shapeLeft && dropX <= shapeRight && dropY >= shapeTop && dropY <= shapeBottom) {
-      //       isOverShapeWidget = true;
-      //       shapeWidget = shape.attrs;
-      //       shapeWidgetData = shape.children[0].dataArray;
-      //     }
-      //   }
-      // });
-
       // Create new shape at the center of the group
       let newShape = {
         x: dropX,
@@ -319,55 +298,14 @@ export default function UploadSection({
         id: uuid()
       };
 
-      // Handle masked image case
-      // if (isOverShapeWidget && shapeWidget?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo')) {
-      //   newShape = {
-      //     src: newShape.src,
-      //     height: Number(shapeWidget.height),
-      //     width: Number(shapeWidget.width),
-      //     x: shapeWidget.x,
-      //     y: shapeWidget.y,
-      //     scaleX: shapeWidget.scaleX,
-      //     scaleY: shapeWidget.scaleY,
-      //     skewX: shapeWidget.skewX,
-      //     skewY: shapeWidget.skewY,
-      //     title: 'masked-image',
-      //     layer: 'masked-image',
-      //     htmlType: 'masked-image',
-      //     type: 'img',
-      //     data: shapeWidget.data,
-      //     maskData: shapeWidgetData,
-      //     maskType: shapeWidget.maskType,
-      //     draggable: true,
-      //     visible: true,
-      //     id: uuid()
-      //   };
-
-      //   // Update mainStage by removing the shape-widget and adding the new masked-image
-      //   mainStage[selectedIndex].selectedShapes = [];
-      //   console.log("mainstage updateed before")
-      //   setMainStage(prevState => {
-      //     const updatedState = [...prevState];
-      //     const updatedShapes = updatedState[selectedIndex].shapes.filter(
-      //       shape => shape.id !== shapeWidget.id
-      //     );
-      //     updatedState[selectedIndex] = {
-      //       ...updatedState[selectedIndex],
-      //       shapes: [...updatedShapes, newShape]
-      //     };
-      //     return updatedState;
-      //   });
-      // } else {
-        // Add the new shape at the center of the group
-        setMainStage(prevState => {
-          const updatedState = [...prevState];
-          updatedState[selectedIndex] = {
-            ...updatedState[selectedIndex],
-            shapes: [...updatedState[selectedIndex].shapes, newShape]
-          };
-          return updatedState;
-        });
-      // }
+      setMainStage(prevState => {
+        const updatedState = [...prevState];
+        updatedState[selectedIndex] = {
+          ...updatedState[selectedIndex],
+          shapes: [...updatedState[selectedIndex].shapes, newShape]
+        };
+        return updatedState;
+      });
 
       // Select the newly added shape
       setTimeout(() => {
@@ -592,13 +530,13 @@ export default function UploadSection({
                   {(!hasSelectedFiles || windowInnerWidth <= 768) && (
                     <>
                       {/* Always show file type on mobile, otherwise show on hover */}
-                      <div 
+                      <div
                         className="absolute left-1 bottom-1 text-center bg-black bg-opacity-70 text-white px-2 py-0.5 rounded-[12px] text-xs font-medium"
                         style={{ display: isElementVisible(itemIndex, item._id) ? 'block' : 'none' }}
                       >
                         {item.fileType || 'Image'}
                       </div>
-                      
+
                       {/* Always show dropdown on mobile, otherwise show on hover */}
                       <div style={{ display: isElementVisible(itemIndex, item._id) ? 'block' : 'none' }}>
                         <MediaImageDropDownCom

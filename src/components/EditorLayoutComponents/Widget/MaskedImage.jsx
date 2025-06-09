@@ -120,8 +120,6 @@ const MaskedImage = ({
   const shapeWidth = shape?.width || image?.width || 0;
   const shapeHeight = shape?.height || image?.height || 0;
 
-  console.log(shape);
-
   // Get corner radius values from shape effect
   const shapeEffect = shape?.effect || {};
   if (!image) return null;
