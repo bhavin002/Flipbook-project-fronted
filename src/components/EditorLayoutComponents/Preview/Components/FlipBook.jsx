@@ -78,10 +78,11 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange }, ref)
                 const response = await GetFlipbookApi(flipbookId);
                 setDivHeight(response.data.height);
                 setDivWidth(response.data.width);
+                
                 const htmlData = JsonToHtml(response.data.pages);
                 htmlData.map((data) => {
                     setPageContent((prev) => [...prev, data]);
-                });
+                });                
                 setTotalPages(response.data.pages.length);
             } catch (error) {
                 toast.error("Failed to load flipbook", {
@@ -147,11 +148,12 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange }, ref)
                                         transform: `scale(${width / (pageType === "double" ? divWidth * 2 : divWidth)}, ${height / divHeight})`,
                                         width: `${pageType === "double" ? divWidth : divWidth}px`,
                                         height: `${divHeight}px`,
-                                        backgroundColor: "rgb(255, 255, 255)",
+                                        backgroundColor: page?.background || "white",
                                         position: "relative",
                                         overflow: "hidden",
                                     }} >
-                                        {page.map((data, index) => {
+                                        
+                                        {page.pageData.map((data, index) => {
                                             if (data?.shape?.htmlType === "slideshow") {
                                                 return <SlideShow shape={data.shape} />;
                                             } else if (data?.shape?.htmlType === "audio-button") {

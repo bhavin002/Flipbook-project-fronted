@@ -1,12 +1,13 @@
 import ReactDOMServer from "react-dom/server";
 
 export default function JsonToHtml(pageData) {
-    const parseData = pageData.map((page) => convertToHtml(JSON.parse(page.pageData)))
+    const parseData = pageData.map((page) => convertToHtml(JSON.parse(page.pageData), page._id));
+    debugger
     return parseData;
 }
 
-function convertToHtml(page) {
-    return page.shapes.map((shape) => {
+function convertToHtml(page, pageId) {
+    const pageData = page.shapes.map((shape) => {
         if (shape.htmlType === "link-area") {
             console.log("shape", shape);
             return { html: ReactDOMServer.renderToStaticMarkup(goToUrl(shape)), shape };
@@ -84,7 +85,7 @@ function convertToHtml(page) {
             return { html: ReactDOMServer.renderToStaticMarkup(stockPhoto(shape)), shape };
         }
         if (shape.htmlType === "stock-video") {
-            console.log("stock-video ??",shape)
+            console.log("stock-video ??", shape)
             return { html: ReactDOMServer.renderToStaticMarkup(stockVideo(shape)), shape };
         }
         if (shape.htmlType === "stock-gif") {
@@ -101,6 +102,14 @@ function convertToHtml(page) {
         }
         return "";
     })
+    return {
+        pageId: pageId,
+        pageData: pageData,
+        background: page.background,
+        width: page.CANVAS_WIDTH,
+        height: page.CANVAS_HEIGHT,
+    }
+
 }
 
 function goToUrl(shape) {
@@ -691,7 +700,7 @@ function goToPreviousPage(shape) {
                 }}
             />
             <img
-             title={shape.htmlData?.tooltip || "Go to previous page"}
+                title={shape.htmlData?.tooltip || "Go to previous page"}
                 src={shape.src}
                 alt={shape.title}
                 style={{
@@ -1015,66 +1024,145 @@ function text(shape) {
 }
 
 function uploadPhoto(shape) {
+    console.log("uploadPhoto 2222 ???", shape);
+    let crop = {};
+    if (shape.cropImage) {
+        try {
+            crop = JSON.parse(shape.cropImage).attrs;
+        } catch (e) {
+            console.error("Failed to parse cropImage:", e);
+        }
+    }
+
+    // Use crop dimensions if valid, otherwise fall back to shape dimensions
+    const displayWidth = crop.width && crop.height ? crop.width : shape.width;
+    const displayHeight = crop.height && crop.width ? crop.height : shape.height;
+
     return (
         <img
             src={shape.src}
             alt={shape.title}
             style={{
-                height: `${shape.height}px`,
-                width: `${shape.width}px`,
+                height: `${displayHeight}px`,
+                width: `${displayWidth}px`,
                 position: "absolute",
-                left: `${shape.x}px`,
-                top: `${shape.y}px`,
+                left: `${shape.x + ((crop.width && crop.height ? crop.x : 0) * (shape.scaleX || 1))}px`,
+                top: `${shape.y + ((crop.width && crop.height ? crop.y : 0) * (shape.scaleY || 1))}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-            scaleX(${shape.scaleX || 1})
-            scaleY(${shape.scaleY || 1})
-            skewX(${shape.skewX || 0}deg)
-            skewY(${shape.skewY || 0}deg)
-            translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
+                    scaleX(${shape.scaleX || 1})
+                    scaleY(${shape.scaleY || 1})
+                    skewX(${shape.skewX || 0}deg)
+                    skewY(${shape.skewY || 0}deg)
+                    translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                 display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                clipPath: crop.width && crop.height
+                    ? `inset(${crop.y * -1}px ${crop.width - shape.width - crop.x * -1}px ${crop.height - shape.height - crop.y * -1}px ${crop.x * -1}px)`
+                    : 'none',
             }}
         />
     );
 }
 
 function stockPhoto(shape) {
+    console.log("stockPhoto 2222 ???", shape);
+    let crop = {};
+    if (shape.cropImage) {
+        try {
+            crop = JSON.parse(shape.cropImage).attrs;
+        } catch (e) {
+            console.error("Failed to parse cropImage:", e);
+        }
+    }
+
+    let effect = {};
+    if (shape.effect) {
+        try {
+            effect = shape.effect;
+        } catch (e) {
+            console.error("Failed to parse effect:", e);
+        }
+    }
+
+    // Use crop dimensions if valid, otherwise fall back to shape dimensions
+    const displayWidth = crop.width && crop.height ? crop.width : shape.width;
+    const displayHeight = crop.height && crop.width ? crop.height : shape.height;
+
+    // Build effect-related styles
+    const effectStyles = {};
+    // Corner radius
+    if (effect.individualCorners) {
+        effectStyles.borderTopLeftRadius = `${effect.topLeftRadius || 0}px`;
+        effectStyles.borderTopRightRadius = `${effect.topRightRadius || 0}px`;
+        effectStyles.borderBottomRightRadius = `${effect.bottomRightRadius || 0}px`;
+        effectStyles.borderBottomLeftRadius = `${effect.bottomLeftRadius || 0}px`;
+    } else {
+        effectStyles.borderRadius = `${effect.cornerRadius || 0}px`;
+    }
+    // Shadow
+    if (effect.isShadowEnabled) {
+        const shadowOpacity = (effect.shadowOpacity || 0) / 100; // Convert percentage to 0-1
+        const shadowColor = effect.shadowColor || '#000000';
+        effectStyles.boxShadow = `${effect.shadowOffsetX || 0}px ${effect.shadowOffsetY || 0}px ${effect.shadowBlur || 0}px rgba(${parseHexToRgb(shadowColor)}, ${shadowOpacity})`;
+    }
+    // Filters
+    const filters = [];
+    if (effect.brightness) filters.push(`brightness(${effect.brightness / 100 + 1})`); // Add 100 to make 0 neutral
+    if (effect.contrast) filters.push(`contrast(${effect.contrast / 100 + 1})`);
+    if (effect.saturation) filters.push(`saturate(${effect.saturation / 100 + 1})`);
+    if (effect.blur) filters.push(`blur(${effect.blur / 100 + 1}px)`);
+    if (effect.grayscale) filters.push(`grayscale(${effect.grayscale / 100 + 1})`);
+    if (filters.length > 0) {
+        effectStyles.filter = filters.join(' ');
+    }
+
     return (
         <img
             src={shape.src}
             alt={shape.title}
             style={{
-                height: `${shape.height}px`,
-                width: `${shape.width}px`,
+                height: `${displayHeight}px`,
+                width: `${displayWidth}px`,
                 position: "absolute",
-                left: `${shape.x}px`,
-                top: `${shape.y}px`,
+                left: `${shape.x + ((crop.width && crop.height ? crop.x || 0 : 0) * (shape.scaleX || 1))}px`,
+                top: `${shape.y + ((crop.width && crop.height ? crop.y || 0 : 0) * (shape.scaleY || 1))}px`,
                 transformOrigin: "0 0",
                 transform: `rotate(${shape.rotation || 0}deg)
-            scaleX(${shape.scaleX || 1})
-            scaleY(${shape.scaleY || 1})
-            skewX(${shape.skewX || 0}deg)
-            skewY(${shape.skewY || 0}deg)
-            translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
+                    scaleX(${shape.scaleX || 1})
+                    scaleY(${shape.scaleY || 1})
+                    skewX(${shape.skewX || 0}deg)
+                    skewY(${shape.skewY || 0}deg)
+                    translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                 display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                clipPath: crop.width && crop.height && crop.x && crop.y
+                    ? `inset(${crop.y * -1}px ${crop.width - shape.width - crop.x * -1}px ${crop.height - shape.height - crop.y * -1}px ${crop.x * -1}px)`
+                    : 'none',
+                ...effectStyles,
             }}
         />
     );
 }
 
+// Helper function to parse hex color to RGB
+function parseHexToRgb(hex) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `${r}, ${g}, ${b}`;
+}
 function stockVideo(shape) {
-    console.log("stockVideo 2222 ???",shape);
+    console.log("stockVideo 2222 ???", shape);
     return (
         <video
             src={shape.src}
             alt={shape.title}
-            height={shape.height}
-            width={shape.width}
             controls="true"
             playsInline="true"
             muted="true"
             volume="1"
             style={{
+                height: `${shape.height}px`,
+                width: `${shape.width}px`,
                 position: "absolute",
                 left: `${shape.x}px`,
                 top: `${shape.y}px`,

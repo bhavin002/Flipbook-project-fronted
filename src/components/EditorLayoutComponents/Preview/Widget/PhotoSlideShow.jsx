@@ -9,9 +9,9 @@ const getImageSizeClass = (size) => {
     case 'medium':
       return 'max-h-[300px]';
     case 'large':
-      return 'h-[calc(80vh-48px-20px)]';
+      return 'max-h-[calc(80vh-48px-20px)]';
     default:
-      return 'h-[calc(80vh-48px-20px)]';
+      return 'max-h-[calc(80vh-48px-20px)]';
   }
 };
 

@@ -121,7 +121,13 @@ export default function StockPhoto({
                 y={0 + 2}
                 width={shapeWidth - 4}
                 height={shapeHeight - 4}
-                cornerRadius={shapeCornerRadius || [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
+                cornerRadius={shapeEffect.individualCorners ? [
+                    topLeftRadius,
+                    topRightRadius,
+                    bottomRightRadius,
+                    bottomLeftRadius
+                ] : shapeCornerRadius}
+                // cornerRadius={shapeCornerRadius || [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
                 fill="#000000"
             />
 
@@ -153,6 +159,8 @@ export default function StockPhoto({
                     width={shapeWidth}
                     height={shapeHeight}
                     fill={shape.fill || 'white'}
+                    borderWidth={shapeEffect.isBorderEnabled ? shapeEffect.borderWidth || 0 : 0}
+                    borderColor={shapeEffect.isBorderEnabled ? shapeEffect.borderColor || 'black' : 'transparent'}
                     zIndex={0}
                 />
                 <Image

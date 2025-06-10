@@ -23,7 +23,7 @@ export default function ImageStyle({
     shadowOffsetX: selectedShape[0].attrs.effect?.shadowOffsetX || 0,
     shadowOffsetY: selectedShape[0].attrs.effect?.shadowOffsetY || 0,
     shadowBlur: selectedShape[0].attrs.effect?.shadowBlur || 10,
-    isBorderEnabled: selectedShape[0].attrs?.effect?.isBorderEnabled || true,
+    isBorderEnabled: selectedShape[0].attrs?.effect?.isBorderEnabled || false,
     borderColor: selectedShape[0].attrs.effect?.borderColor || "#ffffff",
     borderWidth: selectedShape[0].attrs?.effect?.borderWidth || 10,
   });
@@ -278,7 +278,7 @@ export default function ImageStyle({
             />
           </div>
         </div>
-        <div className="flex items-center gap-1">
+        {/* <div className="flex items-center gap-1">
           <Checkbox
             id="border"
             className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
@@ -330,7 +330,7 @@ export default function ImageStyle({
               disabled={!styles.isBorderEnabled}
             />
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
