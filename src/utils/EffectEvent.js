@@ -2,7 +2,7 @@ import Konva from 'konva';
 
 export const EffectEvent = (shape, ractnode, imgNode) => {
     console.log("shape EffectEvent", shape, ractnode, imgNode);
-    
+
     const effect = shape.effect || {};
 
     if (!imgNode || !ractnode) return;
@@ -52,6 +52,7 @@ export const EffectEvent = (shape, ractnode, imgNode) => {
 
     // ractnode.fill('rgba(0, 0, 0, 0)');
     if (effect.isShadowEnabled) {
+        ractnode.opacity(effect.shadowOpacity / 100 || 1);
         ractnode.shadowColor(effect.shadowColor || 'rgba(0, 0, 0, 0)');
         ractnode.shadowBlur(effect.shadowBlur || 0);
         ractnode.shadowOffset({ x: effect.shadowOffsetX || 0, y: effect.shadowOffsetY || 0 });
