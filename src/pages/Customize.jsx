@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Accordion,
     AccordionContent,
@@ -6,9 +6,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import {
-    Info,
-    Monitor,
-    Smartphone
+    Info
 } from "lucide-react";
 import {
     Tooltip,
@@ -19,10 +17,12 @@ import {
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getData } from '@/utils/datas';
+import FlipBookPreview from '@/components/EditorLayoutComponents/Preview/Components/FlipBookPreview';
+import { useParams } from 'react-router-dom';
 export default function Customize() {
     const [activeValues, setActiveValues] = useState(["appearance"]);
+    const { id } = useParams();
 
     const menuItems = getData('customizeMenuItems')
 
@@ -83,43 +83,8 @@ export default function Customize() {
                 </div>
             </div>
 
-            <Card className="shadow-sm flex-grow rounded-none max-md:w-full">
-                <Tabs defaultValue="desktop" className="flex flex-col h-full max-lg:min-h-[70vh]">
-                    <TabsList className="w-full rounded-none">
-                        <TabsTrigger className="items-center gap-2 w-full" value="desktop">
-                            <Monitor className="w-5 h-5" />
-                            <span className="text-xs mt-1 lg:mt-0">Desktop</span>
-                        </TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="mobile">
-                            <Smartphone className="w-5 h-5" />
-                            <span className="text-xs mt-1 lg:mt-0">Mobile</span>
-                        </TabsTrigger>
-                    </TabsList>
-                    <TabsContent value="desktop" className="p-4 pb-0 flex-grow">
-                        <div className="h-full w-full flex flex-col">
-                            <div className="h-[90%] w-full bg-gray-500"></div>
-                            <div className="flex max-lg:p-4 flex-wrap md:justify-start justify-center items-center flex-grow gap-4">
-                                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">View live</a>
-                                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit</a>
-                                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Customize</a>
-                                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit link name</a>
-                                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">SEO</a>
-                            </div>
-                        </div>
-                    </TabsContent>
-                    <TabsContent value="mobile" className="p-4 pb-0 flex-grow w-full">
-                        <div className="h-full w-full flex flex-col">
-                            <div className="h-[90%] md:w-[50%] md:m-auto bg-gray-500"></div>
-                            <div className="flex p-4 flex-wrap justify-center items-center flex-grow gap-4">
-                                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">View live</a>
-                                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit</a>
-                                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Customize</a>
-                                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit link name</a>
-                                <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">SEO</a>
-                            </div>
-                        </div>
-                    </TabsContent>
-                </Tabs>
+            <Card className="shadow-sm flex-grow rounded-none max-md:w-full md:max-w-[60%]">
+                <FlipBookPreview flipbookId={id} component={"customize"} />
             </Card>
         </div>
     );

@@ -295,7 +295,9 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         <div className="flex gap-2 items-center">
                             <div className="flex gap-2">
                                 <div className="flex gap-2 max-lg:hidden">
-                                    <Button variant="outline">
+                                    <Button variant="outline" onClick={()=>{
+                                        navigate(`/customize/${id}`)
+                                    }}>
                                         <SlidersHorizontal />
                                     </Button>
                                     <Button variant="outline">

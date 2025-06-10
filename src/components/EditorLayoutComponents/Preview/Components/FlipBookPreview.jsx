@@ -4,7 +4,7 @@ import { Monitor, Smartphone, ZoomIn, ZoomOut, Grid, Share2, Menu, Maximize, Min
 import { Button } from "@/components/ui/button";
 import FlipBook from "./FlipBook.jsx";
 
-export default function FlipBookPreview({ flipbookId }) {
+export default function FlipBookPreview({ flipbookId, component }) {
     const [activeTab, setActiveTab] = useState("desktop");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -21,7 +21,7 @@ export default function FlipBookPreview({ flipbookId }) {
     const handlePageChange = (page, total) => {
         const validPage = isNaN(page) || page < 1 ? 1 : page;
         const validTotal = isNaN(total) || total < 1 ? 1 : total;
-        
+
         setCurrentPage(validPage);
         setTotalPages(validTotal);
     };
@@ -118,7 +118,7 @@ export default function FlipBookPreview({ flipbookId }) {
         const displayCurrentPage = isNaN(currentPage) ? 1 : currentPage;
         const displayTotalPages = isNaN(totalPages) ? 1 : totalPages;
         const nextPage = displayCurrentPage < displayTotalPages ? displayCurrentPage + 1 : displayCurrentPage;
-        
+
         if (isMobile) {
             return (
                 <div className="w-full flex flex-col items-center justify-center py-4">
@@ -316,6 +316,7 @@ export default function FlipBookPreview({ flipbookId }) {
                                 onPageChange={handlePageChange}
                                 zoomLevel={zoomLevel}
                                 isMobile={activeTab === "mobile"}
+                                component={component}
                             />
                         </div>
                     </TabsContent>
@@ -334,6 +335,7 @@ export default function FlipBookPreview({ flipbookId }) {
                                     onPageChange={handlePageChange}
                                     zoomLevel={zoomLevel}
                                     isMobile={activeTab === "mobile"}
+                                    component={component}
                                 />
                             </div>
                         </div>
