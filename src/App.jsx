@@ -252,7 +252,9 @@ export default function App() {
 
                 <Route path="/editor/:id" element={
                   <PrivateRoute>
-                    <EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                    <FlipbookSettingsProvider>
+                      <EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                    </FlipbookSettingsProvider>
                   </PrivateRoute>
                 }>
                   <Route index element={<Editor />} />

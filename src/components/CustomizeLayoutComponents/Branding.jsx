@@ -129,7 +129,7 @@ export default function Branding() {
 
     const handleLogoSelect = (logo) => {
         setSelectedLogo(logo);
-        updateSettings({ brandLogoId: logo.id });
+        updateSettings({ brandLogoId: logo.id, brandLogoLink: logo.src });
     };
 
     const handleLogoDelete = async () => {
