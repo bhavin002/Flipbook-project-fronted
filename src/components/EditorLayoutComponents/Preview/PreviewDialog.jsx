@@ -17,7 +17,7 @@ export default function PreviewDialog({ flipbookId, open, onOpenChange }) {
                         Description
                     </DialogDescription>
                 </DialogHeader>
-                <FlipBookPreview flipbookId={flipbookId} />
+                <FlipBookPreview flipbookId={flipbookId} component={"previewDialog"} />
             </DialogContent>
         </Dialog>
     )

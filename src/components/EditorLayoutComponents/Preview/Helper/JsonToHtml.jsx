@@ -2,7 +2,6 @@ import ReactDOMServer from "react-dom/server";
 
 export default function JsonToHtml(pageData) {
     const parseData = pageData.map((page) => convertToHtml(JSON.parse(page.pageData), page._id));
-    debugger
     return parseData;
 }
 
@@ -79,7 +78,7 @@ function convertToHtml(page, pageId) {
             return { html: ReactDOMServer.renderToStaticMarkup(text(shape)), shape };
         }
         if (shape.htmlType === "upload-photo") {
-            return { html: ReactDOMServer.renderToStaticMarkup(uploadPhoto(shape)), shape };
+            return { html: ReactDOMServer.renderToStaticMarkup(stockPhoto(shape)), shape };
         }
         if (shape.htmlType === "stock-photo") {
             return { html: ReactDOMServer.renderToStaticMarkup(stockPhoto(shape)), shape };
@@ -1023,46 +1022,6 @@ function text(shape) {
     );
 }
 
-function uploadPhoto(shape) {
-    console.log("uploadPhoto 2222 ???", shape);
-    let crop = {};
-    if (shape.cropImage) {
-        try {
-            crop = JSON.parse(shape.cropImage).attrs;
-        } catch (e) {
-            console.error("Failed to parse cropImage:", e);
-        }
-    }
-
-    // Use crop dimensions if valid, otherwise fall back to shape dimensions
-    const displayWidth = crop.width && crop.height ? crop.width : shape.width;
-    const displayHeight = crop.height && crop.width ? crop.height : shape.height;
-
-    return (
-        <img
-            src={shape.src}
-            alt={shape.title}
-            style={{
-                height: `${displayHeight}px`,
-                width: `${displayWidth}px`,
-                position: "absolute",
-                left: `${shape.x + ((crop.width && crop.height ? crop.x : 0) * (shape.scaleX || 1))}px`,
-                top: `${shape.y + ((crop.width && crop.height ? crop.y : 0) * (shape.scaleY || 1))}px`,
-                transformOrigin: "0 0",
-                transform: `rotate(${shape.rotation || 0}deg)
-                    scaleX(${shape.scaleX || 1})
-                    scaleY(${shape.scaleY || 1})
-                    skewX(${shape.skewX || 0}deg)
-                    skewY(${shape.skewY || 0}deg)
-                    translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
-                display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
-                clipPath: crop.width && crop.height
-                    ? `inset(${crop.y * -1}px ${crop.width - shape.width - crop.x * -1}px ${crop.height - shape.height - crop.y * -1}px ${crop.x * -1}px)`
-                    : 'none',
-            }}
-        />
-    );
-}
 function stockPhoto(shape) {
     console.log("stockPhoto 2222 ???", shape);
     let crop = {};

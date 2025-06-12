@@ -52,7 +52,6 @@ export default function Preview() {
         if (!value) return null;
 
         try {
-            const url = new URL(value);
             return (
                 <Button variant="outline" className="px-2">
                     <img

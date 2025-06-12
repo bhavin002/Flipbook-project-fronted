@@ -3,14 +3,18 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Monitor, Smartphone, ZoomIn, ZoomOut, Grid, Share2, Menu, Maximize, Minimize } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FlipBook from "./FlipBook.jsx";
+import { useFlipbookSettings as useFlipbookSettingsContext } from "@/context/FlipbookSettingsProvider.jsx";
+import { useFlipbookSettings } from "@/hooks/useFlipbookSettings";
 
-export default function FlipBookPreview({ flipbookId }) {
+export default function FlipBookPreview({ flipbookId, component }) {
     const [activeTab, setActiveTab] = useState("desktop");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isDragging, setIsDragging] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(1);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const { latestJson } = useFlipbookSettingsContext();
+    const visibilitySettings = useFlipbookSettings(latestJson);
 
     const progressBarRef = useRef(null);
     const flipBookRef = useRef(null);
@@ -21,7 +25,7 @@ export default function FlipBookPreview({ flipbookId }) {
     const handlePageChange = (page, total) => {
         const validPage = isNaN(page) || page < 1 ? 1 : page;
         const validTotal = isNaN(total) || total < 1 ? 1 : total;
-        
+
         setCurrentPage(validPage);
         setTotalPages(validTotal);
     };
@@ -118,33 +122,35 @@ export default function FlipBookPreview({ flipbookId }) {
         const displayCurrentPage = isNaN(currentPage) ? 1 : currentPage;
         const displayTotalPages = isNaN(totalPages) ? 1 : totalPages;
         const nextPage = displayCurrentPage < displayTotalPages ? displayCurrentPage + 1 : displayCurrentPage;
-        
+
         if (isMobile) {
             return (
-                <div className="w-full flex flex-col items-center justify-center py-4">
+                visibilitySettings.showControlBar && <div className="w-full flex flex-col items-center justify-center">
                     <div className="w-[90%] max-w-[400px] bg-gradient-to-r from-primary/90 to-primary p-3 flex flex-col items-center justify-center shadow-lg space-y-3">
-                        <div className="flex items-center text-primary-foreground text-sm w-full">
-                            <div
-                                ref={progressBarRef}
-                                className="flex-1 h-2 bg-primary-foreground/20 rounded-full relative cursor-pointer select-none hover:bg-primary-foreground/30 transition-colors"
-                                onMouseDown={handleMouseDown}
-                                onTouchStart={handleTouchStart}
-                            >
+                        {visibilitySettings.showNavigationBar && (
+                            <div className="flex items-center text-primary-foreground text-sm w-full">
                                 <div
-                                    className="h-2 bg-primary-foreground rounded-full absolute left-0 top-0 transition-all duration-300"
-                                    style={{ width: `${isNaN(progress) ? 0 : progress}%` }}
-                                />
-                                <div
-                                    className="absolute top-1/2 -translate-y-1/2"
-                                    style={{ left: `calc(${isNaN(progress) ? 0 : progress}% - 8px)` }}
+                                    ref={progressBarRef}
+                                    className="flex-1 h-2 bg-primary-foreground/20 rounded-full relative cursor-pointer select-none hover:bg-primary-foreground/30 transition-colors"
+                                    onMouseDown={handleMouseDown}
+                                    onTouchStart={handleTouchStart}
                                 >
                                     <div
-                                        className="w-4 h-4 bg-primary-foreground text-primary rounded-full shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
-                                        style={{ touchAction: "none" }}
+                                        className="h-2 bg-primary-foreground rounded-full absolute left-0 top-0 transition-all duration-300"
+                                        style={{ width: `${isNaN(progress) ? 0 : progress}%` }}
                                     />
+                                    <div
+                                        className="absolute top-1/2 -translate-y-1/2"
+                                        style={{ left: `calc(${isNaN(progress) ? 0 : progress}% - 8px)` }}
+                                    >
+                                        <div
+                                            className="w-4 h-4 bg-primary-foreground text-primary rounded-full shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+                                            style={{ touchAction: "none" }}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        )}
 
                         <div className="flex items-center justify-center space-x-4">
                             <Button
@@ -163,14 +169,16 @@ export default function FlipBookPreview({ flipbookId }) {
                             >
                                 <ZoomIn className="w-4 h-4" />
                             </Button>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
-                                onClick={toggleFullscreen}
-                            >
-                                {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
-                            </Button>
+                            {visibilitySettings.showFullscreen && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                    onClick={toggleFullscreen}
+                                >
+                                    {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+                                </Button>
+                            )}
                             <Button
                                 variant="ghost"
                                 size="icon"
@@ -178,13 +186,15 @@ export default function FlipBookPreview({ flipbookId }) {
                             >
                                 <Grid className="w-4 h-4" />
                             </Button>
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
-                            >
-                                <Share2 className="w-4 h-4" />
-                            </Button>
+                            {visibilitySettings.showShare && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                >
+                                    <Share2 className="w-4 h-4" />
+                                </Button>
+                            )}
                             <Button
                                 variant="ghost"
                                 size="icon"
@@ -199,31 +209,33 @@ export default function FlipBookPreview({ flipbookId }) {
         }
 
         return (
-            <div className={`w-full bg-gradient-to-r from-primary/90 to-primary p-4 flex items-center justify-between shadow-lg ${isMobile ? "rounded-b-lg" : ""}`}>
+            visibilitySettings.showControlBar && <div className={`w-full bg-gradient-to-r from-primary/90 to-primary p-4 flex items-center justify-between shadow-lg ${isMobile ? "rounded-b-lg" : ""}`}>
                 <div className="flex items-center text-primary-foreground text-sm flex-1">
                     <span className="mr-6 font-medium bg-primary-foreground/10 px-4 py-1.5 rounded-full">
-                        {displayCurrentPage}-{nextPage}/{displayTotalPages}
+                        {displayCurrentPage} - {nextPage} / {displayTotalPages}
                     </span>
-                    <div
-                        ref={progressBarRef}
-                        className="flex-1 h-2.5 bg-primary-foreground/20 rounded-full relative cursor-pointer select-none hover:bg-primary-foreground/30 transition-colors"
-                        onMouseDown={handleMouseDown}
-                        onTouchStart={handleTouchStart}
-                    >
+                    {visibilitySettings.showNavigationBar && (
                         <div
-                            className="h-2.5 bg-primary-foreground rounded-full absolute left-0 top-0 transition-all duration-300"
-                            style={{ width: `${isNaN(progress) ? 0 : progress}%` }}
-                        />
-                        <div
-                            className="absolute top-1/2 -translate-y-1/2"
-                            style={{ left: `calc(${isNaN(progress) ? 0 : progress}% - 10px)` }}
+                            ref={progressBarRef}
+                            className="flex-1 h-2.5 bg-primary-foreground/20 rounded-full relative cursor-pointer select-none hover:bg-primary-foreground/30 transition-colors"
+                            onMouseDown={handleMouseDown}
+                            onTouchStart={handleTouchStart}
                         >
                             <div
-                                className="w-5 h-5 bg-primary-foreground text-primary rounded-full shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
-                                style={{ touchAction: "none" }}
+                                className="h-2.5 bg-primary-foreground rounded-full absolute left-0 top-0 transition-all duration-300"
+                                style={{ width: `${isNaN(progress) ? 0 : progress}%` }}
                             />
+                            <div
+                                className="absolute top-1/2 -translate-y-1/2"
+                                style={{ left: `calc(${isNaN(progress) ? 0 : progress}% - 10px)` }}
+                            >
+                                <div
+                                    className="w-5 h-5 bg-primary-foreground text-primary rounded-full shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+                                    style={{ touchAction: "none" }}
+                                />
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
                 <div className="flex items-center space-x-3 ml-6">
                     <Button
@@ -242,14 +254,16 @@ export default function FlipBookPreview({ flipbookId }) {
                     >
                         <ZoomIn className="w-5 h-5" />
                     </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                        onClick={toggleFullscreen}
-                    >
-                        {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
-                    </Button>
+                    {visibilitySettings.showFullscreen && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                            onClick={toggleFullscreen}
+                        >
+                            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+                        </Button>
+                    )}
                     <Button
                         variant="ghost"
                         size="icon"
@@ -257,13 +271,15 @@ export default function FlipBookPreview({ flipbookId }) {
                     >
                         <Grid className="w-5 h-5" />
                     </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                    >
-                        <Share2 className="w-5 h-5" />
-                    </Button>
+                    {visibilitySettings.showShare && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                        >
+                            <Share2 className="w-5 h-5" />
+                        </Button>
+                    )}
                     <Button
                         variant="ghost"
                         size="icon"
@@ -277,11 +293,11 @@ export default function FlipBookPreview({ flipbookId }) {
     };
 
     return (
-        <div ref={containerRef} className="w-full h-full flex flex-col items-center justify-center relative rounded bg-white">
+        <div ref={containerRef} className="w-full h-full flex flex-col items-center relative rounded bg-white">
             <Tabs
                 value={activeTab}
                 onValueChange={setActiveTab}
-                className="w-full h-full flex flex-col items-center justify-center"
+                className="w-full h-full flex flex-col items-center"
             >
                 <div className="w-full h-[10%] mt-5 flex items-center justify-center">
                     <TabsList className="grid grid-cols-2 bg-gray-100 rounded-lg">
@@ -301,6 +317,7 @@ export default function FlipBookPreview({ flipbookId }) {
                         </TabsTrigger>
                     </TabsList>
                 </div>
+
                 <div className="w-full h-full flex-grow flex items-center justify-center">
                     <TabsContent
                         value="desktop"
@@ -316,6 +333,7 @@ export default function FlipBookPreview({ flipbookId }) {
                                 onPageChange={handlePageChange}
                                 zoomLevel={zoomLevel}
                                 isMobile={activeTab === "mobile"}
+                                component={component}
                             />
                         </div>
                     </TabsContent>
@@ -334,6 +352,7 @@ export default function FlipBookPreview({ flipbookId }) {
                                     onPageChange={handlePageChange}
                                     zoomLevel={zoomLevel}
                                     isMobile={activeTab === "mobile"}
+                                    component={component}
                                 />
                             </div>
                         </div>

@@ -10,6 +10,7 @@ export const FlipbookSettingsProvider = ({ children }) => {
     const [hasFetched, setHasFetched] = useState(false);
     const [updateCounter, setUpdateCounter] = useState(0);
     const [latestSettings, setLatestSettings] = useState(null);
+    const [latestJson, setLatestJson] = useState(null)
     const { id: flipbookId } = useParams();
 
     console.log("updateCounter", updateCounter);
@@ -20,6 +21,10 @@ export const FlipbookSettingsProvider = ({ children }) => {
             const response = await GetFlipbookPreviewSettingByIdApi(flipbookId);
             setLatestSettings(response.data);
             setSettings(response.data);
+            setLatestJson({
+                ...response.data,
+                brandLogoId: response.data.brandLogoLink
+            })
             setHasFetched(true);
         } catch (error) {
             toast.error('Failed to fetch flipbook settings', {
@@ -52,6 +57,27 @@ export const FlipbookSettingsProvider = ({ children }) => {
                     formData.append(key, value);
                 }
             });
+
+            const formDataObj = {};
+            for (let [key, value] of formData.entries()) {
+                try {
+                    formDataObj[key] = JSON.parse(value);
+                } catch (e) {
+                    formDataObj[key] = value;
+                }
+            }
+
+            console.log("formDataObj ???", formDataObj);
+
+            setLatestJson(prevLatestJson => ({
+                ...prevLatestJson,
+                ...formDataObj
+            }));
+
+            if (formData.get('brandLogoId')) {
+                formData.delete('brandLogoLink');
+            }
+
             const response = await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
 
             setUpdateCounter(prev => {
@@ -69,7 +95,7 @@ export const FlipbookSettingsProvider = ({ children }) => {
     };
 
     return (
-        <FlipbookSettingsContext.Provider value={{ settings, updateSettings, flipbookId, latestSettings }}>
+        <FlipbookSettingsContext.Provider value={{ settings, updateSettings, flipbookId, latestSettings, latestJson }}>
             {children}
         </FlipbookSettingsContext.Provider>
     );
