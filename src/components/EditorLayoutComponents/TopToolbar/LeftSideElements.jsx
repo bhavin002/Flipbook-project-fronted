@@ -39,12 +39,13 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
         if (selectedShape?.length !== 1) return;
 
         const updatedStage = [...mainStage];
+        updatedStage[selectedIndex].selectedShape=[];
         updatedStage[selectedIndex].shapes = mainStage[selectedIndex].shapes.map((shape) => {
             if (selectedShape[0].attrs.id === shape.id) {
                 if (type === "horizontal") {
-                    return { ...shape, flipX: !shape.flipX };
+                    return { ...shape, custflipX: !shape.custflipX };
                 } else if (type === "vertical") {
-                    return { ...shape, flipY: !shape.flipY };
+                    return { ...shape, custflipY: !shape.custflipY };
                 }
             }
             return shape;

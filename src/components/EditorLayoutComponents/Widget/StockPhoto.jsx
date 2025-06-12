@@ -74,30 +74,30 @@ export default function StockPhoto({
             onSelect(e.currentTarget);
         }
     };
-    
-    
+
+
     const shapeWidth = shape?.width || loadedImage?.width || 0;
     const shapeHeight = shape?.height || loadedImage?.height || 0;
     const shapeEffect = shape?.effect || {};
     const shapeCornerRadius = shapeEffect.cornerRadius || 0;
     const maxRadius = Math.min(shapeWidth / 2, shapeHeight / 2); // Cap radius to half the smallest dimension
-    
+
     // Limit each corner radius to prevent overextension
     const topLeftRadius = Math.min(
-      shapeEffect.individualCorners ? (shapeEffect.topLeftRadius || 0) : shapeCornerRadius,
-      maxRadius
+        shapeEffect.individualCorners ? (shapeEffect.topLeftRadius || 0) : shapeCornerRadius,
+        maxRadius
     );
     const topRightRadius = Math.min(
-      shapeEffect.individualCorners ? (shapeEffect.topRightRadius || 0) : shapeCornerRadius,
-      maxRadius
+        shapeEffect.individualCorners ? (shapeEffect.topRightRadius || 0) : shapeCornerRadius,
+        maxRadius
     );
     const bottomRightRadius = Math.min(
-      shapeEffect.individualCorners ? (shapeEffect.bottomRightRadius || 0) : shapeCornerRadius,
-      maxRadius
+        shapeEffect.individualCorners ? (shapeEffect.bottomRightRadius || 0) : shapeCornerRadius,
+        maxRadius
     );
     const bottomLeftRadius = Math.min(
-      shapeEffect.individualCorners ? (shapeEffect.bottomLeftRadius || 0) : shapeCornerRadius,
-      maxRadius
+        shapeEffect.individualCorners ? (shapeEffect.bottomLeftRadius || 0) : shapeCornerRadius,
+        maxRadius
     );
 
     if (!loadedImage) return null;
@@ -151,7 +151,11 @@ export default function StockPhoto({
                     ctx.lineTo(0, topLeftRadius);
                     ctx.quadraticCurveTo(0, 0, topLeftRadius, 0);
                     ctx.closePath();
-                  }}
+                }}
+                scaleX={shape.flipX ? -1 : 1}
+                scaleY={shape.flipY ? -1 : 1}
+                offsetX={shape.flipX ? shapeWidth : 0}
+                offsetY={shape.flipY ? shapeHeight : 0}
             >
                 <Rect
                     x={0}
@@ -165,12 +169,12 @@ export default function StockPhoto({
                 />
                 <Image
                     image={loadedImage}
-                    x={shape.flipX ? shapeWidth : 0} // Adjust x position for horizontal flip
-                    y={shape.flipY ? shapeHeight : 0} // Adjust y position for vertical flip
+                    x={0}
+                    y={0}
                     width={shapeWidth}
                     height={shapeHeight}
-                    scaleX={shape.flipX ? -1 : 1} // Apply horizontal flip
-                    scaleY={shape.flipY ? -1 : 1} // Apply vertical flip
+                    scaleX={1}
+                    scaleY={1}
                     ref={imageRef}
                     zIndex={1}
                 />

@@ -171,21 +171,23 @@ export default function KonvaGif({
                 }}
             >
                 <Rect
-                    x={0}
-                    y={0}
                     width={shapeWidth}
                     height={shapeHeight}
                     fill={shape.fill || 'white'}
                     zIndex={0}
+                    x={shape.flipX ? shapeWidth : 0}
+                    y={shape.flipY ? shapeHeight : 0}
+                    scaleX={shape.flipX ? -1 : 1}
+                    scaleY={shape.flipY ? -1 : 1}
                 />
                 <Image
                     image={canvas}
-                    x={shape.flipX ? shapeWidth : 0}
-                    y={shape.flipY ? shapeHeight : 0}
+                    x={0}
+                    y={0}
+                    scaleX={1}
+                    scaleY={1}
                     width={shapeWidth}
                     height={shapeHeight}
-                    scaleX={shape.flipX ? -1 : 1}
-                    scaleY={shape.flipY ? -1 : 1}
                     ref={imageRef}
                     zIndex={1}
                 />
