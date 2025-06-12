@@ -162,7 +162,11 @@ export default function Branding() {
             setIsImageUploading(true);
             const formData = new FormData();
             formData.append('backgroundImage', file);
-            updateSettings({ backgroundImage: file });
+            
+            const imageUrl = URL.createObjectURL(file);
+            setBackgroundImage(imageUrl);
+            
+            updateSettings({ backgroundImage: file , backgroundImageURL: imageUrl });
         } catch (error) {
             toast.error("Failed to upload background image", { description: error.message });
         } finally {
@@ -277,7 +281,7 @@ export default function Branding() {
             case "uploadimage":
                 return (
                     <div className="space-y-4">
-                        {!backgroundImage ? (
+                        {!backgroundImage && !isImageUploading  ? (
                             <div>
                                 <input
                                     type="file"

@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Monitor, Smartphone, ZoomIn, ZoomOut, Grid, Share2, Menu, Maximize, Minimize } from "lucide-react";
+import { Monitor, Smartphone, ZoomIn, ZoomOut, Share2, Maximize, Minimize, LayoutGrid, List, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FlipBook from "./FlipBook.jsx";
 import { useFlipbookSettings as useFlipbookSettingsContext } from "@/context/FlipbookSettingsProvider.jsx";
 import { useFlipbookSettings } from "@/hooks/useFlipbookSettings";
+import { useViewMode } from "@/context/ViewModeContext";
+import { BackgroundColorType, BackgroundImageType } from "@/utils/enum.js";
 
 export default function FlipBookPreview({ flipbookId, component }) {
-    const [activeTab, setActiveTab] = useState("desktop");
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isDragging, setIsDragging] = useState(false);
@@ -15,12 +16,17 @@ export default function FlipBookPreview({ flipbookId, component }) {
     const [isFullscreen, setIsFullscreen] = useState(false);
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
+    const { activeTab, setActiveTab } = useViewMode();
 
     const progressBarRef = useRef(null);
     const flipBookRef = useRef(null);
     const containerRef = useRef(null);
 
     const progress = totalPages > 1 ? ((currentPage - 1) / (totalPages - 1)) * 100 : 0;
+
+    const handleTabChange = (value) => {
+        setActiveTab(value.charAt(0).toUpperCase() + value.slice(1));
+    };
 
     const handlePageChange = (page, total) => {
         const validPage = isNaN(page) || page < 1 ? 1 : page;
@@ -137,7 +143,7 @@ export default function FlipBookPreview({ flipbookId, component }) {
                                 >
                                     <div
                                         className="h-2 bg-primary-foreground rounded-full absolute left-0 top-0 transition-all duration-300"
-                                        style={{ width: `${isNaN(progress) ? 0 : progress}%` }}
+                                        style={{ width: `${isNaN(progress) ? 0 : progress}%`, backgroundColor: visibilitySettings.playerAccentColorHash || "#f9fafb" }}
                                     />
                                     <div
                                         className="absolute top-1/2 -translate-y-1/2"
@@ -169,23 +175,20 @@ export default function FlipBookPreview({ flipbookId, component }) {
                             >
                                 <ZoomIn className="w-4 h-4" />
                             </Button>
-                            {visibilitySettings.showFullscreen && (
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
-                                    onClick={toggleFullscreen}
-                                >
-                                    {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
-                                </Button>
-                            )}
-                            <Button
+                            {visibilitySettings.showPageOverview && (<Button
                                 variant="ghost"
                                 size="icon"
                                 className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
                             >
-                                <Grid className="w-4 h-4" />
-                            </Button>
+                                <LayoutGrid className="w-4 h-4" />
+                            </Button>)}
+                            {visibilitySettings.showSearch && (<Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                            >
+                                <Search className="w-5 h-5" />
+                            </Button>)}
                             {visibilitySettings.showShare && (
                                 <Button
                                     variant="ghost"
@@ -200,8 +203,18 @@ export default function FlipBookPreview({ flipbookId, component }) {
                                 size="icon"
                                 className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
                             >
-                                <Menu className="w-4 h-4" />
+                                <List className="w-4 h-4" />
                             </Button>
+                            {visibilitySettings.showFullscreen && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                    onClick={toggleFullscreen}
+                                >
+                                    {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -209,7 +222,7 @@ export default function FlipBookPreview({ flipbookId, component }) {
         }
 
         return (
-            visibilitySettings.showControlBar && <div className={`w-full bg-gradient-to-r from-primary/90 to-primary p-4 flex items-center justify-between shadow-lg ${isMobile ? "rounded-b-lg" : ""}`}>
+            visibilitySettings.showControlBar && <div className={`w-full bg-gradient-to-r from-primary/90 to-primary p-4 flex items-center justify-between relative shadow-lg ${isMobile ? "rounded-b-lg" : ""}`}>
                 <div className="flex items-center text-primary-foreground text-sm flex-1">
                     <span className="mr-6 font-medium bg-primary-foreground/10 px-4 py-1.5 rounded-full">
                         {displayCurrentPage} - {nextPage} / {displayTotalPages}
@@ -217,13 +230,13 @@ export default function FlipBookPreview({ flipbookId, component }) {
                     {visibilitySettings.showNavigationBar && (
                         <div
                             ref={progressBarRef}
-                            className="flex-1 h-2.5 bg-primary-foreground/20 rounded-full relative cursor-pointer select-none hover:bg-primary-foreground/30 transition-colors"
+                            className="flex-1 h-2.5 absolute left-3 right-3 top-[-5px] bg-[#ae83f4] rounded-full cursor-pointer select-none hover:bg-[#cfb1ff] transition-colors duration-300 ease-in-out"
                             onMouseDown={handleMouseDown}
                             onTouchStart={handleTouchStart}
                         >
                             <div
                                 className="h-2.5 bg-primary-foreground rounded-full absolute left-0 top-0 transition-all duration-300"
-                                style={{ width: `${isNaN(progress) ? 0 : progress}%` }}
+                                style={{ width: `${isNaN(progress) ? 0 : progress}%`, backgroundColor: visibilitySettings.playerAccentColorHash || "#f9fafb" }}
                             />
                             <div
                                 className="absolute top-1/2 -translate-y-1/2"
@@ -254,23 +267,20 @@ export default function FlipBookPreview({ flipbookId, component }) {
                     >
                         <ZoomIn className="w-5 h-5" />
                     </Button>
-                    {visibilitySettings.showFullscreen && (
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                            onClick={toggleFullscreen}
-                        >
-                            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
-                        </Button>
-                    )}
-                    <Button
+                    {visibilitySettings.showPageOverview && (<Button
                         variant="ghost"
                         size="icon"
                         className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
                     >
-                        <Grid className="w-5 h-5" />
-                    </Button>
+                        <LayoutGrid className="w-5 h-5" />
+                    </Button>)}
+                    {visibilitySettings.showSearch && (<Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                    >
+                        <Search className="w-5 h-5" />
+                    </Button>)}
                     {visibilitySettings.showShare && (
                         <Button
                             variant="ghost"
@@ -285,8 +295,18 @@ export default function FlipBookPreview({ flipbookId, component }) {
                         size="icon"
                         className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
                     >
-                        <Menu className="w-5 h-5" />
+                        <List className="w-5 h-5" />
                     </Button>
+                    {visibilitySettings.showFullscreen && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                            onClick={toggleFullscreen}
+                        >
+                            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+                        </Button>
+                    )}
                 </div>
             </div>
         );
@@ -295,28 +315,30 @@ export default function FlipBookPreview({ flipbookId, component }) {
     return (
         <div ref={containerRef} className="w-full h-full flex flex-col items-center relative rounded bg-white">
             <Tabs
-                value={activeTab}
-                onValueChange={setActiveTab}
+                value={activeTab.toLowerCase()}
+                onValueChange={handleTabChange}
                 className="w-full h-full flex flex-col items-center"
             >
-                <div className="w-full h-[10%] mt-5 flex items-center justify-center">
-                    <TabsList className="grid grid-cols-2 bg-gray-100 rounded-lg">
-                        <TabsTrigger
-                            value="desktop"
-                            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                        >
-                            <Monitor className="w-4 h-4 mr-2" />
-                            Desktop
-                        </TabsTrigger>
-                        <TabsTrigger
-                            value="mobile"
-                            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                        >
-                            <Smartphone className="w-4 h-4 mr-2" />
-                            Mobile
-                        </TabsTrigger>
-                    </TabsList>
-                </div>
+                {component !== "customize" && (
+                    <div className="w-full h-[10%] mt-5 flex items-center justify-center">
+                        <TabsList className="grid grid-cols-2 bg-gray-100 rounded-lg">
+                            <TabsTrigger
+                                value="desktop"
+                                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                            >
+                                <Monitor className="w-4 h-4 mr-2" />
+                                Desktop
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="mobile"
+                                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                            >
+                                <Smartphone className="w-4 h-4 mr-2" />
+                                Mobile
+                            </TabsTrigger>
+                        </TabsList>
+                    </div>
+                )}
 
                 <div className="w-full h-full flex-grow flex items-center justify-center">
                     <TabsContent
@@ -324,7 +346,19 @@ export default function FlipBookPreview({ flipbookId, component }) {
                         className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden"
                     >
                         <div
-                            className="w-full h-full flex items-center justify-center"
+                            className={`w-full h-full flex items-center justify-center`}
+                            style={{
+                                backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
+                                backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
+                                ...(visibilitySettings.backgroundImageType === BackgroundImageType.SCALE_CROP && {
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center'
+                                }),
+                                ...(visibilitySettings.backgroundImageType === BackgroundImageType.CENTER && {
+                                    backgroundRepeat: 'no-repeat',
+                                    backgroundPosition: 'center'
+                                })
+                            }}
                             id="preview-dialog"
                         >
                             <FlipBook
@@ -332,7 +366,7 @@ export default function FlipBookPreview({ flipbookId, component }) {
                                 flipbookId={flipbookId}
                                 onPageChange={handlePageChange}
                                 zoomLevel={zoomLevel}
-                                isMobile={activeTab === "mobile"}
+                                isMobile={activeTab.toLowerCase() === "mobile"}
                                 component={component}
                             />
                         </div>
@@ -342,16 +376,25 @@ export default function FlipBookPreview({ flipbookId, component }) {
                         className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden"
                     >
                         <div
-                            className="w-[90%] max-w-[400px] h-full flex flex-col items-center justify-center overflow-hidden"
+                            className={`w-[90%] max-w-[400px] h-full flex flex-col items-center justify-center overflow-hidden`}
+                            style={{ backgroundColor: visibilitySettings.backgroundColorHash }}
                             id="preview-dialog"
                         >
-                            <div className="w-full h-full flex items-center justify-center">
+                            <div className="w-full h-full flex items-center justify-center"
+                                style={{
+                                    backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
+                                    backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
+                                    backgroundSize: 'cover',
+                                    backgroundPosition: 'center',
+                                    backgroundRepeat: 'no-repeat'
+                                }}
+                            >
                                 <FlipBook
                                     ref={flipBookRef}
                                     flipbookId={flipbookId}
                                     onPageChange={handlePageChange}
                                     zoomLevel={zoomLevel}
-                                    isMobile={activeTab === "mobile"}
+                                    isMobile={activeTab.toLowerCase() === "mobile"}
                                     component={component}
                                 />
                             </div>
@@ -359,7 +402,7 @@ export default function FlipBookPreview({ flipbookId, component }) {
                     </TabsContent>
                 </div>
             </Tabs>
-            <ProgressBar isMobile={activeTab === "mobile" && !isFullscreen} />
+            <ProgressBar isMobile={activeTab.toLowerCase() === "mobile" && !isFullscreen} />
         </div>
     );
 }

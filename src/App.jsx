@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
+import { ViewModeProvider } from "@/context/ViewModeContext";
 
 // Auth pages
 import SignUp from "./pages/Auth/SignUp";
@@ -90,6 +91,7 @@ export default function App() {
   const apiCounter = useApiCounterStore((state) => state.counter);
 
   return (
+
     <AuthProvider>
       <FolderProvider>
         <CurrencyProvider>
@@ -234,9 +236,11 @@ export default function App() {
 
                 <Route path="/customize/:id" element={
                   <PrivateRoute>
-                    <FlipbookSettingsProvider>
-                      <CustomizeAppLayout />
-                    </FlipbookSettingsProvider>
+                    <ViewModeProvider>
+                      <FlipbookSettingsProvider>
+                        <CustomizeAppLayout />
+                      </FlipbookSettingsProvider>
+                    </ViewModeProvider>
                   </PrivateRoute>
                 }>
                   <Route index element={<Customize />} />
@@ -252,9 +256,11 @@ export default function App() {
 
                 <Route path="/editor/:id" element={
                   <PrivateRoute>
-                    <FlipbookSettingsProvider>
-                      <EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-                    </FlipbookSettingsProvider>
+                    <ViewModeProvider>
+                      <FlipbookSettingsProvider>
+                        <EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                      </FlipbookSettingsProvider>
+                    </ViewModeProvider>
                   </PrivateRoute>
                 }>
                   <Route index element={<Editor />} />

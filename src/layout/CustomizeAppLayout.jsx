@@ -4,10 +4,11 @@ import { Outlet, useNavigate } from "react-router-dom";
 import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
 import { Button } from "@/components/ui/button";
 import BottomCustomizePanel from "@/components/CustomizeLayoutComponents/BottomCustomizePanel";
+import { useViewMode } from "@/context/ViewModeContext";
 
 export default function CustomizeAppLayout() {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState("Create");
+    const { activeTab, setActiveTab } = useViewMode();
     const navigate = useNavigate();
 
     const TabButton = ({ label }) => (
@@ -33,8 +34,8 @@ export default function CustomizeAppLayout() {
                     </div>
                     <div className="relative md:flex gap-6 hidden">
                         <div className="flex items-center space-x-2">
-                            <TabButton label="Create" />
-                            <TabButton label="Customize" />
+                            <TabButton label="Desktop" />
+                            <TabButton label="Mobile" />
                         </div>
                     </div>
                     <div className="flex md:gap-6 gap-2 items-center">

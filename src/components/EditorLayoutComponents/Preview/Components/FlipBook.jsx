@@ -160,8 +160,31 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
     return (
         <>
             {
-                visibilitySettings.brandLogo && <img src={visibilitySettings.brandLogo} width={200} className="absolute top-5 left-5" alt="Logo" />
+                visibilitySettings.brandLogo && (
+                    visibilitySettings.logoLink ? (
+                        <a 
+                            href={visibilitySettings.logoLink} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="absolute top-5 left-5 cursor-pointer z-[11]" 
+                        >
+                            <img 
+                                src={visibilitySettings.brandLogo} 
+                                width={200} 
+                                alt="Logo" 
+                            />
+                        </a>
+                    ) : (
+                        <img 
+                            src={visibilitySettings.brandLogo} 
+                            width={200} 
+                            className="absolute top-5 left-5" 
+                            alt="Logo" 
+                        />
+                    )
+                )
             }
+            
             <div className="wrapper flex flex-col items-center justify-center relative">
                 <div className="aspect" style={{ width: width, height: height }}>
                     <div className="aspect-inner">
@@ -173,7 +196,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                                         transform: `scale(${width / (pageType === "double" ? divWidth * 2 : divWidth)}, ${height / divHeight})`,
                                         width: `${pageType === "double" ? divWidth : divWidth}px`,
                                         height: `${divHeight}px`,
-                                        backgroundColor: page?.background || "white",
+                                        backgroundColor: page?.background || visibilitySettings.backgroundColor || "white",
                                         position: "relative",
                                         overflow: "hidden",
                                     }} >
@@ -205,7 +228,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                     {currentPage > 1 && (
                         <button
                             onClick={handlePrevPage}
-                            className={`absolute flex h-full items-center left-5`}
+                            className={`absolute flex hover:bg-[#ffffff40] rounded-full p-2 items-center left-5 transition-all duration-300 ease-in-out`}
                             aria-label="Previous page"
                         >
                             <svg aria-hidden="true" width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
@@ -219,7 +242,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                     {currentPage < totalPages && (
                         <button
                             onClick={handleNextPage}
-                            className={`absolute flex h-full items-center right-5`}
+                            className={`absolute flex hover:bg-[#ffffff40] rounded-full p-2 items-center right-5 transition-all duration-300 ease-in-out`}
                             aria-label="Next page"
                         >
                             <svg aria-hidden="true" width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">

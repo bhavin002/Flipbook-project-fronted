@@ -78,6 +78,10 @@ export const FlipbookSettingsProvider = ({ children }) => {
                 formData.delete('brandLogoLink');
             }
 
+            if(formData.get("backgroundImage")){
+                formData.delete('backgroundImageURL');
+            }
+
             const response = await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
 
             setUpdateCounter(prev => {
