@@ -151,11 +151,14 @@ const MaskedImage = ({
       {/* Masked Image Group */}
       <Group
         clipFunc={shape.maskData ? getClipFunc : null}
-        x={0}
-        y={0}
         width={shapeWidth}
         height={shapeHeight}
         fill={shape.fill || 'white'}
+        x={shape.flipX ? shapeWidth : 0}
+        y={shape.flipY ? shapeHeight : 0}
+        scaleX={shape.flipX ? -1 : 1}
+        scaleY={shape.flipY ? -1 : 1}
+
       >
         <Rect
           x={0}
@@ -168,12 +171,12 @@ const MaskedImage = ({
         <Image
           ref={imageRef}
           image={image}
-          x={shape.flipX ? shapeWidth : 0}
-          y={shape.flipY ? shapeHeight : 0}
+          x={0}
+          y={0}
+          scaleX={1}
+          scaleY={1}
           width={shapeWidth}
           height={shapeHeight}
-          scaleX={shape.flipX ? -1 : 1}
-          scaleY={shape.flipY ? -1 : 1}
           zIndex={1}
         />
       </Group>

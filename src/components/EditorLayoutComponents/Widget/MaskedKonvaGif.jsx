@@ -24,7 +24,7 @@ export default function MaskedKonvaGif({
     useEffect(() => {
         let anim;
         try {
-            if(!shape.src.includes('.gif')) return;
+            if (!shape.src.includes('.gif')) return;
             window.gifler(shape.src).get((a) => {
                 anim = a;
                 // Set canvas dimensions to match shape
@@ -169,6 +169,10 @@ export default function MaskedKonvaGif({
                 width={shapeWidth}
                 height={shapeHeight}
                 fill={shape.fill || 'white'}
+                scaleX={shape.flipX ? -1 : 1}
+                scaleY={shape.flipY ? -1 : 1}
+                offsetX={shape.flipX ? shapeWidth : 0}
+                offsetY={shape.flipY ? shapeHeight : 0}
             >
                 <Rect
                     x={0}
@@ -181,12 +185,12 @@ export default function MaskedKonvaGif({
                 <Image
                     ref={imageRef}
                     image={canvas}
-                    x={shape.flipX ? shapeWidth : 0}
-                    y={shape.flipY ? shapeHeight : 0}
+                    x={0}
+                    y={0}
                     width={shapeWidth}
                     height={shapeHeight}
-                    scaleX={shape.flipX ? -1 : 1}
-                    scaleY={shape.flipY ? -1 : 1}
+                    scaleX={1}
+                    scaleY={1}
                     zIndex={1}
                 />
             </Group>

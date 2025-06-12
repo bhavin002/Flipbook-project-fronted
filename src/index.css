@@ -449,3 +449,7 @@ div:hover::-webkit-scrollbar-thumb {
   z-index: 1000;
   opacity: .5;
 }
+
+.stock-photo{
+  max-width: unset;
+}
