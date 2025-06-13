@@ -20,7 +20,14 @@ export const useFlipbookSettings = (settings) => {
       backgroundImageType: settings.backgroundImageType,
       playerAccentColorHash: settings.playerAccentColorHash,
       showPageOverview: settings.pageOverview,
-      showSearch: settings.search
+      showSearch: settings.search,
+      backgroundAudioLink: settings.backgroundAudioFile == null ? "" : settings.backgroundAudioLink,
+      isAudioLoop: settings.isAudioLoop == true,
+      isAutoPlay: settings.isAutoPlay == true,
+      showTableOfContent: settings.isTableOfContent == true,
+      tableOfContents: settings.tableOfContents,
+      showLeadForm: settings.isLeadForm == true,
+      leadForm: settings.leadForm
     };
   }, [settings]);
 

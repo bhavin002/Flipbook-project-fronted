@@ -82,6 +82,10 @@ export const FlipbookSettingsProvider = ({ children }) => {
                 formData.delete('backgroundImageURL');
             }
 
+            if(formData.get("backgroundAudioFile")){
+                formData.delete('backgroundAudioLink');
+            }
+
             const response = await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
 
             setUpdateCounter(prev => {

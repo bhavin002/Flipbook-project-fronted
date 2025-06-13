@@ -45,7 +45,7 @@ export default function MenuControls() {
 
     useEffect(() => {
         const dataToUse = isFirstLoad ? latestSettings : settings;
-        
+
         if (dataToUse) {
             setCheckedItems({
                 "controls-normal-mode": dataToUse.controlInNormalMode,
@@ -61,7 +61,7 @@ export default function MenuControls() {
             });
             setIsAudioLoop(dataToUse.isAudioLoop);
             setIsAutoPlay(dataToUse.isAutoPlay);
-            setBackgroundAudioFile(dataToUse.backgroundAudioFileName && dataToUse.backgroundAudioLink ? 
+            setBackgroundAudioFile(dataToUse.backgroundAudioFileName && dataToUse.backgroundAudioLink ?
                 { name: dataToUse.backgroundAudioFileName, url: dataToUse.backgroundAudioLink } : null);
 
             if (isFirstLoad) {
@@ -74,7 +74,7 @@ export default function MenuControls() {
         setCheckedItems((prev) => {
             const newState = { ...prev, [id]: !prev[id] };
             const fieldKey = checkboxOptions.find((opt) => opt.id === id).fieldKey;
-            
+
             // Special handling for background audio checkbox
             if (id === "background-audio" && !newState[id]) {
                 // When unchecking background audio, also clear the audio file
@@ -83,7 +83,7 @@ export default function MenuControls() {
             } else {
                 updateSettings({ [fieldKey]: newState[id] });
             }
-            
+
             return newState;
         });
     };
@@ -109,7 +109,7 @@ export default function MenuControls() {
                 const formData = new FormData();
                 formData.append("backgroundAudioFile", file);
                 formData.append("backgroundAudio", true);
-                updateSettings({ backgroundAudioFile: file, backgroundAudio: true });
+                updateSettings({ backgroundAudioFile: file, backgroundAudio: true, backgroundAudioLink: URL.createObjectURL(file) });
                 setBackgroundAudioFile({ name: file.name, url: URL.createObjectURL(file) });
                 setCheckedItems(prev => ({ ...prev, "background-audio": true }));
             } catch (error) {
@@ -189,7 +189,7 @@ export default function MenuControls() {
                                     disabled={!isFieldEnabled(option.fieldKey)}
                                     asChild
                                 >
-                                    <label>
+                                    <label className="cursor-pointer">
                                         {buttonLabel}
                                         <input type="file" accept="audio/mp3" hidden onChange={handleAudioReplace} />
                                     </label>

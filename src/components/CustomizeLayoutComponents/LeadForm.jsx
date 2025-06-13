@@ -172,6 +172,9 @@ export default function LeadForm() {
         }
 
         setLeadFormState(prev => ({ ...prev, ...updates }));
+        updateSettings({
+            leadForm: createLeadFormPayload({ ...leadFormState, addPrivacyPolicy: newPrivacyPolicyState }),
+        });
     };
 
     const handleGDPRToggle = () => {
@@ -185,6 +188,9 @@ export default function LeadForm() {
         }
 
         setLeadFormState(prev => ({ ...prev, ...updates }));
+        updateSettings({
+            leadForm: createLeadFormPayload({ ...leadFormState, gdprCompliancyCheck: newGDPRState }),
+        });
     };
 
     const handleAllowSkipToggle = () => {
@@ -198,6 +204,9 @@ export default function LeadForm() {
         }
 
         setLeadFormState(prev => ({ ...prev, ...updates }));
+        updateSettings({
+            leadForm: createLeadFormPayload({ ...leadFormState, allowSkip: newAllowSkipState }),
+        });
     };
 
     const handleDynamicFormChange = (newFields) => {

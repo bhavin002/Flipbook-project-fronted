@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Monitor, Smartphone, ZoomIn, ZoomOut, Share2, Maximize, Minimize, LayoutGrid, List, Search } from "lucide-react";
+import { Monitor, Smartphone, ZoomIn, ZoomOut, Share2, Maximize, Minimize, LayoutGrid, List, Search, ReceiptText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FlipBook from "./FlipBook.jsx";
 import { useFlipbookSettings as useFlipbookSettingsContext } from "@/context/FlipbookSettingsProvider.jsx";
 import { useFlipbookSettings } from "@/hooks/useFlipbookSettings";
 import { useViewMode } from "@/context/ViewModeContext";
 import { BackgroundColorType, BackgroundImageType } from "@/utils/enum.js";
+import BackgroundAudioPlayer from "./BackgroundAudioPlayer";
+import TableOfContentsDrawer from "./TableOfContentsDrawer.jsx";
+import LeadFormModel from "./LeadFormModel";
 
 export default function FlipBookPreview({ flipbookId, component }) {
     const [currentPage, setCurrentPage] = useState(1);
@@ -14,6 +17,8 @@ export default function FlipBookPreview({ flipbookId, component }) {
     const [isDragging, setIsDragging] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(1);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
     const { activeTab, setActiveTab } = useViewMode();
@@ -198,13 +203,22 @@ export default function FlipBookPreview({ flipbookId, component }) {
                                     <Share2 className="w-4 h-4" />
                                 </Button>
                             )}
-                            <Button
+                            {visibilitySettings.showTableOfContent && <Button
                                 variant="ghost"
                                 size="icon"
-                                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                className={`text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors ${isDrawerOpen ? 'bg-primary-foreground/10' : ''}`}
+                                onClick={() => setIsDrawerOpen((prev) => !prev)}
                             >
-                                <List className="w-4 h-4" />
-                            </Button>
+                                <List className="w-5 h-5" />
+                            </Button>}
+                            {visibilitySettings.showLeadForm && <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                                onClick={() => setIsLeadFormOpen(true)}
+                            >
+                                <ReceiptText className="w-5 h-5" />
+                            </Button>}
                             {visibilitySettings.showFullscreen && (
                                 <Button
                                     variant="ghost"
@@ -227,6 +241,7 @@ export default function FlipBookPreview({ flipbookId, component }) {
                     <span className="mr-6 font-medium bg-primary-foreground/10 px-4 py-1.5 rounded-full">
                         {displayCurrentPage} - {nextPage} / {displayTotalPages}
                     </span>
+                    <BackgroundAudioPlayer visibilitySettings={visibilitySettings} />
                     {visibilitySettings.showNavigationBar && (
                         <div
                             ref={progressBarRef}
@@ -290,13 +305,23 @@ export default function FlipBookPreview({ flipbookId, component }) {
                             <Share2 className="w-5 h-5" />
                         </Button>
                     )}
-                    <Button
+                    {visibilitySettings.showTableOfContent && <Button
+                        variant="ghost"
+                        size="icon"
+                        className={`text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors ${isDrawerOpen ? 'bg-primary-foreground/10' : ''}`}
+                        onClick={() => setIsDrawerOpen((prev) => !prev)}
+                    >
+                        <List className="w-5 h-5" />
+                    </Button>}
+                    {visibilitySettings.showLeadForm && <Button
                         variant="ghost"
                         size="icon"
                         className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                        onClick={() => setIsLeadFormOpen(true)}
                     >
-                        <List className="w-5 h-5" />
-                    </Button>
+                        <ReceiptText className="w-5 h-5" />
+                    </Button>}
+
                     {visibilitySettings.showFullscreen && (
                         <Button
                             variant="ghost"
@@ -313,7 +338,7 @@ export default function FlipBookPreview({ flipbookId, component }) {
     };
 
     return (
-        <div ref={containerRef} className="w-full h-full flex flex-col items-center relative rounded bg-white">
+        <div ref={containerRef} className="w-full h-full flex flex-col items-center relative rounded bg-white overflow-hidden">
             <Tabs
                 value={activeTab.toLowerCase()}
                 onValueChange={handleTabChange}
@@ -384,9 +409,14 @@ export default function FlipBookPreview({ flipbookId, component }) {
                                 style={{
                                     backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
                                     backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center',
-                                    backgroundRepeat: 'no-repeat'
+                                    ...(visibilitySettings.backgroundImageType === BackgroundImageType.SCALE_CROP && {
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center'
+                                    }),
+                                    ...(visibilitySettings.backgroundImageType === BackgroundImageType.CENTER && {
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundPosition: 'center'
+                                    })
                                 }}
                             >
                                 <FlipBook
@@ -403,6 +433,19 @@ export default function FlipBookPreview({ flipbookId, component }) {
                 </div>
             </Tabs>
             <ProgressBar isMobile={activeTab.toLowerCase() === "mobile" && !isFullscreen} />
+            {visibilitySettings.showTableOfContent && <TableOfContentsDrawer 
+                open={isDrawerOpen} 
+                onClose={() => setIsDrawerOpen(false)} 
+                tocData={visibilitySettings.tableOfContents}
+                navigateToPage={setPage}
+            />}
+            {visibilitySettings.showLeadForm && (
+                <LeadFormModel 
+                    open={isLeadFormOpen} 
+                    onOpenChange={setIsLeadFormOpen} 
+                    leadFormData={visibilitySettings.leadForm}
+                />
+            )}
         </div>
     );
 }

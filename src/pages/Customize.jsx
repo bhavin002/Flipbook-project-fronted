@@ -32,7 +32,7 @@ export default function Customize() {
 
     return (
         <div className="flex w-full">
-            <div className="md:w-[40%] max-lg:hidden bg-primary flex flex-col p-4">
+            <div className="md:w-[35%] max-lg:hidden bg-primary flex flex-col p-4">
                 <Accordion
                     type="multiple"
                     collapsible
@@ -83,7 +83,7 @@ export default function Customize() {
                 </div>
             </div>
 
-            <Card className="shadow-sm flex-grow rounded-none max-md:w-full md:max-w-[60%]">
+            <Card className="shadow-sm flex-grow rounded-none max-md:w-full md:max-w-[65%]">
                 <FlipBookPreview flipbookId={id} component={"customize"} />
             </Card>
         </div>
