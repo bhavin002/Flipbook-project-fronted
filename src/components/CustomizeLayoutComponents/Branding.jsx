@@ -305,7 +305,7 @@ export default function Branding() {
                             </div>
                         ) : (
                             <div className="space-y-3">
-                                <div className="flex items-center gap-4 w-full">
+                                <div className="flex items-center gap-1 w-full">
                                     <div className="relative w-20 h-16 bg-white border rounded overflow-hidden">
                                         <img
                                             src={backgroundImage}
@@ -322,13 +322,13 @@ export default function Branding() {
                                             id="background-image-replace"
                                             disabled={!isFieldEnabled("backgroundColor") || isImageUploading}
                                         />
-                                        <p className="text-sm text-white w-[160px] truncate">{settings?.backgroundImageName}</p>
+                                        <p className="text-sm text-white w-[150px] truncate">{settings?.backgroundImageName}</p>
                                         <Select
                                             value={backgroundImageType}
                                             onValueChange={handleBackgroundImageTypeChange}
                                             disabled={!isFieldEnabled("backgroundColor")}
                                         >
-                                            <SelectTrigger id="background-image-style" className="w-[200px] text-white">
+                                            <SelectTrigger id="background-image-style" className="w-[150px] text-white">
                                                 <SelectValue placeholder="Select style" />
                                             </SelectTrigger>
                                             <SelectContent>

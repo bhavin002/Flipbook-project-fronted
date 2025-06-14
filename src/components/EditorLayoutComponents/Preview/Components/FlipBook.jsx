@@ -19,8 +19,8 @@ const debounce = (func, delay) => {
         timeoutId = setTimeout(() => func(...args), delay);
     };
 };
-const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile }, ref) {
-
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen }, ref) {
+    console.log(isDrawerOpen);
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
     const [divWidth, setDivWidth] = useState(793);
@@ -31,7 +31,6 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
     const [currentPage, setCurrentPage] = useState(1);
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
-
 
     const myRef = useRef(null);
 
@@ -71,15 +70,17 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
             setWidth(ratioDta.width);
         };
         const debouncedResize = debounce(handleResize, 150);
-        handleResize();
+        setTimeout(() => {
+            handleResize();
+        }, 100);
         window.addEventListener("resize", debouncedResize);
         return () => {
             window.removeEventListener("resize", debouncedResize);
         };
-    }, [pageType, divWidth, divHeight]);
+    }, [pageType, divWidth, divHeight, isDrawerOpen, isFullscreen]);
 
     useEffect(() => {
-        const getPageData = async () => {
+        const getPageData = async () => {   
             try {
                 setPageContent([]);
                 const response = await GetFlipbookApi(flipbookId, false);
@@ -118,6 +119,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
         };
     }, [pageContent, totalPages, onPageChange]);
 
+    
     useImperativeHandle(ref, () => ({
         setPage: (page) => {
             if (myRef.current) {
@@ -136,6 +138,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
 
         );
     }
+
 
     const handleShapeClick = (data) => {
         ClickToDynamic(data, myRef);
@@ -172,13 +175,14 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                                 src={visibilitySettings.brandLogo} 
                                 width={200} 
                                 alt="Logo" 
+                                className="w-auto h-auto max-h-[50px] max-w-[200px]"
                             />
                         </a>
                     ) : (
                         <img 
                             src={visibilitySettings.brandLogo} 
                             width={200} 
-                            className="absolute top-5 left-5" 
+                            className="absolute top-5 left-5 w-auto h-auto max-h-[50px] max-w-[200px]" 
                             alt="Logo" 
                         />
                     )
@@ -188,7 +192,16 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
             <div className="wrapper flex flex-col items-center justify-center relative">
                 <div className="aspect" style={{ width: width, height: height }}>
                     <div className="aspect-inner">
-                        <Turn className="flipbook" id="flipbook" width={width} height={height} pageType={pageType} myRef={myRef} onLoad={handleBookLoad}>
+                        <Turn 
+                            className="flipbook" 
+                            id="flipbook" 
+                            width={width} 
+                            height={height} 
+                            pageType={pageType} 
+                            myRef={myRef} 
+                            onLoad={handleBookLoad}
+                            visibilitySettings={visibilitySettings}
+                        >
                             {pageContent.map((page, index) => (
                                 <div key={index} className="page">
                                     <div style={{

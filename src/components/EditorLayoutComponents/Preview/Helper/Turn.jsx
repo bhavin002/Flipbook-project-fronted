@@ -1,4 +1,4 @@
-import React, { useEffect} from "react";
+import React, { useEffect } from "react";
 import $ from "jquery";
 import pageTurnSound from "/src/assets/page-turn02-103822.mp3";
 
@@ -9,9 +9,11 @@ function Turn({
   height,
   pageType,
   children,
-  myRef
+  myRef,
+  visibilitySettings
 }) {
   const audio = new Audio(pageTurnSound);
+
   useEffect(() => {
     const flipbookEL = myRef.current;
 
@@ -28,7 +30,6 @@ function Turn({
 
       window.addEventListener("resize", handleResize);
 
-      const isTouch = 'ontouchstart' in window;
       $(flipbookEL).turn({
         width: width,
         autoCenter: true,
@@ -49,10 +50,6 @@ function Turn({
           },
           turning: function (e, page, view) {
             console.log("Turning to: ", page);
-            audio.currentTime = 0;
-            audio.play().catch(error => {
-              console.log("Audio playback error:", error);
-            });
           },
         },
       });
@@ -63,13 +60,47 @@ function Turn({
       };
     }
   }, []);
+
   useEffect(() => {
     const flipbookEL = myRef.current;
     if (flipbookEL) {
       $(flipbookEL).turn("size", width, height);
       $(flipbookEL).turn("display", pageType);
+      $(flipbookEL).turn("direction", visibilitySettings?.rightToLeftOrientation ? "rtl" : "ltr");
+
+      $(flipbookEL).off('turning').on('turning', function(e, page, view) {
+        if (visibilitySettings?.flipSound) {
+          audio.currentTime = 0;
+          audio.play().catch(error => {
+            console.log("Audio playback error:", error);
+          });
+        }
+      });
     }
-  }, [width, height]);
+  }, [width, height, visibilitySettings?.flipSound, visibilitySettings?.rightToLeftOrientation]);
+
+  useEffect(() => {
+    const flipbookEL = myRef.current;
+    let autoPlayInterval = null;
+    
+    if (flipbookEL && visibilitySettings?.automaticTransition) {
+      autoPlayInterval = setInterval(function() {
+        const $flipbook = $(flipbookEL);
+        if ($flipbook.turn('page') == $flipbook.turn('pages')) {
+          $flipbook.turn('page', 1);
+        } else {
+          $flipbook.turn('next');
+        }
+      }, (visibilitySettings.automaticTransitionDelay || 4) * 1000);
+    }
+
+    return () => {
+      if (autoPlayInterval) {
+        clearInterval(autoPlayInterval);
+      }
+    };
+  }, [visibilitySettings?.automaticTransition, visibilitySettings?.automaticTransitionDelay]);
+
   return (
     <div className={className} style={{ ...style }} ref={myRef}>
       {children}

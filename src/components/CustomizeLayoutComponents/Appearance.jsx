@@ -30,7 +30,7 @@ export default function Appearance() {
     const checkboxOptions = [
         { id: "automatic-transition", label: "Automatic transition", isShowTooltip: false, fieldKey: "automaticTransition" },
         { id: "flip-sounds", label: "Flip sounds", isShowTooltip: true, tooltip: "Note: on mobile devices or when slide effect is selected, flip sounds will always be disabled.", fieldKey: "flipSound" },
-        { id: "right-to-left", label: "Right to left orientation", isShowTooltip: false, fieldKey: "rigthToLeftOrientation" },
+        { id: "right-to-left", label: "Right to left orientation", isShowTooltip: false, fieldKey: "rightToLeftOrientation" },
         { id: "shadow", label: "Shadow on pages", isShowTooltip: true, tooltip: "Note: when slide effect is selected, shadow on pages will be disabled.", fieldKey: "shadowOnPages" },
         { id: "animate", label: "Animate interactions", isShowTooltip: true, tooltip: "Make your interactions pop by animating them.", fieldKey: "animateInteraction" },
         { id: "highlights", label: "Highlights on links", isShowTooltip: true, tooltip: "Make your links pop by highlighting them.", fieldKey: "highlightsOnLink" },
@@ -68,7 +68,7 @@ export default function Appearance() {
             setCheckedItems({
                 "automatic-transition": dataToUse.automaticTransition || false,
                 "flip-sounds": dataToUse.flipSound || false,
-                "right-to-left": dataToUse.rigthToLeftOrientation || false,
+                "right-to-left": dataToUse.rightToLeftOrientation || false,
                 "shadow": dataToUse.shadowOnPages || false,
                 "animate": dataToUse.animateInteraction || false,
                 "highlights": dataToUse.highlightsOnLink || false,

@@ -4,9 +4,13 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 
-export default function TableOfContentsDrawer({ open, onClose, tocData, navigateToPage }) {
+export default function TableOfContentsDrawer({ open, onClose, visibilitySettings, navigateToPage }) {
+
+    console.log(visibilitySettings.playerAccentColorHash);
 
     const [shouldDisablePointerEvents, setShouldDisablePointerEvents] = useState(!open);
+
+    const accentColor = visibilitySettings.playerAccentColorHash || "#7c3aede6";
 
     useEffect(() => {
         let timeout;
@@ -25,8 +29,8 @@ export default function TableOfContentsDrawer({ open, onClose, tocData, navigate
 
     // Memoized tocData with _id fields
     const tocWithIds = useMemo(() => {
-        if (!tocData) return [];
-        return tocData.map(section => ({
+        if (!visibilitySettings.tableOfContents) return [];
+        return visibilitySettings.tableOfContents.map(section => ({
             ...section,
             _id: section._id || generateId(section),
             subChapters: section.subChapters?.map(sub => ({
@@ -34,7 +38,7 @@ export default function TableOfContentsDrawer({ open, onClose, tocData, navigate
                 _id: sub._id || generateId(sub)
             })) || []
         }));
-    }, [tocData]);
+    }, [visibilitySettings.tableOfContents]);
 
     // State for selected _id
     const [selectedPage, setSelectedPage] = useState(null);
@@ -57,8 +61,8 @@ export default function TableOfContentsDrawer({ open, onClose, tocData, navigate
     if (!tocWithIds || tocWithIds.length === 0) {
         return (
             <div
-                className={`absolute top-0 left-0 h-full w-96 bg-background border-r border-border text-foreground z-50 transition-transform duration-300 ease-in-out shadow-2xl
-                    ${open ? "translate-x-0" : "-translate-x-full"}
+                className={` h-full w-96 bg-background border-r border-border text-foreground z-50 transition-transform duration-150 ease-in-out shadow-2xl
+                    ${open ? "block" : "hidden"}
                     ${shouldDisablePointerEvents ? "pointer-events-none" : "pointer-events-auto"}
                 `}
             >
@@ -85,9 +89,9 @@ export default function TableOfContentsDrawer({ open, onClose, tocData, navigate
 
     return (
         <div
-            className={`absolute top-0 left-0 h-full w-96 bg-background border-r border-border text-foreground z-50 transition-transform duration-300 ease-in-out shadow-2xl
-                ${open ? "translate-x-0" : "-translate-x-full"}
+            className={`h-full flex flex-col bg-background border-r border-border text-foreground transition-all duration-150 ease-in-out shadow-2xl
                 ${shouldDisablePointerEvents ? "pointer-events-none" : "pointer-events-auto"}
+                ${open ? "w-96" : "w-0 overflow-hidden"}
             `}
         >
             {/* Header */}
@@ -107,16 +111,30 @@ export default function TableOfContentsDrawer({ open, onClose, tocData, navigate
             </div>
 
             {/* Content */}
-            <ScrollArea className="h-full pb-16">
+            <ScrollArea className="w-full flex-grow h-0 overflow-y-auto">
                 <div className="p-2">
                     {tocWithIds.map((section) => (
                         <div key={section._id} className="mb-2">
                             {/* Main Section */}
                             <div
-                                className={`group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 ${selectedPage === section._id
-                                        ? 'bg-primary text-primary-foreground shadow-lg hover:bg-primary/90'
-                                        : 'bg-card hover:bg-primary hover:text-primary-foreground hover:shadow-md'
-                                    }`}
+                                className={`group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 ${
+                                    selectedPage === section._id
+                                        ? 'text-primary-foreground shadow-lg'
+                                        : 'bg-card hover:text-primary-foreground hover:shadow-md'
+                                }`}
+                                style={{
+                                    backgroundColor: selectedPage === section._id ? accentColor : undefined
+                                }}
+                                onMouseEnter={(e) => {
+                                    if (selectedPage !== section._id) {
+                                        e.currentTarget.style.backgroundColor = accentColor;
+                                    }
+                                }}
+                                onMouseLeave={(e) => {
+                                    if (selectedPage !== section._id) {
+                                        e.currentTarget.style.backgroundColor = '';
+                                    }
+                                }}
                                 onClick={() => handlePageClick(section._id, section.pageNumber)}
                             >
                                 <div className="flex items-center space-x-3 flex-1">
@@ -143,7 +161,7 @@ export default function TableOfContentsDrawer({ open, onClose, tocData, navigate
                                     variant={selectedPage === section._id ? "secondary" : "outline"}
                                     className={`text-xs transition-colors ${selectedPage === section._id
                                             ? ''
-                                            : 'group-hover:bg-primary-foreground group-hover:text-primary group-hover:border-primary-foreground'
+                                            : 'group-hover:bg-primary-foreground'
                                         }`}
                                 >
                                     {section.pageNumber}
@@ -156,10 +174,24 @@ export default function TableOfContentsDrawer({ open, onClose, tocData, navigate
                                     {section.subChapters.map((subChapter) => (
                                         <div
                                             key={subChapter._id}
-                                            className={`group flex items-center justify-between p-2 rounded-md cursor-pointer transition-all duration-200 ${selectedPage === subChapter._id
-                                                    ? 'bg-primary text-primary-foreground shadow-md hover:bg-primary/90'
-                                                    : 'bg-muted/50 hover:bg-primary hover:text-primary-foreground hover:shadow-sm'
-                                                }`}
+                                            className={`group flex items-center justify-between p-2 rounded-md cursor-pointer transition-all duration-200 ${
+                                                selectedPage === subChapter._id
+                                                    ? 'text-primary-foreground shadow-md'
+                                                    : 'bg-muted/50 hover:text-primary-foreground hover:shadow-sm'
+                                            }`}
+                                            style={{
+                                                backgroundColor: selectedPage === subChapter._id ? accentColor : undefined
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                if (selectedPage !== subChapter._id) {
+                                                    e.currentTarget.style.backgroundColor = accentColor;
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (selectedPage !== subChapter._id) {
+                                                    e.currentTarget.style.backgroundColor = '';
+                                                }
+                                            }}
                                             onClick={() => handlePageClick(subChapter._id, subChapter.pageNumber)}
                                         >
                                             <div className="flex items-center space-x-2 flex-1">
@@ -180,7 +212,7 @@ export default function TableOfContentsDrawer({ open, onClose, tocData, navigate
                                                 variant={selectedPage === subChapter._id ? "secondary" : "outline"}
                                                 className={`text-xs transition-colors ${selectedPage === subChapter._id
                                                         ? ''
-                                                        : 'group-hover:bg-primary-foreground group-hover:text-primary group-hover:border-primary-foreground'
+                                                        : 'group-hover:bg-primary-foreground'
                                                     }`}
                                             >
                                                 {subChapter.pageNumber}

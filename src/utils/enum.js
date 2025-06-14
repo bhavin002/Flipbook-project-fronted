@@ -34,7 +34,7 @@ export const flipbookPreviewFieldKey = {
     tooltipLanguage: 14,
     automaticTransition: 15,
     flipSound: 16,
-    rigthToLeftOrientation: 17,
+    rightToLeftOrientation: 17,
     shadowOnPages: 18,
     animateInteraction: 19,
     highlightsOnLink: 20,

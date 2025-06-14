@@ -6,6 +6,7 @@ export default function JsonToHtml(pageData) {
 }
 
 function convertToHtml(page, pageId) {
+
     const pageData = page.shapes.map((shape) => {
         if (shape.htmlType === "link-area") {
             console.log("shape", shape);
@@ -114,6 +115,7 @@ function convertToHtml(page, pageId) {
 function goToUrl(shape) {
     return (
         <a
+            className="ping"
             style={{
                 width: `${shape.width}px`,
                 height: `${shape.height}px`,

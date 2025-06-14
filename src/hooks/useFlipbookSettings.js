@@ -27,7 +27,12 @@ export const useFlipbookSettings = (settings) => {
       showTableOfContent: settings.isTableOfContent == true,
       tableOfContents: settings.tableOfContents,
       showLeadForm: settings.isLeadForm == true,
-      leadForm: settings.leadForm
+      leadForm: settings.leadForm,
+      flipSound: settings.flipSound == true,
+      rightToLeftOrientation: settings.rightToLeftOrientation == true,
+      automaticTransition: settings.automaticTransition == true,
+      automaticTransitionDelay: settings.automaticTransitionDelay,
+      showAnimateInteraction: settings.animateInteraction == true,
     };
   }, [settings]);
 

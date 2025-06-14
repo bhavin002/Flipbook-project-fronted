@@ -52,7 +52,9 @@ export default function FlipBookPreview({ flipbookId, component }) {
         if (!bar) return;
         const rect = bar.getBoundingClientRect();
         const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
-        const percent = x / rect.width;
+        const percent = visibilitySettings.rightToLeftOrientation
+            ? 1 - (x / rect.width) // Reverse progress for RTL
+            : x / rect.width;
         const page = Math.round(percent * (totalPages - 1)) + 1;
         setCurrentPage(page);
         setPage(page);
@@ -83,6 +85,8 @@ export default function FlipBookPreview({ flipbookId, component }) {
     const handleTouchEnd = () => {
         setIsDragging(false);
     };
+
+    console.log("isDrawerOpen preview", isDrawerOpen);
 
     useEffect(() => {
         if (isDragging) {
@@ -132,320 +136,367 @@ export default function FlipBookPreview({ flipbookId, component }) {
     const ProgressBar = ({ isMobile = false }) => {
         const displayCurrentPage = isNaN(currentPage) ? 1 : currentPage;
         const displayTotalPages = isNaN(totalPages) ? 1 : totalPages;
-        const nextPage = displayCurrentPage < displayTotalPages ? displayCurrentPage + 1 : displayCurrentPage;
+
+        // Show only current page for first and last page
+        const pageDisplay =
+            displayCurrentPage === 1 || displayCurrentPage === displayTotalPages
+                ? `${displayCurrentPage}`
+                : `${displayCurrentPage} - ${displayCurrentPage + 1}`;
 
         if (isMobile) {
             return (
-                visibilitySettings.showControlBar && <div className="w-full flex flex-col items-center justify-center">
-                    <div className="w-[90%] max-w-[400px] bg-gradient-to-r from-primary/90 to-primary p-3 flex flex-col items-center justify-center shadow-lg space-y-3">
-                        {visibilitySettings.showNavigationBar && (
-                            <div className="flex items-center text-primary-foreground text-sm w-full">
-                                <div
-                                    ref={progressBarRef}
-                                    className="flex-1 h-2 bg-primary-foreground/20 rounded-full relative cursor-pointer select-none hover:bg-primary-foreground/30 transition-colors"
-                                    onMouseDown={handleMouseDown}
-                                    onTouchStart={handleTouchStart}
-                                >
+                visibilitySettings.showControlBar && (
+                    <div className="w-full flex flex-col items-center justify-center">
+                        <div className="w-[90%] max-w-[400px] bg-gradient-to-r from-primary/90 to-primary p-3 flex flex-col items-center justify-center shadow-lg space-y-3">
+                            {visibilitySettings.showNavigationBar && (
+                                <div className="flex items-center text-primary-foreground text-sm w-full">
                                     <div
-                                        className="h-2 bg-primary-foreground rounded-full absolute left-0 top-0 transition-all duration-300"
-                                        style={{ width: `${isNaN(progress) ? 0 : progress}%`, backgroundColor: visibilitySettings.playerAccentColorHash || "#f9fafb" }}
-                                    />
-                                    <div
-                                        className="absolute top-1/2 -translate-y-1/2"
-                                        style={{ left: `calc(${isNaN(progress) ? 0 : progress}% - 8px)` }}
+                                        ref={progressBarRef}
+                                        className="flex-1 h-2 bg-primary-foreground/20 rounded-full relative cursor-pointer select-none hover:bg-primary-foreground/30 transition-colors"
+                                        onMouseDown={handleMouseDown}
+                                        onTouchStart={handleTouchStart}
                                     >
                                         <div
-                                            className="w-4 h-4 bg-primary-foreground text-primary rounded-full shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
-                                            style={{ touchAction: "none" }}
+                                            className="h-2 bg-primary-foreground rounded-full absolute left-0 top-0 transition-all duration-300"
+                                            style={{
+                                                width: `${isNaN(progress) ? 0 : progress}%`,
+                                                backgroundColor: visibilitySettings.playerAccentColorHash || "#f9fafb",
+                                            }}
                                         />
+                                        <div
+                                            className="absolute top-1/2 -translate-y-1/2"
+                                            style={{ left: `calc(${isNaN(progress) ? 0 : progress}% - 8px)` }}
+                                        >
+                                            <div
+                                                className="w-4 h-4 bg-primary-foreground text-primary rounded-full shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+                                                style={{ touchAction: "none" }}
+                                            />
+                                        </div>
                                     </div>
+                                </div>
+                            )}
+
+                            <div className="flex items-center justify-center space-x-4">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                    onClick={handleZoomOut}
+                                >
+                                    <ZoomOut className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                    onClick={handleZoomIn}
+                                >
+                                    <ZoomIn className="w-4 h-4" />
+                                </Button>
+                                {visibilitySettings.showPageOverview && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                    >
+                                        <LayoutGrid className="w-4 h-4" />
+                                    </Button>
+                                )}
+                                {visibilitySettings.showSearch && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                                    >
+                                        <Search className="w-5 h-5" />
+                                    </Button>
+                                )}
+                                {visibilitySettings.showShare && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                    >
+                                        <Share2 className="w-4 h-4" />
+                                    </Button>
+                                )}
+                                {visibilitySettings.showTableOfContent && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className={`text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors ${isDrawerOpen ? "bg-primary-foreground/10" : ""
+                                            }`}
+                                        onClick={() => setIsDrawerOpen((prev) => !prev)}
+                                    >
+                                        <List className="w-5 h-5" />
+                                    </Button>
+                                )}
+                                {visibilitySettings.showLeadForm && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                                        onClick={() => setIsLeadFormOpen(true)}
+                                    >
+                                        <ReceiptText className="w-5 h-5" />
+                                    </Button>
+                                )}
+                                {visibilitySettings.showFullscreen && (
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                        onClick={toggleFullscreen}
+                                    >
+                                        {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )
+            );
+        }
+
+        return (
+            visibilitySettings.showControlBar && (
+                <div
+                    className={`w-full bg-gradient-to-r from-primary/90 to-primary p-4 flex items-center justify-between relative shadow-lg ${isMobile ? "rounded-b-lg" : ""
+                        }`}
+                >
+                    <div className="flex items-center text-primary-foreground text-sm flex-1">
+                        <span className="mr-6 font-medium bg-primary-foreground/10 px-4 py-1.5 rounded-full">
+                            {pageDisplay} / {displayTotalPages}
+                        </span>
+                        <BackgroundAudioPlayer visibilitySettings={visibilitySettings} />
+                        {visibilitySettings.showNavigationBar && (
+                            <div
+                                ref={progressBarRef}
+                                className={`flex-1 h-2.5 absolute left-3 right-3 top-[-5px] bg-[#ae83f4] rounded-full cursor-pointer select-none hover:bg-[#cfb1ff] transition-colors duration-300 ease-in-out ${visibilitySettings.rightToLeftOrientation ? "rotate-180" : ""
+                                    }`}
+                                onMouseDown={handleMouseDown}
+                                onTouchStart={handleTouchStart}
+                            >
+                                <div
+                                    className="h-2.5 bg-primary-foreground rounded-full absolute left-0 top-0 transition-all duration-300"
+                                    style={{
+                                        width: `${isNaN(progress) ? 0 : progress}%`,
+                                        backgroundColor: visibilitySettings.playerAccentColorHash || "#f9fafb",
+                                    }}
+                                />
+                                <div
+                                    className="absolute top-1/2 -translate-y-1/2"
+                                    style={{ left: `calc(${isNaN(progress) ? 0 : progress}% - 10px)` }}
+                                >
+                                    <div
+                                        className="w-5 h-5 bg-primary-foreground text-primary rounded-full shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
+                                        style={{ touchAction: "none" }}
+                                    />
                                 </div>
                             </div>
                         )}
-
-                        <div className="flex items-center justify-center space-x-4">
+                    </div>
+                    <div className="flex items-center space-x-3 ml-6">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                            onClick={handleZoomOut}
+                        >
+                            <ZoomOut className="w-5 h-5" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                            onClick={handleZoomIn}
+                        >
+                            <ZoomIn className="w-5 h-5" />
+                        </Button>
+                        {visibilitySettings.showPageOverview && (
                             <Button
                                 variant="ghost"
                                 size="icon"
-                                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
-                                onClick={handleZoomOut}
+                                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
                             >
-                                <ZoomOut className="w-4 h-4" />
+                                <LayoutGrid className="w-5 h-5" />
                             </Button>
+                        )}
+                        {visibilitySettings.showSearch && (
                             <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
-                                onClick={handleZoomIn}
-                            >
-                                <ZoomIn className="w-4 h-4" />
-                            </Button>
-                            {visibilitySettings.showPageOverview && (<Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
-                            >
-                                <LayoutGrid className="w-4 h-4" />
-                            </Button>)}
-                            {visibilitySettings.showSearch && (<Button
                                 variant="ghost"
                                 size="icon"
                                 className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
                             >
                                 <Search className="w-5 h-5" />
-                            </Button>)}
-                            {visibilitySettings.showShare && (
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
-                                >
-                                    <Share2 className="w-4 h-4" />
-                                </Button>
-                            )}
-                            {visibilitySettings.showTableOfContent && <Button
+                            </Button>
+                        )}
+                        {visibilitySettings.showShare && (
+                            <Button
                                 variant="ghost"
                                 size="icon"
-                                className={`text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors ${isDrawerOpen ? 'bg-primary-foreground/10' : ''}`}
+                                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                            >
+                                <Share2 className="w-5 h-5" />
+                            </Button>
+                        )}
+                        {visibilitySettings.showTableOfContent && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className={`text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors ${isDrawerOpen ? "bg-primary-foreground/10" : ""
+                                    }`}
                                 onClick={() => setIsDrawerOpen((prev) => !prev)}
                             >
                                 <List className="w-5 h-5" />
-                            </Button>}
-                            {visibilitySettings.showLeadForm && <Button
+                            </Button>
+                        )}
+                        {visibilitySettings.showLeadForm && (
+                            <Button
                                 variant="ghost"
                                 size="icon"
                                 className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
                                 onClick={() => setIsLeadFormOpen(true)}
                             >
                                 <ReceiptText className="w-5 h-5" />
-                            </Button>}
-                            {visibilitySettings.showFullscreen && (
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
-                                    onClick={toggleFullscreen}
-                                >
-                                    {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
-                                </Button>
-                            )}
-                        </div>
+                            </Button>
+                        )}
+                        {visibilitySettings.showFullscreen && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                                onClick={toggleFullscreen}
+                            >
+                                {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+                            </Button>
+                        )}
                     </div>
                 </div>
-            );
-        }
-
-        return (
-            visibilitySettings.showControlBar && <div className={`w-full bg-gradient-to-r from-primary/90 to-primary p-4 flex items-center justify-between relative shadow-lg ${isMobile ? "rounded-b-lg" : ""}`}>
-                <div className="flex items-center text-primary-foreground text-sm flex-1">
-                    <span className="mr-6 font-medium bg-primary-foreground/10 px-4 py-1.5 rounded-full">
-                        {displayCurrentPage} - {nextPage} / {displayTotalPages}
-                    </span>
-                    <BackgroundAudioPlayer visibilitySettings={visibilitySettings} />
-                    {visibilitySettings.showNavigationBar && (
-                        <div
-                            ref={progressBarRef}
-                            className="flex-1 h-2.5 absolute left-3 right-3 top-[-5px] bg-[#ae83f4] rounded-full cursor-pointer select-none hover:bg-[#cfb1ff] transition-colors duration-300 ease-in-out"
-                            onMouseDown={handleMouseDown}
-                            onTouchStart={handleTouchStart}
-                        >
-                            <div
-                                className="h-2.5 bg-primary-foreground rounded-full absolute left-0 top-0 transition-all duration-300"
-                                style={{ width: `${isNaN(progress) ? 0 : progress}%`, backgroundColor: visibilitySettings.playerAccentColorHash || "#f9fafb" }}
-                            />
-                            <div
-                                className="absolute top-1/2 -translate-y-1/2"
-                                style={{ left: `calc(${isNaN(progress) ? 0 : progress}% - 10px)` }}
-                            >
-                                <div
-                                    className="w-5 h-5 bg-primary-foreground text-primary rounded-full shadow-lg border-2 border-white cursor-pointer hover:scale-110 transition-transform"
-                                    style={{ touchAction: "none" }}
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
-                <div className="flex items-center space-x-3 ml-6">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                        onClick={handleZoomOut}
-                    >
-                        <ZoomOut className="w-5 h-5" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                        onClick={handleZoomIn}
-                    >
-                        <ZoomIn className="w-5 h-5" />
-                    </Button>
-                    {visibilitySettings.showPageOverview && (<Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                    >
-                        <LayoutGrid className="w-5 h-5" />
-                    </Button>)}
-                    {visibilitySettings.showSearch && (<Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                    >
-                        <Search className="w-5 h-5" />
-                    </Button>)}
-                    {visibilitySettings.showShare && (
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                        >
-                            <Share2 className="w-5 h-5" />
-                        </Button>
-                    )}
-                    {visibilitySettings.showTableOfContent && <Button
-                        variant="ghost"
-                        size="icon"
-                        className={`text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors ${isDrawerOpen ? 'bg-primary-foreground/10' : ''}`}
-                        onClick={() => setIsDrawerOpen((prev) => !prev)}
-                    >
-                        <List className="w-5 h-5" />
-                    </Button>}
-                    {visibilitySettings.showLeadForm && <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                        onClick={() => setIsLeadFormOpen(true)}
-                    >
-                        <ReceiptText className="w-5 h-5" />
-                    </Button>}
-
-                    {visibilitySettings.showFullscreen && (
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                            onClick={toggleFullscreen}
-                        >
-                            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
-                        </Button>
-                    )}
-                </div>
-            </div>
+            )
         );
     };
 
     return (
-        <div ref={containerRef} className="w-full h-full flex flex-col items-center relative rounded bg-white overflow-hidden">
-            <Tabs
-                value={activeTab.toLowerCase()}
-                onValueChange={handleTabChange}
-                className="w-full h-full flex flex-col items-center"
-            >
-                {component !== "customize" && (
-                    <div className="w-full h-[10%] mt-5 flex items-center justify-center">
-                        <TabsList className="grid grid-cols-2 bg-gray-100 rounded-lg">
-                            <TabsTrigger
-                                value="desktop"
-                                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                            >
-                                <Monitor className="w-4 h-4 mr-2" />
-                                Desktop
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="mobile"
-                                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                            >
-                                <Smartphone className="w-4 h-4 mr-2" />
-                                Mobile
-                            </TabsTrigger>
-                        </TabsList>
-                    </div>
-                )}
-
-                <div className="w-full h-full flex-grow flex items-center justify-center">
-                    <TabsContent
-                        value="desktop"
-                        className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden"
+        <>
+            <div className="w-full h-full flex items-center relative rounded bg-white overflow-hidden" ref={containerRef} >
+                {visibilitySettings.showTableOfContent && <TableOfContentsDrawer
+                    visibilitySettings={visibilitySettings}
+                    open={isDrawerOpen}
+                    onClose={() => setIsDrawerOpen(false)}
+                    navigateToPage={setPage}
+                />}
+                <div className={`h-full flex flex-col items-center relative rounded bg-white overflow-hidden transition-all duration-150 ease-in-out ${isDrawerOpen && visibilitySettings.showTableOfContent ? "w-[calc(100%-24rem)]" : "w-full"}`}>
+                    <Tabs
+                        value={activeTab.toLowerCase()}
+                        onValueChange={handleTabChange}
+                        className="w-full h-full flex flex-col items-center"
                     >
-                        <div
-                            className={`w-full h-full flex items-center justify-center`}
-                            style={{
-                                backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
-                                backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
-                                ...(visibilitySettings.backgroundImageType === BackgroundImageType.SCALE_CROP && {
-                                    backgroundSize: 'cover',
-                                    backgroundPosition: 'center'
-                                }),
-                                ...(visibilitySettings.backgroundImageType === BackgroundImageType.CENTER && {
-                                    backgroundRepeat: 'no-repeat',
-                                    backgroundPosition: 'center'
-                                })
-                            }}
-                            id="preview-dialog"
-                        >
-                            <FlipBook
-                                ref={flipBookRef}
-                                flipbookId={flipbookId}
-                                onPageChange={handlePageChange}
-                                zoomLevel={zoomLevel}
-                                isMobile={activeTab.toLowerCase() === "mobile"}
-                                component={component}
-                            />
-                        </div>
-                    </TabsContent>
-                    <TabsContent
-                        value="mobile"
-                        className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden"
-                    >
-                        <div
-                            className={`w-[90%] max-w-[400px] h-full flex flex-col items-center justify-center overflow-hidden`}
-                            style={{ backgroundColor: visibilitySettings.backgroundColorHash }}
-                            id="preview-dialog"
-                        >
-                            <div className="w-full h-full flex items-center justify-center"
-                                style={{
-                                    backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
-                                    backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
-                                    ...(visibilitySettings.backgroundImageType === BackgroundImageType.SCALE_CROP && {
-                                        backgroundSize: 'cover',
-                                        backgroundPosition: 'center'
-                                    }),
-                                    ...(visibilitySettings.backgroundImageType === BackgroundImageType.CENTER && {
-                                        backgroundRepeat: 'no-repeat',
-                                        backgroundPosition: 'center'
-                                    })
-                                }}
-                            >
-                                <FlipBook
-                                    ref={flipBookRef}
-                                    flipbookId={flipbookId}
-                                    onPageChange={handlePageChange}
-                                    zoomLevel={zoomLevel}
-                                    isMobile={activeTab.toLowerCase() === "mobile"}
-                                    component={component}
-                                />
+                        {component !== "customize" && (
+                            <div className="w-full h-[10%] mt-5 flex items-center justify-center">
+                                <TabsList className="grid grid-cols-2 bg-gray-100 rounded-lg">
+                                    <TabsTrigger
+                                        value="desktop"
+                                        className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                                    >
+                                        <Monitor className="w-4 h-4 mr-2" />
+                                        Desktop
+                                    </TabsTrigger>
+                                    <TabsTrigger
+                                        value="mobile"
+                                        className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                                    >
+                                        <Smartphone className="w-4 h-4 mr-2" />
+                                        Mobile
+                                    </TabsTrigger>
+                                </TabsList>
                             </div>
+                        )}
+
+                        <div className="w-full h-full flex-grow flex items-center justify-center">
+                            <TabsContent
+                                value="desktop"
+                                className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden"
+                            >
+                                <div
+                                    className={`w-full h-full flex items-center justify-center`}
+                                    style={{
+                                        backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
+                                        backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
+                                        ...(visibilitySettings.backgroundImageType === BackgroundImageType.SCALE_CROP && {
+                                            backgroundSize: 'cover',
+                                            backgroundPosition: 'center'
+                                        }),
+                                        ...(visibilitySettings.backgroundImageType === BackgroundImageType.CENTER && {
+                                            backgroundRepeat: 'no-repeat',
+                                            backgroundPosition: 'center'
+                                        })
+                                    }}
+                                    id="preview-dialog"
+                                >
+                                    <FlipBook
+                                        isDrawerOpen={isDrawerOpen}
+                                        isFullscreen={isFullscreen}
+                                        ref={flipBookRef}
+                                        flipbookId={flipbookId}
+                                        onPageChange={handlePageChange}
+                                        zoomLevel={zoomLevel}
+                                        isMobile={activeTab.toLowerCase() === "mobile"}
+                                        component={component}
+                                    />
+                                </div>
+                            </TabsContent>
+                            <TabsContent
+                                value="mobile"
+                                className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden"
+                            >
+                                <div
+                                    className={`w-[90%] max-w-[400px] h-full flex flex-col items-center justify-center overflow-hidden`}
+                                    style={{ backgroundColor: visibilitySettings.backgroundColorHash }}
+                                    id="preview-dialog"
+                                >
+                                    <div className="w-full h-full flex items-center justify-center"
+                                        style={{
+                                            backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
+                                            backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
+                                            ...(visibilitySettings.backgroundImageType === BackgroundImageType.SCALE_CROP && {
+                                                backgroundSize: 'cover',
+                                                backgroundPosition: 'center'
+                                            }),
+                                            ...(visibilitySettings.backgroundImageType === BackgroundImageType.CENTER && {
+                                                backgroundRepeat: 'no-repeat',
+                                                backgroundPosition: 'center'
+                                            })
+                                        }}
+                                    >
+                                        <FlipBook
+                                            isDrawerOpen={isDrawerOpen}
+                                            isFullscreen={isFullscreen}
+                                            ref={flipBookRef}
+                                            flipbookId={flipbookId}
+                                            onPageChange={handlePageChange}
+                                            zoomLevel={zoomLevel}
+                                            isMobile={activeTab.toLowerCase() === "mobile"}
+                                            component={component}
+                                        />
+                                    </div>
+                                </div>
+                            </TabsContent>
                         </div>
-                    </TabsContent>
+                    </Tabs>
+                    <ProgressBar isMobile={activeTab.toLowerCase() === "mobile" && !isFullscreen} />
+
+                    {visibilitySettings.showLeadForm && (
+                        <LeadFormModel
+                            open={isLeadFormOpen}
+                            onOpenChange={setIsLeadFormOpen}
+                            leadFormData={visibilitySettings.leadForm}
+                        />
+                    )}
                 </div>
-            </Tabs>
-            <ProgressBar isMobile={activeTab.toLowerCase() === "mobile" && !isFullscreen} />
-            {visibilitySettings.showTableOfContent && <TableOfContentsDrawer 
-                open={isDrawerOpen} 
-                onClose={() => setIsDrawerOpen(false)} 
-                tocData={visibilitySettings.tableOfContents}
-                navigateToPage={setPage}
-            />}
-            {visibilitySettings.showLeadForm && (
-                <LeadFormModel 
-                    open={isLeadFormOpen} 
-                    onOpenChange={setIsLeadFormOpen} 
-                    leadFormData={visibilitySettings.leadForm}
-                />
-            )}
-        </div>
+            </div>
+
+        </>
+
     );
 }
