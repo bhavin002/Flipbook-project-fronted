@@ -2,7 +2,6 @@ import "turn.js";
 import Turn from "../Helper/Turn.jsx";
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import JsonToHtml from "../Helper/JsonToHtml.jsx";
-import ClickToDynamic from "../Helper/ClickToDynamic.jsx";
 import SlideShow from "../Widget/SlideShow.jsx";
 import AudioButton from "../Widget/AudioButton.jsx";
 import { GetFlipbookApi } from "@/service/flipbook.service.js";
@@ -11,6 +10,23 @@ import $ from "jquery";
 import { Loader2 } from "lucide-react";
 import { useFlipbookSettings as useFlipbookSettingsContext } from "@/context/FlipbookSettingsProvider.jsx";
 import { useFlipbookSettings } from "@/hooks/useFlipbookSettings";
+import GoToUrl from "../Widget/GoToUrl.jsx";
+import GoToButtonLink from "../Widget/goToButtonLink.jsx";
+import Tag from "../Widget/Tag.jsx";
+import SquareCaption from "../Widget/SquareCaption.jsx";
+import VideoButton from "../Widget/VideoButton.jsx";
+import ProductTag from "../Widget/ProductTag.jsx";
+import ShopArea from "../Widget/ShopArea.jsx";
+import ShopButton from "../Widget/ShopButton.jsx";
+import Quiz from "../Widget/Quiz.jsx";
+import Question from "../Widget/Question.jsx";
+import ContactForm from "../Widget/ContactForm.jsx";
+import GoToPreviousPage from '../Widget/GoToPreviousPage';
+import GoToNextPage from '../Widget/GoToNextPage';
+import GoToPage from '../Widget/GoToPage';
+import GoToFirstPage from '../Widget/GoToFirstPage';
+import GoToLastPage from '../Widget/GoToLastPage';
+import PageContentRenderer from "./PageContentRenderer";
 
 const debounce = (func, delay) => {
     let timeoutId;
@@ -80,7 +96,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
     }, [pageType, divWidth, divHeight, isDrawerOpen, isFullscreen]);
 
     useEffect(() => {
-        const getPageData = async () => {   
+        const getPageData = async () => {
             try {
                 setPageContent([]);
                 const response = await GetFlipbookApi(flipbookId, false);
@@ -119,7 +135,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
         };
     }, [pageContent, totalPages, onPageChange]);
 
-    
+
     useImperativeHandle(ref, () => ({
         setPage: (page) => {
             if (myRef.current) {
@@ -137,11 +153,6 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
             </div>
 
         );
-    }
-
-
-    const handleShapeClick = (data) => {
-        ClickToDynamic(data, myRef);
     }
 
     const handleBookLoad = () => {
@@ -165,40 +176,40 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
             {
                 visibilitySettings.brandLogo && (
                     visibilitySettings.logoLink ? (
-                        <a 
-                            href={visibilitySettings.logoLink} 
-                            target="_blank" 
+                        <a
+                            href={visibilitySettings.logoLink}
+                            target="_blank"
                             rel="noopener noreferrer"
-                            className="absolute top-5 left-5 cursor-pointer z-[11]" 
+                            className="absolute top-5 left-5 cursor-pointer z-[11]"
                         >
-                            <img 
-                                src={visibilitySettings.brandLogo} 
-                                width={200} 
-                                alt="Logo" 
+                            <img
+                                src={visibilitySettings.brandLogo}
+                                width={200}
+                                alt="Logo"
                                 className="w-auto h-auto max-h-[50px] max-w-[200px]"
                             />
                         </a>
                     ) : (
-                        <img 
-                            src={visibilitySettings.brandLogo} 
-                            width={200} 
-                            className="absolute top-5 left-5 w-auto h-auto max-h-[50px] max-w-[200px]" 
-                            alt="Logo" 
+                        <img
+                            src={visibilitySettings.brandLogo}
+                            width={200}
+                            className="absolute top-5 left-5 w-auto h-auto max-h-[50px] max-w-[200px]"
+                            alt="Logo"
                         />
                     )
                 )
             }
-            
+
             <div className="wrapper flex flex-col items-center justify-center relative">
                 <div className="aspect" style={{ width: width, height: height }}>
                     <div className="aspect-inner">
-                        <Turn 
-                            className="flipbook" 
-                            id="flipbook" 
-                            width={width} 
-                            height={height} 
-                            pageType={pageType} 
-                            myRef={myRef} 
+                        <Turn
+                            className="flipbook"
+                            id="flipbook"
+                            width={width}
+                            height={height}
+                            pageType={pageType}
+                            myRef={myRef}
                             onLoad={handleBookLoad}
                             visibilitySettings={visibilitySettings}
                         >
@@ -214,23 +225,15 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                                         overflow: "hidden",
                                     }} >
 
-                                        {page.pageData.map((data, index) => {
-                                            if (data?.shape?.htmlType === "slideshow") {
-                                                return <SlideShow shape={data.shape} />;
-                                            } else if (data?.shape?.htmlType === "audio-button") {
-                                                return <AudioButton shape={data.shape} />
-                                            } else {
-                                                return (
-                                                    <div
-                                                        key={index}
-                                                        style={{ 'cursor': 'pointer' }}
-                                                        title={data.shape?.htmlData?.tooltip || ''}
-                                                        onClick={() => handleShapeClick(data.shape)}
-                                                        dangerouslySetInnerHTML={{ __html: data.html }}
-                                                    />
-                                                );
-                                            }
-                                        })}
+                                        {page.pageData.map((data, index) => (
+                                            <PageContentRenderer
+                                                key={index}
+                                                data={data}
+                                                index={index}
+                                                visibilitySettings={visibilitySettings}
+                                                flipbookRef={myRef}
+                                            />
+                                        ))}
                                     </div>
                                 </div>
                             ))}

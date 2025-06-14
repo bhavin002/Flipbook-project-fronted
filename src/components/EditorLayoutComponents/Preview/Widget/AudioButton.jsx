@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-export default function AudioButton({ shape }) {
+export default function AudioButton({ shape, visibilitySettings }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
   
@@ -86,6 +86,7 @@ export default function AudioButton({ shape }) {
       <img
         src="/src/assets/icons/AudioButton.svg"
         alt={shape.title}
+        className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
         style={{
           ...commonStyle,
           display: shape.visible && !isPlaying ? "block" : "none"
@@ -95,6 +96,7 @@ export default function AudioButton({ shape }) {
       <img
         src="/src/assets/icons/PauseAudioButton.svg"
         alt={`${shape.title}-pause`}
+        className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
         style={{
           ...commonStyle,
           display: shape.visible && isPlaying ? "block" : "none"

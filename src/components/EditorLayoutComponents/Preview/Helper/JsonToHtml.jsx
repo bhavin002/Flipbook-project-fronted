@@ -1,9 +1,11 @@
 import ReactDOMServer from "react-dom/server";
+import React from "react";
 
-export default function JsonToHtml(pageData) {
+const JsonToHtml = (pageData) => {
+    if (!pageData) return [];
     const parseData = pageData.map((page) => convertToHtml(JSON.parse(page.pageData), page._id));
     return parseData;
-}
+};
 
 function convertToHtml(page, pageId) {
 
@@ -20,9 +22,6 @@ function convertToHtml(page, pageId) {
         }
         if (shape.htmlType === "square-caption") {
             return { html: ReactDOMServer.renderToStaticMarkup(squareCaption(shape)), shape };
-        }
-        if (shape.htmlType === "rounded-caption") {
-            return { html: ReactDOMServer.renderToStaticMarkup(roundedCaption(shape)), shape };
         }
         if (shape.htmlType === "embed-code") {
             return { html: ReactDOMServer.renderToStaticMarkup(embedCode(shape)), shape };
@@ -1287,3 +1286,5 @@ function MaskedImageWidget(shape) {
         </svg>
     );
 }
+
+export default JsonToHtml;
