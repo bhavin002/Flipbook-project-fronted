@@ -17,6 +17,16 @@ import GoToNextPage from '../Widget/GoToNextPage';
 import GoToPage from '../Widget/GoToPage';
 import GoToFirstPage from '../Widget/GoToFirstPage';
 import GoToLastPage from '../Widget/GoToLastPage';
+import EmbedCode from '../Widget/EmbedCode';
+import PopupSlideShow from '../Widget/PopupSlideShow';
+import VideoEmbed from '../Widget/VideoEmbed';
+import Text from '../Widget/Text';
+import StockPhoto from '../Widget/StockPhoto';
+import StockVideo from '../Widget/StockVideo';
+import StockGif from '../Widget/StockGif';
+import StockSticker from '../Widget/StockSticker';
+import ShapeWidget from '../Widget/ShapeWidget';
+import MaskedImageWidget from '../Widget/MaskedImageWidget';
 
 const COMPONENT_MAP = {
     'slideshow': SlideShow,
@@ -37,6 +47,17 @@ const COMPONENT_MAP = {
     'go-to-page': GoToPage,
     'go-to-first-page': GoToFirstPage,
     'go-to-last-page': GoToLastPage,
+    'embed-code': EmbedCode,
+    'popup-slideshow': PopupSlideShow,
+    'video-embed': VideoEmbed,
+    'text': Text,
+    'upload-photo': StockPhoto,
+    'stock-photo': StockPhoto,
+    'stock-video': StockVideo,
+    'stock-gif': StockGif,
+    'stock-sticker': StockSticker,
+    'shape-widget': ShapeWidget,
+    'masked-image': MaskedImageWidget,
 };
 
 const PageContentRenderer = ({ data, index, visibilitySettings, flipbookRef }) => {

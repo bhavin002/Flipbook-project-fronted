@@ -4,7 +4,7 @@ import { showModal } from '@/utils/ShowModal';
 
 export default function ProductTag({ shape, visibilitySettings }) {
     const handleClick = () => {
-        if (shape.htmlType === 'link-tag') {
+        if (shape.htmlType === 'product-tag') {
             showModal(ProductTagModal, shape.htmlData);
         }
     };
@@ -29,6 +29,7 @@ export default function ProductTag({ shape, visibilitySettings }) {
                     skewY(${shape.skewY || 0}deg)
                     translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                 display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                cursor: 'pointer'
             }}
         >
             {shape.data.map((path, index) => (
