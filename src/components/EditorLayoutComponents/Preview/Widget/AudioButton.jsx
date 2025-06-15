@@ -72,7 +72,7 @@ export default function AudioButton({ shape, visibilitySettings }) {
   return (
     <div 
       className="cursor-pointer" 
-      title={shape.htmlData.tooltip}
+      title={shape.htmlData?.tooltip}
       onClick={handleClick}
     >
       <div

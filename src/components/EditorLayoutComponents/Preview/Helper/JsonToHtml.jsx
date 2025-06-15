@@ -323,7 +323,7 @@ function embedCode(shape) {
               skewX(${shape.skewX || 0}deg)
               skewY(${shape.skewY || 0}deg)
               translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
-                backgroundImage: (shape.htmlData.coverImage.url && shape.htmlData.embedCode) ? `url(${shape.htmlData.coverImage.url})` : "",
+                backgroundImage: (shape.htmlData?.coverImage?.url && shape.htmlData.embedCode) ? `url(${shape.htmlData.coverImage.url})` : "",
             }}>
                 <div
                     style={{
