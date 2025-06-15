@@ -34,7 +34,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const navigate = useNavigate();
     const [isPreviewLoading, setIsPreviewLoading] = useState(false);
 
-    console.log("mainStage ??", mainStage)
+    console.log("mainStage ??", stageWidth,stageHeight)
 
     useEffect(() => {
         const getFlipbook = async () => {
@@ -341,7 +341,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             <div className="max-lg:hidden relative lg:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
                                 <SidebarProvider value={{ selectedItem, setSelectedItem, width: "23rem" }}>
                                     <EditorSidebarNavigation setIsShapeDrawerOpen={setIsShapeDrawerOpen} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} setSelectedShape={setSelectedShape} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedIndex={selectedIndex} setSelectedItem={setSelectedItem} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-                                    <AppSidebar setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} selectedIndex={selectedIndex} />
+                                    <AppSidebar setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} selectedIndex={selectedIndex} stageWidth={stageWidth} stageHeight={stageHeight} />
                                     <ShapeEditorLayout setIsShapeDrawerOpen={setIsShapeDrawerOpen} mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} setSelectedSubMenu={setSelectedSubMenu} />
                                 </SidebarProvider>
                             </div>

@@ -1,30 +1,69 @@
 import { Input } from "@/components/ui/input"
-import { Search } from 'lucide-react';
-import { useState } from "react";
+import { Loader2, Search } from 'lucide-react';
+import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { getData } from "@/utils/datas";
 import TemplateDetailView from "./TemplateDetailView";
+import { GetTemplatesByLayoutApi, GetThumbnailApi } from "@/service/template.service";
+import { toast } from "sonner";
+import { Skeleton } from "@/components/ui/skeleton";
 
-export default function TemplateSidebarPanel() {
+export default function TemplateSidebarPanel({ stageWidth, stageHeight }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [hoveredId, setHoveredId] = useState(null);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
+    const [templates, setTemplates] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [loadingThumbnail, setLoadingThumbnail] = useState(false);
     const templatesData = getData("templatesData") || [];
-    const templates = getData("templates") || [];
 
-    const handleTemplateClick = (template) => {
-        setSelectedTemplate(template);
+    useEffect(() => {
+        const fetchTemplates = async () => {
+            try {
+                setLoading(true);
+                const response = await GetTemplatesByLayoutApi(stageWidth, stageHeight);
+                const templatesWithThumbnails = response.data.filter(template => template.thumbnail);
+                setTemplates(templatesWithThumbnails);
+            } catch (error) {
+                toast.error("Error fetching templates", {
+                    description: error.message || "Something went wrong"
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchTemplates();
+    }, []);
+
+    const handleTemplateClick = async (template) => {
+        try {
+            setLoadingThumbnail(true);
+            const response = await GetThumbnailApi(template._id);
+            setSelectedTemplate({
+                ...template,
+                thumbnail: response.data.thumbnail
+            });
+        } catch (error) {
+            toast.error("Error fetching template details", {
+                description: error.message || "Something went wrong"
+            });
+        } finally {
+            setLoadingThumbnail(false);
+        }
     };
 
     const handleBackClick = () => {
         setSelectedTemplate(null);
     };
 
-    if (selectedTemplate) {
+    if (selectedTemplate || loadingThumbnail) {
         return (
-            <TemplateDetailView 
+            <TemplateDetailView
                 template={selectedTemplate}
                 onBackClick={handleBackClick}
+                loading={loadingThumbnail}
+                stageWidth={stageWidth}
+                stageHeight={stageHeight}
             />
         );
     }
@@ -60,31 +99,43 @@ export default function TemplateSidebarPanel() {
                 </SelectContent>
             </Select>
             <div className="h-0 overflow-y-auto flex-grow">
-                <div className="grid grid-cols-2 gap-4">
-                    {templates.map((template) => (
-                        <div
-                            key={template.id}
-                            className="relative cursor-pointer rounded-lg overflow-hidden"
-                            onMouseEnter={() => setHoveredId(template.id)}
-                            onMouseLeave={() => setHoveredId(null)}
-                            onClick={() => handleTemplateClick(template)}
-                        >
-                            <div className="relative aspect-[4/3]">
-                                <img
-                                    src={template.thumbnail}
-                                    alt={`Template ${template.id}`}
-                                    className="w-full h-full object-cover"
-                                />
-
-                                {hoveredId === template.id && (
-                                    <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white px-2 py-1 text-xs rounded-md">
-                                        {template.pages} pages
-                                    </div>
-                                )}
+                {loading ? (
+                    <div className="grid grid-cols-2 gap-4">
+                        {[...Array(6)].map((_, index) => (
+                            <div key={index} className="relative rounded-lg overflow-hidden">
+                                <div className={`relative aspect-[${stageWidth}/${stageHeight}]`}>
+                                    <Skeleton className="w-full h-full" />
+                                </div>
                             </div>
-                        </div>
-                    ))}
-                </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-2 gap-4">
+                        {templates.map((template) => (
+                            <div
+                                key={template._id}
+                                className="relative cursor-pointer rounded-lg overflow-hidden"
+                                onMouseEnter={() => setHoveredId(template._id)}
+                                onMouseLeave={() => setHoveredId(null)}
+                                onClick={() => handleTemplateClick(template)}
+                            >
+                                <div className={`relative aspect-[${stageWidth}/${stageHeight}]`}>
+                                    <img
+                                        src={template.thumbnail}
+                                        alt={`Template ${template._id}`}
+                                        className="w-full h-full object-cover"
+                                    />
+
+                                    {hoveredId === template._id && (
+                                        <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white px-2 py-1 text-xs rounded-md">
+                                            {template.noOfPages} pages
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

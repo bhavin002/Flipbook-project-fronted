@@ -87,7 +87,7 @@ export default function TextSidebarPanel({
                         <div
                             className="relative cursor-pointer rounded-lg overflow-hidden"
                         >
-                            <div className="relative aspect-[4/3]">
+                            <div className={`relative aspect-[${stageWidth}/${stageHeight}]`}>
                                 <img
                                     src={textTemplate.thumbnail}
                                     alt={`TextTemplate ${textTemplate.id}`}

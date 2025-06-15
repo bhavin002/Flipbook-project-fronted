@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import LoadingButton from "@/utils/LoadingButton";
+import { CreateTemplateApi } from "@/service/template.service";
 
 export default function FlipbookFromScratch() {
     const [isLoading, setIsLoading] = useState(true);
@@ -91,6 +92,34 @@ export default function FlipbookFromScratch() {
             setIsFlipbookCreating(false);
         }
     }
+
+    // const createFlipBook = async () => {
+    //     try {
+    //         setIsFlipbookCreating(true);
+    //         const response = await CreateTemplateApi({
+    //             width: width,
+    //             height: height,
+    //             pages: [{
+    //                 "pageData": JSON.stringify({
+    //                     stageref: null,
+    //                     CANVAS_WIDTH: width,
+    //                     CANVAS_HEIGHT: height,
+    //                     shapes: [],
+    //                     selectedShapes: [],
+    //                     background: "#fff"
+    //                 })
+    //             }]
+    //         })
+    //         const templateId = response.data.bookId;
+    //         navigate(`/admin-editor/${templateId}`);
+    //     } catch (error) {
+    //         toast.error("Template creation failed", {
+    //             description: error.message || "Oops! Something went wrong.",
+    //         });
+    //     } finally {
+    //         setIsFlipbookCreating(false);
+    //     }
+    // }
 
     return (
         <>

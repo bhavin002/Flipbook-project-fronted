@@ -59,6 +59,7 @@ import VerifyReader from "./pages/Settings/VerifyReader";
 import { WorkspaceProvider } from "./context/WorkspaceContext";
 import { FlipbookProvider } from "./context/FlipbookContext";
 import { FlipbookSettingsProvider } from "./context/FlipbookSettingsProvider";
+import AdminEditorAppLayout from "./layout/AdminEditorAppLayout";
 
 // Route configurations
 const brandingRoutes = [
@@ -252,6 +253,16 @@ export default function App() {
                   </PrivateRoute>
                 }>
                   <Route index element={<FlipbookFromScratch />} />
+                </Route>
+
+                <Route path="/admin-editor/:id" element={
+                  <PrivateRoute>
+                    <ViewModeProvider>
+                        <AdminEditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                    </ViewModeProvider>
+                  </PrivateRoute>
+                }>
+                  <Route index element={<Editor />} />
                 </Route>
 
                 <Route path="/editor/:id" element={

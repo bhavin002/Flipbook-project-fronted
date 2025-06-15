@@ -10,7 +10,7 @@ import UploadsSidebarPanel from '@/components/EditorLayoutComponents/Uploads/Upl
 import ElementsSidebarPanel from '@/components/EditorLayoutComponents/Elements/ElementsSidebarPanel';
 import AutomationSidebarPanel from '@/components/EditorLayoutComponents/Automation/AutomationSidebarPanel';
 
-export function AppSidebar({setIsEditorDrawerOpen, setMainStage, currentView, setCurrentView, mainStage, selectedIndex }) {
+export function AppSidebar({setIsEditorDrawerOpen, setMainStage, currentView, setCurrentView, mainStage, selectedIndex, stageWidth, stageHeight }) {
     const { selectedItem } = useSidebar();
 
     const renderPanel = () => {
@@ -22,7 +22,7 @@ export function AppSidebar({setIsEditorDrawerOpen, setMainStage, currentView, se
             case 'settings':
                 return <SettingSidebarPanel />;
             case 'templates':
-                return <TemplateSidebarPanel />;
+                return <TemplateSidebarPanel stageWidth={stageWidth} stageHeight={stageHeight} />;
             case 'interactions':
                 return <InteractionsSidebarPanel setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />;
             case 'text':
