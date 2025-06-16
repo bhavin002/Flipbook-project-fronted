@@ -78,11 +78,11 @@ export const FlipbookSettingsProvider = ({ children }) => {
                 formData.delete('brandLogoLink');
             }
 
-            if(formData.get("backgroundImage")){
+            if (formData.get("backgroundImage")) {
                 formData.delete('backgroundImageURL');
             }
 
-            if(formData.get("backgroundAudioFile")){
+            if (formData.get("backgroundAudioFile")) {
                 formData.delete('backgroundAudioLink');
             }
 
