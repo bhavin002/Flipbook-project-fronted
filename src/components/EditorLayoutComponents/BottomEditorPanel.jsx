@@ -28,7 +28,7 @@ function NavItem({ item, isSelected, onClick }) {
 }
 
 
-export default function BottomEditorPanel({ isEditorDrawerOpen, setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, currentView, setCurrentView }) {
+export default function BottomEditorPanel({stageWidth, stageHeight, isEditorDrawerOpen, setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, currentView, setCurrentView }) {
     const [selectedItem, setSelectedItem] = useState(null);
 
     const editorBottomNavItems = [
@@ -36,7 +36,7 @@ export default function BottomEditorPanel({ isEditorDrawerOpen, setIsEditorDrawe
             value: "Templates",
             icon: <LayoutPanelLeft />,
             label: "Templates",
-            component: <TemplateSidebarPanel />
+            component: <TemplateSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} stageWidth={stageWidth} stageHeight={stageHeight} />
         },
         {
             value: "interactions",

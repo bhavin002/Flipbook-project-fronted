@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input"
-import { Loader2, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { getData } from "@/utils/datas";
@@ -8,7 +8,7 @@ import { GetTemplatesByLayoutApi, GetThumbnailApi } from "@/service/template.ser
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function TemplateSidebarPanel({ stageWidth, stageHeight }) {
+export default function TemplateSidebarPanel({ mainStage, stageWidth, stageHeight, selectedIndex }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [hoveredId, setHoveredId] = useState(null);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -59,13 +59,24 @@ export default function TemplateSidebarPanel({ stageWidth, stageHeight }) {
     if (selectedTemplate || loadingThumbnail) {
         return (
             <TemplateDetailView
+                templateId={selectedTemplate?._id}
                 template={selectedTemplate}
                 onBackClick={handleBackClick}
                 loading={loadingThumbnail}
                 stageWidth={stageWidth}
                 stageHeight={stageHeight}
+                mainStage={mainStage}
+                selectedIndex={selectedIndex}
             />
         );
+    }
+
+    const onDragTemplate = async (templateId) => {
+        const templateData = {
+            templateId,
+            type: "drag-template",
+        }
+        mainStage[selectedIndex].dragRect.current = templateData;
     }
 
     return (
@@ -124,6 +135,8 @@ export default function TemplateSidebarPanel({ stageWidth, stageHeight }) {
                                         src={template.thumbnail}
                                         alt={`Template ${template._id}`}
                                         className="w-full h-full object-cover"
+                                        draggable
+                                        onDragStart={() => onDragTemplate(template._id)}
                                     />
 
                                     {hoveredId === template._id && (

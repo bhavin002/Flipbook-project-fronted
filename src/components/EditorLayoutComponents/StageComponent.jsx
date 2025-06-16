@@ -17,6 +17,9 @@ import KonavGif from "./Widget/KonvaGif";
 import MaskedKonvaGif from "./Widget/MaskedKonvaGif";
 import KonvaText from "./Widget/KonvaText";
 import UploadPhoto from "./Widget/UploadPhoto";
+import { GetPageByIndexApi, GetTemplateApi } from "@/service/template.service";
+import ConfirmationDialog from "@/utils/ConfirmationDialog";
+import { toast } from "sonner";
 
 export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
     // Consistent Refs Initialization
@@ -31,6 +34,9 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
     const [selecting, setSelecting] = useState(false);
+    const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+    const [isPageModalOpen, setIsPageModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [selectionRect, setSelectionRect] = useState({
         x: 0,
         y: 0,
@@ -715,13 +721,22 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
     return (
         <div
             style={{ width: "100%", height: "100%" }}
-
             className="relative"
-            onDrop={(e) => {
+            onDrop={async (e) => {
                 if (isCropping) return;
                 stage.dragRect.current = mainStage[selectedIndex].dragRect.current;
                 setSelectedIndex(index);
                 e.preventDefault();
+                
+                if (stage.dragRect.current.type === 'drag-template') {
+                    setIsTemplateModalOpen(true);
+                    return;
+                }
+
+                if (stage.dragRect.current.type === 'drag-page') {
+                    setIsPageModalOpen(true);
+                    return;
+                }
 
                 stage.stageref.current.setPointersPositions(e);
                 const pointerPosition = stage.stageref.current.getPointerPosition();
@@ -881,6 +896,60 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
         >
             <div ref={demo}></div>
             <StagePageMenu setSelectedIndex={setSelectedIndex} selectedIndex={selectedIndex} rectProps={rectProps} mainStage={mainStage} setMainStage={setMainStage} index={index} />
+            <ConfirmationDialog
+                isConfirmModalOpen={isTemplateModalOpen}
+                setIsConfirmModalOpen={setIsTemplateModalOpen}
+                title="Apply Template"
+                description="Applying a template will replace the content on the current page and will add new pages if needed. Other pages won't be changed."
+                isLoading={isLoading}
+                onConfirm={async () => {
+                    try {
+                        setIsLoading(true);
+                        const response = await GetTemplateApi(stage.dragRect.current.templateId, false);
+                        const validPageData = response.data.pages;
+                        const newStageData = validPageData.map(e => JSON.parse(e.pageData));
+                        mainStage.splice(index, newStageData.length, ...newStageData)
+                        setMainStage([...mainStage]);
+                        stage.dragRect.current = null;
+                    } catch (error) {
+                        toast.error(error.message || 'Something went wrong');
+                    } finally {
+                        setIsLoading(false);
+                        setIsTemplateModalOpen(false);
+                    }
+                }}
+                onCancel={() => {
+                    stage.dragRect.current = null;
+                    setIsTemplateModalOpen(false);
+                }}
+            />
+            <ConfirmationDialog
+                isConfirmModalOpen={isPageModalOpen}
+                setIsConfirmModalOpen={setIsPageModalOpen}
+                title="Apply Page"
+                description="Applying a page will replace the content on the current page. Other pages won't be changed."
+                isLoading={isLoading}
+                onConfirm={async () => {
+                    try {
+                        setIsLoading(true);
+                        const response = await GetPageByIndexApi(stage.dragRect.current.templateId, stage.dragRect.current.pageIndex);
+                        const newStageData = JSON.parse(response.data.pageData);
+                        mainStage.splice(index, 1, newStageData)
+                        setMainStage([...mainStage]);
+                        stage.dragRect.current = null;
+                    } catch (error) {
+                        toast.error(error.message || 'Something went wrong');
+                    } finally {
+                        setIsLoading(false);
+                        setIsPageModalOpen(false);
+                    }
+                }}
+                onCancel={() => {
+                    stage.dragRect.current = null;
+                    setIsPageModalOpen(false);
+                }}
+            />
+            
             <div onClick={() => setSelectedIndex(index)}>
                 {width && height && <Stage
                     width={width}

@@ -31,3 +31,8 @@ export const GetThumbnailApi = async (templateId) => {
     const response = await ApiClient().get(`/template/get-thumbnail/${templateId}`);
     return response.data;
 }
+
+export const GetPageByIndexApi = async (templateId, index) => {
+    const response = await ApiClient().get(`/template/get-page/${templateId}?page=${index}`);
+    return response.data;
+}

@@ -3,8 +3,17 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from "@/components/ui/skeleton";
 
-const TemplateDetailView = ({ template, onBackClick, loading, stageWidth, stageHeight }) => {
+const TemplateDetailView = ({ templateId, template, onBackClick, loading, stageWidth, stageHeight, mainStage, selectedIndex }) => {
     const [hoveredPageIndex, setHoveredPageIndex] = useState(null);
+
+    const onDragPage = async (pageIndex) => {
+        const pageData = {
+            templateId,
+            pageIndex,
+            type: "drag-page",
+        }
+        mainStage[selectedIndex].dragRect.current = pageData;
+    }
 
     return (
         <div className="px-6 pt-6 pb-2 space-y-4 flex flex-col h-[100vh]">
@@ -43,6 +52,8 @@ const TemplateDetailView = ({ template, onBackClick, loading, stageWidth, stageH
                                         src={page.url}
                                         alt={`Page ${index + 1}`}
                                         className="w-full h-full object-cover"
+                                        draggable
+                                        onDragStart={() => onDragPage(index)}
                                     />
                                     {hoveredPageIndex === index && (
                                         <div className="absolute top-2 left-2 bg-black bg-opacity-60 text-white px-2 py-1 text-xs rounded-md">
