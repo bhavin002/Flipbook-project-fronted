@@ -36,7 +36,7 @@ export default function BottomEditorPanel({stageWidth, stageHeight, isEditorDraw
             value: "Templates",
             icon: <LayoutPanelLeft />,
             label: "Templates",
-            component: <TemplateSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} stageWidth={stageWidth} stageHeight={stageHeight} />
+            component: <TemplateSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} stageWidth={stageWidth} stageHeight={stageHeight} setMainStage={setMainStage} />
         },
         {
             value: "interactions",

@@ -4,7 +4,7 @@ import { showModal } from '@/utils/ShowModal';
 
 export default function ShopArea({ shape, visibilitySettings }) {
     const handleClick = () => {
-        if (shape.htmlType === 'shop-area') {
+        if (shape.htmlType === 'shop-area' && shape.htmlData?.variantId) {
             showModal(ShopAreaModal, shape.htmlData);
         }
     };

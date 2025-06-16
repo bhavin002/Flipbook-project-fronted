@@ -108,7 +108,6 @@ export default function ProductDialog({
             productTitle: productData?.productTitle || "",
             sku: productData?.sku || "",
             description: productData?.description || "",
-            currencyId: productData?.currencyId || currencies[0]?.value || "",
             price: productData?.price?.toString() || "",
             onSale: !!productData?.discountPrice,
             discountPrice: productData?.discountPrice?.toString() || "",
@@ -338,43 +337,6 @@ export default function ProductDialog({
                                         onKeyDown={(e) => restrictNumericInput(e, false)}
                                     />
                                     {errors.price && <p className="text-red-500 text-xs">{errors.price.message}</p>}
-                                </div>
-                                <div className="w-[50%]">
-                                    <div className='flex gap-2 items-center mt-1 mb-1'>
-                                        <Label htmlFor="currency" className="text-xs">Currency</Label>
-                                        <TooltipProvider>
-                                            <Tooltip>
-                                                <TooltipTrigger asChild>
-                                                    <Info className="h-3 w-3 cursor-pointer" />
-                                                </TooltipTrigger>
-                                                <TooltipContent
-                                                    side="right"
-                                                    align="center"
-                                                    className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                                >
-                                                    <p className="text-sm">The currency you select will apply to all products added in your catalog. If you change it, it will also change for all products.</p>
-                                                </TooltipContent>
-                                            </Tooltip>
-                                        </TooltipProvider>
-                                    </div>
-                                    <Select
-                                        onValueChange={(value) => setValue("currencyId", value)}
-                                        value={watch("currencyId")}
-                                    >
-                                        <SelectTrigger id="currency">
-                                            <SelectValue placeholder="Select currency" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {loading ? (
-                                                <SelectItem value="loading" disabled>Loading...</SelectItem>
-                                            ) : currencies.map(option => (
-                                                <SelectItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                    {errors.currencyId && <p className="text-red-500 text-xs">{errors.currencyId.message}</p>}
                                 </div>
                             </div>
                             <div className="space-y-4">

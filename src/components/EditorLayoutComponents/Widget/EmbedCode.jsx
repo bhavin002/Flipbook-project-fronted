@@ -25,6 +25,7 @@ export default function EmbedCode({ shape, onSelect, handleDragStart, handleDrag
             const img = new window.Image();
             // img.src = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(shape.htmlData.coverImage.url)}`;
             // img.crossOrigin = 'Anonymous';
+            shape.fill = "#ffffffa6";
             img.src = shape.htmlData.coverImage.url;
             img.onload = () => {
                 setBgImage(img);

@@ -33,6 +33,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [mainStage, setMainStage] = useState([]);
     const navigate = useNavigate();
     const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+    const [isCustomizeLoading, setIsCustomizeLoading] = useState(false);
 
     console.log("mainStage ??", stageWidth,stageHeight)
 
@@ -110,6 +111,22 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
             setIsPreviewLoading(false);
         }
     };
+
+    const handleCustomizeClick = async () => {
+        try {
+            setIsCustomizeLoading(true);
+            await updatePageData();
+            navigate(`/customize/${id}`);
+        } catch (error) {
+            toast.error("Failed to update page data before customize", {
+                description: error.message || "Something went wrong"
+            });
+        } finally {
+            setIsCustomizeLoading(false);
+        }
+    };
+
+
 
     return (
         <>
@@ -295,9 +312,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         <div className="flex gap-2 items-center">
                             <div className="flex gap-2">
                                 <div className="flex gap-2 max-lg:hidden">
-                                    <Button variant="outline" onClick={()=>{
-                                        navigate(`/customize/${id}`)
-                                    }}>
+                                    <Button variant="outline" onClick={handleCustomizeClick} disabled={isCustomizeLoading}>
                                         <SlidersHorizontal />
                                     </Button>
                                     <Button variant="outline">

@@ -1,6 +1,7 @@
 import React from 'react';
 
 export default function EmbedCode({ shape }) {
+    console.log("shape EmbedCode ?", shape);
     if (shape?.htmlData?.embedCode) {
         return (
             <div style={{

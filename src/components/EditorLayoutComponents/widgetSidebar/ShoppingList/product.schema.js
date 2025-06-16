@@ -30,7 +30,6 @@ export const productSchema = z.object({
     productTitle: z.string().optional(),
     sku: z.string().optional(),
     description: z.string().optional(),
-    currencyId: z.string().min(1, "Currency is required"),
     price: positiveNumberAsStringSchema,
     onSale: z.boolean(),
     discountPrice: positiveNumberAsStringSchema,

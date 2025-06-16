@@ -3,7 +3,7 @@ import { showModal } from "@/utils/ShowModal";
 
 export default function Tag({ shape, visibilitySettings }) {
     const handleClick = () => {
-        if (shape.htmlType === 'link-tag') {
+        if (shape.htmlType === 'link-tag' && shape.htmlData?.url) {
             showModal(LinkModal, shape.htmlData);
         }
     };

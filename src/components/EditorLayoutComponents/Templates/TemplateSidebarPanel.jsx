@@ -8,7 +8,7 @@ import { GetTemplatesByLayoutApi, GetThumbnailApi } from "@/service/template.ser
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function TemplateSidebarPanel({ mainStage, stageWidth, stageHeight, selectedIndex }) {
+export default function TemplateSidebarPanel({ mainStage, stageWidth, stageHeight, selectedIndex, setMainStage }) {
     const [searchQuery, setSearchQuery] = useState("");
     const [hoveredId, setHoveredId] = useState(null);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
@@ -67,6 +67,7 @@ export default function TemplateSidebarPanel({ mainStage, stageWidth, stageHeigh
                 stageHeight={stageHeight}
                 mainStage={mainStage}
                 selectedIndex={selectedIndex}
+                setMainStage={setMainStage}
             />
         );
     }

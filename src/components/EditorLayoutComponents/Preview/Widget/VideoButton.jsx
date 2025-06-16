@@ -4,7 +4,7 @@ import VideoButtonModal from "./VideoButtonModal";
 export default function VideoButton({ shape, visibilitySettings }) {
 
     const handleClick = () => {
-        if (shape.htmlType === 'video-button') {
+        if (shape.htmlType === 'video-button' && shape.htmlData?.url) {
             showModal(VideoButtonModal, shape.htmlData);
         }
     };

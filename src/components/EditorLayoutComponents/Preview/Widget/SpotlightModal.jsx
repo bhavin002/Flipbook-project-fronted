@@ -40,8 +40,8 @@ const SpotlightModal = ({ open, onOpenChange, htmlData }) => {
       <DialogContent className={`max-h-[80vh] max-w-[80vw] z-[100] overflow-hidden rounded-lg ${backgroundClass}`}>
         <div className="flex justify-center w-full p-2">
           <img 
-            src={htmlData.spotlightImage.url} 
-            alt={htmlData.spotlightImage.name || "spotlight image"} 
+            src={htmlData?.spotlightImage?.url} 
+            alt={htmlData?.spotlightImage?.name || "spotlight image"} 
             className={`${imageSizeClass} ${imageFitClass} rounded-md`}
           />
         </div>

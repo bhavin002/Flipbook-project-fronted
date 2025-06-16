@@ -3,7 +3,7 @@ import LinkModal from "./LinkModal";
 
 export default function SquareCaption({ shape, visibilitySettings }) {
     const handleClick = () => {
-        if (shape.htmlType === 'square-caption') {
+        if (shape.htmlType === 'square-caption' && shape.htmlData?.url) {
             showModal(LinkModal, shape.htmlData);
         }
     };

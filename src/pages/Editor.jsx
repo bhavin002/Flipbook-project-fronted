@@ -609,8 +609,6 @@ export default function Editor() {
                 allowHtmlTypesForCrop.includes(selectedShapeData.attrs.htmlType) &&
                 selectedShapeData?.children?.length
             ) {
-                debugger;
-
                 const container = selectedShapeData.children[1];
                 const imageNode = container.children[1];
 

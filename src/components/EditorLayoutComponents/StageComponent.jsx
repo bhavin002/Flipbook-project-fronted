@@ -727,7 +727,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                 stage.dragRect.current = mainStage[selectedIndex].dragRect.current;
                 setSelectedIndex(index);
                 e.preventDefault();
-                
+
                 if (stage.dragRect.current.type === 'drag-template') {
                     setIsTemplateModalOpen(true);
                     return;
@@ -908,7 +908,15 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                         const response = await GetTemplateApi(stage.dragRect.current.templateId, false);
                         const validPageData = response.data.pages;
                         const newStageData = validPageData.map(e => JSON.parse(e.pageData));
-                        mainStage.splice(index, newStageData.length, ...newStageData)
+                        mainStage.forEach(e => {
+                            e.shapes = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)))
+                        })
+                        newStageData.forEach(e => {
+                            e.shapes.forEach(shape => {
+                                shape.id = uuid();
+                            })
+                        })
+                        mainStage.splice(index, 1, ...newStageData)
                         setMainStage([...mainStage]);
                         stage.dragRect.current = null;
                     } catch (error) {
@@ -934,6 +942,9 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                         setIsLoading(true);
                         const response = await GetPageByIndexApi(stage.dragRect.current.templateId, stage.dragRect.current.pageIndex);
                         const newStageData = JSON.parse(response.data.pageData);
+                        newStageData.shapes.forEach(shape => {
+                            shape.id = uuid();
+                        });
                         mainStage.splice(index, 1, newStageData)
                         setMainStage([...mainStage]);
                         stage.dragRect.current = null;
@@ -949,7 +960,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                     setIsPageModalOpen(false);
                 }}
             />
-            
+
             <div onClick={() => setSelectedIndex(index)}>
                 {width && height && <Stage
                     width={width}

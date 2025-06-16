@@ -22,7 +22,7 @@ export function AppSidebar({setIsEditorDrawerOpen, setMainStage, currentView, se
             case 'settings':
                 return <SettingSidebarPanel />;
             case 'templates':
-                return <TemplateSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} stageWidth={stageWidth} stageHeight={stageHeight} />;
+                return <TemplateSidebarPanel mainStage={mainStage} selectedIndex={selectedIndex} stageWidth={stageWidth} stageHeight={stageHeight} setMainStage={setMainStage} />;
             case 'interactions':
                 return <InteractionsSidebarPanel setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />;
             case 'text':

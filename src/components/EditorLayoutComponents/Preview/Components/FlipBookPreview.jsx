@@ -134,7 +134,6 @@ export default function FlipBookPreview({ flipbookId, component }) {
     }, []);
 
     const ProgressBar = ({ isMobile = false }) => {
-        debugger
         let displayCurrentPage = isNaN(currentPage) ? 1 : currentPage % 2 === 0 ? currentPage : currentPage - 1;
         let displayTotalPages = isNaN(totalPages) ? 1 : totalPages;
         displayCurrentPage == 0 && displayCurrentPage++;
