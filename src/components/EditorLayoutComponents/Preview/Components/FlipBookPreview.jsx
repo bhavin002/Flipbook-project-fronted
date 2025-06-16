@@ -22,7 +22,7 @@ export default function FlipBookPreview({ flipbookId, component }) {
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
     const { activeTab, setActiveTab } = useViewMode();
-
+    const [pageType, setPageType] = useState("double");
     const progressBarRef = useRef(null);
     const flipBookRef = useRef(null);
     const containerRef = useRef(null);
@@ -134,14 +134,23 @@ export default function FlipBookPreview({ flipbookId, component }) {
     }, []);
 
     const ProgressBar = ({ isMobile = false }) => {
-        const displayCurrentPage = isNaN(currentPage) ? 1 : currentPage;
-        const displayTotalPages = isNaN(totalPages) ? 1 : totalPages;
-
+        debugger
+        let displayCurrentPage = isNaN(currentPage) ? 1 : currentPage % 2 === 0 ? currentPage : currentPage - 1;
+        let displayTotalPages = isNaN(totalPages) ? 1 : totalPages;
+        displayCurrentPage == 0 && displayCurrentPage++;
+        if (pageType === "single") {
+            displayCurrentPage = isNaN(currentPage) ? 1 : currentPage;
+            displayTotalPages = isNaN(totalPages) ? 1 : totalPages;
+        }
         // Show only current page for first and last page
-        const pageDisplay =
-            displayCurrentPage === 1 || displayCurrentPage === displayTotalPages
+        // if page single then show only current page
+        let pageDisplay = pageType === "single"
+            ? displayCurrentPage
+            : displayCurrentPage % 2 !== 0
                 ? `${displayCurrentPage}`
-                : `${displayCurrentPage} - ${displayCurrentPage + 1}`;
+                : displayCurrentPage === displayTotalPages
+                    ? `${displayCurrentPage}`
+                    : `${displayCurrentPage} - ${displayCurrentPage + 1}`;
 
         if (isMobile) {
             return (
@@ -440,6 +449,8 @@ export default function FlipBookPreview({ flipbookId, component }) {
                                         ref={flipBookRef}
                                         flipbookId={flipbookId}
                                         onPageChange={handlePageChange}
+                                        pageType={pageType}
+                                        setPageType={setPageType}
                                         zoomLevel={zoomLevel}
                                         isMobile={activeTab.toLowerCase() === "mobile"}
                                         component={component}
@@ -475,6 +486,8 @@ export default function FlipBookPreview({ flipbookId, component }) {
                                             ref={flipBookRef}
                                             flipbookId={flipbookId}
                                             onPageChange={handlePageChange}
+                                            pageType={pageType}
+                                            setPageType={setPageType}
                                             zoomLevel={zoomLevel}
                                             isMobile={activeTab.toLowerCase() === "mobile"}
                                             component={component}

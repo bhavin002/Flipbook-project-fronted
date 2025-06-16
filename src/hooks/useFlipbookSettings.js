@@ -33,6 +33,8 @@ export const useFlipbookSettings = (settings) => {
       automaticTransition: settings.automaticTransition == true,
       automaticTransitionDelay: settings.automaticTransitionDelay,
       showAnimateInteraction: settings.animateInteraction == true,
+      layoutStyle: settings.layoutStyle,
+      pageTransition: settings.pageTransition,
     };
   }, [settings]);
 
