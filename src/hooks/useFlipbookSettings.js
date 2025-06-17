@@ -12,7 +12,7 @@ export const useFlipbookSettings = (settings) => {
       showNavigationBar: settings.navigationBar == true,
       showControlBar: settings.controlInNormalMode == true,
       showNavigationArrow: settings.navigationArrow == true,
-      brandLogo: settings.brandLogoLink,
+      brandLogo: settings.brandLogoId == null ? "" : settings.brandLogoLink,
       logoLink: settings.logoLink,
       backgroundColorHash: settings.backgroundColorHash,
       backgroundColor: settings.backgroundColor,

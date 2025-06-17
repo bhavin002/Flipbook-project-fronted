@@ -10,6 +10,7 @@ import { BackgroundColorType, BackgroundImageType } from "@/utils/enum.js";
 import BackgroundAudioPlayer from "./BackgroundAudioPlayer";
 import TableOfContentsDrawer from "./TableOfContentsDrawer.jsx";
 import LeadFormModel from "./LeadFormModel";
+import PageOverviewModal from "./PageOverviewModal.jsx";
 
 export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog" }) {
     const [currentPage, setCurrentPage] = useState(1);
@@ -19,6 +20,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
+    const [isPageOverviewOpen, setIsPageOverviewOpen] = useState(false);
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
     const { activeTab, setActiveTab } = useViewMode();
@@ -222,6 +224,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         variant="ghost"
                                         size="icon"
                                         className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                        onClick={() => setIsPageOverviewOpen(true)}
                                     >
                                         <LayoutGrid className="w-4 h-4" />
                                     </Button>
@@ -342,6 +345,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 variant="ghost"
                                 size="icon"
                                 className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                                onClick={() => setIsPageOverviewOpen(true)}
                             >
                                 <LayoutGrid className="w-5 h-5" />
                             </Button>
@@ -443,7 +447,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden"
                             >
                                 <div
-                                    className={`w-full h-full flex items-center justify-center`}
+                                    className={`w-full h-full flex items-center justify-center flex-col`}
                                     style={{
                                         backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
                                         backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
@@ -470,6 +474,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         isMobile={activeTab.toLowerCase() === "mobile"}
                                         component={component}
                                         previewId={id}
+                                        isPageOverviewOpen={isPageOverviewOpen}
+                                        setIsPageOverviewOpen={setIsPageOverviewOpen}
                                     />
                                 </div>
                             </TabsContent>
@@ -482,7 +488,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                     style={{ backgroundColor: visibilitySettings.backgroundColorHash }}
                                     id={id}
                                 >
-                                    <div className="w-full h-full flex items-center justify-center"
+                                    <div className="w-full h-full flex items-center justify-center flex-col"
                                         style={{
                                             backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
                                             backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
@@ -508,6 +514,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                             isMobile={activeTab.toLowerCase() === "mobile"}
                                             component={component}
                                             previewId={id}
+                                            isPageOverviewOpen={isPageOverviewOpen}
+                                            setIsPageOverviewOpen={setIsPageOverviewOpen}
                                         />
                                     </div>
                                 </div>

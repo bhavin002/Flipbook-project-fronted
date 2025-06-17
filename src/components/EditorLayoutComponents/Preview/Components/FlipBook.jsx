@@ -11,6 +11,7 @@ import { useFlipbookSettings } from "@/hooks/useFlipbookSettings";
 import PageContentRenderer from "./PageContentRenderer";
 import { LayoutStyle } from "@/utils/enum.js";
 import Slider from "../Helper/Slider.jsx";
+import PageOverviewModal from "./PageOverviewModal.jsx";
 
 
 
@@ -22,7 +23,7 @@ const debounce = (func, delay) => {
     };
 };
 
-const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType , previewId }, ref) {
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen }, ref) {
     console.log(isDrawerOpen);
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
@@ -202,26 +203,32 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
         <>
             {visibilitySettings.brandLogo && (
                 visibilitySettings.logoLink ? (
-                    <a
-                        href={visibilitySettings.logoLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="absolute top-5 left-5 cursor-pointer z-[11]"
-                    >
+                    <div className="w-full p-2">
+                        <a
+                            href={visibilitySettings.logoLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="cursor-pointer z-[11]"
+                        >
+                            <img
+                                src={visibilitySettings.brandLogo}
+                                width={200}
+                                alt="Logo"
+                                className="w-auto h-auto max-h-[50px] max-w-[200px]"
+                            />
+                        </a>
+                    </div>
+
+                ) : (
+                    <div className="w-full p-2">
                         <img
                             src={visibilitySettings.brandLogo}
                             width={200}
-                            alt="Logo"
                             className="w-auto h-auto max-h-[50px] max-w-[200px]"
+                            alt="Logo"
                         />
-                    </a>
-                ) : (
-                    <img
-                        src={visibilitySettings.brandLogo}
-                        width={200}
-                        className="absolute top-5 left-5 w-auto h-auto max-h-[50px] max-w-[200px]"
-                        alt="Logo"
-                    />
+                    </div>
+
                 )
             )}
 
@@ -334,6 +341,13 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                     </>
                 )}
             </div>
+            {visibilitySettings.showPageOverview && (
+                <PageOverviewModal
+                    isOpen={isPageOverviewOpen}
+                    onClose={() => setIsPageOverviewOpen(false)}
+                    pageContent={pageContent}
+                />
+            )}
         </>
     );
 });
