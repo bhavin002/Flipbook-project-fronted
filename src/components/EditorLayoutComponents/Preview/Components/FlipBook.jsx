@@ -16,8 +16,6 @@ const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentP
         if (onLoad) onLoad();
     }, [onLoad]);
 
-    console.log("pageType", pageType);
-
     // Calculate slide index from currentPage
     const getSlideIndex = (page) => {
         if (pageType === "single") {
@@ -44,7 +42,7 @@ const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentP
         if (pageContent[pageIndex + 1]) {
             pages.push(pageContent[pageIndex + 1]); // Add next page if available
         }
-        return pages;
+        return visibilitySettings?.rightToLeftOrientation ? pages.reverse() : pages;
     };
 
     // Calculate total number of slides
@@ -53,13 +51,26 @@ const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentP
     // Current slide index
     const currentSlide = getSlideIndex(currentPage);
 
+    // Determine transform direction based on rightToLeftOrientation
+    const transformDirection = visibilitySettings?.rightToLeftOrientation ? `translateX(${currentSlide * width}px)` : `translateX(-${currentSlide * width}px)`;
+
     return (
-        <div className="slider-container" style={{ width, height, position: "relative", overflow: "hidden" }}>
+        <div
+            className="slider-container"
+            style={{
+                width,
+                height,
+                position: "relative",
+                overflow: "hidden",
+                direction: visibilitySettings?.rightToLeftOrientation ? "rtl" : "ltr",
+                textAlign: "left"
+            }}
+        >
             <div
                 className="slider-track"
                 style={{
                     display: "flex",
-                    transform: `translateX(-${currentSlide * width}px)`,
+                    transform: transformDirection,
                     transition: "transform 0.5s ease-in-out",
                 }}
             >
@@ -74,18 +85,32 @@ const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentP
                                 height,
                                 display: "flex",
                                 flexShrink: 0,
+                                flexDirection: visibilitySettings?.rightToLeftOrientation ? "row-reverse" : "row",
                             }}
                         >
                             {pages.map((page, pageIdx) => (
                                 <>
-                                    {slideIndex === 0 && pageType === "double" ? (
-                                        <div key={111}
+                                    {slideIndex === 0 && !visibilitySettings?.rightToLeftOrientation && pageType === "double" ? (
+                                        <div
+                                            key={-1}
                                             className="page"
                                             style={{
                                                 width: pageType === "double" ? width / 2 : width,
                                                 height,
                                                 flexShrink: 0,
-                                            }}></div>
+                                            }}
+                                        ></div>
+                                    ) : null}
+                                    {slideIndex === totalSlides - 1 && visibilitySettings?.rightToLeftOrientation && pageType === "double" ? (
+                                        <div
+                                            key={-1}
+                                            className="page"
+                                            style={{
+                                                width: pageType === "double" ? width / 2 : width,
+                                                height,
+                                                flexShrink: 0,
+                                            }}
+                                        ></div>
                                     ) : null}
                                     <div
                                         key={pageIdx}
@@ -96,12 +121,10 @@ const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentP
                                             flexShrink: 0,
                                         }}
                                     >
-
                                         <div
                                             style={{
-                                                transformOrigin: "left top",
-                                                transform: `scale(${width / (pageType === "double" ? divWidth * 2 : divWidth)
-                                                    }, ${height / divHeight})`,
+                                                transformOrigin: visibilitySettings?.rightToLeftOrientation ? "right top" : "left top",
+                                                transform: `scale(${width / (pageType === "double" ? divWidth * 2 : divWidth)}, ${height / divHeight})`,
                                                 width: `${pageType === "double" ? divWidth : divWidth}px`,
                                                 height: `${divHeight}px`,
                                                 backgroundColor: page?.background || visibilitySettings.backgroundColor || "white",
@@ -119,6 +142,8 @@ const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentP
                                             ))}
                                         </div>
                                     </div>
+
+
                                 </>
                             ))}
                         </div>
@@ -138,7 +163,7 @@ const debounce = (func, delay) => {
 };
 
 const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType }, ref) {
-    console.log(isDrawerOpen);
+
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
     const [divWidth, setDivWidth] = useState(793);
@@ -227,19 +252,21 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
             const flipbookEL = myRef.current;
             const handleTurned = (e, page) => {
                 pageType === "double" && totalPages % 2 != 0 && page == totalPages - 1 && (page = totalPages);
-                setCurrentPage(page);
+                page && setCurrentPage(page);
                 if (onPageChange) onPageChange(page, totalPages);
             };
             $(flipbookEL).on("turned", handleTurned);
             setTimeout(() => {
                 let page = $(flipbookEL).turn("page");
                 pageType === "double" && totalPages % 2 != 0 && page == totalPages - 1 && (page = totalPages);
-                setCurrentPage(page);
+                page && setCurrentPage(page);
                 if (onPageChange) onPageChange(page, totalPages);
-            }, 500);
+            }, 100);
             return () => {
                 $(flipbookEL).off("turned", handleTurned);
             };
+        } else {
+            onPageChange(currentPage, totalPages)
         }
     }, [pageContent, totalPages, onPageChange, visibilitySettings.pageTransition]);
 
@@ -264,7 +291,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
     }
 
     const handleBookLoad = () => {
-        console.log("The book content is fully loaded!");
+
     };
 
     const handlePrevPage = () => {
@@ -273,12 +300,14 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
         } else if (currentPage > 1) {
             if (pageType === "double" && currentPage === 2) {
                 setCurrentPage(1); // Go to page 1 (first slide)
+                onPageChange(1, totalPages);
             } else if (pageType === "double") {
                 setCurrentPage(currentPage - 2); // Move back two pages
+                onPageChange(currentPage - 2, totalPages);
             } else {
                 setCurrentPage(currentPage - 1); // Move back one page
+                onPageChange(currentPage - 1, totalPages);
             }
-            if (onPageChange) onPageChange(currentPage - (pageType === "double" && currentPage > 2 ? 2 : 1), totalPages);
         }
     };
 
@@ -288,13 +317,25 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
         } else if (currentPage < totalPages) {
             if (pageType === "double" && currentPage === 1) {
                 setCurrentPage(2); // Go to pages 2 and 3 (second slide)
-            } else if (pageType === "double" && currentPage < totalPages - 1) {
-                setCurrentPage(currentPage + 2); // Move forward two pages
+                onPageChange(2, totalPages);
+            } else if (pageType === "double") {
+                if (totalPages % 2 !== 0 && currentPage + 3 == totalPages) {
+                    setCurrentPage(totalPages); // Move forward two pages
+                    onPageChange(totalPages, totalPages);
+                } else {
+                    setCurrentPage(currentPage + 2); // Move forward two pages
+                    onPageChange(currentPage + 2, totalPages);
+                }
             } else {
                 setCurrentPage(currentPage + 1); // Move forward one page
+                onPageChange(currentPage + 1, totalPages);
             }
-            if (onPageChange) onPageChange(currentPage + (pageType === "double" && currentPage > 1 ? 2 : 1), totalPages);
         }
+        setTimeout(() => {
+
+
+        }, 1000);
+
     };
 
     return (
