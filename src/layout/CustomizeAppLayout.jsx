@@ -1,15 +1,18 @@
 import { useState } from "react";
 import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom"
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
 import { Button } from "@/components/ui/button";
-import BottomCustomizePanel from "@/components/CustomizeLayoutComponents/BottomCustomizePanel";
 import { useViewMode } from "@/context/ViewModeContext";
+import { Eye, Share2 } from "lucide-react";
+import PreviewDialog from "@/components/EditorLayoutComponents/Preview/PreviewDialog";
 
 export default function CustomizeAppLayout() {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const { activeTab, setActiveTab } = useViewMode();
     const navigate = useNavigate();
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const { id } = useParams();
 
     const TabButton = ({ label }) => (
         <button
@@ -32,29 +35,39 @@ export default function CustomizeAppLayout() {
                     }}>
                         <img src="/src/assets/logo.png" width={200} alt="Logo" />
                     </div>
-                    <div className="relative md:flex gap-6 hidden">
+                    <div className="relative lg:flex gap-6 hidden">
                         <div className="flex items-center space-x-2">
                             <TabButton label="Desktop" />
                             <TabButton label="Mobile" />
                         </div>
                     </div>
                     <div className="flex md:gap-6 gap-2 items-center">
-                        <Button onClick={() => setIsPublishModalOpen(true)}>
+                        <Button className="max-md:hidden" onClick={() => setIsPublishModalOpen(true)}>
                             Share now
+                        </Button>
+                        <Button className="max-md:block hidden" variant="outline" onClick={() => setIsPreviewOpen(true)}>
+                            <Eye />
+                        </Button>
+                        <Button className="max-md:block hidden" onClick={() => setIsPublishModalOpen(true)} >
+                            <Share2 />
                         </Button>
                         <ProfileDropDownCom />
                     </div>
                 </div>
             </header>
 
-            <div className="flex-1 max-md:flex mt-[64px] max-lg:mb-[80px] flex overflow-y-auto">
+            <div className="flex-1 max-md:flex mt-[64px] flex overflow-y-auto">
                 <Outlet />
             </div>
             <PublishFlipbookDialog
                 isPublishModalOpen={isPublishModalOpen}
                 setIsPublishModalOpen={setIsPublishModalOpen}
             />
-            <BottomCustomizePanel />
+            <PreviewDialog
+                open={isPreviewOpen}
+                onOpenChange={setIsPreviewOpen}
+                flipbookId={id}
+            />
         </div>
     )
 }

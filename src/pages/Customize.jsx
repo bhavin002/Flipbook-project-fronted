@@ -6,6 +6,7 @@ import {
     AccordionTrigger,
 } from "@/components/ui/accordion";
 import {
+    Eye,
     Info
 } from "lucide-react";
 import {
@@ -20,9 +21,11 @@ import { Card } from '@/components/ui/card';
 import { getData } from '@/utils/datas';
 import FlipBookPreview from '@/components/EditorLayoutComponents/Preview/Components/FlipBookPreview';
 import { useParams } from 'react-router-dom';
+
 export default function Customize() {
     const [activeValues, setActiveValues] = useState(["appearance"]);
     const { id } = useParams();
+    const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth >= 768);
 
     const menuItems = getData('customizeMenuItems')
 
@@ -30,9 +33,18 @@ export default function Customize() {
         setActiveValues(values);
     };
 
+    React.useEffect(() => {
+        const handleResize = () => {
+            setIsLargeScreen(window.innerWidth >= 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
     return (
         <div className="flex w-full">
-            <div className="md:w-[35%] max-lg:hidden bg-primary flex flex-col p-4">
+            <div className="lg:w-[35%] md:w-[50%] max-md:w-full bg-primary flex flex-col p-4">
                 <Accordion
                     type="multiple"
                     collapsible
@@ -83,9 +95,11 @@ export default function Customize() {
                 </div>
             </div>
 
-            <Card className="shadow-sm flex-grow rounded-none max-md:w-full md:max-w-[65%]">
-                <FlipBookPreview flipbookId={id} component={"customize"} />
-            </Card>
+            {isLargeScreen && (
+                <Card className="shadow-sm flex-grow rounded-none">
+                    <FlipBookPreview flipbookId={id} component={"customize"} />
+                </Card>
+            )}
         </div>
     );
 }

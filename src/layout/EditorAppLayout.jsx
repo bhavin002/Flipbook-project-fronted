@@ -3,8 +3,7 @@ import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDow
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
 import { Button } from "@/components/ui/button";
-import { Download, Eye, SlidersHorizontal } from "lucide-react";
-import ShareDropDownCom from "@/components/EditorLayoutComponents/ShareDropDownCom";
+import { Download, Eye, Share2, SlidersHorizontal } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/utils/AppSidebar";
 import EditorSidebarNavigation from "@/components/EditorLayoutComponents/EditorSidebarNavigation";
@@ -16,6 +15,8 @@ import { toast } from "sonner";
 import useWindowWidth from "@/hooks/use-window-width";
 import EditFlipbookName from "@/utils/EditFlipbookName";
 import PreviewDialog from "@/components/EditorLayoutComponents/Preview/PreviewDialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreVertical } from "lucide-react";
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
@@ -35,7 +36,8 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPreviewLoading, setIsPreviewLoading] = useState(false);
     const [isCustomizeLoading, setIsCustomizeLoading] = useState(false);
 
-    console.log("mainStage ??", stageWidth,stageHeight)
+
+    console.log("mainStage ??", stageWidth, stageHeight)
 
     useEffect(() => {
         const getFlipbook = async () => {
@@ -311,7 +313,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         </div>
                         <div className="flex gap-2 items-center">
                             <div className="flex gap-2">
-                                <div className="flex gap-2 max-lg:hidden">
+                                <div className="flex gap-2 max-md:hidden">
                                     <Button variant="outline" onClick={handleCustomizeClick} disabled={isCustomizeLoading}>
                                         <SlidersHorizontal />
                                     </Button>
@@ -319,24 +321,37 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                         <Download />
                                     </Button>
                                     <Button variant="outline" onClick={handlePreviewClick} disabled={isPreviewLoading}>
-                                    <Eye /> Preview
+                                        <Eye /> Preview
                                     </Button>
                                 </div>
-                                <div className="hidden max-lg:block space-x-2">
-                                    <Button variant="outline">
-                                        <SlidersHorizontal />
-                                    </Button>
-                                    <Button variant="outline">
-                                        <Download />
-                                    </Button>
-                                    <Button variant="outline" onClick={handlePreviewClick} disabled={isPreviewLoading}>
-                                        {isPreviewLoading ? "Loading..." : <Eye />}
-                                    </Button>
+                                <div className="hidden max-md:block">
+                                    <DropdownMenu >
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="outline" size="icon" >
+                                                <MoreVertical />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="start">
+                                            <DropdownMenuItem onClick={handleCustomizeClick} disabled={isCustomizeLoading}>
+                                                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                                                <span>Customize</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                <Download className="mr-2 h-4 w-4" />
+                                                <span>Download</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={handlePreviewClick} disabled={isPreviewLoading}>
+                                                <Eye className="mr-2 h-4 w-4" />
+                                                <span>Preview</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </div>
-                                <Button className="hidden max-lg:block">
-                                    <ShareDropDownCom />
+
+                                <Button className="hidden max-md:block" onClick={() => setIsPublishModalOpen(true)}>
+                                    <Share2 />
                                 </Button>
-                                <Button className="max-lg:hidden" onClick={() => setIsPublishModalOpen(true)}>
+                                <Button className="max-md:hidden" onClick={() => setIsPublishModalOpen(true)}>
                                     Share now
                                 </Button>
                             </div>

@@ -11,7 +11,7 @@ import BackgroundAudioPlayer from "./BackgroundAudioPlayer";
 import TableOfContentsDrawer from "./TableOfContentsDrawer.jsx";
 import LeadFormModel from "./LeadFormModel";
 
-export default function FlipBookPreview({ flipbookId, component }) {
+export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog" }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isDragging, setIsDragging] = useState(false);
@@ -440,7 +440,7 @@ export default function FlipBookPreview({ flipbookId, component }) {
                                             backgroundPosition: 'center'
                                         })
                                     }}
-                                    id="preview-dialog"
+                                    id={id}
                                 >
                                     <FlipBook
                                         isDrawerOpen={isDrawerOpen}
@@ -453,6 +453,7 @@ export default function FlipBookPreview({ flipbookId, component }) {
                                         zoomLevel={zoomLevel}
                                         isMobile={activeTab.toLowerCase() === "mobile"}
                                         component={component}
+                                        previewId={id}
                                     />
                                 </div>
                             </TabsContent>
@@ -463,7 +464,7 @@ export default function FlipBookPreview({ flipbookId, component }) {
                                 <div
                                     className={`w-[90%] max-w-[400px] h-full flex flex-col items-center justify-center overflow-hidden`}
                                     style={{ backgroundColor: visibilitySettings.backgroundColorHash }}
-                                    id="preview-dialog"
+                                    id={id}
                                 >
                                     <div className="w-full h-full flex items-center justify-center"
                                         style={{
@@ -490,6 +491,7 @@ export default function FlipBookPreview({ flipbookId, component }) {
                                             zoomLevel={zoomLevel}
                                             isMobile={activeTab.toLowerCase() === "mobile"}
                                             component={component}
+                                            previewId={id}
                                         />
                                     </div>
                                 </div>

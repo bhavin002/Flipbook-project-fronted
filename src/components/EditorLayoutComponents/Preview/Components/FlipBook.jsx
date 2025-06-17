@@ -137,7 +137,7 @@ const debounce = (func, delay) => {
     };
 };
 
-const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType }, ref) {
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType , previewId }, ref) {
     console.log(isDrawerOpen);
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
@@ -174,7 +174,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
 
     useEffect(() => {
         const handleResize = () => {
-            const previewDialog = document.getElementById("preview-dialog");
+            const previewDialog = document.getElementById(previewId);
             if (visibilitySettings.layoutStyle === LayoutStyle.SMART_VIEW) {
                 if (previewDialog?.clientWidth < 768) {
                     setPageType("single");

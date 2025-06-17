@@ -81,7 +81,7 @@ export default function ProfileDropDownCom() {
                             <ChevronRight className="h-4 w-4" />
                         </div>
                     </PopoverTrigger>
-                    <PopoverContent side="left" className="w-64 p-2">
+                    <PopoverContent side={window.innerWidth <= 768 ? "bottom" : "left"} className="w-64 p-2">
                         <h4 className="text-sm font-medium mb-2 px-2">My workspaces</h4>
                         {isLoading ? (
                             <div className="flex items-center justify-center py-4">
