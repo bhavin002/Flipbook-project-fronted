@@ -37,8 +37,14 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         const validPage = isNaN(page) || page < 1 ? 1 : page;
         const validTotal = isNaN(total) || total < 1 ? 1 : total;
 
-        setCurrentPage(validPage);
-        setTotalPages(validTotal);
+        if (pageType == "double" && validTotal % 2 !== 0 && validPage + 1 == validTotal) {
+            setCurrentPage(validTotal);
+            setTotalPages(validTotal);
+        } else {
+            setCurrentPage(validPage);
+            setTotalPages(validTotal);
+        }
+
     };
 
     const setPage = (page) => {
@@ -50,12 +56,24 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const handleDrag = (clientX) => {
         const bar = progressBarRef.current;
         if (!bar) return;
+
         const rect = bar.getBoundingClientRect();
         const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
         const percent = visibilitySettings.rightToLeftOrientation
-            ? 1 - (x / rect.width) // Reverse progress for RTL
+            ? 1 - x / rect.width // Reverse progress for RTL
             : x / rect.width;
-        const page = Math.round(percent * (totalPages - 1)) + 1;
+
+        let page = Math.round(percent * (totalPages - 1)) + 1;
+        page = Math.max(1, Math.min(page, totalPages)); // Clamp page within valid range
+        if (pageType === "double" && page > 1) {
+            page = page % 2 === 0 ? page : page - 1;
+        }
+        if (pageType === "double" && totalPages % 2 !== 0 && page + 1 === totalPages) {
+            page = totalPages;
+
+        }
+
+        // Update current page and flipbook
         setCurrentPage(page);
         setPage(page);
     };
@@ -85,8 +103,6 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const handleTouchEnd = () => {
         setIsDragging(false);
     };
-
-    console.log("isDrawerOpen preview", isDrawerOpen);
 
     useEffect(() => {
         if (isDragging) {
