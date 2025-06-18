@@ -146,8 +146,6 @@ const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentP
                                             ))}
                                         </div>
                                     </div>
-
-
                                 </>
                             ))}
                         </div>

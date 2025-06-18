@@ -346,6 +346,13 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                     isOpen={isPageOverviewOpen}
                     onClose={() => setIsPageOverviewOpen(false)}
                     pageContent={pageContent}
+                    visibilitySettings={visibilitySettings}
+                    myRef={myRef}
+                    pageType={pageType}
+                    divWidth={divWidth}
+                    divHeight={divHeight}
+                    width={width}
+                    height={height}
                 />
             )}
         </>
