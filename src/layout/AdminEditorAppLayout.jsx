@@ -101,7 +101,9 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
                     pixelRatio: 1,
                     mimeType: 'image/png',
                 });
+                console.log("clippedImage ??", clippedImage)
                 const blob = await (await fetch(clippedImage)).blob();
+                console.log("blob ??", blob)
                 formData.append("thumbnails", blob, `image_${index}.jpg`);
             });
 

@@ -37,7 +37,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isCustomizeLoading, setIsCustomizeLoading] = useState(false);
 
 
-    console.log("mainStage ??", stageWidth, stageHeight)
+    console.log("mainStage ??", mainStage)
 
     useEffect(() => {
         const getFlipbook = async () => {
