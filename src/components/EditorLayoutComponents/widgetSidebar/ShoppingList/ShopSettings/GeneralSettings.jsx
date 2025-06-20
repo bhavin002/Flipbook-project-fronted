@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { MailCheck, Plus, ShoppingBag, ShoppingCart, Heart, Star, GripVertical, Trash2, CircleCheckBig, Smile, ShieldAlert, Info } from "lucide-react";
+import { MailCheck, Plus, ShoppingBag, ShoppingCart, Heart, Star, GripVertical, Trash2, CircleCheckBig, Smile, ShieldAlert, Info, Banknote } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -15,7 +15,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip";
 import CustomerDetailsFields from "@/utils/CustomerDetailsFields";
-import MaskInput from "@/utils/MaskInput";
+import MaskEmailInput from "@/utils/MaskEmailInput";
 import {
     DndContext,
     closestCenter,
@@ -25,7 +25,6 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import {
-    arrayMove,
     SortableContext,
     sortableKeyboardCoordinates,
     useSortable,
@@ -33,7 +32,11 @@ import {
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import { useFieldArray } from "react-hook-form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useCurrency } from '@/context/CurrencyContext';
+import { ShopAppearance } from '@/utils/enum';
 
 function SortableEmailField({ field, index, form, onDelete }) {
     const {
@@ -58,6 +61,7 @@ function SortableEmailField({ field, index, form, onDelete }) {
             className={`flex items-start gap-2 mb-3 ${isDragging ? 'bg-gray-50' : ''}`}
         >
             <button
+                type="button"
                 className="cursor-grab focus:outline-none"
                 {...attributes}
                 {...listeners}
@@ -71,19 +75,25 @@ function SortableEmailField({ field, index, form, onDelete }) {
                     {...form.register(`conditionalInboxOptions.${index}.option`)}
                     placeholder="Option name (e.g., Country)"
                 />
-                <FormMessage />
+
             </div>
 
             <div className="flex-1">
-                <Input
-                    type="text"
-                    {...form.register(`conditionalInboxOptions.${index}.emails.0`)}
+                <MaskEmailInput
+                    value={form.watch(`conditionalInboxOptions.${index}.emails`) || []}
+                    onChange={(emails) => {
+                        form.setValue(`conditionalInboxOptions.${index}.emails`, emails);
+                        if (emails.length > 0) {
+                            form.clearErrors(`conditionalInboxOptions.${index}.emails`);
+                        }
+                    }}
                     placeholder="Email address"
+                    error={!!(form.formState.errors.conditionalInboxOptions && form.formState.errors.conditionalInboxOptions[index] && form.formState.errors.conditionalInboxOptions[index].emails)}
                 />
-                <FormMessage />
             </div>
 
             <Button
+                type="button"
                 variant="ghost"
                 onClick={() => onDelete(index)}
                 className="h-8 w-8 p-0"
@@ -102,28 +112,31 @@ export default function GeneralSettings({ form, clearErrors }) {
             coordinateGetter: sortableKeyboardCoordinates,
         })
     );
+    const { currencies, loading } = useCurrency();
+
+    const { fields, append, remove, move } = useFieldArray({
+        control: form.control,
+        name: "conditionalInboxOptions",
+    });
 
     const addEmailField = () => {
-        const newField = {
+        append({
             id: `field-${Date.now()}`,
             option: "",
-            emails: [""],
-        };
-        form.setValue("conditionalInboxOptions", [...form.getValues("conditionalInboxOptions"), newField]);
+            emails: []
+        });
     };
 
     const handleDeleteField = (index) => {
-        const updatedFields = form.getValues("conditionalInboxOptions").filter((_, i) => i !== index);
-        form.setValue("conditionalInboxOptions", updatedFields);
+        remove(index);
     };
 
     function handleDragEnd(event) {
         const { active, over } = event;
         if (active.id !== over?.id) {
-            const items = form.getValues("conditionalInboxOptions");
-            const oldIndex = items.findIndex(item => item.id === active.id);
-            const newIndex = items.findIndex(item => item.id === over.id);
-            form.setValue("conditionalInboxOptions", arrayMove(items, oldIndex, newIndex));
+            const oldIndex = fields.findIndex(item => item.id === active.id);
+            const newIndex = fields.findIndex(item => item.id === over.id);
+            move(oldIndex, newIndex);
         }
     }
 
@@ -164,39 +177,81 @@ export default function GeneralSettings({ form, clearErrors }) {
                         <FormControl>
                             <div className="flex justify-around items-center border rounded-md">
                                 <Button
-                                    variant={field.value === 1 ? "default" : "ghost"}
+                                    type="button"
+                                    variant={field.value === ShopAppearance.SHOP_BAG ? "default" : "ghost"}
                                     className="w-full [&_svg]:size-5 border-r rounded-r-none"
-                                    onClick={() => field.onChange(1)}
+                                    onClick={() => field.onChange(ShopAppearance.SHOP_BAG)}
                                 >
                                     <ShoppingBag />
                                 </Button>
                                 <Button
-                                    variant={field.value === 2 ? "default" : "ghost"}
-                                    className="w-full [&_svg]:size-5 border-r rounded-r-none"
-                                    onClick={() => field.onChange(2)}
+                                    type="button"
+                                    variant={field.value === ShopAppearance.SHOP_CART ? "default" : "ghost"}
+                                    className="w-full [&_svg]:size-5 border-r rounded-none"
+                                    onClick={() => field.onChange(ShopAppearance.SHOP_CART)}
                                 >
                                     <ShoppingCart />
                                 </Button>
                                 <Button
-                                    variant={field.value === 3 ? "default" : "ghost"}
-                                    className="w-full [&_svg]:size-5 border-r rounded-r-none"
-                                    onClick={() => field.onChange(3)}
+                                    type="button"
+                                    variant={field.value === ShopAppearance.SHOP_HEART ? "default" : "ghost"}
+                                    className="w-full [&_svg]:size-5 border-r rounded-none"
+                                    onClick={() => field.onChange(ShopAppearance.SHOP_HEART)}
                                 >
                                     <Heart />
                                 </Button>
                                 <Button
-                                    variant={field.value === 4 ? "default" : "ghost"}
-                                    className="w-full [&_svg]:size-5 border-r rounded-r-none"
-                                    onClick={() => field.onChange(4)}
+                                    type="button"
+                                    variant={field.value === ShopAppearance.SHOP_STAR ? "default" : "ghost"}
+                                    className="w-full [&_svg]:size-5 rounded-l-none"
+                                    onClick={() => field.onChange(ShopAppearance.SHOP_STAR)}
                                 >
                                     <Star />
                                 </Button>
                             </div>
                         </FormControl>
-                        <FormMessage />
                     </FormItem>
                 )}
             />
+            <Separator className="my-4" />
+            <div className="space-y-4">
+                <div className="flex gap-2 items-center">
+                    <Banknote className="h-5 w-5" />
+                    <span className="text-sm font-semibold">Currency</span>
+                </div>
+                <FormField
+                    control={form.control}
+                    name="currencyId"
+                    render={({ field }) => {
+                        console.log("field", field);
+                        return (
+                            <FormItem>
+                                <FormLabel className="text-xs">Select currency</FormLabel>
+                                <FormControl>
+                                    <Select
+                                        value={field.value}
+                                        onValueChange={field.onChange}
+                                        disabled={loading}
+                                    >
+                                        <SelectTrigger id="currency" className={errors.currencyId ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}>
+                                            <SelectValue placeholder="Select currency" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {loading ? (
+                                                <SelectItem value="loading" disabled>Loading...</SelectItem>
+                                            ) : currencies.map(option => (
+                                                <SelectItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </FormControl>
+                            </FormItem>
+                        )
+                    }}
+                />
+            </div>
             <Separator className="my-4" />
             <div className="space-y-4">
                 <div className="flex gap-2 items-center">
@@ -214,7 +269,26 @@ export default function GeneralSettings({ form, clearErrors }) {
                             <FormControl>
                                 <RadioGroup
                                     value={field.value.toString()}
-                                    onValueChange={(value) => field.onChange(parseInt(value))}
+                                    onValueChange={(value) => {
+                                        const newValue = parseInt(value);
+                                        field.onChange(newValue);
+                                        clearErrors([
+                                            "conditionalInboxDescription",
+                                            "conditionalInboxOptions",
+                                            "simpleInboxEmails"
+                                        ]);
+                                        if (newValue === 1) {
+                                            // Conditional inbox selected
+                                            const options = form.getValues("conditionalInboxOptions");
+                                            if (!options || options.length === 0) {
+                                                form.setValue("conditionalInboxOptions", [{ id: `field-${Date.now()}`, option: "", emails: [] }]);
+                                            }
+                                        } else {
+                                            // Simple inbox selected: Clear conditional inbox fields
+                                            form.setValue("conditionalInboxOptions", []);
+                                            form.setValue("conditionalInboxDescription", "");
+                                        }
+                                    }}
                                     className="space-y-2"
                                 >
                                     <div className="flex items-start space-x-2">
@@ -233,7 +307,6 @@ export default function GeneralSettings({ form, clearErrors }) {
                                     </div>
                                 </RadioGroup>
                             </FormControl>
-                            <FormMessage />
                         </FormItem>
                     )}
                 />
@@ -245,14 +318,13 @@ export default function GeneralSettings({ form, clearErrors }) {
                             <FormItem>
                                 <FormLabel className="text-xs">Email <span>*</span></FormLabel>
                                 <FormControl>
-                                    <MaskInput
+                                    <MaskEmailInput
                                         value={field.value}
                                         onChange={(emails) => field.onChange(emails)}
                                         placeholder="Type email and press Enter"
-                                        className={errors.simpleInboxEmails ? "border-red-500" : ""}
+                                        error={errors.simpleInboxEmails}
                                     />
                                 </FormControl>
-                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -269,10 +341,9 @@ export default function GeneralSettings({ form, clearErrors }) {
                                             type="text"
                                             placeholder="E.g. Select location"
                                             {...field}
-                                            className={errors.conditionalInboxDescription ? "border-red-500" : ""}
+                                            className={errors.conditionalInboxDescription ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                         />
                                     </FormControl>
-                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -284,10 +355,10 @@ export default function GeneralSettings({ form, clearErrors }) {
                                 modifiers={[restrictToVerticalAxis]}
                             >
                                 <SortableContext
-                                    items={form.getValues("conditionalInboxOptions").map(field => field.id)}
+                                    items={fields.map(field => field.id)}
                                     strategy={verticalListSortingStrategy}
                                 >
-                                    {form.getValues("conditionalInboxOptions").length > 0 && (
+                                    {fields.length > 0 && (
                                         <div className="flex mb-2 px-8">
                                             <div className="flex-1">
                                                 <Label className="text-xs text-gray-500">Option</Label>
@@ -297,7 +368,7 @@ export default function GeneralSettings({ form, clearErrors }) {
                                             </div>
                                         </div>
                                     )}
-                                    {form.getValues("conditionalInboxOptions").map((field, index) => (
+                                    {fields.map((field, index) => (
                                         <SortableEmailField
                                             key={field.id}
                                             field={field}
@@ -309,6 +380,7 @@ export default function GeneralSettings({ form, clearErrors }) {
                                 </SortableContext>
                             </DndContext>
                             <Button
+                                type="button"
                                 variant="outline"
                                 size="sm"
                                 onClick={addEmailField}
@@ -333,16 +405,18 @@ export default function GeneralSettings({ form, clearErrors }) {
                         control={form.control}
                         name="showOrderNumber"
                         render={({ field }) => (
-                            <FormItem className="flex items-center space-x-2">
-                                <FormControl>
-                                    <Checkbox
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
-                                </FormControl>
-                                <FormLabel className="text-sm font-medium">
-                                    Show background
-                                </FormLabel>
+                            <FormItem>
+                                <div className='flex items-center gap-2'>
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-medium">
+                                        Show background
+                                    </FormLabel>
+                                </div>
                             </FormItem>
                         )}
                     />
@@ -356,11 +430,10 @@ export default function GeneralSettings({ form, clearErrors }) {
                             <FormControl>
                                 <Textarea
                                     placeholder="Thank you for ordering. We will contact you soon!"
-                                    className={`resize-none ${errors.orderConfirmationMessage ? "border-red-500" : ""}`}
+                                    className={`resize-none ${errors.orderConfirmationMessage ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}`}
                                     {...field}
                                 />
                             </FormControl>
-                            <FormMessage />
                         </FormItem>
                     )}
                 />
@@ -386,16 +459,16 @@ export default function GeneralSettings({ form, clearErrors }) {
                         name="minimumOrderValue"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="text-xs">Minimum order value (INR)</FormLabel>
+                                <FormLabel className="text-xs">Minimum order value</FormLabel>
                                 <FormControl>
                                     <Input
                                         type="number"
+                                        min={0}
                                         {...field}
                                         onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                                        className={errors.minimumOrderValue ? "border-red-500" : ""}
+                                        className={errors.minimumOrderValue ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                     />
                                 </FormControl>
-                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -421,10 +494,9 @@ export default function GeneralSettings({ form, clearErrors }) {
                                     type="text"
                                     placeholder="Contact details"
                                     {...field}
-                                    className={errors.contactTitle ? "border-red-500" : ""}
+                                    className={errors.contactTitle ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                 />
                             </FormControl>
-                            <FormMessage />
                         </FormItem>
                     )}
                 />
@@ -437,11 +509,10 @@ export default function GeneralSettings({ form, clearErrors }) {
                             <FormControl>
                                 <Textarea
                                     placeholder="To send the order you must enter your contact details."
-                                    className={`resize-none ${errors.contactDescription ? "border-red-500" : ""}`}
+                                    className={`resize-none ${errors.contactDescription ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}`}
                                     {...field}
                                 />
                             </FormControl>
-                            <FormMessage />
                         </FormItem>
                     )}
                 />
@@ -492,10 +563,9 @@ export default function GeneralSettings({ form, clearErrors }) {
                                             type="text"
                                             placeholder="E.g. SG"
                                             {...field}
-                                            className={errors.privacyPolicyCompanyName ? "border-red-500" : ""}
+                                            className={errors.privacyPolicyCompanyName ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                         />
                                     </FormControl>
-                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -510,10 +580,16 @@ export default function GeneralSettings({ form, clearErrors }) {
                                             type="text"
                                             placeholder="E.g. https://example.com/privacy"
                                             {...field}
-                                            className={errors.privacyPolicyLink ? "border-red-500" : ""}
+                                            onBlur={(e) => {
+                                                const { value } = e.target;
+                                                if (value && !value.startsWith('http://') && !value.startsWith('https://')) {
+                                                    field.onChange(`https://${value}`);
+                                                }
+                                                field.onBlur(); // RHF's onBlur
+                                            }}
+                                            className={errors.privacyPolicyLink ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                         />
                                     </FormControl>
-                                    <FormMessage />
                                 </FormItem>
                             )}
                         />

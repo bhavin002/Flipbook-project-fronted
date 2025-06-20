@@ -1,0 +1,1 @@
+export const DEFAULT_CURRENCY_ID = "6827661479609e74c99d7dfe";

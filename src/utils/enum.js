@@ -90,3 +90,10 @@ export const BackgroundImageType = {
     CENTER: 1,
     TILE: 2,
 }
+
+export const ShopAppearance = {
+    SHOP_BAG: 0,
+    SHOP_CART: 1,
+    SHOP_HEART: 2,
+    SHOP_STAR: 3,
+}

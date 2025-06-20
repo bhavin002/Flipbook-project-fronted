@@ -20,6 +20,17 @@ export default function OrderOptions({ form, clearErrors, errors }) {
     const [pdfLogo, setPdfLogo] = useState(null);
     const [isLogoLoading, setIsLogoLoading] = useState(false);
 
+    const workspaceLogoId = form.watch("workspaceLogoId");
+    const pdfLogoId = form.watch("pdfLogoId");
+
+
+    const workspaceLogoUrl = workspaceLogoId && workspaceLogoId.startsWith("http")
+        ? workspaceLogoId
+        : form.getValues("workspaceLogoUrl");
+    const pdfLogoUrl = pdfLogoId && pdfLogoId.startsWith("http")
+        ? pdfLogoId
+        : form.getValues("pdfLogoUrl");
+
     const handleLogoSelect = (logo, type) => {
         if (type === "workspace") {
             setWorkspaceLogo(logo);
@@ -152,11 +163,11 @@ export default function OrderOptions({ form, clearErrors, errors }) {
                             </TooltipProvider>
                         </div>
                         <div className="border flex justify-between p-2 rounded-sm my-2 items-center">
-                            {workspaceLogo ? (
+                            {workspaceLogoId ? (
                                 <>
                                     <img
-                                        src={workspaceLogo.src}
-                                        alt={workspaceLogo.alt}
+                                        src={workspaceLogo ? workspaceLogo.src : workspaceLogoUrl}
+                                        alt={workspaceLogo ? workspaceLogo.alt : "Workspace Logo"}
                                         className="max-w-[142px] max-h-[40px] object-contain"
                                     />
                                     <div className="flex gap-1 items-center">
@@ -166,6 +177,7 @@ export default function OrderOptions({ form, clearErrors, errors }) {
                                         />
                                         <Button
                                             variant="ghost"
+                                            type="button"
                                             onClick={() => handleLogoDelete("workspace")}
                                             disabled={isLogoLoading}
                                             className="h-8 w-8 p-0"
@@ -217,11 +229,11 @@ export default function OrderOptions({ form, clearErrors, errors }) {
                                 </TooltipProvider>
                             </div>
                             <div className="border flex justify-between p-2 rounded-sm my-2 items-center">
-                                {pdfLogo ? (
+                                {pdfLogoId ? (
                                     <>
                                         <img
-                                            src={pdfLogo.src}
-                                            alt={pdfLogo.alt}
+                                            src={pdfLogo ? pdfLogo.src : pdfLogoUrl}
+                                            alt={pdfLogo ? pdfLogo.alt : "PDF Logo"}
                                             className="max-w-[142px] max-h-[40px] object-contain"
                                         />
                                         <div className="flex gap-1 items-center">
@@ -230,6 +242,7 @@ export default function OrderOptions({ form, clearErrors, errors }) {
                                                 mode="replace"
                                             />
                                             <Button
+                                                type="button"
                                                 variant="ghost"
                                                 onClick={() => handleLogoDelete("pdf")}
                                                 disabled={isLogoLoading}

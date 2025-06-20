@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import LoadingButton from "@/utils/LoadingButton";
 import { Form } from "@/components/ui/form";
 import { useParams } from "react-router-dom";
+import { DEFAULT_CURRENCY_ID } from "@/utils/databaseStaticValue";
 
 export default function ShopSettings() {
     const [open, setOpen] = useState(false);
@@ -23,7 +24,7 @@ export default function ShopSettings() {
     const form = useForm({
         resolver: zodResolver(shopSettingsSchema),
         defaultValues: {
-            shopAppearance: 1,
+            shopAppearance: 0,
             shopEmailType: 0,
             simpleInboxEmails: [],
             conditionalInboxDescription: "",
@@ -49,50 +50,58 @@ export default function ShopSettings() {
             checkoutButtonLabel: "Place Order",
             notificationMessageInternal: "A new order has been placed.",
             notificationMessageCustomer: "Thank you for your purchase!",
-            workspaceLogoId: null,
+            workspaceLogoId: "",
+            workspaceLogoUrl: "",
             allowPdfDownload: false,
-            pdfLogoId: null,
+            pdfLogoId: "",
+            pdfLogoUrl: "",
             headerText: "",
             footerText: "",
             allowCsvDownload: false,
-            currencyId: "",
+            currencyId: DEFAULT_CURRENCY_ID,
         }
     });
 
     const { formState: { errors }, clearErrors } = form;
+    
+    console.log("errors from shop settings", errors);
 
     const fetchShopSettings = async () => {
         try {
             setIsFetching(true);
             const response = await getShopSettingApi(flipbookId);
+
+            console.log("response from shop settings", response.data);
             
             const transformedData = {
-                shopAppearance: response.data.shopAppearance || 1,
-                shopEmailType: response.data.shopEmailType || 0,
-                simpleInboxEmails: response.data.simpleInboxEmails || [],
-                conditionalInboxDescription: response.data.conditionalInboxDescription || "",
-                conditionalInboxOptions: response.data.conditionalInboxOptions || [],
-                showOrderNumber: response.data.showOrderNumber || false,
-                orderConfirmationMessage: response.data.orderConfirmationMessage || "Thank you! Your order has been received.",
-                hasMinimumOrderValue: response.data.hasMinimumOrderValue || false,
-                minimumOrderValue: response.data.minimumOrderValue || 0,
-                contactTitle: response.data.contactTitle || "Contact details",
-                contactDescription: response.data.contactDescription || "",
-                customerFields: response.data.customerFields || [],
-                showPrivacyPolicy: response.data.showPrivacyPolicy || false,
-                privacyPolicyCompanyName: response.data.privacyPolicyCompanyName || "",
-                privacyPolicyLink: response.data.privacyPolicyLink || "",
-                emailCheckout: response.data.emailCheckout || false,
-                checkoutButtonLabel: response.data.checkoutButtonLabel || "Place Order",
-                notificationMessageInternal: response.data.notificationMessageInternal || "A new order has been placed.",
-                notificationMessageCustomer: response.data.notificationMessageCustomer || "Thank you for your purchase!",
-                workspaceLogoId: response.data.workspaceLogoId || null,
-                allowPdfDownload: response.data.allowPdfDownload || false,
-                pdfLogoId: response.data.pdfLogoId || null,
-                headerText: response.data.headerText || "",
-                footerText: response.data.footerText || "",
-                allowCsvDownload: response.data.allowCsvDownload || false,
-                currencyId: response.data.currencyId || "",
+                shopAppearance: response.data.flipbookShopSettings.shopAppearance || 0,
+                shopEmailType: response.data.flipbookShopSettings.shopEmailType || 0,
+                simpleInboxEmails: response.data.flipbookShopSettings.simpleInboxEmails || [],
+                conditionalInboxDescription: response.data.flipbookShopSettings.conditionalInboxDescription || "",
+                conditionalInboxOptions: response.data.flipbookShopSettings.conditionalInboxOptions || [],
+                showOrderNumber: response.data.flipbookShopSettings.showOrderNumber || false,
+                orderConfirmationMessage: response.data.flipbookShopSettings.orderConfirmationMessage || "Thank you! Your order has been received.",
+                hasMinimumOrderValue: response.data.flipbookShopSettings.hasMinimumOrderValue || false,
+                minimumOrderValue: response.data.flipbookShopSettings.minimumOrderValue || 0,
+                contactTitle: response.data.flipbookShopSettings.contactTitle || "Contact details",
+                contactDescription: response.data.flipbookShopSettings.contactDescription || "",
+                customerFields: response.data.flipbookShopSettings.customerFields || [],
+                showPrivacyPolicy: response.data.flipbookShopSettings.showPrivacyPolicy || false,
+                privacyPolicyCompanyName: response.data.flipbookShopSettings.privacyPolicyCompanyName || "",
+                privacyPolicyLink: response.data.flipbookShopSettings.privacyPolicyLink || "",
+                emailCheckout: response.data.flipbookShopSettings.emailCheckout || false,
+                checkoutButtonLabel: response.data.flipbookShopSettings.checkoutButtonLabel || "Place Order",
+                notificationMessageInternal: response.data.flipbookShopSettings.notificationMessageInternal || "A new order has been placed.",
+                notificationMessageCustomer: response.data.flipbookShopSettings.notificationMessageCustomer || "Thank you for your purchase!",
+                workspaceLogoId: response.data.flipbookShopSettings.workspaceLogoId || "",
+                workspaceLogoUrl: response.data.flipbookShopSettings.workspaceLogoUrl || "",
+                allowPdfDownload: response.data.flipbookShopSettings.allowPdfDownload || false,
+                pdfLogoId: response.data.flipbookShopSettings.pdfLogoId || "",
+                pdfLogoUrl: response.data.flipbookShopSettings.pdfLogoUrl || "",
+                headerText: response.data.flipbookShopSettings.headerText || "",
+                footerText: response.data.flipbookShopSettings.footerText || "",
+                allowCsvDownload: response.data.flipbookShopSettings.allowCsvDownload || false,
+                currencyId: response.data.flipbookShopSettings.currencyId || "",
             };
             
             form.reset(transformedData);
@@ -139,8 +148,7 @@ export default function ShopSettings() {
                 currencyId: data.currencyId,
             };
 
-            let response;
-            response = await updateShopSettingApi(flipbookId, apiData);
+            await updateShopSettingApi(flipbookId, apiData);
 
             setOpen(false);
         } catch (error) {
@@ -194,7 +202,7 @@ export default function ShopSettings() {
                                     <Button variant="outline" type="button" onClick={() => setOpen(false)}>
                                         Cancel
                                     </Button>
-                                    <Button type="submit" disabled={isLoading}>
+                                    <Button type="submit" disabled={isLoading || Object.keys(errors).length > 0}>
                                         {isLoading ? <LoadingButton isLoading={isLoading} /> : "Save changes"}
                                     </Button>
                                 </DialogFooter>

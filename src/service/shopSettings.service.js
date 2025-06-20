@@ -1,7 +1,7 @@
 import ApiClient from "@/utils/ApiClient"
 
 export const updateShopSettingApi = async (flipbookId, data) => {
-    const response = await ApiClient().put(`/flipbook-shop-setting/update/${flipbookId}`, data);
+    const response = await ApiClient().post(`/flipbook-shop-setting/update/${flipbookId}`, data);
     return response.data;
 }
 

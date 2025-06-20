@@ -1,10 +1,14 @@
 import { z } from "zod";
 
 const customerFieldSchema = z.object({
-    type: z.enum(["text", "email", "phone"]),
-    label: z.string().min(1, "Label is required"),
-    placeholder: z.string().optional(),
-    required: z.boolean(),
+    label: z.string().optional(),
+    type: z.enum([
+        "email",
+        "phone_number",
+        "custom_input",
+        "website"
+    ]),
+    required: z.boolean()
 });
 
 const conditionalInboxOptionSchema = z.object({
@@ -13,7 +17,7 @@ const conditionalInboxOptionSchema = z.object({
 });
 
 export const shopSettingsSchema = z.object({
-    shopAppearance: z.number().min(1).max(4),
+    shopAppearance: z.number().min(0).max(3),
     shopEmailType: z.number().min(0).max(1),
     simpleInboxEmails: z.array(z.string().email("Invalid email address")).optional(),
     conditionalInboxDescription: z.string().optional(),
@@ -24,7 +28,7 @@ export const shopSettingsSchema = z.object({
     minimumOrderValue: z.number().min(0, "Minimum order value must be positive").optional(),
     contactTitle: z.string().min(1, "Contact title is required"),
     contactDescription: z.string().optional(),
-    customerFields: z.array(customerFieldSchema).min(1, "At least one customer field is required"),
+    customerFields: z.array(customerFieldSchema),
     showPrivacyPolicy: z.boolean(),
     privacyPolicyCompanyName: z.string().optional(),
     privacyPolicyLink: z.string().optional(),
@@ -41,12 +45,14 @@ export const shopSettingsSchema = z.object({
     currencyId: z.string().min(1, "Currency ID is required"),
 }).superRefine((data, ctx) => {
     // Simple inbox validation
-    if (data.shopEmailType === 0 && (!data.simpleInboxEmails || data.simpleInboxEmails.length === 0)) {
-        ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            path: ['simpleInboxEmails'],
-            message: 'At least one email is required for simple inbox',
-        });
+    if (data.shopEmailType === 0) {
+        if (!data.simpleInboxEmails || data.simpleInboxEmails.length === 0) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                path: ['simpleInboxEmails'],
+                message: 'At least one email is required for simple inbox',
+            });
+        }
     }
 
     // Conditional inbox validation
@@ -63,6 +69,24 @@ export const shopSettingsSchema = z.object({
                 code: z.ZodIssueCode.custom,
                 path: ['conditionalInboxOptions'],
                 message: 'At least one option is required for conditional inbox',
+            });
+        } else {
+            // Validate each option in conditionalInboxOptions
+            data.conditionalInboxOptions.forEach((option, index) => {
+                if (!option.option) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        path: [`conditionalInboxOptions.${index}.option`],
+                        message: 'Option name is required',
+                    });
+                }
+                if (!option.emails || option.emails.length === 0) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        path: [`conditionalInboxOptions.${index}.emails`],
+                        message: 'At least one email is required',
+                    });
+                }
             });
         }
     }
