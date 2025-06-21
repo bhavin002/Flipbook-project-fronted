@@ -10,7 +10,6 @@ import { BackgroundColorType, BackgroundImageType } from "@/utils/enum.js";
 import BackgroundAudioPlayer from "./BackgroundAudioPlayer";
 import TableOfContentsDrawer from "./TableOfContentsDrawer.jsx";
 import LeadFormModel from "./LeadFormModel";
-import PageOverviewModal from "./PageOverviewModal.jsx";
 
 export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog" }) {
     const [currentPage, setCurrentPage] = useState(1);

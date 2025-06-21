@@ -60,7 +60,7 @@ const COMPONENT_MAP = {
     'masked-image': MaskedImageWidget,
 };
 
-const PageContentRenderer = ({ data, index, visibilitySettings, flipbookRef }) => {
+const PageContentRenderer = ({ data, index, visibilitySettings, flipbookRef, flipbookId }) => {
     const htmlType = data?.shape?.htmlType;
     const Component = COMPONENT_MAP[htmlType];
 
@@ -69,7 +69,8 @@ const PageContentRenderer = ({ data, index, visibilitySettings, flipbookRef }) =
             shape: data.shape,
             visibilitySettings,
             ...(flipbookRef && { flipbookRef }),
-            ...(data.shape?.id && { key: data.shape.id })
+            ...(data.shape?.id && { key: data.shape.id }),
+            ...(flipbookId && { flipbookId })
         };
         return <Component {...props} />;
     }

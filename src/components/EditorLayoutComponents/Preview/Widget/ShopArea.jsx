@@ -2,10 +2,10 @@ import React from 'react';
 import ShopAreaModal from './ShopAreaModal';
 import { showModal } from '@/utils/ShowModal';
 
-export default function ShopArea({ shape, visibilitySettings }) {
+export default function ShopArea({ shape, visibilitySettings, flipbookId }) {
     const handleClick = () => {
         if (shape.htmlType === 'shop-area' && shape.htmlData?.variantId) {
-            showModal(ShopAreaModal, shape.htmlData);
+            showModal(ShopAreaModal, shape.htmlData, flipbookId);
         }
     };
     return (

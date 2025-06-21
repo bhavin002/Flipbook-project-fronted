@@ -19,13 +19,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
 import { getProductApi } from '@/service/product.service';
+import cartService from '@/service/IndexedDBCart.service';
 
-const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
+const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [productInfo, setProductInfo] = useState(null);
     const [selectedVariant, setSelectedVariant] = useState({});
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const [quantity, setQuantity] = useState(4);
+    const [quantity, setQuantity] = useState(1);
     const [personalizationText, setPersonalizationText] = useState('');
     const [currentImages, setCurrentImages] = useState([]);
 
@@ -106,13 +107,13 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
         if (matchingVariant) {
             return {
                 price: matchingVariant.price,
-                discountPrice: matchingVariant.discountPrice
+                discountPrice: matchingVariant.discountPrice,
             };
         }
 
         return {
             price: productInfo.price,
-            discountPrice: productInfo.discountPrice
+            discountPrice: productInfo.discountPrice,
         };
     };
 
@@ -134,6 +135,35 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
         setCurrentImageIndex((prev) =>
             prev === 0 ? currentImages.length - 1 : prev - 1
         );
+    };
+
+    const handleAddToCart = async () => {
+        try {
+            const variantKey = Object.entries(selectedVariant)
+                .map(([key, value]) => `${value}`)
+                .join(' | ');
+
+            const matchingVariant = productInfo.productVariants?.find(
+                variant => variant.variantName.includes(variantKey)
+            );
+
+            const productData = {
+                productTitle: productInfo.productTitle,
+                productImage: currentImages[0]?.imageLink || htmlData?.productImage,
+                currentPrice: getCurrentPrice(),
+                quantity: quantity,
+                productId: productInfo._id,
+                productVariantId: matchingVariant?._id || null,
+                personalizationText: productInfo.customizableProduct ? personalizationText : null,
+            };
+
+            await cartService.addToCart(flipbookId, productData);
+            onOpenChange(false);
+        } catch (error) {
+            toast.error('Failed to add product to cart', {
+                description: error.message,
+            });
+        }
     };
 
     const LoadingSkeleton = () => (
@@ -372,7 +402,8 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
                                 {hasQuantityControls && (
                                     <div className="text-xs text-gray-500">
                                         {productInfo.minQuantity} / {productInfo.maxQuantity}
-                                    </div>)}
+                                    </div>
+                                )}
                             </div>
 
                             <div className="space-x-3">
@@ -387,13 +418,9 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData }) => {
                                 <Button
                                     style={{
                                         backgroundColor: htmlData?.customizeButton?.buttonColor || '#774B15',
-                                        color: htmlData?.customizeButton?.labelColor || '#DD400E'
+                                        color: htmlData?.customizeButton?.labelColor || '#DD400E',
                                     }}
-                                    onClick={() => {
-                                        toast.success('Product added to cart', {
-                                            description: `${quantity}x ${productInfo.productTitle || 'Product'}`
-                                        });
-                                    }}
+                                    onClick={handleAddToCart}
                                 >
                                     {htmlData?.customizeButton?.buttonLabel || 'Add to Cart'}
                                 </Button>

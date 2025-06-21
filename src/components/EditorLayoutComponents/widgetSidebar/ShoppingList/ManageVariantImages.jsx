@@ -60,6 +60,7 @@ function SortableImageItem({ image, onDelete }) {
 }
 
 export default function ManageVariantImages({ attributes, variants, setValue, watch, selectedAttributeId, setSelectedAttributeId }) {
+    console.log("variants ManageVariantImages", variants);
     const [selectedAttributeName, setSelectedAttributeName] = useState(watch("variantImages")?.selectedAttribute || "");
     const [isLinkImagesOpen, setIsLinkImagesOpen] = useState(false);
     const [page, setPage] = useState(1);

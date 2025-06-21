@@ -5,15 +5,14 @@ import JsonToHtml from "../Helper/JsonToHtml.jsx";
 import { GetFlipbookApi } from "@/service/flipbook.service.js";
 import { toast } from "sonner";
 import $ from "jquery";
-import { Loader2 } from "lucide-react";
+import { Loader2, ShoppingBag } from "lucide-react";
 import { useFlipbookSettings as useFlipbookSettingsContext } from "@/context/FlipbookSettingsProvider.jsx";
 import { useFlipbookSettings } from "@/hooks/useFlipbookSettings";
 import PageContentRenderer from "./PageContentRenderer";
 import { LayoutStyle } from "@/utils/enum.js";
 import Slider from "../Helper/Slider.jsx";
 import PageOverviewModal from "./PageOverviewModal.jsx";
-
-
+import ShoppingCartPopover from "./ShoppingCartPopover.jsx";
 
 const debounce = (func, delay) => {
     let timeoutId;
@@ -203,7 +202,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
         <>
             {visibilitySettings.brandLogo && (
                 visibilitySettings.logoLink ? (
-                    <div className="w-full p-2">
+                    <div className="w-full flex justify-between p-2">
                         <a
                             href={visibilitySettings.logoLink}
                             target="_blank"
@@ -220,13 +219,14 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                     </div>
 
                 ) : (
-                    <div className="w-full p-2">
+                    <div className="w-full flex justify-between p-4">
                         <img
                             src={visibilitySettings.brandLogo}
                             width={200}
                             className="w-auto h-auto max-h-[50px] max-w-[200px]"
                             alt="Logo"
                         />
+                        <ShoppingCartPopover flipbookId={flipbookId} />
                     </div>
 
                 )
@@ -266,6 +266,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                                                     index={idx}
                                                     visibilitySettings={visibilitySettings}
                                                     flipbookRef={myRef}
+                                                    flipbookId={flipbookId}
                                                 />
                                             ))}
                                         </div>
@@ -286,6 +287,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                                 divHeight={divHeight}
                                 visibilitySettings={visibilitySettings}
                                 onLoad={handleBookLoad}
+                                flipbookId={flipbookId}
                             />
                         )}
                     </div>
@@ -353,6 +355,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                     divHeight={divHeight}
                     width={width}
                     height={height}
+                    flipbookId={flipbookId}
                 />
             )}
         </>

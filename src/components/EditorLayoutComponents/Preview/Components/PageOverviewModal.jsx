@@ -2,7 +2,7 @@ import React from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import PageContentRenderer from './PageContentRenderer';
 
-const PageOverviewModal = ({ isOpen, onClose, pageContent, visibilitySettings, myRef, pageType, divWidth, divHeight, width, height }) => {
+const PageOverviewModal = ({ isOpen, onClose, pageContent, visibilitySettings, myRef, pageType, divWidth, divHeight, width, height, flipbookId }) => {
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -26,6 +26,7 @@ const PageOverviewModal = ({ isOpen, onClose, pageContent, visibilitySettings, m
                                 index={idx}
                                 visibilitySettings={visibilitySettings}
                                 flipbookRef={myRef}
+                                flipbookId={flipbookId}
                             />
                         ))}
                     </div>

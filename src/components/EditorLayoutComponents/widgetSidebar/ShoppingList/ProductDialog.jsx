@@ -4,17 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { Trash2, GripVertical } from "lucide-react";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
+import { Trash2, GripVertical, Info } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { useState, useRef } from "react";
-import { Info } from "lucide-react";
 import {
     Tooltip,
     TooltipContent,
@@ -138,7 +130,7 @@ export default function ProductDialog({
         }
     });
 
-    console.log("errors ??",errors)
+    console.log("errors ??", errors)
 
     const onSale = watch("onSale");
 
@@ -322,7 +314,23 @@ export default function ProductDialog({
                         </div>
                         <Separator className="my-5" />
                         <div className="space-y-4 px-1" >
-                            <Label className="text-md font-semibold">Pricing</Label>
+                            <div className="flex items-center gap-2">
+                                <Label className="text-md font-semibold">Pricing</Label>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
+                                        </TooltipTrigger>
+                                        <TooltipContent
+                                            side="right"
+                                            align="center"
+                                            className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                                        >
+                                            <p className="text-sm">If you change pricing here, it will reflect on current users who have added this product to their cart. The cart will be updated with the new price automatically.</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
                             <div className="flex gap-4">
                                 <div className="w-[50%]">
                                     <Label htmlFor="product-price" className={`text-xs ${errors.price ? "text-red-500" : ""}`}>

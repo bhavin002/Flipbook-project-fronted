@@ -26,11 +26,22 @@ const strictlyPositiveNumberAsStringSchema = numberAsStringSchema.refine(
     }
 );
 
+const requiredPositiveNumberAsStringSchema = z
+    .string()
+    .regex(/^[0-9]*\.?[0-9]+$/, "")
+    .transform((val) => {
+        const num = parseFloat(val);
+        return isNaN(num) ? null : num;
+    })
+    .refine((val) => val !== null && val > 0, {
+        message: "Price must be greater than 0",
+    });
+
 export const productSchema = z.object({
     productTitle: z.string().optional(),
     sku: z.string().optional(),
     description: z.string().optional(),
-    price: positiveNumberAsStringSchema,
+    price: requiredPositiveNumberAsStringSchema,
     onSale: z.boolean(),
     discountPrice: positiveNumberAsStringSchema,
     images: z.array(z.object({

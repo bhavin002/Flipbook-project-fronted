@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import PageContentRenderer from "../Components/PageContentRenderer";
 
-const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentPage, onPageChange, totalPages, divWidth, divHeight, visibilitySettings, onLoad }) => {
+const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentPage, onPageChange, totalPages, divWidth, divHeight, visibilitySettings, onLoad, flipbookId }) => {
     useEffect(() => {
         if (onLoad) onLoad();
     }, [onLoad]);
@@ -142,6 +142,7 @@ const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentP
                                                     data={data}
                                                     index={idx}
                                                     visibilitySettings={visibilitySettings}
+                                                    flipbookId={flipbookId}
                                                 />
                                             ))}
                                         </div>

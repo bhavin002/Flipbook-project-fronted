@@ -86,6 +86,7 @@ function SortableAttributeItem({ attribute, onDelete, onAttributeChange, onOptio
 export default function ProductAttributes({ setValue, errors, watch }) {
   const [attributes, setAttributes] = useState(() => {
     const productAttrs = watch("productAttributes") || [];
+    console.log("productAttrs ProductAttributes", productAttrs);
     return productAttrs.map((attr, index) => ({
       id: attr._id,
       name: attr.attributeName,
@@ -183,21 +184,16 @@ export default function ProductAttributes({ setValue, errors, watch }) {
 
     // Get existing product variants to preserve visibility settings
     const existingVariants = watch("productVariants") || [];
+    console.log("existingVariants ProductAttributes", existingVariants);
     
-    let combinations = validAttributes[0].options.map(option => {
-      console.log("option ??? validAttributes", option);
-
-      // Find existing variant with this option to preserve visibility
-      const existingVariant = existingVariants.find(v => v.variantName === option);
-
-      return {
-        variant: option,
-        price: existingVariants.find(v => v.variantName === option)?.price || price, 
-        discountPrice: existingVariants.find(v => v.variantName === option)?.discountPrice || discountPrice, 
-        sku: existingVariants.find(v => v.variantName === option)?.sku || sku, 
-        visibility: existingVariant ? existingVariant.visibility : true,
-      };
-    });
+    // Generate all possible combinations first
+    let combinations = validAttributes[0].options.map(option => ({
+      variant: option,
+      price: price,
+      discountPrice: discountPrice,
+      sku: sku,
+      visibility: true,
+    }));
 
     for (let i = 1; i < validAttributes.length; i++) {
       const newCombinations = [];
@@ -208,21 +204,31 @@ export default function ProductAttributes({ setValue, errors, watch }) {
           // Create the new variant name
           const newVariantName = `${comb.variant} | ${option}`;
           
-          // Find existing variant with this name to preserve visibility
-          const existingVariant = existingVariants.find(v => v.variantName === newVariantName);
-          
           newCombinations.push({
             variant: newVariantName,
             price: comb.price, 
             discountPrice: comb.discountPrice, 
             sku: comb.sku, 
-            visibility: existingVariant ? existingVariant.visibility : comb.visibility,
+            visibility: comb.visibility,
           });
         });
       });
 
       combinations = newCombinations;
     }
+
+    // Now match with existing variants to preserve their values
+    combinations = combinations.map(comb => {
+      const existingVariant = existingVariants.find(v => v.variantName === comb.variant);
+      
+      return {
+        variant: comb.variant,
+        price: existingVariant?.price || comb.price,
+        discountPrice: existingVariant?.discountPrice || comb.discountPrice,
+        sku: existingVariant?.sku || comb.sku,
+        visibility: existingVariant ? existingVariant.visibility : comb.visibility,
+      };
+    });
 
     setValue("productVariants", combinations.map(comb => ({
       variantName: comb.variant,
