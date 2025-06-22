@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ShoppingBag, X, Trash2, Download, Minus, Plus } from "lucide-react";
+import { ShoppingBag, X, Trash2, Download, Minus, Plus, ShoppingCart, Heart, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
     DropdownMenu,
@@ -12,12 +12,31 @@ import { Separator } from "@/components/ui/separator";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import cartService from '@/service/IndexedDBCart.service';
 import { toast } from 'sonner';
+import { useShopSettings } from "@/context/ShopSettingsContext";
+import { ShopAppearance } from "@/utils/enum";
 
 const ShoppingCartPopover = ({ flipbookId }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { shopSettings, getCurrentCurrency } = useShopSettings();
+
+    const getCartIcon = () => {
+        if (shopSettings.shopAppearance === ShopAppearance.SHOP_BAG) {
+            return <ShoppingBag />;
+        }
+        if (shopSettings.shopAppearance === ShopAppearance.SHOP_CART) {
+            return <ShoppingCart />;
+        }
+        if (shopSettings.shopAppearance === ShopAppearance.SHOP_HEART) {
+            return <Heart />;
+        }
+        if (shopSettings.shopAppearance === ShopAppearance.SHOP_STAR) {
+            return <Star />;
+        }
+        return <ShoppingBag />;
+    };
 
     useEffect(() => {
         const fetchCart = async () => {
@@ -92,7 +111,50 @@ const ShoppingCartPopover = ({ flipbookId }) => {
     };
 
     const handleDownload = (format) => {
-        console.log(`Downloading as ${format}`);
+        toast.success(`${format} downloaded successfully`);
+    };
+
+    const renderDownloadButton = () => {
+        const { allowPdfDownload, allowCsvDownload } = shopSettings;
+
+        if (!allowPdfDownload && !allowCsvDownload) {
+            return null;
+        }
+
+        if (allowPdfDownload && allowCsvDownload) {
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            disabled={cartItems.length === 0}
+                        >
+                            <Download className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="center" className="w-20">
+                        <DropdownMenuItem onClick={() => handleDownload('PDF')}>
+                            PDF
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDownload('CSV')}>
+                            CSV
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        }
+
+        return (
+            <Button
+                variant="outline"
+                size="sm"
+                disabled={cartItems.length === 0}
+                onClick={() => handleDownload(allowPdfDownload ? 'PDF' : 'CSV')}
+            >
+                <Download className="h-4 w-4" />
+            </Button>
+        );
     };
 
     return (
@@ -102,7 +164,7 @@ const ShoppingCartPopover = ({ flipbookId }) => {
                 className="relative [&_svg]:size-5"
                 onClick={() => setIsOpen(!isOpen)}
             >
-                <ShoppingBag />
+                {getCartIcon()}
                 {getTotalItems() > 0 && !isOpen && (
                     <Badge
                         variant="default"
@@ -115,7 +177,7 @@ const ShoppingCartPopover = ({ flipbookId }) => {
 
             {isOpen && (
                 <div
-                    className="absolute right-0 mt-2 w-96 bg-background border rounded-md shadow-lg z-50 max-h-[600px] flex flex-col"
+                    className="absolute right-0 mt-2 w-[20rem] md:w-[28rem] bg-background border rounded-md shadow-lg z-50 max-h-[600px] flex flex-col"
                     style={{ top: '100%' }}
                 >
                     <div className="flex items-center justify-between p-4 border-b">
@@ -135,25 +197,7 @@ const ShoppingCartPopover = ({ flipbookId }) => {
                             >
                                 Clear list
                             </Button>
-                            <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        disabled={cartItems.length === 0}
-                                    >
-                                        <Download className="h-4 w-4" />
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="center" className="w-20">
-                                    <DropdownMenuItem onClick={() => handleDownload('PDF')}>
-                                        PDF
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleDownload('CSV')}>
-                                        CSV
-                                    </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
+                            {renderDownloadButton()}
                             <Button
                                 variant="ghost"
                                 size="icon"
@@ -166,72 +210,74 @@ const ShoppingCartPopover = ({ flipbookId }) => {
 
                     <div className="flex-1 p-4 overflow-y-auto" style={{ maxHeight: '200px' }}>
                         {isLoading ? (
-                            <div className="text-center py-8 text-muted-foreground">
+                            <div className="text-center text-muted-foreground">
                                 Loading cart...
                             </div>
                         ) : cartItems.length === 0 ? (
-                            <div className="text-center py-8 text-muted-foreground">
+                            <div className="text-center text-muted-foreground">
                                 Your cart is empty
                             </div>
                         ) : (
                             <div className="space-y-4">
                                 {cartItems.map((item) => (
-                                    <div key={item.productVariantId || item.productId} className="flex items-center gap-3">
+                                    <div key={item.productVariantId || item.productId} className="flex items-start gap-3">
                                         <div className="w-16 h-16 rounded-md flex items-center justify-center bg-gray-50">
                                             {item.productImage ? (
                                                 <img
-                                                    src={item.productImage}
-                                                    alt={item.productTitle}
-                                                    className="w-full h-full object-cover rounded-md"
-                                                />
+                                                src={item.productImage}
+                                                alt={item.productTitle}
+                                                className="w-full h-full object-cover rounded-md"
+                                            />
                                             ) : (
                                                 <ShoppingBag className="h-6 w-6 text-muted-foreground" />
                                             )}
                                         </div>
                                         <div className="flex-1">
                                             <h4 className="font-medium line-clamp-2">{item.productTitle}</h4>
-                                            <p className="text-sm font-semibold">{item.productPrice} INR</p>
+                                            <p className="text-sm font-semibold">{item.productPrice} {getCurrentCurrency()}</p>
                                             {item.personalizationText && (
                                                 <p className="text-xs text-gray-500">Personalization: {item.personalizationText}</p>
                                             )}
                                         </div>
-                                        <div className="flex items-center gap-1 border rounded-md">
+                                        <div className="flex flex-col items-end gap-2">
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                className="h-8 w-8"
-                                                onClick={() => updateQuantity(
-                                                    { productId: item.productId, productVariantId: item.productVariantId },
-                                                    item.productQty - 1
-                                                )}
-                                                disabled={item.productQty <= 1}
-                                            >
-                                                <Minus className="h-3 w-3" />
-                                            </Button>
-                                            <span className="px-3 py-1 text-sm min-w-[2rem] text-center">
-                                                {item.productQty}
-                                            </span>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="h-8 w-8"
-                                                onClick={() => updateQuantity(
-                                                    { productId: item.productId, productVariantId: item.productVariantId },
-                                                    item.productQty + 1
+                                                onClick={() => removeItem(
+                                                    { productId: item.productId, productVariantId: item.productVariantId }
                                                 )}
                                             >
-                                                <Plus className="h-3 w-3" />
+                                                <Trash2 className="h-4 w-4" color="red" />
                                             </Button>
+                                            <div className="flex items-center gap-1 border rounded-md">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8"
+                                                    onClick={() => updateQuantity(
+                                                        { productId: item.productId, productVariantId: item.productVariantId },
+                                                        item.productQty - 1
+                                                    )}
+                                                    disabled={item.productQty <= 1}
+                                                >
+                                                    <Minus className="h-3 w-3" />
+                                                </Button>
+                                                <span className="px-3 py-1 text-sm min-w-[2rem] text-center">
+                                                    {item.productQty}
+                                                </span>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8"
+                                                    onClick={() => updateQuantity(
+                                                        { productId: item.productId, productVariantId: item.productVariantId },
+                                                        item.productQty + 1
+                                                    )}
+                                                >
+                                                    <Plus className="h-3 w-3" />
+                                                </Button>
+                                            </div>
                                         </div>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => removeItem(
-                                                { productId: item.productId, productVariantId: item.productVariantId }
-                                            )}
-                                        >
-                                            <Trash2 className="h-4 w-4" color="red" />
-                                        </Button>
                                     </div>
                                 ))}
                             </div>
@@ -244,11 +290,13 @@ const ShoppingCartPopover = ({ flipbookId }) => {
                             <div className="p-4 space-y-4">
                                 <div className="flex justify-between items-center">
                                     <span className="text-lg font-semibold">Total:</span>
-                                    <span className="text-lg font-bold">{getTotalPrice()} INR</span>
+                                    <span className="text-lg font-bold">{getTotalPrice()} {getCurrentCurrency()}</span>
                                 </div>
-                                <Button className="w-full" size="lg">
-                                    Send order
-                                </Button>
+                                {shopSettings.emailCheckout && (
+                                    <Button className="w-full" size="lg">
+                                        {shopSettings.checkoutButtonLabel}
+                                    </Button>
+                                )}
                             </div>
                         </>
                     )}
@@ -259,8 +307,8 @@ const ShoppingCartPopover = ({ flipbookId }) => {
                 isConfirmModalOpen={isConfirmModalOpen}
                 setIsConfirmModalOpen={setIsConfirmModalOpen}
                 title="Clear Shopping List"
-                description="Are you sure you want to clear all items from your shopping list? This action cannot be undone."
                 onConfirm={clearCart}
+                description="Are you sure you want to clear all items from your shopping list? This action cannot be undone."
             />
         </div>
     );

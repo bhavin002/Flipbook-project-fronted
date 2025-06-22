@@ -322,7 +322,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             </div>
                         )}
                     </div>
-                    <div className="flex items-center space-x-3 ml-6">
+                    <div className="flex items-center space-x-3 md:ml-6">
                         <Button
                             variant="ghost"
                             size="icon"

@@ -60,6 +60,7 @@ import { WorkspaceProvider } from "./context/WorkspaceContext";
 import { FlipbookProvider } from "./context/FlipbookContext";
 import { FlipbookSettingsProvider } from "./context/FlipbookSettingsProvider";
 import AdminEditorAppLayout from "./layout/AdminEditorAppLayout";
+import { ShopSettingsProvider } from "./context/ShopSettingsContext";
 
 // Route configurations
 const brandingRoutes = [
@@ -239,7 +240,9 @@ export default function App() {
                   <PrivateRoute>
                     <ViewModeProvider>
                       <FlipbookSettingsProvider>
-                        <CustomizeAppLayout />
+                        <ShopSettingsProvider>
+                          <CustomizeAppLayout />
+                        </ShopSettingsProvider>
                       </FlipbookSettingsProvider>
                     </ViewModeProvider>
                   </PrivateRoute>
@@ -258,7 +261,7 @@ export default function App() {
                 <Route path="/admin-editor/:id" element={
                   <PrivateRoute>
                     <ViewModeProvider>
-                        <AdminEditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                      <AdminEditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
                     </ViewModeProvider>
                   </PrivateRoute>
                 }>
@@ -269,7 +272,9 @@ export default function App() {
                   <PrivateRoute>
                     <ViewModeProvider>
                       <FlipbookSettingsProvider>
-                        <EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                        <ShopSettingsProvider>
+                          <EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                        </ShopSettingsProvider>
                       </FlipbookSettingsProvider>
                     </ViewModeProvider>
                   </PrivateRoute>

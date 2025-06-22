@@ -19,7 +19,8 @@ export function CurrencyProvider({ children }) {
         // Transform API data to the format needed by components
         const formattedCurrencies = response.data.map(currency => ({
           value: currency._id,
-          label: `${currency.code} (${currency.name})`
+          label: `${currency.code} (${currency.name})`,
+          code: currency.code
         }));
 
         setCurrencies(formattedCurrencies);

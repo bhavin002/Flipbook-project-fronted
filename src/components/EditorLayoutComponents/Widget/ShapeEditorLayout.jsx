@@ -24,7 +24,7 @@ import GoToPage from "../widgetSidebar/GoToPage"
 import StockVideo from "../widgetSidebar/StockVideo"
 import Text from "../widgetSidebar/Text"
 
-function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex) {
+function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, flipbookId) {
     if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
         return (
             <Hyperlink mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />
@@ -107,7 +107,7 @@ function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, 
     }
     if (selectedSubMenu === "shopping-list") {
         return (
-            <ShoppingList selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
+            <ShoppingList selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} flipbookId={flipbookId}/>
         )
     }
     if (selectedSubMenu === "product-tag") {
@@ -153,10 +153,10 @@ function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, 
 
 }
 
-export default function ShapeEditorLayout({ setIsShapeDrawerOpen, selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex, setSelectedSubMenu }) {
+export default function ShapeEditorLayout({ setIsShapeDrawerOpen, selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex, setSelectedSubMenu, flipbookId }) {
     return (
         <div className={`absolute right-0 h-full dark-theme top-0 bg-sidebar z-[11] text-white transition-all flex`} style={{ width: (selectedSubMenu) ? '23rem' : "0px", position: "absolute", overflowX: 'hidden' }}>
-            {renderComponent(setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex)}
+            {renderComponent(setIsShapeDrawerOpen, selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, flipbookId)}
         </div>
     )
 

@@ -25,7 +25,7 @@ import { Drawer, DrawerContent } from "@/components/ui/drawer"
 import StockVideo from "../widgetSidebar/StockVideo"
 import Text from "../widgetSidebar/Text"
 
-function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, setIsShapeDrawerOpen) {
+function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, setIsShapeDrawerOpen, flipbookId) {
     if (selectedShape?.length && selectedSubMenu === 'hyperlink') {
         return (
             <Hyperlink mainStage={mainStage} setMainStage={setMainStage} selectedShape={selectedShape} selectedIndex={selectedIndex} />
@@ -108,7 +108,7 @@ function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mai
     }
     if (selectedSubMenu === "shopping-list") {
         return (
-            <ShoppingList selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
+            <ShoppingList selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} flipbookId={flipbookId} />
         )
     }
     if (selectedSubMenu === "product-tag") {
@@ -154,14 +154,14 @@ function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mai
 
 }
 
-export default function BottomShapeEditorLayout({ isShapeDrawerOpen, setIsShapeDrawerOpen, selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex, setSelectedSubMenu }) {
+export default function BottomShapeEditorLayout({ isShapeDrawerOpen, setIsShapeDrawerOpen, selectedSubMenu, selectedShape, mainStage, setMainStage, selectedIndex, setSelectedSubMenu, flipbookId }) {
     return (
         <Drawer open={isShapeDrawerOpen} onOpenChange={() => {
             setIsShapeDrawerOpen(false)
             setSelectedSubMenu(null)
         }}>
             <DrawerContent className="max-h-[85vh] rounded-t-xl flex flex-col">
-                {renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, setIsShapeDrawerOpen)}
+                {renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mainStage, setMainStage, selectedIndex, setIsShapeDrawerOpen, flipbookId)}
             </DrawerContent>
         </Drawer>
     )

@@ -53,21 +53,21 @@ function ValidationDropdown({ field, onValidationChange }) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0" type="button">
+                <Button variant="ghost" className="h-8 w-8 p-0" type="button" disabled={field.isLocked}>
                     {field.type ? getIcon(field.type) : <AlertCircle className="h-4 w-4" />}
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-40">
-                <DropdownMenuItem onClick={() => onValidationChange(field.id, "custom_input")}>
+                <DropdownMenuItem onClick={() => onValidationChange(field.id, "custom_input")} disabled={field.isLocked}>
                     <AlertCircle className="mr-2 h-4 w-4" /> Custom field
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onValidationChange(field.id, "email")}>
+                <DropdownMenuItem onClick={() => onValidationChange(field.id, "email")} disabled={field.isLocked}>
                     <Mail className="mr-2 h-4 w-4" /> Email address
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onValidationChange(field.id, "phone_number")}>
+                <DropdownMenuItem onClick={() => onValidationChange(field.id, "phone_number")} disabled={field.isLocked}>
                     <Phone className="mr-2 h-4 w-4" /> Phone number
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onValidationChange(field.id, "website")}>
+                <DropdownMenuItem onClick={() => onValidationChange(field.id, "website")} disabled={field.isLocked}>
                     <Globe className="mr-2 h-4 w-4" /> Website
                 </DropdownMenuItem>
             </DropdownMenuContent>
@@ -103,6 +103,7 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
                 type="button"
                 {...attributes}
                 {...listeners}
+                disabled={field.isLocked}
             >
                 <GripVertical className="h-4 w-4 text-gray-400" />
             </button>
@@ -125,6 +126,7 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
                 onClick={() => onRequiredChange(field.id)}
                 className={`h-8 px-2 text-xs ${field.required ? 'text-primary' : 'text-gray-400'}`}
                 title={field.required ? 'Required field' : 'Optional field'}
+                disabled={field.isLocked}
             >
                 <Star className={field.required ? 'fill-current' : ''} />
             </Button>
@@ -134,6 +136,7 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
                 type="button"
                 onClick={() => onDelete(field.id)}
                 className="h-8 w-8 p-0"
+                disabled={field.isLocked}
             >
                 <Trash2 className="h-4 w-4" />
             </Button>
@@ -141,7 +144,7 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
     );
 }
 
-export default function CustomerDetailsFields({ form }) {
+export default function CustomerDetailsFields({ form, isEmailFieldRequired = false }) {
     if(!form){
         return null;
     }
@@ -155,14 +158,31 @@ export default function CustomerDetailsFields({ form }) {
     const [fields, setFields] = useState([]);
 
     useEffect(() => {
-        const convertedFields = customerFields.map((field, index) => ({
+        let convertedFields = customerFields.map((field, index) => ({
             id: `field-${index}`,
             label: field.label || '',
             type: field.type || 'custom_input',
-            required: field.required || false
+            required: field.required || false,
+            isLocked: false
         }));
+
+        if (isEmailFieldRequired && !convertedFields.some(f => f.label === "Email address")) {
+            convertedFields = [{
+                id: `field-email-locked`,
+                label: "Email address",
+                type: "email",
+                required: true,
+                isLocked: true
+            }, ...convertedFields];
+        } else if (isEmailFieldRequired && convertedFields.some(f => f.label === "Email address")) {
+            convertedFields = convertedFields.map((field, index) => ({
+                ...field,
+                isLocked: index === 0
+            }));
+        }
+
         setFields(convertedFields);
-    }, [customerFields]);
+    }, [customerFields, isEmailFieldRequired]);
 
     // Update form when local state changes
     const updateFormFields = (newFields) => {
@@ -182,7 +202,8 @@ export default function CustomerDetailsFields({ form }) {
             id: newId,
             label: typeName,
             type: fieldType,
-            required: false
+            required: false,
+            isLocked: false
         };
 
         const newFields = [...fields, newField];
@@ -191,7 +212,7 @@ export default function CustomerDetailsFields({ form }) {
     };
 
     const handleDeleteField = (id) => {
-        if (fields.length <= 1) return;
+        if (fields.length <= 1 || fields.find(f => f.id === id)?.isLocked) return;
         const newFields = fields.filter(field => field.id !== id);
         setFields(newFields);
         updateFormFields(newFields);

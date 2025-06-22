@@ -63,15 +63,6 @@ export default function OrderOptions({ form, clearErrors, errors }) {
     const handleEmailCheckoutChange = (checked) => {
         clearErrors(["checkoutButtonLabel", "notificationMessageInternal", "notificationMessageCustomer"]);
         form.setValue("emailCheckout", checked);
-        if (checked) {
-            form.setValue("checkoutButtonLabel", "Place Order");
-            form.setValue("notificationMessageInternal", "A new order has been placed.");
-            form.setValue("notificationMessageCustomer", "Thank you for your purchase!");
-        } else {
-            form.setValue("checkoutButtonLabel", "");
-            form.setValue("notificationMessageInternal", "");
-            form.setValue("notificationMessageCustomer", "");
-        }
     };
 
     return (
@@ -101,12 +92,11 @@ export default function OrderOptions({ form, clearErrors, errors }) {
                                 <FormControl>
                                     <Input
                                         type="text"
-                                        placeholder="Place Order"
+                                        placeholder="Send order"
                                         {...field}
-                                        className={errors.checkoutButtonLabel ? "border-red-500" : ""}
+                                        className={errors.checkoutButtonLabel ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                     />
                                 </FormControl>
-                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -119,11 +109,10 @@ export default function OrderOptions({ form, clearErrors, errors }) {
                                 <FormControl>
                                     <Textarea
                                         placeholder="A new order has been placed."
-                                        className={`resize-none ${errors.notificationMessageInternal ? "border-red-500" : ""}`}
+                                        className={`resize-none ${errors.notificationMessageInternal ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}`}
                                         {...field}
                                     />
                                 </FormControl>
-                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -136,11 +125,11 @@ export default function OrderOptions({ form, clearErrors, errors }) {
                                 <FormControl>
                                     <Textarea
                                         placeholder="Thank you for your purchase!"
-                                        className={`resize-none ${errors.notificationMessageCustomer ? "border-red-500" : ""}`}
+                                        className={`resize-none ${errors.notificationMessageCustomer ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}`}
                                         {...field}
                                     />
                                 </FormControl>
-                                <FormMessage />
+                                
                             </FormItem>
                         )}
                     />
@@ -269,11 +258,10 @@ export default function OrderOptions({ form, clearErrors, errors }) {
                                     <FormControl>
                                         <Textarea
                                             placeholder="E.g. company name, your address, contact info"
-                                            className={`h-16 resize-none ${errors.headerText ? "border-red-500" : ""}`}
+                                            className={`h-16 resize-none ${errors.headerText ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}`}
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -286,11 +274,10 @@ export default function OrderOptions({ form, clearErrors, errors }) {
                                     <FormControl>
                                         <Textarea
                                             placeholder="E.g. Thank you for your order."
-                                            className={`h-16 resize-none ${errors.footerText ? "border-red-500" : ""}`}
+                                            className={`h-16 resize-none ${errors.footerText ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}`}
                                             {...field}
                                         />
                                     </FormControl>
-                                    <FormMessage />
                                 </FormItem>
                             )}
                         />

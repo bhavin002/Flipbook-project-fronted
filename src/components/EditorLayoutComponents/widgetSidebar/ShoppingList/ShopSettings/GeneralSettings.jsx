@@ -533,7 +533,7 @@ export default function GeneralSettings({ form, clearErrors }) {
                         </Tooltip>
                     </TooltipProvider>
                 </div>
-                <CustomerDetailsFields form={form} />
+                <CustomerDetailsFields form={form} isEmailFieldRequired={true} />
             </div>
             <Separator className="my-4" />
             <div className="space-y-4">

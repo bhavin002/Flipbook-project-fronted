@@ -39,6 +39,7 @@ import LoadingButton from "@/utils/LoadingButton";
 import { useCurrency } from "@/context/CurrencyContext";
 import { addIntercationDataToMainStage, restrictNumericInput } from "@/utils/Helper";
 import { productSchema } from "./product.schema";
+import { useShopSettings } from "@/context/ShopSettingsContext";
 
 function SortableImageItem({ image, onDelete }) {
     const {
@@ -82,9 +83,8 @@ function SortableImageItem({ image, onDelete }) {
 }
 
 export default function ProductDialog({
-    mainStage, setMainStage, selectedShape, selectedIndex, isProductDialogOpen, setIsProductDialogOpen, productData
+    mainStage, setMainStage, selectedShape, selectedIndex, isProductDialogOpen, setIsProductDialogOpen, productData, flipbookId
 }) {
-    const { currencies, loading } = useCurrency();
     const [productImages, setProductImages] = useState(productData?.images.map(img => ({
         id: img.imageId,
         imageLink: img.imageLink,
@@ -93,6 +93,7 @@ export default function ProductDialog({
     const [isUploading, setIsUploading] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef(null);
+    const { getCurrentCurrency } = useShopSettings();
 
     const { register, handleSubmit, watch, setValue, formState: { errors }, clearErrors } = useForm({
         resolver: zodResolver(productSchema),
@@ -236,6 +237,7 @@ export default function ProductDialog({
         try {
             setIsLoading(true);
             let response;
+            data.flipbookId = flipbookId;
             if (selectedShape[0].attrs?.htmlData?.variantId) {
                 response = await updateProductApi(selectedShape[0].attrs?.htmlData?.variantId, data);
             } else {
@@ -334,7 +336,7 @@ export default function ProductDialog({
                             <div className="flex gap-4">
                                 <div className="w-[50%]">
                                     <Label htmlFor="product-price" className={`text-xs ${errors.price ? "text-red-500" : ""}`}>
-                                        Price
+                                        Price ({getCurrentCurrency()})
                                     </Label>
                                     <Input
                                         type="text"
@@ -364,7 +366,7 @@ export default function ProductDialog({
                                             htmlFor="discount-product-price"
                                             className={`text-xs ${errors.discountPrice ? "text-red-500" : ""}`}
                                         >
-                                            Discount price
+                                            Discount price ({getCurrentCurrency()})
                                         </Label>
                                         <Input
                                             type="text"

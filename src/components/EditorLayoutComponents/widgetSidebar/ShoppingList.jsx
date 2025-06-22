@@ -8,7 +8,7 @@ import ProductCustomize from "./ShoppingList/ProductCustomize";
 import { toast } from "sonner";
 import { getProductApi } from "@/service/product.service";
 
-export default function ShoppingList({ mainStage, setMainStage, selectedShape, selectedIndex }) {
+export default function ShoppingList({ mainStage, setMainStage, selectedShape, selectedIndex, flipbookId }) {
     const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [productData, setProductData] = useState(null);
@@ -64,6 +64,7 @@ export default function ShoppingList({ mainStage, setMainStage, selectedShape, s
                         isProductDialogOpen={isProductDialogOpen}
                         setIsProductDialogOpen={setIsProductDialogOpen}
                         productData={productData}
+                        flipbookId={flipbookId}
                     />
                 )
             }
