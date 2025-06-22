@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Star, Trash2 } from "lucide-react";
+import { v4 as uuid } from "uuid";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -76,6 +77,7 @@ const SortableDropdownOption = ({
                 />
             </div>
             <Button
+                type="button"
                 variant="ghost"
                 onClick={() => deleteDropdownOption(fieldId, option.id)}
                 className="hover:text-red-500 hover:bg-sidebar"
@@ -162,6 +164,7 @@ const SortableField = ({
                     </SelectContent>
                 </Select>
                 <Button
+                    type="button"
                     variant="ghost"
                     size="icon"
                     onClick={() => toggleRequired(field.id)}
@@ -170,7 +173,7 @@ const SortableField = ({
                 >
                     <Star className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" onClick={() => deleteField(field.id)} className="hover:text-red-500 hover:bg-sidebar"><Trash2 /></Button>
+                <Button type="button" variant="ghost" onClick={() => deleteField(field.id)} className="hover:text-red-500 hover:bg-sidebar"><Trash2 /></Button>
             </div>
             {isDropdown && dropdownOptions[field.id] && (
                 <div className="ml-5 space-y-1">
@@ -197,6 +200,7 @@ const SortableField = ({
                         </SortableContext>
                     </DndContext>
                     <Button
+                        type="button"
                         variant="outline"
                         size="sm"
                         className="text-primary"
@@ -211,38 +215,47 @@ const SortableField = ({
     );
 };
 
-export default function DynamicForm({ fields: initialFields = [], onChange = () => {}, disabled }) {
+export default function DynamicForm({ fields: initialFields = [], onChange = () => { }, disabled }) {
+    console.log("initialFields ??", initialFields)
     const [fields, setFields] = useState([]);
     const [dropdownOptions, setDropdownOptions] = useState({});
-    const [nextFieldId, setNextFieldId] = useState(1);
-    const [nextOptionId, setNextOptionId] = useState(1);
 
     const debouncedFields = useDebounce(fields, 500);
+
+    // Generate unique field ID using uuid
+    const generateUniqueFieldId = () => {
+        return uuid();
+    };
+
+    // Generate unique option ID using uuid
+    const generateUniqueOptionId = () => {
+        return uuid();
+    };
 
     useEffect(() => {
         if (initialFields.length > 0) {
             setFields(initialFields);
             const options = {};
+            let maxOptionId = 0;
+
             initialFields.forEach((field) => {
                 if (field.options.length > 1) {
-                    options[field.id] = field.options.map((opt, idx) => ({
-                        id: idx + nextOptionId,
-                        value: opt,
-                    }));
+                    options[field.id] = field.options.map((opt, idx) => {
+                        const optionId = idx + 1;
+                        maxOptionId = Math.max(maxOptionId, optionId);
+                        return {
+                            id: optionId,
+                            value: opt,
+                        };
+                    });
                 }
             });
             setDropdownOptions(options);
-            setNextOptionId(
-                Math.max(...Object.values(options).flatMap((opts) => opts.map((o) => o.id)), 0) + 1 || 1
-            );
-            setNextFieldId(initialFields.length + 1);
         }
     }, [initialFields]);
 
     useEffect(() => {
-        if (debouncedFields.length > 0) {
-            onChange(debouncedFields);
-        }
+        onChange(debouncedFields);
     }, [debouncedFields]);
 
     const fieldTypes = [
@@ -297,11 +310,10 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
 
         const fieldConfig = fieldOptions.find(opt => opt.label === fieldOption);
         const fieldType = fieldConfig?.type || "custom_input";
-        let required = false;
-        
-        if (fieldOption === "Email address") required = true;
 
-        const newFieldId = `field-${nextFieldId}`;
+        let required = false;
+
+        const newFieldId = generateUniqueFieldId();
         const newField = {
             id: newFieldId,
             name: fieldOption,
@@ -312,17 +324,18 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
 
         const newFields = [...fields, newField];
         setFields(newFields);
-        setNextFieldId(nextFieldId + 1);
 
         if (fieldConfig?.isDropdown) {
+            const option1Id = generateUniqueOptionId();
+            const option2Id = generateUniqueOptionId();
+
             setDropdownOptions({
                 ...dropdownOptions,
                 [newFieldId]: [
-                    { id: nextOptionId, value: "Option 1" },
-                    { id: nextOptionId + 1, value: "Option 2" },
+                    { id: option1Id, value: "Option 1" },
+                    { id: option2Id, value: "Option 2" },
                 ],
             });
-            setNextOptionId(nextOptionId + 2);
         }
     };
 
@@ -351,10 +364,11 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
     };
 
     const toggleRequired = (id) => {
-        const newFields = fields.map((field) =>
-            field.id === id ? { ...field, required: !field.required } : field
-        );
-        setFields(newFields);
+        setFields((prevFields) => {
+            return prevFields.map((field) =>
+                field.id === id ? { ...field, required: !field.required } : field
+            );
+        });
     };
 
     const deleteField = (id) => {
@@ -369,7 +383,8 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
 
     const addDropdownOption = (fieldId) => {
         const options = dropdownOptions[fieldId] || [];
-        const newOptions = [...options, { id: nextOptionId, value: "New option" }];
+        const newOptionId = generateUniqueOptionId();
+        const newOptions = [...options, { id: newOptionId, value: "New option" }];
         setDropdownOptions({
             ...dropdownOptions,
             [fieldId]: newOptions,
@@ -430,7 +445,7 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
 
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="text-primary">
+                    <Button type="button" variant="outline" className="text-primary">
                         <Plus />Add field
                     </Button>
                 </DropdownMenuTrigger>
