@@ -226,7 +226,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                             className="w-auto h-auto max-h-[50px] max-w-[200px]"
                             alt="Logo"
                         />
-                        <ShoppingCartPopover flipbookId={flipbookId} />
+                        <ShoppingCartPopover flipbookId={flipbookId} isMobile={isMobile} />
                     </div>
 
                 )

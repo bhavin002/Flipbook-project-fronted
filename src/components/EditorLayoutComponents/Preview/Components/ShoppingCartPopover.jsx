@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import { useShopSettings } from "@/context/ShopSettingsContext";
 import { ShopAppearance } from "@/utils/enum";
 
-const ShoppingCartPopover = ({ flipbookId }) => {
+const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
@@ -200,7 +200,7 @@ const ShoppingCartPopover = ({ flipbookId }) => {
 
             {isOpen && (
                 <div
-                    className="absolute right-0 mt-2 w-[20rem] md:w-[28rem] bg-background border rounded-md shadow-lg z-50 max-h-[600px] flex flex-col"
+                    className={`absolute right-0 mt-2 w-auto bg-background border rounded-md shadow-lg z-50 max-h-[600px] flex flex-col ${isMobile ? 'md:w-[23rem]' : 'md:w-[28rem]'}`}
                     style={{ top: '100%' }}
                 >
                     <div className="flex items-center justify-between p-4 border-b">
