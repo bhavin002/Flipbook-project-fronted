@@ -84,6 +84,7 @@ export default function ManageVariantImages({ attributes, variants, setValue, wa
 
         // Initialize local variant data
         const initialVariants = variants.map((variant) => ({
+            _id: variant._id,
             variantName: variant.variant,
             price: variant.price || "",
             discountPrice: variant.discountPrice || "",

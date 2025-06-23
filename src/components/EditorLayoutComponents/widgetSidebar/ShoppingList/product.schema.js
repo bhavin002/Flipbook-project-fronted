@@ -64,6 +64,7 @@ export const productSchema = z.object({
         optionValues: z.array(z.string().min(1, "Option value is required")),
     })).optional().default([]),
     productVariants: z.array(z.object({
+        _id: z.string().optional(),
         variantName: z.string().min(1, "Variant name is required"),
         price: positiveNumberAsStringSchema.optional(),
         discountPrice: positiveNumberAsStringSchema.optional(),
@@ -95,31 +96,41 @@ export const productSchema = z.object({
         });
     }
 
-    if (data.quantityOption && data.enableMinMaxQuantity && data.restrictToMoqMultiples) {
+    if (data.quantityOption && data.enableMinMaxQuantity) {
         if (data.minQuantity === null || data.minQuantity <= 0) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                message: "The max. value must be a multiple of the min.",
+                message: "Minimum quantity must be greater than 0.",
                 path: ["minQuantity"]
             });
         }
         if (data.maxQuantity === null || data.maxQuantity <= 0) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                message: "",
+                message: "Maximum quantity must be greater than 0.",
                 path: ["maxQuantity"]
             });
         }
         if (
             data.minQuantity !== null &&
-            data.maxQuantity !== null &&
-            data.maxQuantity < data.minQuantity
+            data.maxQuantity !== null
         ) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: "Maximum quantity must be greater than or equal to minimum quantity",
-                path: ["maxQuantity"]
-            });
+            if (data.maxQuantity < data.minQuantity) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Maximum quantity must be greater than or equal to minimum quantity.",
+                    path: ["maxQuantity"]
+                });
+            } else if (data.restrictToMoqMultiples) {
+                // Only check for multiples if restrictToMoqMultiples is true
+                if (data.maxQuantity % data.minQuantity !== 0) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "The max. value must be a multiple of the min.",
+                        path: ["maxQuantity"]
+                    });
+                }
+            }
         }
     }
 

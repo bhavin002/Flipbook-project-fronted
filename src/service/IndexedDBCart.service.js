@@ -102,6 +102,12 @@ class IndexedDBCartService {
             productQty: productData.quantity || 1,
             productId: productData.productId,
             productVariantId: productData.productVariantId || null,
+            minQuantity: productData.minQuantity || null,
+            maxQuantity: productData.maxQuantity || null,
+            restrictToMoqMultiples: productData.restrictToMoqMultiples || null,
+            instructionMessage: productData.instructionMessage || null,
+            personalizationPrice: productData.personalizationPrice || null,
+            pricingMethod: productData.pricingMethod || null,
             personalizationText: productData.personalizationText || null,
             addedAt: new Date().toISOString(),
         };

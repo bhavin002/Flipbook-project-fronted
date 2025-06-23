@@ -65,8 +65,27 @@ const ShoppingCartPopover = ({ flipbookId }) => {
         return () => unsubscribe();
     }, [flipbookId]);
 
-    const updateQuantity = async (productIdentifier, newQuantity) => {
-        if (newQuantity < 1) return;
+    // Helper to get step for quantity changes
+    const getStep = (item) => item.restrictToMoqMultiples ? item.minQuantity : 1;
+
+    // Helper to calculate personalization cost
+    const getPersonalizationCost = (item) => {
+        if (item.personalizationText && item.personalizationText.length > 0 && item.pricingMethod && item.personalizationPrice) {
+            if (item.pricingMethod === 'PER_CHAR') {
+                return item.personalizationPrice * item.personalizationText.length;
+            } else if (item.pricingMethod === 'FLAT_FEE') {
+                return item.personalizationPrice;
+            }
+        }
+        return 0;
+    };
+
+    const updateQuantity = async (productIdentifier, newQuantity, item) => {
+        // Only enforce min/max if they are not null/undefined
+        if (
+            (item.minQuantity !== null && item.minQuantity !== undefined && newQuantity < item.minQuantity) ||
+            (item.maxQuantity !== null && item.maxQuantity !== undefined && newQuantity > item.maxQuantity)
+        ) return;
         try {
             await cartService.updateProductQuantity(flipbookId, productIdentifier, newQuantity);
         } catch (error) {
@@ -107,7 +126,11 @@ const ShoppingCartPopover = ({ flipbookId }) => {
     };
 
     const getTotalPrice = () => {
-        return cartItems.reduce((total, item) => total + (item.productPrice * item.productQty), 0);
+        return cartItems.reduce((total, item) => {
+            const personalizationCost = getPersonalizationCost(item);
+            const itemBasePrice = item.productPrice || 0;
+            return total + ((itemBasePrice + personalizationCost) * item.productQty);
+        }, 0);
     };
 
     const handleDownload = (format) => {
@@ -234,9 +257,12 @@ const ShoppingCartPopover = ({ flipbookId }) => {
                                         </div>
                                         <div className="flex-1">
                                             <h4 className="font-medium line-clamp-2">{item.productTitle}</h4>
-                                            <p className="text-sm font-semibold">{item.productPrice} {getCurrentCurrency()}</p>
+                                            <p className="text-sm font-semibold">
+                                                {/* Show price with personalization */}
+                                                {item.productPrice + getPersonalizationCost(item)} {getCurrentCurrency()}
+                                            </p>
                                             {item.personalizationText && (
-                                                <p className="text-xs text-gray-500">Personalization: {item.personalizationText}</p>
+                                                <p className="text-xs text-gray-500">{item.instructionMessage}: {item.personalizationText}</p>
                                             )}
                                         </div>
                                         <div className="flex flex-col items-end gap-2">
@@ -254,11 +280,19 @@ const ShoppingCartPopover = ({ flipbookId }) => {
                                                     variant="ghost"
                                                     size="icon"
                                                     className="h-8 w-8"
-                                                    onClick={() => updateQuantity(
-                                                        { productId: item.productId, productVariantId: item.productVariantId },
-                                                        item.productQty - 1
-                                                    )}
-                                                    disabled={item.productQty <= 1}
+                                                    onClick={() => {
+                                                        const step = getStep(item);
+                                                        const newQty = item.productQty - step;
+                                                        // Only check min if it's set
+                                                        if (item.minQuantity === null || item.minQuantity === undefined || newQty >= item.minQuantity) {
+                                                            updateQuantity(
+                                                                { productId: item.productId, productVariantId: item.productVariantId },
+                                                                newQty,
+                                                                item
+                                                            );
+                                                        }
+                                                    }}
+                                                    disabled={item.minQuantity !== null && item.minQuantity !== undefined && item.productQty <= item.minQuantity}
                                                 >
                                                     <Minus className="h-3 w-3" />
                                                 </Button>
@@ -269,10 +303,19 @@ const ShoppingCartPopover = ({ flipbookId }) => {
                                                     variant="ghost"
                                                     size="icon"
                                                     className="h-8 w-8"
-                                                    onClick={() => updateQuantity(
-                                                        { productId: item.productId, productVariantId: item.productVariantId },
-                                                        item.productQty + 1
-                                                    )}
+                                                    onClick={() => {
+                                                        const step = getStep(item);
+                                                        const newQty = item.productQty + step;
+                                                        // Only check max if it's set
+                                                        if (item.maxQuantity === null || item.maxQuantity === undefined || newQty <= item.maxQuantity) {
+                                                            updateQuantity(
+                                                                { productId: item.productId, productVariantId: item.productVariantId },
+                                                                newQty,
+                                                                item
+                                                            );
+                                                        }
+                                                    }}
+                                                    disabled={item.maxQuantity !== null && item.maxQuantity !== undefined && item.productQty >= item.maxQuantity}
                                                 >
                                                     <Plus className="h-3 w-3" />
                                                 </Button>

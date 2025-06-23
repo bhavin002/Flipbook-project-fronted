@@ -203,12 +203,12 @@ export default function ProductAttributes({ setValue, errors, watch }) {
         currentOptions.forEach(option => {
           // Create the new variant name
           const newVariantName = `${comb.variant} | ${option}`;
-          
+
           newCombinations.push({
             variant: newVariantName,
-            price: comb.price, 
-            discountPrice: comb.discountPrice, 
-            sku: comb.sku, 
+            price: comb.price,
+            discountPrice: comb.discountPrice,
+            sku: comb.sku,
             visibility: comb.visibility,
           });
         });
@@ -217,11 +217,12 @@ export default function ProductAttributes({ setValue, errors, watch }) {
       combinations = newCombinations;
     }
 
-    // Now match with existing variants to preserve their values
+    // Now match with existing variants to preserve their values and _id
     combinations = combinations.map(comb => {
       const existingVariant = existingVariants.find(v => v.variantName === comb.variant);
-      
+
       return {
+        _id: existingVariant?._id,
         variant: comb.variant,
         price: existingVariant?.price || comb.price,
         discountPrice: existingVariant?.discountPrice || comb.discountPrice,
@@ -231,6 +232,7 @@ export default function ProductAttributes({ setValue, errors, watch }) {
     });
 
     setValue("productVariants", combinations.map(comb => ({
+      _id: comb._id,
       variantName: comb.variant,
       price: comb.price,
       discountPrice: comb.discountPrice,

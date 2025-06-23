@@ -95,7 +95,7 @@ export default function ProductDialog({
     const fileInputRef = useRef(null);
     const { getCurrentCurrency } = useShopSettings();
 
-    const { register, handleSubmit, watch, setValue, formState: { errors }, clearErrors } = useForm({
+    const { register, handleSubmit, watch, setValue, formState: { errors }, clearErrors, trigger } = useForm({
         resolver: zodResolver(productSchema),
         defaultValues: {
             productTitle: productData?.productTitle || "",
@@ -121,6 +121,7 @@ export default function ProductDialog({
             charLimit: productData?.charLimit?.toString() || "4",
             productAttributes: productData?.productAttributes,
             productVariants: productData?.productVariants.map(variant => ({
+                _id: variant._id,
                 variantName: variant.variantName,
                 price: variant.price?.toString(),
                 discountPrice: variant.discountPrice?.toString(),
@@ -343,7 +344,10 @@ export default function ProductDialog({
                                         className={errors.price ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                         id="product-price"
                                         {...register("price")}
-                                        onChange={(e) => handleNumberInputChange(e, "price")}
+                                        onChange={(e) => {
+                                            handleNumberInputChange(e, "price");
+                                            trigger("discountPrice");
+                                        }}
                                         onKeyDown={(e) => restrictNumericInput(e, false)}
                                     />
                                     {errors.price && <p className="text-red-500 text-xs">{errors.price.message}</p>}
@@ -354,7 +358,10 @@ export default function ProductDialog({
                                     <Switch
                                         id="on-sale"
                                         checked={onSale}
-                                        onCheckedChange={(checked) => setValue("onSale", checked)}
+                                        onCheckedChange={(checked) => {
+                                            setValue("onSale", checked);
+                                            clearErrors("discountPrice");
+                                        }}
                                     />
                                     <Label htmlFor="on-sale" className="ml-3 text-gray-700">
                                         On sale
