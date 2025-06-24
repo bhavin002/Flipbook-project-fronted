@@ -5,7 +5,7 @@ import JsonToHtml from "../Helper/JsonToHtml.jsx";
 import { GetFlipbookApi } from "@/service/flipbook.service.js";
 import { toast } from "sonner";
 import $ from "jquery";
-import { Loader2, ShoppingBag } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useFlipbookSettings as useFlipbookSettingsContext } from "@/context/FlipbookSettingsProvider.jsx";
 import { useFlipbookSettings } from "@/hooks/useFlipbookSettings";
 import PageContentRenderer from "./PageContentRenderer";
@@ -139,6 +139,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
             }
         },
     }));
+
 
     if (pageContent.length === 0) {
         return (

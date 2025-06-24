@@ -10,6 +10,9 @@ import { BackgroundColorType, BackgroundImageType } from "@/utils/enum.js";
 import BackgroundAudioPlayer from "./BackgroundAudioPlayer";
 import TableOfContentsDrawer from "./TableOfContentsDrawer.jsx";
 import LeadFormModel from "./LeadFormModel";
+import cartService from '@/service/IndexedDBCart.service';
+import { getProductCartInfoApi } from '@/service/product.service.js';
+import { toast } from "sonner";
 
 export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog" }) {
     const [currentPage, setCurrentPage] = useState(1);
@@ -27,6 +30,78 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const progressBarRef = useRef(null);
     const flipBookRef = useRef(null);
     const containerRef = useRef(null);
+
+    useEffect(() => {
+        const syncCartPrices = async () => {
+            if (!flipbookId) return;
+            try {
+                const cartItems = await cartService.getCart(flipbookId);
+                console.log("cartItems ????", cartItems);
+                if (!cartItems || cartItems.length === 0) return;
+
+                const uniqMap = new Map();
+                cartItems.forEach(item => {
+                    const key = `${item.productId}::${item.productVariantId || ''}`;
+                    if (!uniqMap.has(key)) {
+                        uniqMap.set(key, {
+                            productId: item.productId,
+                            variantId: item.productVariantId || ''
+                        });
+                    }
+                });
+                const payload = Array.from(uniqMap.values());
+
+                let updatedProducts;
+                try {
+                    const response = await getProductCartInfoApi(payload);
+                    console.log("getProductCartInfoApi ????", response.data);
+                    updatedProducts = response.data;
+                } catch (err) {
+                    toast.error('Failed to sync cart prices', { description: err.message });
+                    return;
+                }
+                console.log("updatedProducts ????", updatedProducts);
+                console.log("cartItems ????", cartItems);
+
+                const updatedCartItems = cartItems.map(item => {
+                    const updated = updatedProducts.find(
+                        p =>
+                            p.productId === item.productId &&
+                            (String(p.productVariantId || '') === String(item.productVariantId || ''))
+                    );
+                    console.log(`Matching for item ${item.cartId}:`, {
+                        itemProductId: item.productId,
+                        itemVariantId: item.productVariantId,
+                        foundMatch: !!updated,
+                        updatedProduct: updated
+                    });
+
+                    if (updated) {
+                        return {
+                            ...item,
+                            productTitle: updated.productName || item.productTitle,
+                            productImage: updated.images && updated.images[0] ? updated.images[0].imageLink : item.productImage,
+                            productPrice: updated.discountedPrice ?? updated.price ?? item.productPrice,
+                            price: updated.price ?? item.price,
+                            discountedPrice: updated.discountedPrice ?? item.discountedPrice,
+                            images: updated.images || item.images,
+                            pricingMethod: updated.pricingMethod || item.pricingMethod,
+                            paidPersonalization: updated.paidPersonalization ?? item.paidPersonalization,
+                            personalizationPrice: updated.personalizationPrice ?? item.personalizationPrice,
+                        };
+                    }
+                    return item;
+                });
+
+                console.log("Final updatedCartItems:", updatedCartItems);
+                await cartService.saveCart(flipbookId, updatedCartItems);
+                console.log("Cart successfully updated in IndexedDB");
+            } catch (error) {
+                toast.error('Failed to sync cart prices', { description: error.message });
+            }
+        };
+        syncCartPrices();
+    }, []);
 
     const progress = totalPages > 1 ? ((currentPage - 1) / (totalPages - 1)) * 100 : 0;
 

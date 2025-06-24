@@ -28,3 +28,8 @@ export const duplicateProductApi = async (productId) => {
     const response = await ApiClient().get(`/product/duplicate/${productId}`);
     return response.data;
 }
+
+export const getProductCartInfoApi = async (ids) => {
+    const response = await ApiClient().post(`/product/get-product-cart-info`, ids);
+    return response.data;
+}

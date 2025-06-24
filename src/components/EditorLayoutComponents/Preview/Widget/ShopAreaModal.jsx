@@ -162,7 +162,15 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
         setPersonalizationError('');
 
         try {
-            const cart = await cartService.getCart(flipbookId);
+            // Only check that the quantity being added does not exceed maxQuantity
+            const maxQty = productInfo?.maxQuantity || 100;
+            if (quantity > maxQty) {
+                toast.error(`You cannot add more than ${maxQty} of this product at once.`, {
+                    description: `You tried to add ${quantity}.`,
+                });
+                return;
+            }
+
             const variantKey = Object.entries(selectedVariant)
                 .map(([key, value]) => `${value}`)
                 .join(' | ');
@@ -170,23 +178,6 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
             const matchingVariant = productInfo.productVariants?.find(
                 variant => variant.variantName.includes(variantKey)
             );
-
-            // Find existing cart item
-            const existingCartItem = cart.find(item => {
-                if (matchingVariant?._id) {
-                    return item.productVariantId === matchingVariant._id;
-                }
-                return item.productId === productInfo._id && !item.productVariantId;
-            });
-
-            const existingQty = existingCartItem ? existingCartItem.productQty : 0;
-            const maxQty = productInfo?.maxQuantity || 100;
-            if (existingQty + quantity > maxQty) {
-                toast.error(`You cannot add more than ${maxQty} of this product to the cart.`, {
-                    description: `You already have ${existingQty} in your cart.`,
-                });
-                return;
-            }
 
             const productData = {
                 productTitle: productInfo.productTitle,
@@ -199,10 +190,13 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
                 maxQuantity: productInfo.maxQuantity,
                 restrictToMoqMultiples: productInfo.restrictToMoqMultiples,
                 instructionMessage: productInfo.instructionMessage,
+                paidPersonalization: productInfo.paidPersonalization,
                 personalizationPrice: productInfo.personalizationPrice,
                 pricingMethod: productInfo.pricingMethod,
                 personalizationText: productInfo.customizableProduct ? personalizationText : null,
             };
+
+            console.log("productData ????", productData);
 
             await cartService.addToCart(flipbookId, productData);
             onOpenChange(false);
@@ -387,7 +381,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
                                     <Textarea
                                         value={personalizationText}
                                         onChange={(e) => {
-                                            if (!productInfo.charLimit || e.target.value.length <= productInfo.charLimit) {
+                                            if (!productInfo.paidPersonalization || !productInfo.charLimit || e.target.value.length <= productInfo.charLimit) {
                                                 setPersonalizationText(e.target.value);
                                                 setPersonalizationError('');
                                             }
@@ -399,7 +393,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
                                     {personalizationError && (
                                         <div className="text-xs text-red-500">{personalizationError}</div>
                                     )}
-                                    {productInfo.charLimit && (
+                                    {productInfo.paidPersonalization && productInfo.charLimit && (
                                         <div className="text-xs text-gray-500 text-right">
                                             {personalizationText.length} / {productInfo.charLimit}
                                         </div>

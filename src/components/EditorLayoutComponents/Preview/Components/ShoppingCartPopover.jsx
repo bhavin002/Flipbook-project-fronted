@@ -70,7 +70,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
 
     // Helper to calculate personalization cost
     const getPersonalizationCost = (item) => {
-        if (item.personalizationText && item.personalizationText.length > 0 && item.pricingMethod && item.personalizationPrice) {
+        if (item.paidPersonalization) {
             if (item.pricingMethod === 'PER_CHAR') {
                 return item.personalizationPrice * item.personalizationText.length;
             } else if (item.pricingMethod === 'FLAT_FEE') {
@@ -80,12 +80,31 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
         return 0;
     };
 
+    // Update quantity using cartId
+    const updateQuantityByCartId = async (cartId, newQuantity, item) => {
+        // Only enforce min/max if they are not null/undefined
+        if (
+            (item.minQuantity !== null && item.minQuantity !== undefined && newQuantity < item.minQuantity) ||
+            (item.maxQuantity !== null && item.maxQuantity !== undefined && newQuantity > item.maxQuantity)
+        ) return;
+
+        try {
+            await cartService.updateProductQuantityByCartId(flipbookId, cartId, newQuantity);
+        } catch (error) {
+            toast.error('Failed to update quantity', {
+                description: error.message,
+            });
+        }
+    };
+
+    // Legacy method for backward compatibility
     const updateQuantity = async (productIdentifier, newQuantity, item) => {
         // Only enforce min/max if they are not null/undefined
         if (
             (item.minQuantity !== null && item.minQuantity !== undefined && newQuantity < item.minQuantity) ||
             (item.maxQuantity !== null && item.maxQuantity !== undefined && newQuantity > item.maxQuantity)
         ) return;
+
         try {
             await cartService.updateProductQuantity(flipbookId, productIdentifier, newQuantity);
         } catch (error) {
@@ -95,6 +114,18 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
         }
     };
 
+    // Remove item using cartId
+    const removeItemByCartId = async (cartId) => {
+        try {
+            await cartService.removeFromCartByCartId(flipbookId, cartId);
+        } catch (error) {
+            toast.error('Failed to remove item', {
+                description: error.message,
+            });
+        }
+    };
+
+    // Legacy remove method for backward compatibility
     const removeItem = async (productIdentifier) => {
         try {
             await cartService.removeFromCart(flipbookId, productIdentifier);
@@ -243,14 +274,14 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
                         ) : (
                             <div className="space-y-4">
                                 {cartItems.map((item) => (
-                                    <div key={item.productVariantId || item.productId} className="flex items-start gap-3">
+                                    <div key={item.cartId} className="flex items-start gap-3">
                                         <div className="w-16 h-16 rounded-md flex items-center justify-center bg-gray-50">
                                             {item.productImage ? (
                                                 <img
-                                                src={item.productImage}
-                                                alt={item.productTitle}
-                                                className="w-full h-full object-cover rounded-md"
-                                            />
+                                                    src={item.productImage}
+                                                    alt={item.productTitle}
+                                                    className="w-full h-full object-cover rounded-md"
+                                                />
                                             ) : (
                                                 <ShoppingBag className="h-6 w-6 text-muted-foreground" />
                                             )}
@@ -269,9 +300,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
-                                                onClick={() => removeItem(
-                                                    { productId: item.productId, productVariantId: item.productVariantId }
-                                                )}
+                                                onClick={() => removeItemByCartId(item.cartId)}
                                             >
                                                 <Trash2 className="h-4 w-4" color="red" />
                                             </Button>
@@ -285,11 +314,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
                                                         const newQty = item.productQty - step;
                                                         // Only check min if it's set
                                                         if (item.minQuantity === null || item.minQuantity === undefined || newQty >= item.minQuantity) {
-                                                            updateQuantity(
-                                                                { productId: item.productId, productVariantId: item.productVariantId },
-                                                                newQty,
-                                                                item
-                                                            );
+                                                            updateQuantityByCartId(item.cartId, newQty, item);
                                                         }
                                                     }}
                                                     disabled={item.minQuantity !== null && item.minQuantity !== undefined && item.productQty <= item.minQuantity}
@@ -308,11 +333,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
                                                         const newQty = item.productQty + step;
                                                         // Only check max if it's set
                                                         if (item.maxQuantity === null || item.maxQuantity === undefined || newQty <= item.maxQuantity) {
-                                                            updateQuantity(
-                                                                { productId: item.productId, productVariantId: item.productVariantId },
-                                                                newQty,
-                                                                item
-                                                            );
+                                                            updateQuantityByCartId(item.cartId, newQty, item);
                                                         }
                                                     }}
                                                     disabled={item.maxQuantity !== null && item.maxQuantity !== undefined && item.productQty >= item.maxQuantity}
@@ -345,7 +366,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
                     )}
                 </div>
             )}
-            
+
             <ConfirmationDialog
                 isConfirmModalOpen={isConfirmModalOpen}
                 setIsConfirmModalOpen={setIsConfirmModalOpen}

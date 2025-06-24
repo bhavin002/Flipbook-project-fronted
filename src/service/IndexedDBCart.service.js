@@ -1,3 +1,5 @@
+import { v4 as uuid } from "uuid";
+
 class IndexedDBCartService {
     constructor() {
         this.dbName = 'FlipbookCartDB';
@@ -71,7 +73,7 @@ class IndexedDBCartService {
 
             request.onsuccess = () => {
                 const result = request.result;
-                resolve(result ? result.cart : []);
+                resolve(result ? result.cartItems : []);
             };
 
             request.onerror = () => {
@@ -80,22 +82,26 @@ class IndexedDBCartService {
         });
     }
 
-    // Add or update product in cart
+    // Add or update product in cart (always adds new item)
     async addToCart(flipbookId, productData) {
         await this.ensureDB();
         try {
             const result = await this._addToCart(flipbookId, productData);
-            this.emit('cartUpdated', { flipbookId, cart: result.cart });
+            this.emit('cartUpdated', { flipbookId, cart: result.cartItems });
             return result;
         } catch (error) {
             throw new Error(`Failed to add product to cart: ${error.message}`);
         }
     }
 
-    // Internal method for addToCart logic
+    // Internal method for addToCart logic (always adds new item)
     async _addToCart(flipbookId, productData) {
-        const existingCart = await this.getCart(flipbookId);
-        const newProduct = {
+        const existingCartItems = await this.getCart(flipbookId);
+
+        console.log("productData.paidPersonalization ????", productData.paidPersonalization);
+        
+        const newCartItem = {
+            cartId: uuid(), // Generate unique cart ID
             productTitle: productData.productTitle,
             productImage: this.getFirstImage(productData),
             productPrice: this.getDiscountedPrice(productData),
@@ -106,40 +112,35 @@ class IndexedDBCartService {
             maxQuantity: productData.maxQuantity || null,
             restrictToMoqMultiples: productData.restrictToMoqMultiples || null,
             instructionMessage: productData.instructionMessage || null,
+            paidPersonalization: productData.paidPersonalization || false,
             personalizationPrice: productData.personalizationPrice || null,
             pricingMethod: productData.pricingMethod || null,
             personalizationText: productData.personalizationText || null,
             addedAt: new Date().toISOString(),
         };
 
-        const existingProductIndex = this.findExistingProduct(existingCart, newProduct);
-        let updatedCart;
-        if (existingProductIndex !== -1) {
-            updatedCart = [...existingCart];
-            updatedCart[existingProductIndex].productQty += newProduct.productQty;
-            updatedCart[existingProductIndex].addedAt = new Date().toISOString();
-        } else {
-            updatedCart = [...existingCart, newProduct];
-        }
+        // Always add as new item
+        const updatedCartItems = [...existingCartItems, newCartItem];
+        const action = 'added';
 
-        await this.saveCart(flipbookId, updatedCart);
+        await this.saveCart(flipbookId, updatedCartItems);
         return {
             success: true,
-            cart: updatedCart,
-            action: existingProductIndex !== -1 ? 'updated' : 'added',
-            product: newProduct,
+            cartItems: updatedCartItems,
+            action: action,
+            product: newCartItem,
         };
     }
 
     // Save cart data
-    async saveCart(flipbookId, cart) {
+    async saveCart(flipbookId, cartItems) {
         await this.ensureDB();
         return new Promise((resolve, reject) => {
             const transaction = this.db.transaction([this.storeName], 'readwrite');
             const objectStore = transaction.objectStore(this.storeName);
             const cartData = {
                 flipbookId: flipbookId,
-                cart: cart,
+                cartItems: cartItems, // Changed from 'cart' to 'cartItems'
                 updatedAt: new Date().toISOString(),
             };
             const request = objectStore.put(cartData);
@@ -154,47 +155,47 @@ class IndexedDBCartService {
         });
     }
 
-    // Update product quantity
-    async updateProductQuantity(flipbookId, productIdentifier, newQuantity) {
+    // Update product quantity by cartId
+    async updateProductQuantityByCartId(flipbookId, cartId, newQuantity) {
         await this.ensureDB();
         try {
-            const result = await this._updateProductQuantity(flipbookId, productIdentifier, newQuantity);
-            this.emit('cartUpdated', { flipbookId, cart: result.cart });
+            const result = await this._updateProductQuantityByCartId(flipbookId, cartId, newQuantity);
+            this.emit('cartUpdated', { flipbookId, cart: result.cartItems });
             return result;
         } catch (error) {
             throw new Error(`Failed to update product quantity: ${error.message}`);
         }
     }
 
-    // Internal method for updateProductQuantity logic
-    async _updateProductQuantity(flipbookId, productIdentifier, newQuantity) {
-        const existingCart = await this.getCart(flipbookId);
-        const productIndex = this.findExistingProductByIdentifier(existingCart, productIdentifier);
+    // Internal method for updateProductQuantityByCartId logic
+    async _updateProductQuantityByCartId(flipbookId, cartId, newQuantity) {
+        const existingCartItems = await this.getCart(flipbookId);
+        const itemIndex = existingCartItems.findIndex(item => item.cartId === cartId);
 
-        if (productIndex === -1) {
-            throw new Error('Product not found in cart');
+        if (itemIndex === -1) {
+            throw new Error('Cart item not found');
         }
 
-        const updatedCart = [...existingCart];
+        const updatedCartItems = [...existingCartItems];
         if (newQuantity <= 0) {
-            updatedCart.splice(productIndex, 1);
+            updatedCartItems.splice(itemIndex, 1);
         } else {
-            updatedCart[productIndex].productQty = newQuantity;
-            updatedCart[productIndex].addedAt = new Date().toISOString();
+            updatedCartItems[itemIndex].productQty = newQuantity;
+            updatedCartItems[itemIndex].addedAt = new Date().toISOString();
         }
 
-        await this.saveCart(flipbookId, updatedCart);
+        await this.saveCart(flipbookId, updatedCartItems);
         return {
             success: true,
-            cart: updatedCart,
+            cartItems: updatedCartItems,
             action: newQuantity <= 0 ? 'removed' : 'updated',
         };
     }
 
-    // Remove product from cart
-    async removeFromCart(flipbookId, productIdentifier) {
-        const result = await this.updateProductQuantity(flipbookId, productIdentifier, 0);
-        this.emit('cartUpdated', { flipbookId, cart: result.cart });
+    // Remove cart item by cartId
+    async removeFromCartByCartId(flipbookId, cartId) {
+        const result = await this.updateProductQuantityByCartId(flipbookId, cartId, 0);
+        this.emit('cartUpdated', { flipbookId, cart: result.cartItems });
         return result;
     }
 
@@ -206,7 +207,7 @@ class IndexedDBCartService {
             this.emit('cartUpdated', { flipbookId, cart: [] });
             return {
                 success: true,
-                cart: [],
+                cartItems: [],
                 action: 'cleared',
             };
         } catch (error) {
@@ -214,36 +215,17 @@ class IndexedDBCartService {
         }
     }
 
-    // Get cart totals
-    async getCartTotals(flipbookId) {
-        const cart = await this.getCart(flipbookId);
-        const totalItems = cart.reduce((sum, item) => sum + item.productQty, 0);
-        const totalPrice = cart.reduce((sum, item) => sum + (item.productPrice * item.productQty), 0);
-        return {
-            totalItems,
-            totalPrice,
-            itemCount: cart.length,
-        };
-    }
-
-    // Helper method to find existing product in cart
-    findExistingProduct(cart, newProduct) {
-        return cart.findIndex(item => {
-            if (newProduct.productVariantId) {
-                return item.productVariantId === newProduct.productVariantId;
+    // Helper method to calculate personalization cost
+    getPersonalizationCost(item) {
+        console.log("item ????", item);
+        if (item.paidPersonalization && item.personalizationText && item.personalizationText.length > 0 && item.pricingMethod && item.personalizationPrice) {
+            if (item.pricingMethod === 'PER_CHAR') {
+                return item.personalizationPrice * item.personalizationText.length;
+            } else if (item.pricingMethod === 'FLAT_FEE') {
+                return item.personalizationPrice;
             }
-            return item.productId === newProduct.productId && !item.productVariantId;
-        });
-    }
-
-    // Helper method to find product by identifier
-    findExistingProductByIdentifier(cart, identifier) {
-        return cart.findIndex(item => {
-            if (identifier.productVariantId) {
-                return item.productVariantId === identifier.productVariantId;
-            }
-            return item.productId === identifier.productId && !item.productVariantId;
-        });
+        }
+        return 0;
     }
 
     // Helper method to get first image
