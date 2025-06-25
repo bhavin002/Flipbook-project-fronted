@@ -12,6 +12,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from 'sonner';
 import { getQuizApi } from '@/service/quiz.service';
+import { quizAttemptApi, getQuizAttemptApi } from '@/service/question.service';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -34,13 +35,18 @@ const createQuizSchema = (collectEmail, questions) => {
     return z.object(baseSchema);
 };
 
-const QuizModel = ({ open, onOpenChange, htmlData }) => {
+const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [quizInfo, setQuizInfo] = useState(null);
     const [currentView, setCurrentView] = useState('quiz');
     const [quizResult, setQuizResult] = useState(null);
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
     const [marketingAccepted, setMarketingAccepted] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false);
+    const [resultLoading, setResultLoading] = useState(false);
+    const [resultError, setResultError] = useState(null);
+    const [detailedResultLoading, setDetailedResultLoading] = useState(false);
+    const [detailedQuizResult, setDetailedQuizResult] = useState(null);
 
     const {
         register,
@@ -93,7 +99,7 @@ const QuizModel = ({ open, onOpenChange, htmlData }) => {
         for (let i = 0; i < quizInfo.questions.length; i++) {
             const answer = watchedValues[`question_${i}`];
             const question = quizInfo.questions[i];
-            
+
             if (question.isMultipleAnswer) {
                 if (!answer || !Array.isArray(answer) || answer.length === 0) {
                     return false;
@@ -118,7 +124,7 @@ const QuizModel = ({ open, onOpenChange, htmlData }) => {
         } else {
             setValue(`question_${questionIndex}`, optionId, { shouldValidate: true });
         }
-        
+
         await trigger(`question_${questionIndex}`);
     };
 
@@ -127,118 +133,109 @@ const QuizModel = ({ open, onOpenChange, htmlData }) => {
         await trigger('email');
     };
 
-    const calculateScore = (answers) => {
-        let correctAnswers = 0;
-        const totalQuestions = quizInfo.questions.length;
-        const detailedResults = [];
-
-        quizInfo.questions.forEach((question, index) => {
-            const userAnswer = answers[`question_${index}`];
-            const correctOptions = question.options.filter(opt => opt.isCorrect).map(opt => opt._id);
-
-            let isCorrect = false;
-
-            if (question.isMultipleAnswer) {
-                const userAnswerArray = Array.isArray(userAnswer) ? userAnswer : [];
-                isCorrect = correctOptions.length === userAnswerArray.length &&
-                    correctOptions.every(id => userAnswerArray.includes(id));
-            } else {
-                isCorrect = correctOptions.includes(userAnswer);
-            }
-
-            if (isCorrect) correctAnswers++;
-
-            detailedResults.push({
-                question: question.text,
-                userAnswer,
-                correctOptions,
-                isCorrect,
-                options: question.options
-            });
-        });
-
-        return {
-            score: correctAnswers,
-            total: totalQuestions,
-            percentage: (correctAnswers / totalQuestions) * 100,
-            details: detailedResults
-        };
-    };
-
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         if (!isFormValid()) {
             toast.error('Please complete all required fields');
             return;
         }
-        
-        const result = calculateScore(data);
-        setQuizResult(result);
-        setCurrentView('result');
+        setSubmitLoading(true);
+        setResultError(null);
+        try {
+            // Build answers array for API
+            const answers = quizInfo.questions.map((q, idx) => ({
+                questionId: q._id,
+                answerIds: Array.isArray(data[`question_${idx}`]) ? data[`question_${idx}`] : [data[`question_${idx}`]]
+            }));
+            const payload = {
+                quizId: quizInfo._id,
+                email: data.email,
+                addPrivacyPolicy: !!privacyAccepted,
+                addGdprCompliance: false, // Add if you have GDPR checkbox
+                answers,
+                flipbookId: flipbookId || htmlData?.flipbookId
+            };
+            const createResponse = await quizAttemptApi(payload);
+            const attemptRes = createResponse.data;
+            setSubmitLoading(false);
+            setResultLoading(true);
+            // Only set attemptId and show result summary, do not fetch detailed result yet
+            setQuizResult({ ...attemptRes, attemptId: attemptRes.attempt?._id });
+            setCurrentView('result');
+        } catch (error) {
+            setSubmitLoading(false);
+            setResultLoading(false);
+            setResultError(error.message || 'Failed to submit quiz');
+            toast.error('Failed to submit quiz', { description: error.message });
+        } finally {
+            setSubmitLoading(false);
+            setResultLoading(false);
+        }
     };
 
     const handleRetakeQuiz = () => {
         setCurrentView('quiz');
         setQuizResult(null);
+        setDetailedQuizResult(null);
         setPrivacyAccepted(false);
         setMarketingAccepted(false);
+        setResultError(null);
         reset();
     };
 
-    const handleViewResults = () => {
+    const handleViewResults = async () => {
         setCurrentView('results-detail');
+        setDetailedResultLoading(true);
+        setDetailedQuizResult(null);
+        try {
+            const attemptId = quizResult?.attemptId;
+            if (!attemptId) throw new Error('No attempt ID found');
+            const resultResponse = await getQuizAttemptApi(attemptId);
+            setDetailedQuizResult(resultResponse.data);
+        } catch (error) {
+            setResultError(error.message || 'Failed to fetch detailed results');
+            toast.error('Failed to fetch detailed results', { description: error.message });
+        } finally {
+            setDetailedResultLoading(false);
+        }
     };
 
     const handleCloseModal = () => {
         setCurrentView('quiz');
         setQuizResult(null);
+        setDetailedQuizResult(null);
         setPrivacyAccepted(false);
         setMarketingAccepted(false);
+        setResultError(null);
         reset();
         onOpenChange(false);
     };
 
-    if (isLoading) {
+    if (isLoading || submitLoading || resultLoading) {
         return (
             <Dialog open={open} onOpenChange={handleCloseModal}>
                 <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <div className="h-8 w-3/4 bg-gray-200 rounded animate-pulse"></div>
                     </DialogHeader>
-
                     <div className="space-y-6 mt-4">
-                        <div className="space-y-4 pb-4 border-b">
-                            <div>
-                                <div className="h-4 w-24 bg-gray-200 rounded animate-pulse mb-2"></div>
-                                <div className="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex items-center space-x-2">
-                                    <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
-                                    <div className="h-4 w-64 bg-gray-200 rounded animate-pulse"></div>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
-                                    <div className="h-4 w-48 bg-gray-200 rounded animate-pulse"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {[1, 2, 3].map((_, index) => (
-                            <div key={index} className="space-y-4">
-                                <div className="h-6 w-3/4 bg-gray-200 rounded animate-pulse"></div>
-                                <div className="space-y-3">
-                                    {[1, 2, 3, 4].map((_, optionIndex) => (
-                                        <div key={optionIndex} className="flex items-center space-x-3 p-3 border rounded-lg">
-                                            <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
-                                            <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-
+                        <div className="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
+                        <div className="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
                         <div className="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
                     </div>
+                </DialogContent>
+            </Dialog>
+        );
+    }
+
+    if (resultError) {
+        return (
+            <Dialog open={open} onOpenChange={handleCloseModal}>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>Error</DialogTitle>
+                    </DialogHeader>
+                    <div className="text-red-500">{resultError}</div>
+                    <Button onClick={handleCloseModal} className="mt-4">Close</Button>
                 </DialogContent>
             </Dialog>
         );
@@ -266,8 +263,8 @@ const QuizModel = ({ open, onOpenChange, htmlData }) => {
 
                     <div className="space-y-2">
                         <div className="flex items-center space-x-2">
-                            <Checkbox 
-                                id="privacy" 
+                            <Checkbox
+                                id="privacy"
                                 checked={privacyAccepted}
                                 onCheckedChange={setPrivacyAccepted}
                             />
@@ -280,8 +277,8 @@ const QuizModel = ({ open, onOpenChange, htmlData }) => {
                         </div>
 
                         <div className="flex items-center space-x-2">
-                            <Checkbox 
-                                id="marketing" 
+                            <Checkbox
+                                id="marketing"
                                 checked={marketingAccepted}
                                 onCheckedChange={setMarketingAccepted}
                             />
@@ -342,98 +339,142 @@ const QuizModel = ({ open, onOpenChange, htmlData }) => {
         </div>
     );
 
-    const renderResultView = () => (
-        <div className="text-center space-y-6">
-            {quizResult.passed ? (
-                <>
-                    <div className="flex justify-center">
-                        <CheckCircle className="h-16 w-16 text-green-500" />
-                    </div>
-                    <h3 className="text-xl font-semibold">
-                        {quizInfo.settings.useDifferentMessages
-                            ? quizInfo.settings.passedQuizMessage
-                            : "Congratulations, you passed the quiz! Well done!"}
-                    </h3>
-                </>
-            ) : (
-                <>
-                    <div className="flex justify-center">
-                        <AlertCircle className="h-16 w-16 text-red-500" />
-                    </div>
-                    <h3 className="text-xl font-semibold">
-                        {quizInfo.settings.useDifferentMessages
-                            ? quizInfo.settings.failedQuizMessage
-                            : "You failed the quiz, but don't give up! Try again!"}
-                    </h3>
-                </>
-            )}
-
-            <div className="space-y-3">
-                <Button onClick={handleViewResults} className="w-full">
-                    View results
-                </Button>
-
-                {(quizInfo.settings.allowRetake || !quizResult.passed) && (
-                    <Button onClick={handleRetakeQuiz} variant="outline" className="w-full">
-                        Retake quiz
-                    </Button>
+    const renderResultView = () => {
+        if (!quizResult) return null;
+        // Use isCorrect from each answer in the API response
+        const allCorrect = Array.isArray(quizResult.attempt?.answers) && quizResult.attempt.answers.length > 0
+            ? quizResult.attempt.answers.every(ans => ans.isCorrect === true)
+            : false;
+        const passed = allCorrect;
+        return (
+            <div className="text-center space-y-6">
+                {passed ? (
+                    <>
+                        <div className="flex justify-center">
+                            <CheckCircle className="h-16 w-16 text-green-500" />
+                        </div>
+                        <h3 className="text-xl font-semibold">
+                            {quizInfo.settings.useDifferentMessages
+                                ? quizInfo.settings.passedQuizMessage
+                                : "Congratulations, you passed the quiz! Well done!"}
+                        </h3>
+                    </>
+                ) : (
+                    <>
+                        <div className="flex justify-center">
+                            <AlertCircle className="h-16 w-16 text-red-500" />
+                        </div>
+                        <h3 className="text-xl font-semibold">
+                            {quizInfo.settings.useDifferentMessages
+                                ? quizInfo.settings.failedQuizMessage
+                                : "You failed the quiz, but don't give up! Try again!"}
+                        </h3>
+                    </>
                 )}
+                <div className="space-y-3">
+                    <Button onClick={handleViewResults} className="w-full">
+                        View results
+                    </Button>
+                    {(quizInfo.settings.allowRetake || !passed) && (
+                        <Button onClick={handleRetakeQuiz} variant="outline" className="w-full">
+                            Retake quiz
+                        </Button>
+                    )}
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
-    const renderDetailedResults = () => (
-        <div className="space-y-6">
-            <div className="text-center space-y-2">
-                <h3 className="text-xl font-semibold">Quiz Results</h3>
-                <p className="text-gray-600">
-                    Score: {quizResult.score}/{quizResult.total} ({Math.round(quizResult.percentage)}%)
-                </p>
-            </div>
-
-            {quizResult.details.map((result, index) => (
-                <div key={index} className="space-y-3">
-                    <h4 className="font-medium">{index + 1}. {result.question}</h4>
-
-                    <div className="space-y-2">
-                        {result.options.map((option) => {
-                            const isUserAnswer = Array.isArray(result.userAnswer)
-                                ? result.userAnswer.includes(option._id)
-                                : result.userAnswer === option._id;
-                            const isCorrect = result.correctOptions.includes(option._id);
-
-                            let bgColor = '';
-                            let icon = null;
-
-                            if (isCorrect) {
-                                bgColor = 'bg-green-50 border-green-200';
-                                icon = <CheckCircle className="h-4 w-4 text-green-600" />;
-                            } else if (isUserAnswer && !isCorrect) {
-                                bgColor = 'bg-red-50 border-red-200';
-                                icon = <XCircle className="h-4 w-4 text-red-600" />;
-                            }
-
-                            return (
-                                <div key={option._id} className={`flex items-center justify-between p-3 border rounded-lg ${bgColor}`}>
-                                    <span>{String.fromCharCode(65 + result.options.indexOf(option))}. {option.text}</span>
-                                    {icon}
-                                </div>
-                            );
-                        })}
+    const renderDetailedResults = () => {
+        if (detailedResultLoading) {
+            // Skeleton loader mimicking the detailed results UI
+            return (
+                <div className="space-y-6 animate-pulse">
+                    <div className="text-center space-y-2">
+                        <div className="h-6 w-1/3 mx-auto bg-gray-200 rounded" />
+                        <div className="h-4 w-1/4 mx-auto bg-gray-200 rounded" />
+                    </div>
+                    <div className="flex gap-4 items-center text-sm mb-2">
+                        <div className="h-4 w-32 bg-gray-200 rounded" />
+                        <div className="h-4 w-24 bg-gray-200 rounded" />
+                        <div className="h-4 w-40 bg-gray-200 rounded" />
+                    </div>
+                    {[...Array(2)].map((_, idx) => (
+                        <div key={idx} className="space-y-3">
+                            <div className="h-5 w-1/2 bg-gray-200 rounded" />
+                            <div className="space-y-2">
+                                {[...Array(3)].map((_, j) => (
+                                    <div key={j} className="flex items-center justify-between p-3 border rounded-lg bg-gray-100">
+                                        <div className="h-4 w-2/3 bg-gray-200 rounded" />
+                                        <div className="h-4 w-4 bg-gray-300 rounded-full" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                    <div className="flex gap-3">
+                        <div className="h-10 flex-1 bg-gray-200 rounded" />
+                        <div className="h-10 flex-1 bg-gray-200 rounded" />
                     </div>
                 </div>
-            ))}
-
-            <div className="flex gap-3">
-                <Button onClick={handleRetakeQuiz} variant="outline" className="flex-1">
-                    Retake quiz
-                </Button>
-                <Button onClick={handleCloseModal} className="flex-1">
-                    Close
-                </Button>
+            );
+        }
+        if (!detailedQuizResult || !detailedQuizResult.quizDetails) return null;
+        const { quizDetails } = detailedQuizResult;
+        return (
+            <div className="space-y-6">
+                <div className="text-center space-y-2">
+                    <h3 className="text-xl font-semibold">Quiz Results</h3>
+                    <p className="text-gray-600">
+                        Score: {detailedQuizResult.correctAnswersCount}/{quizDetails.questions.length}
+                    </p>
+                </div>
+                {/* Legend */}
+                <div className="flex gap-4 items-center text-sm mb-2">
+                    <div className="flex items-center gap-1"><span className="inline-block w-4 h-4 bg-green-50 border border-green-200 rounded"></span> Correct & Selected</div>
+                    <div className="flex items-center gap-1"><span className="inline-block w-4 h-4 bg-green-100 border border-green-200 rounded"></span> Correct</div>
+                    <div className="flex items-center gap-1"><span className="inline-block w-4 h-4 bg-red-50 border border-red-200 rounded"></span> Selected (Incorrect)</div>
+                </div>
+                {quizDetails.questions.map((question, index) => (
+                    <div key={question._id} className="space-y-3">
+                        <h4 className="font-medium">{index + 1}. {question.text}</h4>
+                        <div className="space-y-2">
+                            {question.options.map((option) => {
+                                const isUserAnswer = option.userAnswer;
+                                const isCorrect = option.isCorrect;
+                                let bgColor = '';
+                                let icon = null;
+                                if (isCorrect && isUserAnswer) {
+                                    bgColor = 'bg-green-50 border-green-200';
+                                    icon = <CheckCircle className="h-4 w-4 text-green-600" />;
+                                } else if (isCorrect) {
+                                    bgColor = 'bg-green-100 border-green-200';
+                                    icon = <CheckCircle className="h-4 w-4 text-green-400" />;
+                                } else if (isUserAnswer) {
+                                    bgColor = 'bg-red-50 border-red-200';
+                                    icon = <XCircle className="h-4 w-4 text-red-600" />;
+                                }
+                                return (
+                                    <div key={option._id} className={`flex items-center justify-between p-3 border rounded-lg ${bgColor}`}>
+                                        <span>{String.fromCharCode(65 + question.options.indexOf(option))}. {option.text}</span>
+                                        {icon}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ))}
+                <div className="flex gap-3">
+                    <Button onClick={handleRetakeQuiz} variant="outline" className="flex-1">
+                        Retake quiz
+                    </Button>
+                    <Button onClick={handleCloseModal} className="flex-1">
+                        Close
+                    </Button>
+                </div>
             </div>
-        </div>
-    );
+        );
+    };
 
     return (
         <Dialog open={open} onOpenChange={handleCloseModal}>

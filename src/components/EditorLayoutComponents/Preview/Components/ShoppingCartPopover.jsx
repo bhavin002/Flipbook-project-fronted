@@ -14,6 +14,7 @@ import cartService from '@/service/IndexedDBCart.service';
 import { toast } from 'sonner';
 import { useShopSettings } from "@/context/ShopSettingsContext";
 import { ShopAppearance } from "@/utils/enum";
+import OrderForm from './OrderForm';
 
 const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -21,6 +22,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
     const [cartItems, setCartItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { shopSettings, getCurrentCurrency } = useShopSettings();
+    const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
 
     const getCartIcon = () => {
         if (shopSettings.shopAppearance === ShopAppearance.SHOP_BAG) {
@@ -212,161 +214,163 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
     };
 
     return (
-        <div className="relative">
-            <Button
-                variant={isOpen ? "default" : "outline"}
-                className="relative [&_svg]:size-5"
-                onClick={() => setIsOpen(!isOpen)}
-            >
-                {getCartIcon()}
-                {getTotalItems() > 0 && !isOpen && (
-                    <Badge
-                        variant="default"
-                        className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-                    >
-                        {getTotalItems()}
-                    </Badge>
-                )}
-            </Button>
-
-            {isOpen && (
-                <div
-                    className={`absolute right-0 mt-2 w-auto bg-background border rounded-md shadow-lg z-50 max-h-[600px] flex flex-col ${isMobile ? 'md:w-[23rem]' : 'md:w-[28rem]'}`}
-                    style={{ top: '100%' }}
+        <>
+            <div className="relative">
+                <Button
+                    variant={isOpen ? "default" : "outline"}
+                    className="relative [&_svg]:size-5"
+                    onClick={() => setIsOpen(!isOpen)}
                 >
-                    <div className="flex items-center justify-between p-4 border-b">
-                        <div className="flex items-center gap-2">
-                            <h3 className="font-semibold">My list</h3>
-                            <Badge className="bg-primary text-white">
-                                {getTotalItems()}
-                            </Badge>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Button
-                                variant="outline"
-                                type="button"
-                                size="sm"
-                                onClick={handleClearCartClick}
-                                disabled={cartItems.length === 0}
-                            >
-                                Clear list
-                            </Button>
-                            {renderDownloadButton()}
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                <X className="h-4 w-4" />
-                            </Button>
-                        </div>
-                    </div>
+                    {getCartIcon()}
+                    {getTotalItems() > 0 && !isOpen && (
+                        <Badge
+                            variant="default"
+                            className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                        >
+                            {getTotalItems()}
+                        </Badge>
+                    )}
+                </Button>
 
-                    <div className="flex-1 p-4 overflow-y-auto" style={{ maxHeight: '200px' }}>
-                        {isLoading ? (
-                            <div className="text-center text-muted-foreground">
-                                Loading cart...
+                {isOpen && (
+                    <div
+                        className={`absolute right-0 mt-2 w-auto bg-background border rounded-md shadow-lg z-50 max-h-[600px] flex flex-col ${isMobile ? 'md:w-[23rem]' : 'md:w-[28rem]'}`}
+                        style={{ top: '100%' }}
+                    >
+                        <div className="flex items-center justify-between p-4 border-b">
+                            <div className="flex items-center gap-2">
+                                <h3 className="font-semibold">My list</h3>
+                                <Badge className="bg-primary text-white">
+                                    {getTotalItems()}
+                                </Badge>
                             </div>
-                        ) : cartItems.length === 0 ? (
-                            <div className="text-center text-muted-foreground">
-                                Your cart is empty
+                            <div className="flex items-center gap-2">
+                                <Button
+                                    variant="outline"
+                                    type="button"
+                                    size="sm"
+                                    onClick={handleClearCartClick}
+                                    disabled={cartItems.length === 0}
+                                >
+                                    Clear list
+                                </Button>
+                                {renderDownloadButton()}
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
                             </div>
-                        ) : (
-                            <div className="space-y-4">
-                                {cartItems.map((item) => (
-                                    <div key={item.cartId} className="flex items-start gap-3">
-                                        <div className="w-16 h-16 rounded-md flex items-center justify-center bg-gray-50">
-                                            {item.productImage ? (
-                                                <img
-                                                    src={item.productImage}
-                                                    alt={item.productTitle}
-                                                    className="w-full h-full object-cover rounded-md"
-                                                />
-                                            ) : (
-                                                <ShoppingBag className="h-6 w-6 text-muted-foreground" />
-                                            )}
-                                        </div>
-                                        <div className="flex-1">
-                                            <h4 className="font-medium line-clamp-2">{item.productTitle}</h4>
-                                            <p className="text-sm font-semibold">
-                                                {/* Show price with personalization */}
-                                                {item.productPrice + getPersonalizationCost(item)} {getCurrentCurrency()}
-                                            </p>
-                                            {item.personalizationText && (
-                                                <p className="text-xs text-gray-500">{item.instructionMessage}: {item.personalizationText}</p>
-                                            )}
-                                        </div>
-                                        <div className="flex flex-col items-end gap-2">
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() => removeItemByCartId(item.cartId)}
-                                            >
-                                                <Trash2 className="h-4 w-4" color="red" />
-                                            </Button>
-                                            <div className="flex items-center gap-1 border rounded-md">
+                        </div>
+
+                        <div className="flex-1 p-4 overflow-y-auto" style={{ maxHeight: '200px' }}>
+                            {isLoading ? (
+                                <div className="text-center text-muted-foreground">
+                                    Loading cart...
+                                </div>
+                            ) : cartItems.length === 0 ? (
+                                <div className="text-center text-muted-foreground">
+                                    Your cart is empty
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {cartItems.map((item) => (
+                                        <div key={item.cartId} className="flex items-start gap-3">
+                                            <div className="w-16 h-16 rounded-md flex items-center justify-center bg-gray-50">
+                                                {item.productImage ? (
+                                                    <img
+                                                        src={item.productImage}
+                                                        alt={item.productTitle}
+                                                        className="w-full h-full object-cover rounded-md"
+                                                    />
+                                                ) : (
+                                                    <ShoppingBag className="h-6 w-6 text-muted-foreground" />
+                                                )}
+                                            </div>
+                                            <div className="flex-1">
+                                                <h4 className="font-medium line-clamp-2">{item.productTitle}</h4>
+                                                <p className="text-sm font-semibold">
+                                                    {/* Show price with personalization */}
+                                                    {item.productPrice + getPersonalizationCost(item)} {getCurrentCurrency()}
+                                                </p>
+                                                {item.personalizationText && (
+                                                    <p className="text-xs text-gray-500">{item.instructionMessage}: {item.personalizationText}</p>
+                                                )}
+                                            </div>
+                                            <div className="flex flex-col items-end gap-2">
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="h-8 w-8"
-                                                    onClick={() => {
-                                                        const step = getStep(item);
-                                                        const newQty = item.productQty - step;
-                                                        // Only check min if it's set
-                                                        if (item.minQuantity === null || item.minQuantity === undefined || newQty >= item.minQuantity) {
-                                                            updateQuantityByCartId(item.cartId, newQty, item);
-                                                        }
-                                                    }}
-                                                    disabled={item.minQuantity !== null && item.minQuantity !== undefined && item.productQty <= item.minQuantity}
+                                                    onClick={() => removeItemByCartId(item.cartId)}
                                                 >
-                                                    <Minus className="h-3 w-3" />
+                                                    <Trash2 className="h-4 w-4" color="red" />
                                                 </Button>
-                                                <span className="px-3 py-1 text-sm min-w-[2rem] text-center">
-                                                    {item.productQty}
-                                                </span>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8"
-                                                    onClick={() => {
-                                                        const step = getStep(item);
-                                                        const newQty = item.productQty + step;
-                                                        // Only check max if it's set
-                                                        if (item.maxQuantity === null || item.maxQuantity === undefined || newQty <= item.maxQuantity) {
-                                                            updateQuantityByCartId(item.cartId, newQty, item);
-                                                        }
-                                                    }}
-                                                    disabled={item.maxQuantity !== null && item.maxQuantity !== undefined && item.productQty >= item.maxQuantity}
-                                                >
-                                                    <Plus className="h-3 w-3" />
-                                                </Button>
+                                                <div className="flex items-center gap-1 border rounded-md">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8"
+                                                        onClick={() => {
+                                                            const step = getStep(item);
+                                                            const newQty = item.productQty - step;
+                                                            // Only check min if it's set
+                                                            if (item.minQuantity === null || item.minQuantity === undefined || newQty >= item.minQuantity) {
+                                                                updateQuantityByCartId(item.cartId, newQty, item);
+                                                            }
+                                                        }}
+                                                        disabled={item.minQuantity !== null && item.minQuantity !== undefined && item.productQty <= item.minQuantity}
+                                                    >
+                                                        <Minus className="h-3 w-3" />
+                                                    </Button>
+                                                    <span className="px-3 py-1 text-sm min-w-[2rem] text-center">
+                                                        {item.productQty}
+                                                    </span>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8"
+                                                        onClick={() => {
+                                                            const step = getStep(item);
+                                                            const newQty = item.productQty + step;
+                                                            // Only check max if it's set
+                                                            if (item.maxQuantity === null || item.maxQuantity === undefined || newQty <= item.maxQuantity) {
+                                                                updateQuantityByCartId(item.cartId, newQty, item);
+                                                            }
+                                                        }}
+                                                        disabled={item.maxQuantity !== null && item.maxQuantity !== undefined && item.productQty >= item.maxQuantity}
+                                                    >
+                                                        <Plus className="h-3 w-3" />
+                                                    </Button>
+                                                </div>
                                             </div>
                                         </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {cartItems.length > 0 && (
+                            <>
+                                <Separator />
+                                <div className="p-4 space-y-4">
+                                    <div className="flex justify-between items-center">
+                                        <span className="text-lg font-semibold">Total:</span>
+                                        <span className="text-lg font-bold">{getTotalPrice()} {getCurrentCurrency()}</span>
                                     </div>
-                                ))}
-                            </div>
+                                    {shopSettings.emailCheckout && (
+                                        <Button className="w-full" size="lg" onClick={() => setIsOrderFormOpen(true)}>
+                                            {shopSettings.checkoutButtonLabel}
+                                        </Button>
+                                    )}
+                                </div>
+                            </>
                         )}
                     </div>
-
-                    {cartItems.length > 0 && (
-                        <>
-                            <Separator />
-                            <div className="p-4 space-y-4">
-                                <div className="flex justify-between items-center">
-                                    <span className="text-lg font-semibold">Total:</span>
-                                    <span className="text-lg font-bold">{getTotalPrice()} {getCurrentCurrency()}</span>
-                                </div>
-                                {shopSettings.emailCheckout && (
-                                    <Button className="w-full" size="lg">
-                                        {shopSettings.checkoutButtonLabel}
-                                    </Button>
-                                )}
-                            </div>
-                        </>
-                    )}
-                </div>
-            )}
-
+                )}
+            </div>
+            <OrderForm open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen} />
             <ConfirmationDialog
                 isConfirmModalOpen={isConfirmModalOpen}
                 setIsConfirmModalOpen={setIsConfirmModalOpen}
@@ -374,7 +378,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
                 onConfirm={clearCart}
                 description="Are you sure you want to clear all items from your shopping list? This action cannot be undone."
             />
-        </div>
+        </>
     );
 };
 

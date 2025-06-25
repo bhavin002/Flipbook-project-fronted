@@ -2,10 +2,10 @@ import React from 'react';
 import { showModal } from '@/utils/ShowModal';
 import QuizModel from './QuizModel';
 
-export default function Quiz({ shape, visibilitySettings }) {
+export default function Quiz({ shape, visibilitySettings, flipbookId }) {
     const handleClick = () => {
         if (shape.htmlType === 'quiz') {
-            showModal(QuizModel, shape.htmlData);
+            showModal(QuizModel, shape.htmlData, flipbookId);
         }
     };
     return (

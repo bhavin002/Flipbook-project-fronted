@@ -19,3 +19,13 @@ export const duplicateQuestionFormApi = async (questionFormId) => {
     const response = await ApiClient().get(`/question-form/duplicate/${questionFormId}`);
     return response.data;
 }
+
+export const quizAttemptApi = async (data) => {
+    const response = await ApiClient().post("/quiz-attempt/create", data);
+    return response.data;
+}
+
+export const getQuizAttemptApi = async (quizAttemptId) => {
+    const response = await ApiClient().get(`/quiz-attempt/get/attempt/${quizAttemptId}`);
+    return response.data;
+}
