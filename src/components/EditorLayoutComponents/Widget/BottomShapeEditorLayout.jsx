@@ -123,7 +123,7 @@ function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mai
     }
     if (selectedSubMenu === "question") {
         return (
-            <Question selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
+            <Question selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} flipbookId={flipbookId} />
         )
     }
     if (selectedSubMenu === "contact-form") {

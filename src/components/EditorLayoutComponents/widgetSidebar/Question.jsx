@@ -12,7 +12,7 @@ const questionSchema = z.object({
   question: z.string().min(1, "Question cannot be empty"),
 });
 
-export default function Question({ selectedShape, mainStage, setMainStage, selectedIndex }) {
+export default function Question({ selectedShape, mainStage, setMainStage, selectedIndex, flipbookId }) {
   const initialQuestion = selectedShape[0]?.attrs?.htmlData?.question || "Add your question here...";
 
   const form = useForm({
@@ -83,6 +83,7 @@ export default function Question({ selectedShape, mainStage, setMainStage, selec
         mainStage={mainStage}
         setMainStage={setMainStage}
         selectedIndex={selectedIndex}
+        flipbookId={flipbookId}
       />
     </div>
   );

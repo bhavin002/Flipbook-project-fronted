@@ -16,6 +16,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { CheckCircle } from 'lucide-react';
+import { CreateQuestionFormResponseApi } from '@/service/questionFormResponse.service';
+import LoadingButton from '@/utils/LoadingButton';
 
 const createQuestionSchema = (formData) => {
     const baseSchema = {
@@ -35,6 +37,7 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
     const [currentView, setCurrentView] = useState('question');
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
     const [gdprAccepted, setGdprAccepted] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     const {
         register,
@@ -111,30 +114,33 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
         await trigger('response');
     };
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
+        setSubmitting(true);
         if (!isFormValid()) {
             toast.error('Please complete all required fields');
             return;
         }
-
-        // Here you would typically send the data to your API
-        console.log('Submitted data:', {
-            ...data,
-            privacyAccepted,
-            gdprAccepted,
-            variantId: htmlData.variantId
-        });
-
-        // Show success view
-        setCurrentView('success');
-
-        // You can also show a toast for immediate feedback
-        toast.success('Response submitted successfully!');
+        try {
+            const payload = {
+                questionFormId: htmlData.variantId,
+                email: data.email,
+                answer: data.response,
+                addGDPRCompliance: !!formData.addGDPRCompliance && !!gdprAccepted,
+                addPrivacyPolicy: !!formData.addPrivacyPolicy && !!privacyAccepted,
+            };
+            await CreateQuestionFormResponseApi(payload);
+            setCurrentView('success');
+            toast.success('Response submitted successfully!');
+        } catch (err) {
+            toast.error('Failed to submit response', { description: err.message });
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const handleCloseModal = () => {
         setCurrentView('question');
-        setPrivacyAccepted(false);
+        setPrivacyAccepted(false);  
         setGdprAccepted(false);
         reset();
         onOpenChange(false);
@@ -262,15 +268,12 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
                 )}
             </div>
 
-
-
-            {/* Submit Button */}
             <Button
                 onClick={handleSubmit(onSubmit)}
                 className="w-full"
-                disabled={!isFormValid()}
+                disabled={!isFormValid() || submitting}
             >
-                {formData.buttonLabel || 'Submit'}
+                {submitting ? <LoadingButton /> : (formData.buttonLabel || 'Submit')}
             </Button>
         </div>
     );
@@ -284,16 +287,6 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
             <h3 className="text-xl font-semibold">
                 {formData.thankYouMessage || 'Thank you for your response!'}
             </h3>
-
-            <div className="space-y-3">
-                <Button onClick={handleBackToQuestion} variant="outline" className="w-full">
-                    Submit Another Response
-                </Button>
-
-                <Button onClick={handleCloseModal} className="w-full">
-                    Close
-                </Button>
-            </div>
         </div>
     );
 

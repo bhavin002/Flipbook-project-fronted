@@ -28,7 +28,7 @@ import { toast } from "sonner";
 import LoadingButton from "@/utils/LoadingButton";
 import { addIntercationDataToMainStage } from "@/utils/Helper";
 
-export default function QuestionDialog({ selectedShape, mainStage, setMainStage, selectedIndex }) {
+export default function QuestionDialog({ selectedShape, mainStage, setMainStage, selectedIndex, flipbookId }) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
@@ -76,7 +76,8 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
         try {
             setIsLoading(true);
             let response;
-
+            
+            data.flipbookId = flipbookId;
             if (variantId) {
                 response = await updateQuestionFormApi(variantId, data);
             } else {

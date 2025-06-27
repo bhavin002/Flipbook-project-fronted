@@ -179,8 +179,14 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
                 variant => variant.variantName.includes(variantKey)
             );
 
+            let displayTitle = productInfo.productTitle;
+            if (matchingVariant && matchingVariant.variantName) {
+                const variantDisplay = matchingVariant.variantName.split(' | ').join(', ');
+                displayTitle = `${productInfo.productTitle}, ${variantDisplay}`;
+            }
+
             const productData = {
-                productTitle: productInfo.productTitle,
+                productTitle: displayTitle,
                 productImage: currentImages[0]?.imageLink || htmlData?.productImage,
                 currentPrice: getCurrentPrice(),
                 quantity: quantity,
@@ -260,6 +266,20 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
     const hasPrice = productInfo?.price != null || productInfo?.discountPrice != null;
     const hasQuantityControls = productInfo?.minQuantity > 0 && productInfo?.maxQuantity > 0;
 
+    const getSelectedVariantName = () => {
+        if (!productInfo?.productVariants || !selectedVariant) return '';
+        const variantKey = Object.entries(selectedVariant)
+            .map(([key, value]) => `${value}`)
+            .join(' | ');
+        const matchingVariant = productInfo.productVariants.find(
+            variant => variant.variantName.includes(variantKey)
+        );
+        if (matchingVariant && matchingVariant.variantName) {
+            return matchingVariant.variantName.split(' | ').join(', ');
+        }
+        return '';
+    };
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-6xl overflow-y-auto">
@@ -320,6 +340,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
                                     {productInfo.productTitle && (
                                         <h2 className="text-xl font-semibold text-gray-900">
                                             {productInfo.productTitle}
+                                            {getSelectedVariantName() && `, ${getSelectedVariantName()}`}
                                         </h2>
                                     )}
                                     {productInfo.sku && (

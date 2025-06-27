@@ -269,7 +269,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
                                 onCheckedChange={setPrivacyAccepted}
                             />
                             <Label htmlFor="privacy" className="text-sm leading-relaxed">
-                                I agree to the following company's Privacy Policy:
+                                 I agree to the following company's Privacy Policy:
                                 <a href={quizInfo.settings.privacyPolicyLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
                                     {quizInfo.settings.companyName}
                                 </a> *
@@ -372,10 +372,10 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
                     </>
                 )}
                 <div className="space-y-3">
-                    <Button onClick={handleViewResults} className="w-full">
+                    {quizInfo.settings.isShowCorrectAnswer && <Button onClick={handleViewResults} className="w-full">
                         View results
-                    </Button>
-                    {(quizInfo.settings.allowRetake || !passed) && (
+                    </Button>}
+                    {(quizInfo.settings.allowRetake) && (
                         <Button onClick={handleRetakeQuiz} variant="outline" className="w-full">
                             Retake quiz
                         </Button>

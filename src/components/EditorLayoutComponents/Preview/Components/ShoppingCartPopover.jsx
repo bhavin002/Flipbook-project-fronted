@@ -370,7 +370,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
                     </div>
                 )}
             </div>
-            <OrderForm open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen} />
+            <OrderForm open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen} flipbookId={flipbookId} />
             <ConfirmationDialog
                 isConfirmModalOpen={isConfirmModalOpen}
                 setIsConfirmModalOpen={setIsConfirmModalOpen}

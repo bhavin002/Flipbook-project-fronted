@@ -15,6 +15,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { CheckCircle } from 'lucide-react';
 import { useShopSettings } from '@/context/ShopSettingsContext';
+import cartService from '@/service/IndexedDBCart.service';
+import { CreateOrderApi } from '@/service/order.service';
+import LoadingButton from '@/utils/LoadingButton';
 
 const createOrderFormSchema = (customerFields, shopSettings) => {
     const baseSchema = {};
@@ -103,11 +106,12 @@ const createOrderFormSchema = (customerFields, shopSettings) => {
     return z.object(baseSchema);
 };
 
-const OrderForm = ({ open, onOpenChange }) => {
+const OrderForm = ({ open, onOpenChange, flipbookId }) => {
     const { shopSettings, isLoading } = useShopSettings();
     const [currentView, setCurrentView] = useState('form');
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
     const [selectedLocation, setSelectedLocation] = useState('');
+    const [submitting, setSubmitting] = useState(false);
 
     const {
         register,
@@ -164,21 +168,57 @@ const OrderForm = ({ open, onOpenChange }) => {
         setValue('conditionalInboxOption', value, { shouldValidate: true });
     };
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         if (!isFormValid()) {
             toast.error('Please complete all required fields');
             return;
         }
-        const formData = {};
-        shopSettings.customerFields.forEach((field, index) => {
-            formData[field.label] = data[`field_${index}`];
-        });
-        if (shopSettings.shopEmailType === 1) {
-            formData['Location'] = data.conditionalInboxOption;
+        if (!flipbookId) {
+            toast.error('Flipbook ID is missing.');
+            return;
         }
-        console.log('Order submitted:', formData);
-        toast.success(shopSettings.orderConfirmationMessage || 'Order submitted successfully!');
-        setCurrentView('success');
+        setSubmitting(true);
+        try {
+            const cartItems = await cartService.getCart(flipbookId);
+            if (!cartItems || cartItems.length === 0) {
+                toast.error('Your cart is empty.');
+                setSubmitting(false);
+                return;
+            }
+            let email = '';
+            (shopSettings.customerFields || []).forEach((field, idx) => {
+                if (field.type === 'email' && !email) {
+                    email = data[`field_${idx}`];
+                }
+            });
+            const products = cartItems.map(item => ({
+                productId: item.productId,
+                variantId: item.productVariantId || undefined,
+                quantity: item.productQty,
+                customizationText: item.personalizationText || undefined,
+            }));
+            const customerFields = (shopSettings.customerFields || []).map((field, idx) => ({
+                label: field.label,
+                value: data[`field_${idx}`],
+            }));
+            const payload = {
+                email,
+                flipbookId,
+                products,
+                customerFields,
+            };
+            if (shopSettings.shopEmailType === 1) {
+                payload.conditionalInboxSelection = data.conditionalInboxOption;
+            }
+            await CreateOrderApi(payload);
+            await cartService.clearCart(flipbookId);
+            toast.success(shopSettings.orderConfirmationMessage || 'Order submitted successfully!');
+            setCurrentView('success');
+        } catch (err) {
+            toast.error('Failed to submit order', { description: err.message });
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const handleCloseModal = () => {
@@ -348,9 +388,9 @@ const OrderForm = ({ open, onOpenChange }) => {
             <Button
                 onClick={handleSubmit(onSubmit)}
                 className="w-full"
-                disabled={!isFormValid()}
+                disabled={!isFormValid() || submitting}
             >
-                {shopSettings.checkoutButtonLabel || 'Place Order'}
+                {submitting ? <LoadingButton /> : (shopSettings.checkoutButtonLabel || 'Place Order')}
             </Button>
         </div>
     );
