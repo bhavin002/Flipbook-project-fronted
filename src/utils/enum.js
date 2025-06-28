@@ -97,3 +97,9 @@ export const ShopAppearance = {
     SHOP_HEART: 2,
     SHOP_STAR: 3,
 }
+
+export const CheckoutType = {
+    0: "Email",
+    1: "Whatsapp",
+    2: "Slack",
+}

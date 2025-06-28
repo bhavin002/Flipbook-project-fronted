@@ -216,11 +216,10 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
             {/* Question Response */}
             <div className="space-y-2">
                 <Label htmlFor="response" className="text-sm font-medium">
-                    {formData.question} *
+                    {htmlData?.question}
                 </Label>
                 <Textarea
                     id="response"
-                    placeholder="Type your response here..."
                     rows={4}
                     {...register('response')}
                     onChange={handleResponseChange}
@@ -293,15 +292,6 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
     return (
         <Dialog open={open} onOpenChange={handleCloseModal}>
             <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                    <DialogTitle className="text-lg text-gray-800">
-                        {currentView === 'question'
-                            ? (htmlData?.question || 'Your Question')
-                            : 'Response Submitted'
-                        }
-                    </DialogTitle>
-                </DialogHeader>
-
                 {currentView === 'question' && renderQuestionView()}
                 {currentView === 'success' && renderSuccessView()}
             </DialogContent>

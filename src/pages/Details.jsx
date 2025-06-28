@@ -19,6 +19,8 @@ export default function Details() {
     const handleTabChange = (value) => {
         navigate(`/${value}/${id}`);
     };
+
+    console.log("id ?? ", id);
     
     return (
         <div className="p-6 max-md:w-[100vw] h-full overflow-y-hidden">
@@ -74,7 +76,7 @@ export default function Details() {
                     <TrackableLinks/>
                 </TabsContent>
                 <TabsContent value="stats" className="h-full overflow-y-auto">
-                    <Statistics/>
+                    <Statistics flipbookId={id}/>
                 </TabsContent>
             </Tabs>
         </div>

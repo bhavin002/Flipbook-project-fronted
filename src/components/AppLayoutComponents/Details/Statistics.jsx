@@ -6,14 +6,14 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import GenericSelection from "@/utils/GenericSelection";
 import FlipbookSummary from "./Statistics/FlipbookSummary";
-import OrdersTable from "./Statistics/OrdersTable";
+import OrdersTable from "./Statistics/Orders/OrdersTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Quiz from "./Statistics/Quiz";
 import Question from "./Statistics/Question";
 import ContactForm from "./Statistics/ContactForm";
 
-export default function Statistics() {
+export default function Statistics({ flipbookId }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [statisticsFilter, setStatisticsFilter] = useState([]);
     const [displayValue, setDisplayValue] = useState({
@@ -75,7 +75,7 @@ export default function Statistics() {
                 />
             </div>
             <FlipbookSummary />
-            <OrdersTable />
+            <OrdersTable flipbookId={flipbookId} />
             <Card>
                 <CardHeader>
                     <CardTitle>Form responses</CardTitle>

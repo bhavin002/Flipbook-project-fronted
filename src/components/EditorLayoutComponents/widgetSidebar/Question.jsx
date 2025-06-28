@@ -13,8 +13,9 @@ const questionSchema = z.object({
 });
 
 export default function Question({ selectedShape, mainStage, setMainStage, selectedIndex, flipbookId }) {
+  console.log("selectedShape",selectedShape)
   const initialQuestion = selectedShape[0]?.attrs?.htmlData?.question || "Add your question here...";
-
+  console.log("initialQuestion",initialQuestion)
   const form = useForm({
     resolver: zodResolver(questionSchema),
     defaultValues: {
