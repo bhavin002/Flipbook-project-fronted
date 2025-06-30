@@ -13,7 +13,7 @@ import { toast } from "sonner";
 import LoadingButton from "@/utils/LoadingButton";
 import { addIntercationDataToMainStage } from "@/utils/Helper";
 
-export default function QuizDialog({ selectedShape, mainStage, setMainStage, selectedIndex }) {
+export default function QuizDialog({ selectedShape, mainStage, setMainStage, selectedIndex, flipbookId }) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
@@ -65,7 +65,7 @@ export default function QuizDialog({ selectedShape, mainStage, setMainStage, sel
         try {
             setIsFetching(true);
             const response = await getQuizApi(variantId);
-            console.log("response", response);
+            console.log("response daat quiz", response);
 
             const transformedData = {
                 questions: response.data.questions.map(q => ({
@@ -94,11 +94,10 @@ export default function QuizDialog({ selectedShape, mainStage, setMainStage, sel
     };
 
     const onSubmit = async (data) => {
-        console.log("data", data);
         try {
             setIsLoading(true);
             let response;
-
+            data.flipbookId = flipbookId;
             if (variantId) {
                 response = await updateQuizApi(variantId, data);
             } else {

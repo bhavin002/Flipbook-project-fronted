@@ -18,7 +18,6 @@ export const contactFormSchema = z.object({
         tooltip: z.string().optional(),
         buttonLabel: z.string().min(1, "Button label is required"),
         thankYouMessage: z.string().min(1, "Thank you message is required"),
-        collectEmail: z.boolean(),
         addPrivacyPolicy: z.boolean(),
         companyName: z.string().optional(),
         privacyPolicyLink: z.string().optional(),

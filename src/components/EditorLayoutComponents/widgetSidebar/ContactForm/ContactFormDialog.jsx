@@ -29,7 +29,6 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
                 tooltip: "Click to answer question",
                 buttonLabel: "Submit",
                 thankYouMessage: "Your response has been submitted.",
-                collectEmail: false,
                 addPrivacyPolicy: false,
                 companyName: "Flipnova",
                 privacyPolicyLink: "https://legal.flipnova.com/privacy-policy",
@@ -59,7 +58,7 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
         try {
             setIsFetching(true);
             const response = await getContactFormApi(variantId);
-            
+
             // Transform the API response to match the form schema
             const transformedData = {
                 formTitle: response.data.formTitle || "",
@@ -68,7 +67,6 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
                     tooltip: response.data.settings?.tooltip || "Click to answer question",
                     buttonLabel: response.data.settings?.buttonLabel || "Submit",
                     thankYouMessage: response.data.settings?.thankYouMessage || "Your response has been submitted.",
-                    collectEmail: response.data.settings?.collectEmail || false,
                     addPrivacyPolicy: response.data.settings?.addPrivacyPolicy || false,
                     companyName: response.data.settings?.companyName || "Flipnova",
                     privacyPolicyLink: response.data.settings?.privacyPolicyLink || "https://legal.flipnova.com/privacy-policy",
@@ -77,7 +75,7 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
                 },
                 customerFields: response.data.customerFields || []
             };
-            
+
             form.reset(transformedData);
             setOpen(true);
         } catch (error) {
@@ -92,7 +90,7 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
     const onSubmit = async (data) => {
         try {
             setIsLoading(true);
-            
+
             // Transform the form data to match the expected API payload
             const apiData = {
                 formTitle: data.formTitle,
@@ -101,7 +99,6 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
                     tooltip: data.settings.tooltip,
                     buttonLabel: data.settings.buttonLabel,
                     thankYouMessage: data.settings.thankYouMessage,
-                    collectEmail: data.settings.collectEmail,
                     addPrivacyPolicy: data.settings.addPrivacyPolicy,
                     companyName: data.settings.companyName,
                     privacyPolicyLink: data.settings.privacyPolicyLink,

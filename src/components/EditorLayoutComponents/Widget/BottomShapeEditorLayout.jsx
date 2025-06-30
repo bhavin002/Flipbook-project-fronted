@@ -118,7 +118,7 @@ function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mai
     }
     if (selectedSubMenu === "quiz") {
         return (
-            <Quiz selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
+            <Quiz selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} flipbookId={flipbookId}/>
         )
     }
     if (selectedSubMenu === "question") {

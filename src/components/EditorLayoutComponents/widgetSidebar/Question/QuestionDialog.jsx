@@ -50,7 +50,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
         }
     });
 
-    const { formState: { errors } , clearErrors } = form;
+    const { formState: { errors }, clearErrors } = form;
 
     const fetchQuestionForm = async () => {
         if (!variantId) {
@@ -76,7 +76,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
         try {
             setIsLoading(true);
             let response;
-            
+
             data.flipbookId = flipbookId;
             if (variantId) {
                 response = await updateQuestionFormApi(variantId, data);
@@ -150,6 +150,30 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                         </DialogHeader>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
                             <div className="lg:max-h-[calc(100vh-150px)] max-lg:max-h-[calc(100vh-300px)] overflow-y-auto px-1 py-2">
+                                <div className="space-y-2">
+                                    <div>
+                                        <Label>
+                                            Question
+                                        </Label>
+                                        <p className="text-sm text-gray-500">
+                                            Ask a question to gather feedback and insights.
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <Label htmlFor="question" className={`text-xs ${errors.question ? "text-red-500" : ""}`}>
+                                            Question <span>*</span>
+                                        </Label>
+                                        <Input
+                                            type="text"
+                                            id="question"
+                                            {...form.register("question")}
+                                            placeholder="Add your question here..."
+                                            className={errors.question ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
+                                        />
+                                        {errors.question && <p className="text-red-500 text-xs">{errors.question.message}</p>}
+                                    </div>
+                                </div>
+                                <Separator className="my-4" />
                                 <div>
                                     <Label htmlFor="question-tooltip" className={`text-xs ${errors.tooltip ? "text-red-500" : ""}`}>
                                         Tooltip

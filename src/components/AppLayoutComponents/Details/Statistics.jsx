@@ -97,10 +97,10 @@ export default function Statistics({ flipbookId }) {
                             <Quiz />
                         </TabsContent>
                         <TabsContent value="question" className="h-full mt-4">
-                            <Question />
+                            <Question flipbookId={flipbookId}/>
                         </TabsContent>
                         <TabsContent value="contact-form" className="h-full mt-4">
-                            <ContactForm />
+                            <ContactForm flipbookId={flipbookId} />
                         </TabsContent>
                     </Tabs>
                 </CardContent>

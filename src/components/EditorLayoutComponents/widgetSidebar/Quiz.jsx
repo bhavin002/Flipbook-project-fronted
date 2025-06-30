@@ -14,7 +14,7 @@ const quizSchema = z.object({
     instructions: z.string()
 })
 
-export default function Quiz({ selectedShape, mainStage, setMainStage, selectedIndex }) {
+export default function Quiz({ selectedShape, mainStage, setMainStage, selectedIndex, flipbookId }) {
     const initialIsMandatory = selectedShape[0]?.attrs?.htmlData?.isMandatory || false;
     const initialInstructions = selectedShape[0]?.attrs?.htmlData?.instructions || "Please complete the highlighted quiz before proceeding.";
 
@@ -57,7 +57,7 @@ export default function Quiz({ selectedShape, mainStage, setMainStage, selectedI
     const handleMandatoryChange = (checked) => {
         const currentInstructions = form.getValues("instructions");
         form.setValue("isMandatory", checked);
-        
+
         // If instructions is empty or null when unchecking mandatory, set default instructions
         if (!checked && (!currentInstructions || currentInstructions.trim() === "")) {
             const defaultInstructions = "Please complete the highlighted quiz before proceeding.";
@@ -88,7 +88,7 @@ export default function Quiz({ selectedShape, mainStage, setMainStage, selectedI
             <div className="space-y-2">
                 <Label className="text-lg">Quiz</Label>
                 <p className="text-sm">Create quizzes to test knowledge. Customize questions, share your quiz, and review results - all in one place.</p>
-                <QuizDialog selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
+                <QuizDialog selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} flipbookId={flipbookId}/>
             </div>
 
             <Form {...form}>

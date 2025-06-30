@@ -2,10 +2,10 @@ import React from 'react';
 import { showModal } from '@/utils/ShowModal';
 import ContactFormModel from './ContactFormModel';
 
-export default function ContactForm({ shape, visibilitySettings }) {
+export default function ContactForm({ shape, visibilitySettings, flipbookId }) {
     const handleClick = () => {
         if (shape.htmlType === 'contact-form') {
-            showModal(ContactFormModel, shape.htmlData);
+            showModal(ContactFormModel, shape.htmlData, flipbookId);
         }
     };
     return (

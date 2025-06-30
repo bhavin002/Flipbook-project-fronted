@@ -915,12 +915,12 @@ const questions = [
 ];
 
 const contactFormData = [
-    { date: "Mar 17, 2025, 3:15 PM", email: "alex.jones@flipnova.com", name: "Alex Jones", phone: "1212121212", country: "United States", custom: "tdadqd" },
+    { date: "Mar 17, 2025, 3:15 PM", email: "alex.jones@flipnova.com", name: "Alex Jones", phone: "1212121212", country: "United States", custom: "tdadqd", gdprAccepted: "Yes" },
     { date: "Mar 18, 2025, 1:45 PM", email: "sophia.miller@techwave.com", name: "Sophia Miller", phone: "2323232323", country: "Canada", custom: "weoplk" },
     { date: "Mar 19, 2025, 11:30 AM", email: "liam.smith@cybertrend.com", name: "Liam Smith", phone: "3434343434", country: "United Kingdom", custom: "zxcvbn" },
     { date: "Mar 20, 2025, 2:20 PM", email: "emma.davis@nextgen.com", name: "Emma Davis", phone: "4545454545", country: "Australia", custom: "asdfgh" },
     { date: "Mar 21, 2025, 9:10 AM", email: "noah.johnson@digitech.com", name: "Noah Johnson", phone: "5656565656", country: "Germany", custom: "qwerty" },
-    { date: "Mar 22, 2025, 4:50 PM", email: "olivia.brown@softlab.com", name: "Olivia Brown", phone: "6767676767", country: "France", custom: "mnbvcx" },
+    { date: "Mar 22, 2025, 4:50 PM", email: "olivia.brown@softlab.com", name: "Olivia Brown", phone: "6767676767", country: "France", custom: "mnbvcx", gdprAccepted: "Yes" },
     { date: "Mar 23, 2025, 8:00 AM", email: "william.wilson@webcore.com", name: "William Wilson", phone: "7878787878", country: "India", custom: "lkjhg" },
     { date: "Mar 24, 2025, 6:40 PM", email: "ava.moore@cloudsync.com", name: "Ava Moore", phone: "8989898989", country: "Japan", custom: "poiuy" },
     { date: "Mar 25, 2025, 12:25 PM", email: "james.taylor@infowave.com", name: "James Taylor", phone: "9090909090", country: "Brazil", custom: "rewqas" },

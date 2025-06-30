@@ -15,13 +15,15 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { CheckCircle } from 'lucide-react';
+import { ContactSubmissionApi } from '@/service/contactSubmission.service';
+import LoadingButton from '@/utils/LoadingButton';
 
 const createContactFormSchema = (customerFields, settings) => {
     const baseSchema = {};
 
     customerFields.forEach((field, index) => {
         const fieldKey = `field_${index}`;
-        
+
         if (field.required) {
             switch (field.type) {
                 case 'email':
@@ -91,17 +93,23 @@ const createContactFormSchema = (customerFields, settings) => {
     return z.object(baseSchema);
 };
 
-const ContactFormModel = ({ open, onOpenChange, htmlData }) => {
+const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [contactFormInfo, setContactFormInfo] = useState(null);
     const [currentView, setCurrentView] = useState('form');
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
     const [gdprAccepted, setGdprAccepted] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+
+    console.log("contactFormInfo ??",contactFormInfo)
+
+    console.log("flipbookId", flipbookId)
+    console.log("contactFormId", htmlData.variantId)
 
     const {
         register,
         handleSubmit,
-        formState: { errors, isValid },
+        formState: { errors },
         watch,
         setValue,
         reset,
@@ -144,7 +152,7 @@ const ContactFormModel = ({ open, onOpenChange, htmlData }) => {
         for (let i = 0; i < contactFormInfo.customerFields.length; i++) {
             const field = contactFormInfo.customerFields[i];
             const value = watchedValues[`field_${i}`];
-            
+
             if (field.required && (!value || value.trim() === '')) {
                 return false;
             }
@@ -183,21 +191,32 @@ const ContactFormModel = ({ open, onOpenChange, htmlData }) => {
         setValue('gdprAccepted', checked, { shouldValidate: true });
     };
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         if (!isFormValid()) {
             toast.error('Please complete all required fields');
             return;
         }
-        
-        // Process form data
-        const formData = {};
-        contactFormInfo.customerFields.forEach((field, index) => {
-            formData[field.label] = data[`field_${index}`];
-        });
-
-        console.log('Form submitted:', formData);
-        toast.success('Form submitted successfully!');
-        setCurrentView('success');
+        setSubmitting(true);
+        try {
+            const submittedFields = contactFormInfo.customerFields.map((field, index) => ({
+                fieldId: field._id,
+                type: field.type,
+                value: data[`field_${index}`]
+            }));
+            const payload = {
+                contactFormId: htmlData.variantId,
+                privacyAccepted: !!privacyAccepted,
+                gdprAccepted: !!gdprAccepted,
+                submittedFields,
+                flipbookId: flipbookId
+            };
+            await ContactSubmissionApi(payload);
+            setCurrentView('success');
+        } catch (error) {
+            toast.error('Failed to submit form', { description: error.message });
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const handleCloseModal = () => {
@@ -268,7 +287,7 @@ const ContactFormModel = ({ open, onOpenChange, htmlData }) => {
 
                     <div className="space-y-4 mt-4">
                         <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
-                        
+
                         {[1, 2, 3, 4].map((_, index) => (
                             <div key={index} className="space-y-2">
                                 <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
@@ -313,18 +332,18 @@ const ContactFormModel = ({ open, onOpenChange, htmlData }) => {
                 <div className="space-y-3 pt-4 border-t">
                     {contactFormInfo.settings.addPrivacyPolicy && (
                         <div className="flex items-start space-x-2">
-                            <Checkbox 
-                                id="privacy" 
+                            <Checkbox
+                                id="privacy"
                                 checked={privacyAccepted}
                                 onCheckedChange={handlePrivacyChange}
                                 className="mt-0.5"
                             />
                             <Label htmlFor="privacy" className="text-sm leading-relaxed">
                                 I agree to the following company's Privacy Policy:
-                                <a 
-                                    href={contactFormInfo.settings.privacyPolicyLink} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
+                                <a
+                                    href={contactFormInfo.settings.privacyPolicyLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="text-primary hover:underline ml-1"
                                 >
                                     {contactFormInfo.settings.companyName}
@@ -335,8 +354,8 @@ const ContactFormModel = ({ open, onOpenChange, htmlData }) => {
 
                     {contactFormInfo.settings.addGDPRCompliance && (
                         <div className="flex items-start space-x-2">
-                            <Checkbox 
-                                id="gdpr" 
+                            <Checkbox
+                                id="gdpr"
                                 checked={gdprAccepted}
                                 onCheckedChange={handleGdprChange}
                                 className="mt-0.5"
@@ -352,9 +371,9 @@ const ContactFormModel = ({ open, onOpenChange, htmlData }) => {
             <Button
                 onClick={handleSubmit(onSubmit)}
                 className="w-full"
-                disabled={!isFormValid()}
+                disabled={!isFormValid() || submitting}
             >
-                {contactFormInfo.settings.buttonLabel || 'Submit'}
+                {submitting ? <LoadingButton /> : (contactFormInfo.settings.buttonLabel || 'Submit')}
             </Button>
         </div>
     );
