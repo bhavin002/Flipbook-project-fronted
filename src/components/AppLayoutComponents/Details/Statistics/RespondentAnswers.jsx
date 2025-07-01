@@ -1,75 +1,59 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SelectValue, SelectTrigger, SelectItem, SelectGroup, SelectContent, Select } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { CircleCheck, XCircle } from 'lucide-react';
-import { getData } from '@/utils/datas';
+import { getQuizAttemptApi } from '@/service/quizAttempt.service';
+import { toast } from "sonner";
 
-export default function RespondentAnswers() {
-  const [selectedRespondent, setSelectedRespondent] = useState("respondent1");
-  
-  // Simulated data based on the quiz data
-  const quizData = getData('quizData');
-  
-  // Sample respondent data
-  const respondentsData = [
-    {
-      id: "respondent1",
-      name: "John Doe",
-      email: "john.doe@example.com",
-      score: "3/5",
-      submittedAt: "Mar 16, 2025, 9:23 PM",
-      answers: [
-        { questionId: 1, selectedOption: 2, isCorrect: true },
-        { questionId: 2, selectedOption: 2, isCorrect: true },
-        { questionId: 3, selectedOption: 1, isCorrect: false },
-        { questionId: 4, selectedOption: 1, isCorrect: true },
-        { questionId: 5, selectedOption: 2, isCorrect: false }
-      ]
-    },
-    {
-      id: "respondent2",
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      score: "4/5",
-      submittedAt: "Mar 15, 2025, 8:15 PM",
-      answers: [
-        { questionId: 1, selectedOption: 2, isCorrect: true },
-        { questionId: 2, selectedOption: 2, isCorrect: true },
-        { questionId: 3, selectedOption: 2, isCorrect: true },
-        { questionId: 4, selectedOption: 1, isCorrect: true },
-        { questionId: 5, selectedOption: 2, isCorrect: false }
-      ]
-    },
-    {
-      id: "respondent3",
-      name: "Alex Johnson",
-      email: "alex.johnson@example.com",
-      score: "5/5",
-      submittedAt: "Mar 14, 2025, 3:45 PM",
-      answers: [
-        { questionId: 1, selectedOption: 2, isCorrect: true },
-        { questionId: 2, selectedOption: 2, isCorrect: true },
-        { questionId: 3, selectedOption: 2, isCorrect: true },
-        { questionId: 4, selectedOption: 1, isCorrect: true },
-        { questionId: 5, selectedOption: 1, isCorrect: true }
-      ]
+export default function RespondentAnswers({ respondents = [], loading }) {
+  const [selectedRespondent, setSelectedRespondent] = useState("");
+  const [answerData, setAnswerData] = useState(null);
+  const [loadingAnswer, setLoadingAnswer] = useState(false);
+
+  useEffect(() => {
+    if (respondents.length > 0) {
+      setSelectedRespondent(respondents[0].value);
+    } else {
+      setSelectedRespondent("");
+      setAnswerData(null);
     }
-  ];
+  }, [respondents]);
 
-  const selectedResponder = respondentsData.find(r => r.id === selectedRespondent);
-  
+  useEffect(() => {
+    const fetchAnswerData = async () => {
+      if (!selectedRespondent) return;
+      setLoadingAnswer(true);
+      try {
+        const data = await getQuizAttemptApi(selectedRespondent);
+        setAnswerData(data.data);
+      } catch (err) {
+        setAnswerData(null);
+        toast.error("Failed to load respondent's answers", { description: err.message });
+      } finally {
+        setLoadingAnswer(false);
+      }
+    };
+    if (selectedRespondent) fetchAnswerData();
+  }, [selectedRespondent]);
+
   const handleRespondentChange = (value) => {
     setSelectedRespondent(value);
   };
 
-  // Function to get option text
-  const getOptionText = (questionId, optionId) => {
-    const question = quizData.find(q => q.id === questionId);
-    if (!question) return "";
-    const option = question.options.find(o => o.id === optionId);
-    return option ? option.text : "";
-  };
+  if (loading) {
+    return <div className="h-32 bg-gray-100 animate-pulse rounded" />;
+  }
+
+  // Zero state: no respondents
+  if (!loading && respondents.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[100px] text-center text-muted-foreground">
+        <span className="text-lg font-medium">No respondents found for this quiz.</span>
+        <span className="text-sm mt-2">Share the quiz to start collecting answers.</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -79,33 +63,32 @@ export default function RespondentAnswers() {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {respondentsData.map(respondent => (
-              <SelectItem key={respondent.id} value={respondent.id}>
-                {respondent.name} ({respondent.email})
+            {respondents.map(respondent => (
+              <SelectItem key={respondent.value} value={respondent.value}>
+                {respondent.label}
               </SelectItem>
             ))}
           </SelectGroup>
         </SelectContent>
       </Select>
-      
-      {selectedResponder && (
+      {loadingAnswer ? (
+        <div className="h-32 bg-gray-100 animate-pulse rounded" />
+      ) : answerData && answerData.quizDetails ? (
         <>
           <div className="space-y-1">
-            <p className="text-sm font-medium">{selectedResponder.name} ({selectedResponder.email})</p>
-            <p className="text-xs text-gray-500">Correct answers: {selectedResponder.score}</p>
-            <p className="text-xs text-gray-500">Submitted: {selectedResponder.submittedAt}</p>
+            <p className="text-sm font-medium">{answerData.email}</p>
+            <p className="text-xs text-gray-500">Correct answers: {answerData.correctAnswersCount}</p>
+            <p className="text-xs text-gray-500">Submitted: {new Date(answerData.submittedAt).toLocaleString()}</p>
           </div>
-          
           <Separator />
-          
           <div className="space-y-6">
-            {quizData.map((question, qIndex) => {
-              const userAnswer = selectedResponder.answers.find(a => a.questionId === question.id);
-              const selectedOption = question.options.find(o => o.id === userAnswer?.selectedOption);
-              const isCorrect = userAnswer?.isCorrect;
-              
+            {answerData.quizDetails.questions.map((question, qIndex) => {
+              const isCorrect = question.options.every(opt => {
+                if (opt.userAnswer) return opt.isCorrect;
+                return true;
+              });
               return (
-                <Card key={question.id} className="overflow-hidden">
+                <Card key={question._id} className="overflow-hidden">
                   <CardContent className="p-0">
                     <div className="flex flex-col">
                       <div className={`p-4 ${isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
@@ -119,22 +102,20 @@ export default function RespondentAnswers() {
                           </div>
                           <div className="flex-1">
                             <h4 className="font-medium text-base">
-                              {question.id}. {question.question}
+                              {qIndex + 1}. {question.text}
                             </h4>
                           </div>
                         </div>
                       </div>
-                      
                       <div className="p-4 space-y-2">
                         {question.options.map(option => {
-                          const isSelected = userAnswer?.selectedOption === option.id;
-                          const bgColor = isSelected 
+                          const isSelected = option.userAnswer;
+                          const bgColor = isSelected
                             ? (option.isCorrect ? 'bg-green-100' : 'bg-red-100')
                             : option.isCorrect ? 'bg-green-50' : '';
-                          
                           return (
-                            <div 
-                              key={option.id} 
+                            <div
+                              key={option._id}
                               className={`flex items-center gap-2 p-2 rounded ${bgColor}`}
                             >
                               {option.isCorrect ? (
@@ -163,6 +144,8 @@ export default function RespondentAnswers() {
             })}
           </div>
         </>
+      ) : (
+        <div className="text-gray-500 text-center">No answer data available.</div>
       )}
     </div>
   );

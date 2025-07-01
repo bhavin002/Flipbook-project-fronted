@@ -94,7 +94,7 @@ export default function Statistics({ flipbookId }) {
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value="quiz" className="h-full mt-4">
-                            <Quiz />
+                            <Quiz flipbookId={flipbookId}/>
                         </TabsContent>
                         <TabsContent value="question" className="h-full mt-4">
                             <Question flipbookId={flipbookId}/>

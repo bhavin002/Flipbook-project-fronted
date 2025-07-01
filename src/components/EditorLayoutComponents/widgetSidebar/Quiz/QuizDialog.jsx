@@ -54,8 +54,6 @@ export default function QuizDialog({ selectedShape, mainStage, setMainStage, sel
 
     const { formState: { errors }, clearErrors } = form;
 
-    console.log("errors ??", errors);
-
     const fetchQuiz = async () => {
         if (!variantId) {
             setOpen(true); // Open modal directly if no variantId (new quiz)
@@ -65,16 +63,17 @@ export default function QuizDialog({ selectedShape, mainStage, setMainStage, sel
         try {
             setIsFetching(true);
             const response = await getQuizApi(variantId);
-            console.log("response daat quiz", response);
 
             const transformedData = {
                 questions: response.data.questions.map(q => ({
                     text: q.text,
                     options: q.options.map(o => ({
                         text: o.text,
-                        isCorrect: o.isCorrect
+                        isCorrect: o.isCorrect,
+                        _id: o._id
                     })),
-                    isMultipleAnswer: q.isMultipleAnswer
+                    isMultipleAnswer: q.isMultipleAnswer,
+                    _id: q._id
                 })),
                 settings: {
                     ...response.data.settings,

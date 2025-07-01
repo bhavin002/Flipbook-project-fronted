@@ -958,11 +958,6 @@ const quizSummary = [
         id: "completion",
         title: "83.33%",
         label: "Completion rate"
-    },
-    {
-        id: "avgTime",
-        title: "00:00:12",
-        label: "Average time to complete"
     }
 ];
 

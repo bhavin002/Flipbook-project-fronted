@@ -11,8 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from 'sonner';
-import { getQuizApi } from '@/service/quiz.service';
-import { quizAttemptApi, getQuizAttemptApi } from '@/service/question.service';
+import { quizAttemptApi, getQuizAttemptApi, getQuizByIdApi } from '@/service/quizAttempt.service';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -41,12 +40,14 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
     const [currentView, setCurrentView] = useState('quiz');
     const [quizResult, setQuizResult] = useState(null);
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
+    const [gdprAccepted, setGdprAccepted] = useState(false);
     const [marketingAccepted, setMarketingAccepted] = useState(false);
     const [submitLoading, setSubmitLoading] = useState(false);
     const [resultLoading, setResultLoading] = useState(false);
     const [resultError, setResultError] = useState(null);
     const [detailedResultLoading, setDetailedResultLoading] = useState(false);
     const [detailedQuizResult, setDetailedQuizResult] = useState(null);
+    console.log("quizInfo ??",quizInfo)
 
     const {
         register,
@@ -65,7 +66,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
         const getQuizData = async () => {
             try {
                 setIsLoading(true);
-                const response = await getQuizApi(htmlData.variantId);
+                const response = await getQuizByIdApi(htmlData.variantId);
                 setQuizInfo(response.data);
             } catch (error) {
                 toast.error('Failed to load quiz information', {
@@ -91,7 +92,10 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
             if (!email || !email.includes('@') || errors.email) {
                 return false;
             }
-            if (!privacyAccepted) {
+            if (quizInfo.settings.addPrivacyPolicy && !privacyAccepted) {
+                return false;
+            }
+            if (quizInfo.settings.addGDPRCompliance && !gdprAccepted) {
                 return false;
             }
         }
@@ -150,7 +154,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
                 quizId: quizInfo._id,
                 email: data.email,
                 addPrivacyPolicy: !!privacyAccepted,
-                addGdprCompliance: false, // Add if you have GDPR checkbox
+                addGdprCompliance: !!gdprAccepted,
                 answers,
                 flipbookId: flipbookId || htmlData?.flipbookId
             };
@@ -177,6 +181,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
         setQuizResult(null);
         setDetailedQuizResult(null);
         setPrivacyAccepted(false);
+        setGdprAccepted(false);
         setMarketingAccepted(false);
         setResultError(null);
         reset();
@@ -204,6 +209,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
         setQuizResult(null);
         setDetailedQuizResult(null);
         setPrivacyAccepted(false);
+        setGdprAccepted(false);
         setMarketingAccepted(false);
         setResultError(null);
         reset();
@@ -260,32 +266,39 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
                             className={`mt-1 ${errors.email && "border-red-500 focus:outline-none focus-visible:ring-0"}`}
                         />
                     </div>
-
                     <div className="space-y-2">
-                        <div className="flex items-center space-x-2">
-                            <Checkbox
-                                id="privacy"
-                                checked={privacyAccepted}
-                                onCheckedChange={setPrivacyAccepted}
-                            />
-                            <Label htmlFor="privacy" className="text-sm leading-relaxed">
-                                 I agree to the following company's Privacy Policy:
-                                <a href={quizInfo.settings.privacyPolicyLink} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline ml-1">
-                                    {quizInfo.settings.companyName}
-                                </a> *
-                            </Label>
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                            <Checkbox
-                                id="marketing"
-                                checked={marketingAccepted}
-                                onCheckedChange={setMarketingAccepted}
-                            />
-                            <Label htmlFor="marketing" className="text-sm">
-                                I agree to receive marketing materials
-                            </Label>
-                        </div>
+                        {quizInfo.settings.addPrivacyPolicy && (
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="privacy"
+                                    checked={privacyAccepted}
+                                    onCheckedChange={setPrivacyAccepted}
+                                />
+                                <Label htmlFor="privacy" className="text-sm leading-relaxed">
+                                    I agree to the following company's Privacy Policy:
+                                    <a
+                                        href={quizInfo.settings.privacyPolicyLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-primary hover:underline ml-1"
+                                    >
+                                        {quizInfo.settings.companyName}
+                                    </a> *
+                                </Label>
+                            </div>
+                        )}
+                        {quizInfo.settings.addGDPRCompliance && (
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="gdpr"
+                                    checked={gdprAccepted}
+                                    onCheckedChange={setGdprAccepted}
+                                />
+                                <Label htmlFor="gdpr" className="text-sm">
+                                    {quizInfo.settings.gdprMessage || "I agree to GDPR compliance"} *
+                                </Label>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

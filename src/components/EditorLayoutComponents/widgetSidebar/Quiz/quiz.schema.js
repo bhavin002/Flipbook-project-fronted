@@ -3,12 +3,14 @@ import { z } from "zod";
 const optionSchema = z.object({
   text: z.string().min(1, "Option text is required"),
   isCorrect: z.boolean(),
+  _id: z.string().optional(),
 });
 
 const questionSchema = z.object({
   text: z.string().min(1, "Question text is required"),
   options: z.array(optionSchema).min(1, "At least one option is required"),
   isMultipleAnswer: z.boolean(),
+  _id: z.string().optional(),
 });
 
 export const quizSchema = z.object({
