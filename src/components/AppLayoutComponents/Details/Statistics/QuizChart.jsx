@@ -70,7 +70,14 @@ export default function QuizChart({ questionStats = [], loading }) {
                 {question.options.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={getBarColor(entry.isCorrect)} />
                 ))}
-                <LabelList dataKey="percentage" position="insideRight" formatter={(value) => `${value}%`} style={{ fill: '#333', fontWeight: 'bold' }} />
+                <LabelList 
+                  dataKey="percentage" 
+                  position="insideRight" 
+                  content={({ value }) => value > 0 ? (
+                    <tspan style={{ fill: '#333', fontWeight: 'bold' }}>{value}%</tspan>
+                  ) : null}
+                  style={{ fill: '#333', fontWeight: 'bold' }}
+                />
               </Bar>
             </BarChart>
           </ResponsiveContainer>

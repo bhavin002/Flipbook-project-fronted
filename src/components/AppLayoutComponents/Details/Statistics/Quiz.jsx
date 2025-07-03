@@ -85,6 +85,15 @@ export default function Quiz({ flipbookId }) {
         }
     };
 
+    if (!loadingQuizList && quizList.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[100px] text-center text-muted-foreground">
+                <span className="text-lg font-medium">No quizzes found for this flipbook.</span>
+                <span className="text-sm mt-2">Create a quiz to start collecting responses.</span>
+            </div>
+        );
+    }
+
     return (
         <div className="grid gap-2 space-y-1">
             <Label htmlFor="workspace-select">Form name</Label>
