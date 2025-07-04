@@ -6,7 +6,7 @@ import { useCurrency } from './CurrencyContext';
 
 const ShopSettingsContext = createContext();
 
-export function ShopSettingsProvider({ children }) {
+export function ShopSettingsProvider({ children, publicData }) {
     const { id: flipbookId } = useParams();
     const [isLoading, setIsLoading] = useState(true);
     const [shopSettings, setShopSettings] = useState(null);
@@ -60,8 +60,14 @@ export function ShopSettingsProvider({ children }) {
     };
 
     useEffect(() => {
-        fetchShopSettings();
-    }, [flipbookId]);
+        if (publicData) {
+            setShopSettings(publicData.shopSettings);
+            setIsLoading(false);
+        } else {
+            fetchShopSettings();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [publicData, flipbookId]);
 
     const value = {
         shopSettings,

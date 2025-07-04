@@ -111,11 +111,7 @@ export default function App() {
                 <Route path="/accept-invitation/:token" element={<VerifyReader />} />
                 <Route path="/public-flipbook/:id" element={
                   <ViewModeProvider>
-                    <FlipbookSettingsProvider>
-                      <ShopSettingsProvider>
-                        <PublicFlipbook />
-                      </ShopSettingsProvider>
-                    </FlipbookSettingsProvider>
+                    <PublicFlipbook />
                   </ViewModeProvider>
                 }
                 />

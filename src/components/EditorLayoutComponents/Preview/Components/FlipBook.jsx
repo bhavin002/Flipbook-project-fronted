@@ -89,16 +89,23 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
         const getPageData = async () => {
             try {
                 setPageContent([]);
-                const response = isPublicView ? await GetPublishFlipbookApi(flipbookId, true) : await GetFlipbookApi(flipbookId, false);
-                console.log(response);
-                setDivHeight(response.data.height);
-                setDivWidth(response.data.width);
+                let flipbookRes = null;
+                if(isPublicView){
+                    const response = await GetPublishFlipbookApi(flipbookId);
+                    flipbookRes = response.data.flipbook;
+                } else {
+                    const response = await GetFlipbookApi(flipbookId, false);
+                    flipbookRes = response.data;
+                }
+                console.log(flipbookRes);
+                setDivHeight(flipbookRes.height);
+                setDivWidth(flipbookRes.width);
 
-                const htmlData = JsonToHtml(response.data.pages);
+                const htmlData = JsonToHtml(flipbookRes.pages);
                 htmlData.map((data) => {
                     setPageContent((prev) => [...prev, data]);
                 });
-                setTotalPages(response.data.pages.length);
+                setTotalPages(flipbookRes.pages.length);
             } catch (error) {
                 toast.error("Failed to load flipbook", {
                     description: error.message,

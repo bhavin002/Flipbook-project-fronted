@@ -5,7 +5,8 @@ import { toast } from 'sonner';
 
 export const FlipbookSettingsContext = createContext();
 
-export const FlipbookSettingsProvider = ({ children }) => {
+export const FlipbookSettingsProvider = ({ children, publicData }) => {
+    console.log("publicData in FlipbookSettingsProvider:", publicData);
     const [settings, setSettings] = useState(null);
     const [hasFetched, setHasFetched] = useState(false);
     const [updateCounter, setUpdateCounter] = useState(0);
@@ -34,8 +35,19 @@ export const FlipbookSettingsProvider = ({ children }) => {
     }, [flipbookId, hasFetched]);
 
     useEffect(() => {
-        fetchSettings();
-    }, [fetchSettings]);
+        if (publicData) {
+            setLatestSettings(publicData.settings);
+            setSettings(publicData.settings);
+            setLatestJson({
+                ...publicData.settings,
+                brandLogoId: publicData.settings?.brandLogoLink
+            });
+            setHasFetched(true);
+        } else {
+            fetchSettings();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [publicData, flipbookId]);
 
     const updateSettings = async (payload) => {
         try {
