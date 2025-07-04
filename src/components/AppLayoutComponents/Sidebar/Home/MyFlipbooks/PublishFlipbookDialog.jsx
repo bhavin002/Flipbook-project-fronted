@@ -35,7 +35,8 @@ export default function PublishFlipbookDialog({
     isPublishModalOpen,
     setIsPublishModalOpen,
     flipbookId, // Add flipbookId prop
-    onPublishSuccess // Optional callback for success handling
+    onPublishSuccess, // Optional callback for success handling
+    mainStage
 }) {
     const [selectedRadio, setSelectedRadio] = useState("email");
     const [emailInput, setEmailInput] = useState("");
@@ -53,6 +54,8 @@ export default function PublishFlipbookDialog({
     const [sendNotification, setSendNotification] = useState(false);
     const [trackReaders, setTrackReaders] = useState(false);
     const [isPublished, setIsPublished] = useState(false);
+
+    console.log("mainStage in PublishFlipbookDialog",mainStage)
 
     // Email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -294,6 +297,73 @@ export default function PublishFlipbookDialog({
         }
     };
 
+    const cloneStageElements = (stageRef) => {
+        const targetChild = stageRef.children[0].children[1];
+        const bg = stageRef.children[0].children[0];
+        const targetWidth = targetChild.width() / targetChild.scaleX();
+        const targetHeight = targetChild.height() / targetChild.scaleY();
+
+        // Clone target child and background
+        const clonedNode = targetChild.clone();
+        const clonedBg = bg.clone();
+
+        // Reset attributes
+        clonedNode.setAttr('scaleX', 1);
+        clonedNode.setAttr('scaleY', 1);
+        clonedNode.setAttr('x', 0);
+        clonedNode.setAttr('y', 0);
+
+        clonedBg.setAttr('height', targetHeight);
+        clonedBg.setAttr('width', targetWidth);
+        clonedBg.setAttr('x', 0);
+        clonedBg.setAttr('y', 0);
+
+        clonedNode.children = [clonedBg, ...clonedNode.children];
+
+        return { clonedNode, targetWidth, targetHeight };
+    };
+
+    async function generateThumbnails(mainStage) {
+        const thumbnails = [];
+        for (let i = 0; i < mainStage.length; i++) {
+            const stage = mainStage[i];
+            const stageRef = stage.stageref.current;
+            if (!stageRef) continue;
+            const { clonedNode, targetWidth, targetHeight } = cloneStageElements(stageRef);
+            const dataUrl = await clonedNode.toDataURL({
+                x: 0,
+                y: 0,
+                width: targetWidth,
+                crossOriginIsolated: false,
+                height: targetHeight,
+                pixelRatio: 1,
+                mimeType: 'image/png',
+            });
+            const blob = await (await fetch(dataUrl)).blob();
+            thumbnails.push(blob);
+        }
+        return thumbnails;
+    }
+
+    function buildFormData(payload, thumbnails) {
+        const formData = new FormData();
+        Object.entries(payload).forEach(([key, value]) => {
+            if (Array.isArray(value)) {
+                value.forEach((item) => formData.append(`${key}[]`, item));
+            } else if (typeof value === 'object' && value !== null) {
+                formData.append(key, JSON.stringify(value));
+            } else if (value !== undefined && value !== null) {
+                formData.append(key, value);
+            }
+        });
+        if (thumbnails && thumbnails.length) {
+            thumbnails.forEach((thumb, idx) => {
+                formData.append('thumbnails', thumb, `thumbnail_${idx}.jpg`);
+            });
+        }
+        return formData;
+    }
+
     // Handle publish action
     const handlePublish = async () => {
         if (!flipbookId) {
@@ -304,13 +374,15 @@ export default function PublishFlipbookDialog({
         setPublishing(true);
 
         try {
-
             const payload = buildPayload();
-            console.log('Publishing with payload:', payload);
-
-            const response = isPublished ? await UpdatePublishFlipbookApi(payload) : await PublishFlipbookApi(payload);
-
-            console.log('Publish response:', response);
+            // Generate thumbnails from mainStage
+            const thumbnails = await generateThumbnails(mainStage);
+            // Build FormData
+            const formData = buildFormData(payload, thumbnails);
+            // Call the API with FormData
+            const response = isPublished
+                ? await UpdatePublishFlipbookApi(formData)
+                : await PublishFlipbookApi(formData);
 
             // Call success callback if provided
             if (onPublishSuccess) {

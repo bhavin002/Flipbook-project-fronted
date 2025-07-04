@@ -28,7 +28,6 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
     const [isMoveToWorkspaceModalOpen, setIsMoveToWorkspaceModalOpen] = useState(false);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
     const [isDeleteForeverModalOpen, setIsDeleteForeverModalOpen] = useState(false);
-    const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isCopying, setIsCopying] = useState(false);
@@ -42,10 +41,6 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
     const closeDropdown = () => {
         setIsDropdownOpen(false);
     };
-
-    const onPublishSuccess = () => {
-        setFlipbooks(prev => prev.map(item => item._id === flipbook._id ? { ...item, flipbookState: 'Published' } : item));    
-    }
 
     const handleItemClick = async (action, e) => {
 
@@ -73,8 +68,12 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
             setIsTrashModalOpen(true);
             closeDropdown();
         } else if (action === 'publish') {
-            setIsPublishModalOpen(true);
             closeDropdown();
+            navigate(`/editor/${flipbook._id}`, {
+                state: {
+                    publish: true
+                }
+            })
         } else if (action === "stats") {
             navigate(`/stats/${flipbook._id}`);
             closeDropdown();
@@ -427,7 +426,7 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
             <RenameFlipbookDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} flipbook={flipbook} setFlipbooks={setFlipbooks} />
             <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
             <DownloadDialog isDownloadModalOpen={isDownloadModalOpen} setIsDownloadModalOpen={setIsDownloadModalOpen} />
-            <MoveToWorkspaceDialog isMoveToWorkspaceModalOpen={isMoveToWorkspaceModalOpen} setIsMoveToWorkspaceModalOpen={setIsMoveToWorkspaceModalOpen} flipbookId={flipbook._id} setFlipbooks={setFlipbooks}/>
+            <MoveToWorkspaceDialog isMoveToWorkspaceModalOpen={isMoveToWorkspaceModalOpen} setIsMoveToWorkspaceModalOpen={setIsMoveToWorkspaceModalOpen} flipbookId={flipbook._id} setFlipbooks={setFlipbooks} />
             <ConfirmationDialog
                 isConfirmModalOpen={isTrashModalOpen}
                 setIsConfirmModalOpen={setIsTrashModalOpen}
@@ -446,7 +445,6 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 onConfirm={() => handleDeleteForeverConfirmation(true)}
                 onCancel={() => handleDeleteForeverConfirmation(false)}
             />
-            <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} flipbookId={flipbook._id} onPublishSuccess={onPublishSuccess}/>
         </>
     );
 }

@@ -1,7 +1,11 @@
 import ApiClient from "@/utils/ApiClient";
 
 export const PublishFlipbookApi = async (data) => {
-    const response = await ApiClient().post("/flipbook-publish/publish", data);
+    const response = await ApiClient().post("/flipbook-publish/publish", data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
     return response.data;
 }
 
@@ -11,6 +15,10 @@ export const GetFlipbookPublishInfoApi = async (flipbookId) => {
 }
 
 export const UpdatePublishFlipbookApi = async (data) => {
-    const response = await ApiClient().post(`/flipbook-publish/update-publish-details`, data);
+    const response = await ApiClient().post(`/flipbook-publish/update-publish-details`, data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
     return response.data;
 }

@@ -15,12 +15,10 @@ import { toast } from "sonner";
 
 export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlipbooks, isTrash = false, isFolder = false, view }) {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
-    const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [selectedFlipbooks, setSelectedFlipbooks] = useState([]);
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
     const [isDeleteForeverModalOpen, setIsDeleteForeverModalOpen] = useState(false);
     const [actionLoading, setActionLoading] = useState(false);
-    const [flipbookId, setFlipbookId] = useState(null);
     const router = useNavigate();
     const location = useLocation();
 
@@ -36,8 +34,11 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
         if (action === 'share') {
             setIsShareModalOpen(true);
         } else if (action === 'publish') {
-            setFlipbookId(flipbookId);
-            setIsPublishModalOpen(true);
+            router(`/editor/${flipbookId}`, {
+                state: {
+                    publish: true
+                }
+            })
         } else if (action === "details") {
             router(`/details/${flipbookId}`)
         } else if (action === "stats") {
@@ -129,13 +130,13 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 const response = await MoveToTrashFlipbookApi({
                     flipbookIds: selectedFlipbooks
                 });
-                
+
                 setFlipbooks(prev => prev.filter(item => !selectedFlipbooks.includes(item._id)));
-                
+
                 toast.success("Flipbooks moved to trash", {
                     description: response.message || `${selectedFlipbooks.length} flipbooks were successfully moved to trash`
                 });
-                
+
                 clearSelection();
                 setIsTrashModalOpen(false);
             } catch (error) {
@@ -158,13 +159,13 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 const response = await DeleteFlipbookApi({
                     flipbookIds: selectedFlipbooks
                 });
-                
+
                 setFlipbooks(prev => prev.filter(item => !selectedFlipbooks.includes(item._id)));
-                
+
                 toast.success("Flipbooks deleted permanently", {
                     description: response.message || `${selectedFlipbooks.length} flipbooks were permanently deleted`
                 });
-                
+
                 clearSelection();
                 setIsDeleteForeverModalOpen(false);
             } catch (error) {
@@ -186,13 +187,13 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
             const response = await RecoverFlipbookApi({
                 flipbookIds: selectedFlipbooks
             });
-            
+
             setFlipbooks(prev => prev.filter(item => !selectedFlipbooks.includes(item._id)));
-            
+
             toast.success("Flipbooks recovered", {
                 description: response.message || `${selectedFlipbooks.length} flipbooks were successfully recovered`
             });
-            
+
             clearSelection();
         } catch (error) {
             toast.error("Failed to recover flipbooks", {
@@ -266,7 +267,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                 />
                             </div>
 
-                            <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white">
+                            <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white h-full">
                                 <span className={`text-xs font-medium px-2 py-0.5 rounded-sm inline-flex items-center ${getStatusBadgeStyle(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}`}>
                                     <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-70"></span>
                                     {getStatusDisplayText(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}
@@ -302,15 +303,10 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
         );
     };
 
-    const onPublishSuccess = () => {
-        setFlipbooks(prev => prev.map(flipbook => flipbook._id === flipbookId ? { ...flipbook, flipbookState: 'Published' } : flipbook));
-    }
-
     return (
         <>
             {renderContent()}
             <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
-            <PublishFlipbookDialog isPublishModalOpen={isPublishModalOpen} setIsPublishModalOpen={setIsPublishModalOpen} flipbookId={flipbookId} onPublishSuccess={onPublishSuccess}/>
 
             <ConfirmationDialog
                 isConfirmModalOpen={isTrashModalOpen}

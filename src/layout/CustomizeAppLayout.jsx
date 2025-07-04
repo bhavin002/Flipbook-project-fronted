@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom"
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
@@ -8,7 +8,6 @@ import { Eye, Share2 } from "lucide-react";
 import PreviewDialog from "@/components/EditorLayoutComponents/Preview/PreviewDialog";
 
 export default function CustomizeAppLayout() {
-    const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const { activeTab, setActiveTab } = useViewMode();
     const navigate = useNavigate();
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -26,6 +25,14 @@ export default function CustomizeAppLayout() {
         </button>
     );
 
+    const onPublish = () => {
+        navigate(`/editor/${id}`, {
+            state: {
+                publish: true
+            }
+        })
+    }
+
     return (
         <div className="flex flex-col min-h-screen">
             <header className="fixed top-0 left-0 right-0 z-10 bg-white">
@@ -42,13 +49,13 @@ export default function CustomizeAppLayout() {
                         </div>
                     </div>
                     <div className="flex md:gap-6 gap-2 items-center">
-                        <Button className="max-md:hidden" onClick={() => setIsPublishModalOpen(true)}>
+                        <Button className="max-md:hidden" onClick={() => onPublish()}>
                             Share now
                         </Button>
                         <Button className="max-md:block hidden" variant="outline" onClick={() => setIsPreviewOpen(true)}>
                             <Eye />
                         </Button>
-                        <Button className="max-md:block hidden" onClick={() => setIsPublishModalOpen(true)} >
+                        <Button className="max-md:block hidden" onClick={() => onPublish()} >
                             <Share2 />
                         </Button>
                         <ProfileDropDownCom />
@@ -59,15 +66,12 @@ export default function CustomizeAppLayout() {
             <div className="flex-1 max-md:flex mt-[64px] flex overflow-y-auto">
                 <Outlet />
             </div>
-            <PublishFlipbookDialog
-                isPublishModalOpen={isPublishModalOpen}
-                setIsPublishModalOpen={setIsPublishModalOpen}
-            />
             <PreviewDialog
                 open={isPreviewOpen}
                 onOpenChange={setIsPreviewOpen}
                 flipbookId={id}
             />
         </div>
+
     )
 }

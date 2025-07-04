@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
 import { Button } from "@/components/ui/button";
 import { Download, Eye, Share2, SlidersHorizontal } from "lucide-react";
@@ -35,7 +35,8 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const navigate = useNavigate();
     const [isPreviewLoading, setIsPreviewLoading] = useState(false);
     const [isCustomizeLoading, setIsCustomizeLoading] = useState(false);
-
+    const location = useLocation();
+    const state = location.state;
 
     console.log("mainStage ??", mainStage)
 
@@ -128,7 +129,12 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
         }
     };
 
-
+    useEffect(() => {
+        if (state?.publish) {
+            setIsPublishModalOpen(true);
+            navigate(location.pathname, { replace: true });
+        }
+    }, [state]);
 
     return (
         <>
@@ -385,6 +391,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         isPublishModalOpen={isPublishModalOpen}
                         setIsPublishModalOpen={setIsPublishModalOpen}
                         flipbookId={id}
+                        mainStage={mainStage}
                     />
                     <PreviewDialog 
                         open={isPreviewOpen}

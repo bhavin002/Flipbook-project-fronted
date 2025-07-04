@@ -16,7 +16,6 @@ import { EditTemplateApi, GetTemplateApi } from "@/service/template.service";
 import LoadingButton from "@/utils/LoadingButton";
 
 export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
-    const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -334,11 +333,6 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
                             </div>
                         </div>
                     </div>
-                    <PublishFlipbookDialog
-                        isPublishModalOpen={isPublishModalOpen}
-                        setIsPublishModalOpen={setIsPublishModalOpen}
-                        flipbookId={id}
-                    />
                     <PreviewDialog
                         open={isPreviewOpen}
                         onOpenChange={setIsPreviewOpen}
