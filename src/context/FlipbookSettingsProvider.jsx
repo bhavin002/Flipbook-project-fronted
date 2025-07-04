@@ -13,6 +13,8 @@ export const FlipbookSettingsProvider = ({ children }) => {
     const [latestJson, setLatestJson] = useState(null)
     const { id: flipbookId } = useParams();
 
+    console.log("updateCounter :", updateCounter);
+
     const fetchSettings = useCallback(async () => {
         if (!flipbookId || hasFetched) return;
         try {

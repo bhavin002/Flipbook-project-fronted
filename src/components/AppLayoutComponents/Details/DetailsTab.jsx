@@ -1,8 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Check, Copy, Info, Crown, Mail, Monitor, Smartphone } from 'lucide-react';
+import { Check, Copy, Info, Crown, Mail } from 'lucide-react';
 import {
     Tooltip,
     TooltipContent,
@@ -14,12 +13,22 @@ import { Label } from "@/components/ui/label";
 import ChangeVisibilityDialog from "./ChangeVisibilityDialog";
 import { CalanderDialog } from "./CalanderDialog";
 import { useState } from "react";
+import FlipBookPreview from "@/components/EditorLayoutComponents/Preview/Components/FlipBookPreview";
+import { toast } from "sonner";
 
-export default function DetailsTab() {
+export default function DetailsTab({ flipbookId }) {
     const [copied, setCopied] = useState(false);
     const handleCopy = () => {
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
+        const shareUrl = `${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`;
+        navigator.clipboard.writeText(shareUrl)
+            .then(() => {
+                setCopied(true);
+                toast.success("Link copied to clipboard!");
+                setTimeout(() => setCopied(false), 2000);
+            })
+            .catch(() => {
+                toast.error("Failed to copy link");
+            });
     }
     return (
         <div className="py-6 max-w-[100vw] overflow-auto space-y-4">
@@ -27,14 +36,14 @@ export default function DetailsTab() {
                 <h1 className="text-2xl font-bold mb-2">Details of New Flipbook</h1>
                 <p className="text-gray-500">Access share, embed and download options, as well as statistics.</p>
             </div>
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>Share link</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-center space-x-2">
                         <Input
-                            value="https://www.flipnova.com/F9D7AD99E8C/new-flipbook-71pfukuo7k/full-view.html"
+                            value={`${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`}
                             readOnly
                         />
                         <Button variant="outline" onClick={handleCopy}>
@@ -116,7 +125,7 @@ export default function DetailsTab() {
                             </div>
                         </CardContent>
                     </Card>
-                     <Card>
+                    <Card>
                         <CardHeader>
                             <CardTitle>Download</CardTitle>
                         </CardHeader>
@@ -155,7 +164,7 @@ export default function DetailsTab() {
                                 <div className="border rounded-md p-4 flex justify-between items-center">
                                     <div className="flex items-center">
                                         <div className="text-gray-400 mr-2">
-                                            <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>png-icon</title><g fillRule="nonzero" fill="none"><path d="M12.2404969 0H4.22198758C3.05055901 0 2.09714286.95407867 2.09714286 2.12484472v4.86215435H.83291773C.3601227 6.98699907 0 7.52679089 0 8v7.2227558c0 .4731677.39729912.8561905.87013556.8561905h1.26422512l-.03721782 1.7605568c0 1.1720497.95341615 2.1248447 2.12484472 2.1248447l11.66322272-.0253526c1.1706833 0 2.1242236-.9528365 2.1242236-2.1248448V5.00359143L12.2404969 0zm2.9590266 18.0130475H4.84892957c-.45358178 0-.83444229-.3780235-.83444229-.8322264l.01209525-1.1018748H16.1776159c.4728779 0 .8562733-.3830228.8562733-.8561905l-.0372178-7.37948344c0-.47320911-.3833954-.85627329-.8562733-.85627329H4.02076116l-.03139645-4.15758099c0-.45291925.36939958-.82227743.82293996-.82227743l6.23207083-.0078675v2.50522893c0 .81316771.659793 1.47358178 1.4735818 1.47358178l3.4775876-.00782608.0262146 11.21918722c0 .4542443-.3686957.8236025-.822236.8236025z" fillOpacity=".87" fill="#000"></path><path d="M3.93813477 13.5v-1.4955078h.678125c.53684895 0 .95916341-.1286621 1.26694335-.3859863.30777995-.2573243.46166993-.6009278.46166993-1.0308106 0-.290625-.07114258-.550472-.21342774-.779541-.14228515-.22906901-.34309896-.40566407-.6024414-.52978516-.25934245-.12412109-.55753581-.18618164-.89458008-.18618164H2.87553711V13.5h1.06259766zm.69628906-2.315918h-.69628906V9.91259766h.70839843c.19173177.00201823.34309896.06458333.45410157.18769534.1110026.1231119.1665039.2875976.1665039.493457 0 .1876953-.05398763.3330078-.16196289.4359375-.10797526.1029297-.26489258.1543945-.47075195.1543945zM8.07358398 13.5v-2.7427734L9.63569336 13.5h1.05654294V9.0921875H9.63266602v2.7427734L8.07358398 9.0921875H7.01098633V13.5h1.06259765zm5.24648442.0605469c.3753906 0 .7205078-.0555013 1.0353515-.1665039.3148438-.1110026.5540039-.2573242.7174805-.4389649v-1.8103515h-1.8012695v.7295898h.7386718v.6841797c-.1352213.123112-.3410807.184668-.6175781.184668-.3229167 0-.559554-.1104981-.7099121-.3314942-.1503581-.2209961-.2255371-.5514811-.2255371-.9914551v-.2664062c.0020182-.4197917.0756836-.7427083.2209961-.96875.1453125-.22604167.3511719-.33906251.6175781-.33906251.2220052 0 .3935547.05247396.5146484.15742191.1210938.1049479.1998047.2805338.2361329.5267578h1.0232421c-.0504557-.4985026-.2275553-.87338869-.5312988-1.12465822-.3037435-.25126953-.7300944-.3769043-1.2790527-.3769043-.3753906 0-.7058757.08728841-.9914551.26186524-.2855794.17457682-.5050618.42382812-.6584473.74775388-.1533854.3239258-.2300781.7028483-.2300781 1.1367676l.0030274.3814453c.0242187.6296875.2088867 1.1211263.5540039 1.4743164.3451172.3531901.8062825.5297852 1.3834961.5297852z" fill="#FFF"></path></g></svg>
+                                            <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>png-icon</title><g fillRule="nonzero" fill="none"><path d="M12.2404969 0H4.22198758C3.05055901 0 2.09714286.95407867 2.09714286 2.12484472v4.86215435H.83291773C.3601227 6.98699907 0 7.52679089 0 8v7.2227558c0 .4731677.39729912.8561905.87013556.8561905h1.26422512l-.03721782 1.7605568c0 1.1720497.95341615 2.1248447 2.12484472 2.1248447l11.66322272-.0253526c1.1706833 0 2.1242236-.9528365 2.1242236-2.1248448V5.00359143L12.2404969 0zm2.9590266 18.0130475H4.84892957c-.45358178 0-.83444229-.3780235-.83444229-.8322264l.01209525-1.1018748H16.1776159c.4728779 0 .8562733-.3830228.8562733-.8561905l-.0372178-7.37948344c0-.47320911-.3833954-.85627329-.8562733-.85627329H4.02076116l-.03139645-4.15758099c0-.45291925.36939958-.82227743.82293996-.82227743l6.23207083-.0078675v2.50522893c0 .81316771.659793 1.47358178 1.4735818 1.47358178l3.4775876-.00782608.0262146 11.21918722c0 .4542443-.3686957.8236025-.822236.8236025z" fillOpacity=".87" fill="#000"></path><path d="M3.93813477 13.5v-1.4955078h.678125c.53684895 0 .95916341-.1286621 1.26694335-.3859863.30777995-.2573243.46166993-.6009278.46166993-1.0308106 0-.290625-.07114258-.550472-.21342774-.779541-.14228515-.22906901-.34309896-.40566407-.6024414-.52978516-.25934245-.12412109-.55753581-.18618164-.89458008-.18618164H2.87553711V13.5h1.06259766zm.69628906-2.315918h-.69628906V9.91259766h.70839843c.19173177.00201823.34309896.06458333.45410157.18769534.1110026.1231119.1665039.2875976.1665039.493457 0 .1876953-.05398763.3330078-.16196289.4359375-.10797526.1029297-.26489258.1543945-.47075195.1543945zM8.07358398 13.5v-2.7427734L9.63569336 13.5h1.05654294V9.0921875H9.63266602v2.7427734L8.07358398 9.0921875H7.01098633V13.5h1.06259765zm5.24648442.0605469c.3753906 0 .7205078-.0555013 1.0353515-.1665039.3148438-.1110026.5540039-.2573242.7174805-.4389649v-1.8103515H12.837207v.7295898h.7386718v.6841797c-.1352213.123112-.3410807.184668-.6175781.184668-.32291666 0-.55955403-.1104981-.7099121-.3314942-.15035808-.2209961-.22553711-.5514811-.22553711-.9914551v-.2664062c.00201823-.4197917.07568359-.7427083.22099609-.96875.1453125-.22604167.35117187-.33906251.61757812-.33906251.22200521 0 .39355469.05247396.51464844.15742191.12109375.1049479.19980469.2805338.23613281.5267578h1.02324219c-.05045573-.4985026-.22755534-.87338869-.53129883-1.12465822-.30374349-.25126953-.7300944-.3769043-1.27905273-.3769043-.37539063 0-.70587565.08728841-.99145508.26186524-.28557943.17457682-.50506185.42382812-.65844726.74775388-.15338542.3239258-.23007813.7028483-.23007813 1.1367676l.00302734.3814453c.02421875.6296875.20888672 1.1211263.55400391 1.4743164.34511719.3531901.80628255.5297852 1.38349609.5297852zM9.74755859 13.5V9.0921875H8.68798828V13.5h1.05957031zm2.20126951 0v-1.7558594h1.7134766v-.8173828h-1.7134766V9.91259766h1.8860352V9.0921875h-2.9486328V13.5h1.0625976z" fill="#FFF"></path></g></svg>
                                         </div>
                                         <div>PNG</div>
                                     </div>
@@ -185,7 +194,7 @@ export default function DetailsTab() {
                                 <div className="border rounded-md p-4 flex justify-between items-center col-span-1">
                                     <div className="flex items-center">
                                         <div className="text-gray-400 mr-2">
-                                            <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>html-icon</title><g fill="none" fillRule="nonzero"><path d="M12.2404969 0H4.22198758C3.05055901 0 2.09714286.95407867 2.09714286 2.12484472v4.86215435H.83291773C.3601227 6.98699907 0 7.52679089 0 8v7.2227558c0 .4731677.39729912.8561905.87013556.8561905h1.26422512l-.03721782 1.7605568c0 1.1720497.95341615 2.1248447 2.12484472 2.1248447l11.66322272-.0253526c1.1706833 0 2.1242236-.9528365 2.1242236-2.1248448V5.00359143L12.2404969 0zm2.9590266 18.0130475H4.84892957c-.45358178 0-.83444229-.3780235-.83444229-.8322264l.01209525-1.1018748H19.1776159c.4728779 0 .8223841-.3830228.8223841-.8561905L19.9966714 8c0-.47320911-.3833954-1.01300093-.8562733-1.01300093H4.02076116l-.03139645-4.15758099c0-.45291925.36939958-.82227743.82293996-.82227743l6.23207083-.0078675v2.50522893c0 .81316771.659793 1.47358178 1.4735818 1.47358178l3.4775876-.00782608.0262146 11.21918722c0 .4542443-.3686957.8236025-.822236.8236025z" fillOpacity=".87" fill="#000"></path><path d="M2.71970437 13.6958855v-1.840625h1.56513671v1.840625h1.05654297V9.28807304H4.28484108v1.74980466H2.71970437V9.28807304H1.65710671v4.40781246h1.06259766zm5.551802 0v-3.5874023h1.32294921v-.82041016H5.91017824v.82041016h1.29873047v3.5874023h1.06259766zm3.02014583 0v-1.0292968l-.1029297-2.1100586 1.0686523 3.1393554h.7023438l1.065625-3.1363281-.1029297 2.1070313v1.0292968h1.065625V9.28807304h-1.3986328l-.9808594 3.06669926-.9838867-3.06669926h-1.3956055v4.40781246h1.0625977zm7.3689453 0v-.8173828h-1.849707V9.28807304h-1.0625977v4.40781246h2.9123047z" fill="#FFF"></path></g></svg>
+                                            <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>html-icon</title><g fill="none" fillRule="nonzero"><path d="M12.2404969 0H4.22198758C3.05055901 0 2.09714286.95407867 2.09714286 2.12484472v4.86215435H.83291773C.3601227 6.98699907 0 7.52679089 0 8v7.2227558c0 .4731677.39729912.8561905.87013556.8561905h1.26422512l-.03721782 1.7605568c0 1.1720497.95341615 2.1248447 2.12484472 2.1248447l11.66322272-.0253526c1.1706833 0 2.1242236-.9528365 2.1242236-2.1248448V5.00359143L12.2404969 0zm2.9590266 18.0130475H4.84892957c-.45358178 0-.83444229-.3780235-.83444229-.8322264l.01209525-1.1018748H19.1776159c.4728779 0 .8223841-.3830228.8223841-.8561905L19.9966714 8c0-.47320911-.3833954-1.01300093-.8562733-1.01300093H4.02076116l-.03139645-4.15758099c0-.45291925.36939958-.82227743.82293996-.82227743l6.23207083-.0078675v2.50522893c0 .81316771.659793 1.47358178 1.4735818 1.47358178l3.4775876-.00782608.0262146 11.21918722c0 .4542443-.3686957.8236025-.822236.8236025z" fillOpacity=".87" fill="#000"></path><path d="M2.71970437 13.6958855v-1.840625h1.56513671v1.840625h1.05654297V9.28807304H4.28484108v1.74980466H2.71970437V9.28807304H1.65710671v4.40781246h1.06259766zm5.551802 0v-3.5874023h1.32294921v-.82041016H5.91017824v.82041016h1.29873047v3.5874023h1.06259766zm3.02014583 0v-1.0292968l-.1029297-2.1100586 1.0686523 3.1393554h.7023438l1.065625-3.1363281-.1029297 2.1070313v1.0292968h1.0625977zm7.3689453 0v-.8173828h-1.849707V9.28807304h-1.0625977v4.40781246h2.9123047z" fill="#FFF"></path></g></svg>
                                         </div>
                                         <div>HTML5</div>
                                     </div>
@@ -196,47 +205,10 @@ export default function DetailsTab() {
                     </Card>
                 </div>
                 <Card className="shadow-sm flex-grow rounded-lg">
-                    <Tabs defaultValue="desktop" className="flex flex-col h-full max-lg:min-h-[70vh]">
-                        <TabsList className="w-full rounded-none">
-                            <TabsTrigger className="items-center gap-2 w-full" value="desktop">
-                                <Monitor className="w-5 h-5" />
-                                <span className="text-xs mt-1 lg:mt-0">Desktop</span>
-                            </TabsTrigger>
-                            <TabsTrigger className="items-center gap-2 w-full" value="mobile">
-                                <Smartphone className="w-5 h-5" />
-                                <span className="text-xs mt-1 lg:mt-0">Mobile</span>
-                            </TabsTrigger>
-                        </TabsList>
-                        <TabsContent value="desktop" className="p-4 pb-0 flex-grow">
-                            <div className="h-full w-full flex flex-col">
-                                <div className="h-[90%] w-full bg-gray-500">
-                                </div>
-                                <div className="flex max-lg:p-4 flex-wrap md:justify-start justify-center items-center  flex-grow gap-4">
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">View live</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Customize</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit link name</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">SEO</a>
-                                </div>
-                            </div>
-                        </TabsContent>
-                        <TabsContent value="mobile" className="p-4 pb-0 flex-grow w-full">
-                            <div className="h-full w-full flex flex-col">
-                                <div className="h-[90%] md:w-[50%] md:m-auto bg-gray-500">
-                                </div>
-                                <div className="flex p-4 flex-wrap justify-center items-center  flex-grow gap-4">
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">View live</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Customize</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Edit link name</a>
-                                    <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">SEO</a>
-                                </div>
-                            </div>
-                        </TabsContent>
-                    </Tabs>
+                    <FlipBookPreview flipbookId={flipbookId} component={"detailsPage"} />
                 </Card>
             </div>
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>Share</CardTitle>
                 </CardHeader>
@@ -288,7 +260,7 @@ export default function DetailsTab() {
                     </div>
                 </CardContent>
             </Card>
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>Order printed copies</CardTitle>
                     <CardDescription>Order high-quality printed copies of your publication from our print partner, Peecho.</CardDescription>

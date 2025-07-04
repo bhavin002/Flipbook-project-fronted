@@ -61,7 +61,7 @@ export default function Details() {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="details" className="h-full overflow-y-auto">
-                    <DetailsTab/>
+                    <DetailsTab flipbookId={id}/>
                 </TabsContent>
                 <TabsContent value="embed" className="h-full overflow-y-auto">
                     <Embed/>

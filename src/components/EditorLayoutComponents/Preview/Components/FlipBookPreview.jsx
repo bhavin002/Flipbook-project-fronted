@@ -14,7 +14,7 @@ import cartService from '@/service/IndexedDBCart.service';
 import { getProductCartInfoApi } from '@/service/product.service.js';
 import { toast } from "sonner";
 
-export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog" }) {
+export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isDragging, setIsDragging] = useState(false);
@@ -30,6 +30,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const progressBarRef = useRef(null);
     const flipBookRef = useRef(null);
     const containerRef = useRef(null);
+
+    console.log("isPublicView ??", isPublicView);
 
     useEffect(() => {
         const syncCartPrices = async () => {
@@ -494,7 +496,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                         onValueChange={handleTabChange}
                         className="w-full h-full flex flex-col items-center"
                     >
-                        {component !== "customize" && (
+                        {component !== "customize" && !isPublicView && (
                             <div className="w-full h-[10%] mt-5 flex items-center justify-center">
                                 <TabsList className="grid grid-cols-2 bg-gray-100 rounded-lg">
                                     <TabsTrigger
@@ -550,6 +552,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         previewId={id}
                                         isPageOverviewOpen={isPageOverviewOpen}
                                         setIsPageOverviewOpen={setIsPageOverviewOpen}
+                                        isPublicView={isPublicView}
                                     />
                                 </div>
                             </TabsContent>
@@ -590,6 +593,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                             previewId={id}
                                             isPageOverviewOpen={isPageOverviewOpen}
                                             setIsPageOverviewOpen={setIsPageOverviewOpen}
+                                            isPublicView={isPublicView}
                                         />
                                     </div>
                                 </div>

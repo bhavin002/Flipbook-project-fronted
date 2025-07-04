@@ -2,7 +2,7 @@ import "turn.js";
 import Turn from "../Helper/Turn.jsx";
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import JsonToHtml from "../Helper/JsonToHtml.jsx";
-import { GetFlipbookApi } from "@/service/flipbook.service.js";
+import { GetFlipbookApi, GetPublishFlipbookApi } from "@/service/flipbook.service.js";
 import { toast } from "sonner";
 import $ from "jquery";
 import { Loader2 } from "lucide-react";
@@ -22,7 +22,7 @@ const debounce = (func, delay) => {
     };
 };
 
-const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen }, ref) {
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView }, ref) {
     console.log(isDrawerOpen);
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
@@ -89,7 +89,8 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
         const getPageData = async () => {
             try {
                 setPageContent([]);
-                const response = await GetFlipbookApi(flipbookId, false);
+                const response = isPublicView ? await GetPublishFlipbookApi(flipbookId, true) : await GetFlipbookApi(flipbookId, false);
+                console.log(response);
                 setDivHeight(response.data.height);
                 setDivWidth(response.data.width);
 

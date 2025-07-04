@@ -61,6 +61,7 @@ import { FlipbookProvider } from "./context/FlipbookContext";
 import { FlipbookSettingsProvider } from "./context/FlipbookSettingsProvider";
 import AdminEditorAppLayout from "./layout/AdminEditorAppLayout";
 import { ShopSettingsProvider } from "./context/ShopSettingsContext";
+import PublicFlipbook from "./public/PublicFlipbook";
 
 // Route configurations
 const brandingRoutes = [
@@ -108,6 +109,16 @@ export default function App() {
                 <Route path="/auth/forgot-password/:token" element={<PublicRoute><ResetPassword /></PublicRoute>} />
                 <Route path="/account/confirm-account" element={<PublicRoute><ConfirmAccount /></PublicRoute>} />
                 <Route path="/accept-invitation/:token" element={<VerifyReader />} />
+                <Route path="/public-flipbook/:id" element={
+                  <ViewModeProvider>
+                    <FlipbookSettingsProvider>
+                      <ShopSettingsProvider>
+                        <PublicFlipbook />
+                      </ShopSettingsProvider>
+                    </FlipbookSettingsProvider>
+                  </ViewModeProvider>
+                }
+                />
 
                 {/* Default redirect */}
                 <Route path="/" element={<Navigate to="/myflipbooks" replace />} />
@@ -179,42 +190,78 @@ export default function App() {
                 {/* flipbook details page routes */}
                 <Route path="/details/:id" element={
                   <PrivateRoute>
-                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                    <ViewModeProvider>
+                      <FlipbookSettingsProvider>
+                        <ShopSettingsProvider>
+                          <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                        </ShopSettingsProvider>
+                      </FlipbookSettingsProvider>
+                    </ViewModeProvider>
                   </PrivateRoute>
                 }>
                   <Route index element={<Details />} />
                 </Route>
                 <Route path="/embed/:id" element={
                   <PrivateRoute>
-                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                    <ViewModeProvider>
+                      <FlipbookSettingsProvider>
+                        <ShopSettingsProvider>
+                          <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                        </ShopSettingsProvider>
+                      </FlipbookSettingsProvider>
+                    </ViewModeProvider>
                   </PrivateRoute>
                 }>
                   <Route index element={<Details />} />
                 </Route>
                 <Route path="/trackable-links/:id" element={
                   <PrivateRoute>
-                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                    <ViewModeProvider>
+                      <FlipbookSettingsProvider>
+                        <ShopSettingsProvider>
+                          <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                        </ShopSettingsProvider>
+                      </FlipbookSettingsProvider>
+                    </ViewModeProvider>
                   </PrivateRoute>
                 }>
                   <Route index element={<Details />} />
                 </Route>
                 <Route path="/stats/:id" element={
                   <PrivateRoute>
-                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                    <ViewModeProvider>
+                      <FlipbookSettingsProvider>
+                        <ShopSettingsProvider>
+                          <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                        </ShopSettingsProvider>
+                      </FlipbookSettingsProvider>
+                    </ViewModeProvider>
                   </PrivateRoute>
                 }>
                   <Route index element={<Details />} />
                 </Route>
                 <Route path="/send-email/:id" element={
                   <PrivateRoute>
-                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                    <ViewModeProvider>
+                      <FlipbookSettingsProvider>
+                        <ShopSettingsProvider>
+                          <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                        </ShopSettingsProvider>
+                      </FlipbookSettingsProvider>
+                    </ViewModeProvider>
                   </PrivateRoute>
                 }>
                   <Route index element={<Details />} />
                 </Route>
                 <Route path="/download-qr/:id" element={
                   <PrivateRoute>
-                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                    <ViewModeProvider>
+                      <FlipbookSettingsProvider>
+                        <ShopSettingsProvider>
+                          <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                        </ShopSettingsProvider>
+                      </FlipbookSettingsProvider>
+                    </ViewModeProvider>
                   </PrivateRoute>
                 }>
                   <Route index element={<Details />} />
