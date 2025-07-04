@@ -30,6 +30,7 @@ import { PublishFlipbookApi } from "@/service/flipbook.publish.service";
 import { flipbookVisibility } from "@/utils/enum";
 import { toast } from "sonner";
 import LoadingButton from "@/utils/LoadingButton";
+import { useNavigate } from "react-router-dom";
 
 export default function PublishFlipbookDialog({
     isPublishModalOpen,
@@ -54,8 +55,8 @@ export default function PublishFlipbookDialog({
     const [sendNotification, setSendNotification] = useState(false);
     const [trackReaders, setTrackReaders] = useState(false);
     const [isPublished, setIsPublished] = useState(false);
-
-    console.log("mainStage in PublishFlipbookDialog",mainStage)
+    const navigate = useNavigate();
+    console.log("mainStage in PublishFlipbookDialog", mainStage)
 
     // Email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -391,6 +392,8 @@ export default function PublishFlipbookDialog({
 
             // Close modal on success
             setIsPublishModalOpen(false);
+
+            navigate(`/details/${flipbookId}`)
 
             // Reset form state
             resetForm();
