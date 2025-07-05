@@ -11,13 +11,14 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from 'sonner';
-import { getQuestionFormApi } from '@/service/question.service';
+import { getPublishedQuestionFormApi, getQuestionFormApi } from '@/service/question.service';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { CheckCircle } from 'lucide-react';
 import { CreateQuestionFormResponseApi } from '@/service/questionFormResponse.service';
 import LoadingButton from '@/utils/LoadingButton';
+import { IsPublished } from '@/utils/Helper';
 
 const createQuestionSchema = (formData) => {
     const baseSchema = {
@@ -56,7 +57,7 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
         const getQuestionData = async () => {
             try {
                 setIsLoading(true);
-                const response = await getQuestionFormApi(htmlData.variantId);
+                const response = IsPublished() ? await getPublishedQuestionFormApi(htmlData.variantId) : await getQuestionFormApi(htmlData.variantId);
                 setFormData(response.data);
             } catch (error) {
                 toast.error('Failed to load question information', {
@@ -216,7 +217,7 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
             {/* Question Response */}
             <div className="space-y-2">
                 <Label htmlFor="response" className="text-sm font-medium">
-                    {htmlData?.question}
+                    {formData?.question}
                 </Label>
                 <Textarea
                     id="response"

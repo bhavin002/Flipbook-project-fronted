@@ -19,6 +19,11 @@ export const getProductApi = async (productId) => {
     return response.data;
 }
 
+export const getPublishedProductApi = async (productId) => {
+    const response = await ApiClient().get(`/product/get/publish/${productId}`);
+    return response.data;
+}
+
 export const updateProductApi = async (productId, data) => {
     const response = await ApiClient().put(`/product/update/${productId}`, data);
     return response.data;

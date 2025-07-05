@@ -15,6 +15,7 @@ export default function PublicFlipbook() {
             try {
                 const response = await GetPublishFlipbookApi(id);
                 setPublicData(response.data);
+                sessionStorage.setItem("fn_workspace_id", response.data.flipbook.workspaceId);
             } catch (e) {
                 toast.error('Failed to fetch flipbook data', {
                     description: e.message,

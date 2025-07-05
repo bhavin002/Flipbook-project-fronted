@@ -10,6 +10,11 @@ export const getContactFormApi = async (contactFormId) => {
     return response.data;
 }
 
+export const getPublishedContactFormApi = async (contactFormId) => {
+    const response = await ApiClient().get(`/contact-form/get/publish/${contactFormId}`);
+    return response.data;
+}
+
 export const updateContactFormApi = async (contactFormId, data) => {
     const response = await ApiClient().put(`/contact-form/update/${contactFormId}`, data);
     return response.data;

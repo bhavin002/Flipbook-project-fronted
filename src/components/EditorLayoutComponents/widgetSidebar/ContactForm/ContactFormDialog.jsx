@@ -14,7 +14,7 @@ import LoadingButton from "@/utils/LoadingButton";
 import { addIntercationDataToMainStage } from "@/utils/Helper";
 import { Form } from "@/components/ui/form";
 
-export default function ContactFormDialog({ selectedShape, mainStage, setMainStage, selectedIndex }) {
+export default function ContactFormDialog({ selectedShape, mainStage, setMainStage, selectedIndex, flipbookId }) {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
@@ -105,7 +105,8 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
                     addGDPRCompliance: data.settings.addGDPRCompliance,
                     gdprMessage: data.settings.gdprMessage
                 },
-                customerFields: data.customerFields
+                customerFields: data.customerFields,
+                flipbookId: flipbookId
             };
 
             let response;

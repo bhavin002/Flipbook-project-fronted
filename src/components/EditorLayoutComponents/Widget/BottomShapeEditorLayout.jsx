@@ -128,7 +128,7 @@ function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mai
     }
     if (selectedSubMenu === "contact-form") {
         return (
-            <ContactForm selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
+            <ContactForm selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} flipbookId={flipbookId}/>
         )
     }
     if (selectedSubMenu === "page-options") {

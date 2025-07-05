@@ -211,7 +211,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
         <>
             {visibilitySettings.brandLogo && (
                 visibilitySettings.logoLink ? (
-                    <div className="w-full flex justify-between p-2">
+                    <div className="w-full flex justify-between p-4">
                         <a
                             href={visibilitySettings.logoLink}
                             target="_blank"
@@ -225,6 +225,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                                 className="w-auto h-auto max-h-[50px] max-w-[200px]"
                             />
                         </a>
+                        <ShoppingCartPopover flipbookId={flipbookId} isMobile={isMobile} />
                     </div>
 
                 ) : (

@@ -18,8 +18,9 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
-import { getProductApi } from '@/service/product.service';
+import { getProductApi, getPublishedProductApi } from '@/service/product.service';
 import cartService from '@/service/IndexedDBCart.service';
+import { IsPublished } from '@/utils/Helper';
 
 const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -36,8 +37,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
             const getProductInfo = async () => {
                 try {
                     setIsLoading(true);
-                    const response = await getProductApi(htmlData.variantId);
-                    console.log("response.data ???",response.data);
+                    const response = IsPublished() ?await getPublishedProductApi(htmlData.variantId) : await getProductApi(htmlData.variantId);
                     setProductInfo(response.data);
 
                     if (response.data?.productAttributes?.length > 0) {

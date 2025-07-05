@@ -10,13 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from 'sonner';
-import { getContactFormApi } from '@/service/contactForm.service';
+import { getContactFormApi, getPublishedContactFormApi } from '@/service/contactForm.service';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { CheckCircle } from 'lucide-react';
 import { ContactSubmissionApi } from '@/service/contactSubmission.service';
 import LoadingButton from '@/utils/LoadingButton';
+import { IsPublished } from '@/utils/Helper';
 
 const createContactFormSchema = (customerFields, settings) => {
     const baseSchema = {};
@@ -101,11 +102,6 @@ const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
     const [gdprAccepted, setGdprAccepted] = useState(false);
     const [submitting, setSubmitting] = useState(false);
 
-    console.log("contactFormInfo ??",contactFormInfo)
-
-    console.log("flipbookId", flipbookId)
-    console.log("contactFormId", htmlData.variantId)
-
     const {
         register,
         handleSubmit,
@@ -127,7 +123,7 @@ const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
         const getContactFormInfo = async () => {
             try {
                 setIsLoading(true);
-                const response = await getContactFormApi(htmlData.variantId);
+                const response = IsPublished() ? await getPublishedContactFormApi(htmlData.variantId) : await getContactFormApi(htmlData.variantId);
                 setContactFormInfo(response.data);
             } catch (error) {
                 toast.error('Failed to load contact form information', {

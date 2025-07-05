@@ -31,13 +31,16 @@ import { flipbookVisibility } from "@/utils/enum";
 import { toast } from "sonner";
 import LoadingButton from "@/utils/LoadingButton";
 import { useNavigate } from "react-router-dom";
+import { UpdateFlipbookPageDataApi } from "@/service/flipbook.service";
 
 export default function PublishFlipbookDialog({
     isPublishModalOpen,
     setIsPublishModalOpen,
     flipbookId, // Add flipbookId prop
     onPublishSuccess, // Optional callback for success handling
-    mainStage
+    mainStage,
+    stageWidth,
+    stageHeight
 }) {
     const [selectedRadio, setSelectedRadio] = useState("email");
     const [emailInput, setEmailInput] = useState("");
@@ -375,6 +378,25 @@ export default function PublishFlipbookDialog({
         setPublishing(true);
 
         try {
+
+            mainStage.forEach(e => {
+                e.temp = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
+            });
+            const temp = JSON.parse(JSON.stringify(mainStage))
+            temp.forEach(e => {
+                e.selectedShapes = [];
+                e.shapes = e.temp;
+                delete e.temp;
+                e.stageref = null;
+            });
+            await UpdateFlipbookPageDataApi(flipbookId, {
+                width: stageWidth,
+                height: stageHeight,
+                pages: temp.map(e => ({
+                    pageData: JSON.stringify(e),
+                })),
+            });
+
             const payload = buildPayload();
             // Generate thumbnails from mainStage
             const thumbnails = await generateThumbnails(mainStage);

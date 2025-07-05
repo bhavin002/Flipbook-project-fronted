@@ -170,7 +170,7 @@ const addEntryInDB = async (htmlType, id, setIsLoading) => {
 
 export const duplicateShapes = async (mainStage, selectedIndex, setMainStage, setIsLoading, selectedShape) => {
     const response = await addEntryInDB(selectedShape[0].attrs.htmlType, selectedShape[0].attrs.htmlData?.variantId, setIsLoading);
-    
+
     if (!response?.data) return;
 
     const selectedShapes = mainStage[selectedIndex]?.selectedShapes
@@ -208,3 +208,11 @@ export const duplicateShapes = async (mainStage, selectedIndex, setMainStage, se
     mainStage.splice(selectedIndex, 1, mainStage[selectedIndex]);
     setMainStage([...mainStage]);
 };
+
+export const IsPublished = () => {
+    const currentUrlBasePath = window.location.pathname.split('/')[1];
+    if (currentUrlBasePath === "public-flipbook") {
+        return true;
+    }
+    return false;
+}

@@ -11,11 +11,12 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from 'sonner';
-import { quizAttemptApi, getQuizAttemptApi, getQuizByIdApi } from '@/service/quizAttempt.service';
+import { quizAttemptApi, getQuizAttemptApi, getQuizByIdApi, getPublishedQuizByIdApi } from '@/service/quizAttempt.service';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { IsPublished } from '@/utils/Helper';
 
 const createQuizSchema = (collectEmail, questions) => {
     const baseSchema = {};
@@ -66,7 +67,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
         const getQuizData = async () => {
             try {
                 setIsLoading(true);
-                const response = await getQuizByIdApi(htmlData.variantId);
+                const response = IsPublished() ? await getPublishedQuizByIdApi(htmlData.variantId) : await getQuizByIdApi(htmlData.variantId);
                 setQuizInfo(response.data);
             } catch (error) {
                 toast.error('Failed to load quiz information', {

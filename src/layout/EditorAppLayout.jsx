@@ -392,6 +392,8 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         setIsPublishModalOpen={setIsPublishModalOpen}
                         flipbookId={id}
                         mainStage={mainStage}
+                        stageWidth={stageWidth}
+                        stageHeight={stageHeight}
                     />
                     <PreviewDialog 
                         open={isPreviewOpen}

@@ -15,6 +15,11 @@ export const getQuizByIdApi = async (quizId) => {
     return response.data;
 }
 
+export const getPublishedQuizByIdApi = async (quizId) => {
+    const response = await ApiClient().get(`/quiz-attempt/get-quiz-by-quiz-id/publish/${quizId}`);
+    return response.data;
+}
+
 export const getQuizByFlipbookId = async (flipbookId) => {
     const response = await ApiClient().get(`/quiz/dropdown/${flipbookId}`);
     return response.data;
