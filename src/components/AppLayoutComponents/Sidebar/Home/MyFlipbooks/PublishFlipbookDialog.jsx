@@ -103,7 +103,7 @@ export default function PublishFlipbookDialog({
                     setActiveTab("unlisted");
                 } else if (visibility === flipbookVisibility.PASSWORD) {
                     setActiveTab("passwordLocked");
-                    setPassword(publishFlipbookData.password || "");
+                    setPassword(publishFlipbookData.password ? "******" : "");
                 } else if (visibility === flipbookVisibility.PRIVATE) {
                     setActiveTab("private");
                     setSelectedRadio("email");

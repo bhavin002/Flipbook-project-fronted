@@ -22,3 +22,26 @@ export const UpdatePublishFlipbookApi = async (data) => {
     });
     return response.data;
 }
+
+export const UpdateFlipbookViewCountApi = async (flipbookId) => {
+    const response = await ApiClient().get(`/flipbook-publish/update-view-count/${flipbookId}`);
+    return response.data
+}
+
+export const GetConfigApi = async (flipbookId) => {
+    const response = await ApiClient().get(`/flipbook-publish/get-config/${flipbookId}`);
+    return response.data;
+}
+
+export const GetPublishFlipbookApi = async (flipbookId, token, loader = true) => {
+    const url = token ? `/flipbook-publish/get-book/${flipbookId}?token=${token}` : `/flipbook-publish/get-book/${flipbookId}`;
+    const response = await ApiClient().get(url, {
+        showLoader: loader
+    });
+    return response.data;
+}
+
+export const VerifyFlipbookPasswordApi = async (data) => {
+    const response = await ApiClient().post(`/flipbook-publish/verify-password`, data);
+    return response.data;
+}

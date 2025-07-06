@@ -49,6 +49,8 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
             router(`/editor/${flipbookId}`)
         } else if (action === "use-template") {
             router(`/editor/${flipbookId}`)
+        } else if (action === "view"){
+            window.open(`/public-flipbook/${flipbookId}`, '_blank');
         } else {
             console.error("Invalid action:", action);
         }

@@ -14,7 +14,7 @@ import cartService from '@/service/IndexedDBCart.service';
 import { getProductCartInfoApi } from '@/service/product.service.js';
 import { toast } from "sonner";
 
-export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false }) {
+export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false, publicFlipbookData }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isDragging, setIsDragging] = useState(false);
@@ -553,6 +553,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         isPageOverviewOpen={isPageOverviewOpen}
                                         setIsPageOverviewOpen={setIsPageOverviewOpen}
                                         isPublicView={isPublicView}
+                                        publicFlipbookData={publicFlipbookData}
                                     />
                                 </div>
                             </TabsContent>
@@ -594,6 +595,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                             isPageOverviewOpen={isPageOverviewOpen}
                                             setIsPageOverviewOpen={setIsPageOverviewOpen}
                                             isPublicView={isPublicView}
+                                            publicFlipbookData={publicFlipbookData}
                                         />
                                     </div>
                                 </div>

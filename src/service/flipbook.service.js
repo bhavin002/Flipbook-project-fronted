@@ -20,13 +20,6 @@ export const GetFlipbookApi = async (flipbookId, loader = true) => {
     return response.data;
 }
 
-export const GetPublishFlipbookApi = async (flipbookId, loader = true) => {
-    const response = await ApiClient().get(`/flipbook/publish/get/${flipbookId}`, {
-        showLoader: loader
-    });
-    return response.data;
-}
-
 export const UpdateFlipbookApi = async (flipbookId, data) => {
     const response = await ApiClient().post(`/flipbook/rename-flipbook/${flipbookId}`, data);
     return response.data;

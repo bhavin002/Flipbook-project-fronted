@@ -2,7 +2,8 @@ import "turn.js";
 import Turn from "../Helper/Turn.jsx";
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import JsonToHtml from "../Helper/JsonToHtml.jsx";
-import { GetFlipbookApi, GetPublishFlipbookApi } from "@/service/flipbook.service.js";
+import { GetFlipbookApi } from "@/service/flipbook.service.js";
+import { GetPublishFlipbookApi, UpdateFlipbookViewCountApi } from "@/service/flipbook.publish.service.js";
 import { toast } from "sonner";
 import $ from "jquery";
 import { Loader2 } from "lucide-react";
@@ -22,8 +23,8 @@ const debounce = (func, delay) => {
     };
 };
 
-const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView }, ref) {
-    console.log(isDrawerOpen);
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView, publicFlipbookData }, ref) {
+    console.log("publicFlipbookData ??",publicFlipbookData);
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
     const [divWidth, setDivWidth] = useState(793);
@@ -32,6 +33,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
     const [pageContent, setPageContent] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [viewCountUpdated, setViewCountUpdated] = useState(false);
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
 
@@ -90,7 +92,9 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
             try {
                 setPageContent([]);
                 let flipbookRes = null;
-                if(isPublicView){
+                if (isPublicView && publicFlipbookData) {
+                    flipbookRes = publicFlipbookData;
+                } else if (isPublicView) {
                     const response = await GetPublishFlipbookApi(flipbookId);
                     flipbookRes = response.data.flipbook;
                 } else {
@@ -113,7 +117,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
             }
         };
         getPageData();
-    }, [flipbookId]);
+    }, [flipbookId, publicFlipbookData]);
 
     useEffect(() => {
         if (visibilitySettings.pageTransition === 0 && myRef.current) {
@@ -161,6 +165,19 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
 
     const handleBookLoad = () => {
 
+    };
+
+    const handleFlipbookClick = async () => {
+        if (isPublicView && !viewCountUpdated) {
+            try {
+                await UpdateFlipbookViewCountApi(flipbookId);
+                setViewCountUpdated(true);
+            } catch (error) {
+                toast.error("Failed to update view count", {
+                    description: error.message
+                })
+            }
+        }
     };
 
     const handlePrevPage = () => {
@@ -242,7 +259,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                 )
             )}
 
-            <div className="wrapper flex flex-col items-center justify-center relative">
+            <div className="wrapper flex flex-col items-center justify-center relative" onClick={handleFlipbookClick}>
                 <div className="aspect" style={{ width, height }}>
                     <div className="aspect-inner">
                         {visibilitySettings.pageTransition === 0 ? (
