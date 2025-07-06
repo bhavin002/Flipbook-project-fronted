@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DateRangePickerModal } from "../Filter/DateRangePickerModal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Quiz from "./Statistics/Quiz";
 import Question from "./Statistics/Question";
 import ContactForm from "./Statistics/ContactForm";
+import { GetFlipbookStatisticsApi } from "@/service/flipbook.publish.service";
+import PopularProductsTable from "./Statistics/PopularProductsTable";
 
 export default function Statistics({ flipbookId }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,6 +22,8 @@ export default function Statistics({ flipbookId }) {
         from: new Date(),
         to: new Date(),
     });
+    const [stats, setStats] = useState(null);
+    const [loadingStats, setLoadingStats] = useState(true);
 
     const options = [{
         name: "Trackable links",
@@ -29,6 +33,21 @@ export default function Statistics({ flipbookId }) {
             { value: 'up', label: 'up' }
         ]
     }];
+
+    useEffect(() => {
+        async function fetchStats() {
+            setLoadingStats(true);
+            try {
+                const response = await GetFlipbookStatisticsApi(flipbookId);
+                setStats(response.data);
+            } catch (e) {
+                setStats(null);
+            } finally {
+                setLoadingStats(false);
+            }
+        }
+        if (flipbookId) fetchStats();
+    }, [flipbookId]);
 
     const handleApplyDateRange = (dateRange) => {
         if (dateRange?.from && dateRange?.to) {
@@ -74,8 +93,21 @@ export default function Statistics({ flipbookId }) {
                     allLabel="All statistics"
                 />
             </div>
-            <FlipbookSummary />
+            <FlipbookSummary
+                viewsCount={stats?.viewsCount || 0}
+                impressionCount={stats?.impressionCount || 0}
+                orderCount={stats?.orderCount || 0}
+                orderValues={stats?.orderValues || 0}
+                flipbookId={flipbookId}
+                loadingStats={loadingStats}
+            />
             <OrdersTable flipbookId={flipbookId} />
+            <div className="mt-8">
+                <PopularProductsTable
+                    products={stats?.popularProducts || []}
+                    loading={loadingStats}
+                />
+            </div>
             <Card>
                 <CardHeader>
                     <CardTitle>Form responses</CardTitle>

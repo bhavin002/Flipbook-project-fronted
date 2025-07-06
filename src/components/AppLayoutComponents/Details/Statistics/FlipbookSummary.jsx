@@ -5,14 +5,22 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Download, Eye, Clock, BarChart2, ShoppingCart } from "lucide-react"
+import { Download, Eye, BarChart2, ShoppingCart } from "lucide-react"
 import FlipbookStatistics from "@/utils/FlipbookStatistics"
+import { Skeleton } from "@/components/ui/skeleton"
 
-export default function FlipbookSummary() {
+export default function FlipbookSummary({ viewsCount = 0, impressionCount = 0, orderCount = 0, orderValues = [], flipbookId,loadingStats }) {
+    // Ensure orderValues is always an array for backward compatibility
+    const normalizedOrderValues = Array.isArray(orderValues)
+        ? orderValues
+        : orderValues && typeof orderValues === 'object'
+            ? [orderValues]
+            : [];
+
     const statsData = [
         {
             id: "impressions",
-            title: "2",
+            title: impressionCount,
             label: "Impressions",
             description: "Counted each times your flipbooks and bookshelves are loaded.",
             icon: <BarChart2 className="h-5 w-5 text-blue-600" />,
@@ -20,19 +28,11 @@ export default function FlipbookSummary() {
         },
         {
             id: "views",
-            title: "1",
+            title: viewsCount,
             label: "Views",
             description: "Counted each times a user opens and interacts with your flipbooks.",
             icon: <Eye className="h-5 w-5 text-purple-600" />,
             color: "bg-purple-600",
-        },
-        {
-            id: "timeSpent",
-            title: "00:00:08",
-            label: "Average time spent",
-            description: "Average duration users spend viewing your content per session.",
-            icon: <Clock className="h-5 w-5 text-orange-600" />,
-            color: "bg-orange-600",
         },
         {
             id: "downloads",
@@ -44,13 +44,69 @@ export default function FlipbookSummary() {
         },
         {
             id: "orders",
-            title: "0",
+            title: orderCount,
             label: "Orders",
             description: "Total number of orders placed for your flipbooks.",
             icon: <ShoppingCart className="h-5 w-5 text-indigo-600" />,
             color: "bg-indigo-600",
-        }
+        },
+        // Dynamically add an entry for each order value (currency)
+        ...normalizedOrderValues.map((ov, idx) => ({
+            id: `orders-value-${ov.currencyId || idx}`,
+            title: `${ov.orderValue} ${ov.symbol || ''}`,
+            label: `Orders value${normalizedOrderValues.length > 1 ? ` (${ov.symbol || ''})` : ''}`,
+            description: `Total order value generated from this flipbook.`,
+            icon: <ShoppingCart className="h-5 w-5 text-indigo-600" />,
+            color: "bg-indigo-600",
+        }))
     ]
+
+    if (loadingStats) {
+        // Skeleton layout mimicking the real UI
+        return (
+            <Card>
+                <CardHeader>
+                    <div className="flex items-center justify-between w-full">
+                        <Skeleton className="h-6 w-32 mb-2" />
+                        <Skeleton className="h-5 w-24" />
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex flex-col md:flex-row gap-4">
+                        <div className="w-full md:w-1/3 lg:w-1/4">
+                            <Card className="h-full">
+                                <CardContent className="p-6 h-full flex items-center justify-center">
+                                    <Skeleton className="w-full h-40" />
+                                </CardContent>
+                            </Card>
+                        </div>
+                        <div className="w-full md:w-2/3 lg:w-3/4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {[...Array(5)].map((_, idx) => (
+                                    <Card className="h-full" key={idx}>
+                                        <CardContent className="p-0 h-full">
+                                            <div className="flex h-full">
+                                                <div className={`w-1.5 bg-gray-200`}></div>
+                                                <div className="p-5 flex flex-1 items-center">
+                                                    <div className="flex items-center gap-3 w-full">
+                                                        <Skeleton className="h-5 w-5 rounded-full" />
+                                                        <div className="flex flex-col w-full">
+                                                            <Skeleton className="h-6 w-16 mb-2" />
+                                                            <Skeleton className="h-4 w-20" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        );
+    }
 
     return (
         <>
@@ -110,7 +166,7 @@ export default function FlipbookSummary() {
                     </div>
                 </CardContent>
             </Card>
-            <FlipbookStatistics />
+            <FlipbookStatistics flipbookId={flipbookId}/>
         </>
     )
 }

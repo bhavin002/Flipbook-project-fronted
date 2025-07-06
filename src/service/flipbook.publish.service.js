@@ -45,3 +45,13 @@ export const VerifyFlipbookPasswordApi = async (data) => {
     const response = await ApiClient().post(`/flipbook-publish/verify-password`, data);
     return response.data;
 }
+
+export const GetFlipbookStatisticsApi = async (flipbookId) => {
+    const response = await ApiClient().get(`/flipbook-publish/get-statistics/${flipbookId}`);
+    return response.data;
+}
+
+export const GetLastMonthFlipbookStatsApi = async (flipbookId) => {
+    const response = await ApiClient().get(`/flipbook-publish/last-month-stats/${flipbookId}`);
+    return response.data;
+}

@@ -26,14 +26,14 @@ export default function Summary() {
             icon: <Eye className="h-5 w-5 text-purple-600" />,
             color: "bg-purple-600",
         },
-        {
-            id: "timeSpent",
-            title: "00:00:28",
-            label: "Average time spent",
-            description: "Average duration users spend viewing your content per session.",
-            icon: <Clock className="h-5 w-5 text-orange-600" />,
-            color: "bg-orange-600",
-        },
+        // {
+        //     id: "timeSpent",
+        //     title: "00:00:28",
+        //     label: "Average time spent",
+        //     description: "Average duration users spend viewing your content per session.",
+        //     icon: <Clock className="h-5 w-5 text-orange-600" />,
+        //     color: "bg-orange-600",
+        // },
         {
             id: "downloads",
             title: "0",
@@ -52,7 +52,7 @@ export default function Summary() {
                         <CardTitle>Summary</CardTitle>
                     </div>
                 </CardHeader>
-                <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {statsData.map((stat, index) => (
                         <TooltipProvider key={index}>
                             <Tooltip>
