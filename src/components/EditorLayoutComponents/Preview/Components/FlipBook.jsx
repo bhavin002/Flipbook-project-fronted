@@ -24,7 +24,6 @@ const debounce = (func, delay) => {
 };
 
 const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView, publicFlipbookData }, ref) {
-    console.log("publicFlipbookData ??",publicFlipbookData);
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
     const [divWidth, setDivWidth] = useState(793);
@@ -226,38 +225,37 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
 
     return (
         <>
-            {visibilitySettings.brandLogo && (
-                visibilitySettings.logoLink ? (
-                    <div className="w-full flex justify-between p-4">
-                        <a
-                            href={visibilitySettings.logoLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="cursor-pointer z-[11]"
-                        >
+            <div className="w-full relative">
+                {visibilitySettings.brandLogo && (
+                    <div className="flex justify-start p-4">
+                        {visibilitySettings.logoLink ? (
+                            <a
+                                href={visibilitySettings.logoLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="cursor-pointer z-[11]"
+                            >
+                                <img
+                                    src={visibilitySettings.brandLogo}
+                                    width={200}
+                                    alt="Logo"
+                                    className="w-auto h-auto max-h-[50px] max-w-[200px]"
+                                />
+                            </a>
+                        ) : (
                             <img
                                 src={visibilitySettings.brandLogo}
                                 width={200}
-                                alt="Logo"
                                 className="w-auto h-auto max-h-[50px] max-w-[200px]"
+                                alt="Logo"
                             />
-                        </a>
-                        <ShoppingCartPopover flipbookId={flipbookId} isMobile={isMobile} />
+                        )}
                     </div>
-
-                ) : (
-                    <div className="w-full flex justify-between p-4">
-                        <img
-                            src={visibilitySettings.brandLogo}
-                            width={200}
-                            className="w-auto h-auto max-h-[50px] max-w-[200px]"
-                            alt="Logo"
-                        />
-                        <ShoppingCartPopover flipbookId={flipbookId} isMobile={isMobile} />
-                    </div>
-
-                )
-            )}
+                )}
+                {visibilitySettings.showShoppingList && <div className="absolute top-4 right-4 z-[12]">
+                    <ShoppingCartPopover flipbookId={flipbookId} isMobile={isMobile} />
+                </div>}
+            </div>
 
             <div className="wrapper flex flex-col items-center justify-center relative" onClick={handleFlipbookClick}>
                 <div className="aspect" style={{ width, height }}>

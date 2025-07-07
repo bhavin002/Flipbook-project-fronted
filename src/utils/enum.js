@@ -60,6 +60,9 @@ export const flipbookPreviewFieldKey = {
     isAudioLoop: 40,
     isAutoPlay: 41,
     backgroundImageType: 42,
+    backgroundImageName: 43,
+    backgroundAudioFileName: 44,
+    showShoppingList: 45,
 }
 
 export const BackgroundColorType = {

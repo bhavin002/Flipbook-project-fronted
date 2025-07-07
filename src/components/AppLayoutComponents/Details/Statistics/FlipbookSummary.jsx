@@ -62,47 +62,14 @@ export default function FlipbookSummary({ viewsCount = 0, impressionCount = 0, o
     ]
 
     if (loadingStats) {
-        // Skeleton layout mimicking the real UI
+        // Simple box skeleton layout (like FlipbookStatistics)
         return (
             <Card>
                 <CardHeader>
-                    <div className="flex items-center justify-between w-full">
-                        <Skeleton className="h-6 w-32 mb-2" />
-                        <Skeleton className="h-5 w-24" />
-                    </div>
+                    <Skeleton className="h-6 w-32 mb-2" />
                 </CardHeader>
                 <CardContent>
-                    <div className="flex flex-col md:flex-row gap-4">
-                        <div className="w-full md:w-1/3 lg:w-1/4">
-                            <Card className="h-full">
-                                <CardContent className="p-6 h-full flex items-center justify-center">
-                                    <Skeleton className="w-full h-40" />
-                                </CardContent>
-                            </Card>
-                        </div>
-                        <div className="w-full md:w-2/3 lg:w-3/4">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {[...Array(5)].map((_, idx) => (
-                                    <Card className="h-full" key={idx}>
-                                        <CardContent className="p-0 h-full">
-                                            <div className="flex h-full">
-                                                <div className={`w-1.5 bg-gray-200`}></div>
-                                                <div className="p-5 flex flex-1 items-center">
-                                                    <div className="flex items-center gap-3 w-full">
-                                                        <Skeleton className="h-5 w-5 rounded-full" />
-                                                        <div className="flex flex-col w-full">
-                                                            <Skeleton className="h-6 w-16 mb-2" />
-                                                            <Skeleton className="h-4 w-20" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
+                    <Skeleton className="w-full h-64 rounded-md" />
                 </CardContent>
             </Card>
         );
