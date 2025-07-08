@@ -14,6 +14,7 @@ import { LayoutStyle } from "@/utils/enum.js";
 import Slider from "../Helper/Slider.jsx";
 import PageOverviewModal from "./PageOverviewModal.jsx";
 import ShoppingCartPopover from "./ShoppingCartPopover.jsx";
+import { detectDeviceType } from "@/utils/Helper.js";
 
 const debounce = (func, delay) => {
     let timeoutId;
@@ -169,7 +170,10 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
     const handleFlipbookClick = async () => {
         if (isPublicView && !viewCountUpdated) {
             try {
-                await UpdateFlipbookViewCountApi(flipbookId);
+                const data = {
+                    device: detectDeviceType()
+                }
+                await UpdateFlipbookViewCountApi(flipbookId, data);
                 setViewCountUpdated(true);
             } catch (error) {
                 toast.error("Failed to update view count", {

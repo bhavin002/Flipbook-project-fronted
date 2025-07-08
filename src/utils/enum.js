@@ -106,3 +106,9 @@ export const CheckoutType = {
     1: "Whatsapp",
     2: "Slack",
 }
+
+export const DeviceType = {
+    "MOBILE": 1,
+    "TABLET": 2,
+    "DESKTOP": 3
+}
