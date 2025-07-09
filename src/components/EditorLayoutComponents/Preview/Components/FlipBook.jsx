@@ -24,7 +24,7 @@ const debounce = (func, delay) => {
 };
 
 const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView, publicFlipbookData }, ref) {
-    console.log("publicFlipbookData ??",publicFlipbookData);
+    console.log("publicFlipbookData ??", publicFlipbookData);
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
     const [divWidth, setDivWidth] = useState(793);
@@ -205,9 +205,13 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                 setCurrentPage(2); // Go to pages 2 and 3 (second slide)
                 onPageChange(2, totalPages);
             } else if (pageType === "double") {
-                if (totalPages % 2 !== 0 && currentPage + 3 == totalPages) {
-                    setCurrentPage(totalPages); // Move forward two pages
-                    onPageChange(totalPages, totalPages);
+                // Prevent going past last spread
+                if (
+                    (totalPages % 2 === 0 && currentPage + 2 > totalPages) ||
+                    (totalPages % 2 !== 0 && currentPage + 1 >= totalPages)
+                ) {
+                    // Do nothing, already at last spread
+                    return;
                 } else {
                     setCurrentPage(currentPage + 2); // Move forward two pages
                     onPageChange(currentPage + 2, totalPages);
@@ -344,7 +348,9 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                                 </svg>
                             </button>
                         )}
-                        {currentPage < totalPages && (
+                        {/* Fix: Only show Next arrow if not on last spread in double page mode */}
+                        {((pageType !== "double" && currentPage < totalPages) ||
+                          (pageType === "double" && currentPage < (totalPages % 2 === 0 ? totalPages - 1 : totalPages - 1))) && (
                             <button
                                 onClick={handleNextPage}
                                 className="absolute flex hover:bg-[#ffffff40] rounded-full p-2 items-center right-5 transition-all duration-300 ease-in-out"
