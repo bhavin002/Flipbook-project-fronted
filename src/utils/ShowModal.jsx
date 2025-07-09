@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 
-export function showModal(ModalComponent, htmlData, flipbookId) {
+export function showModal(ModalComponent, htmlData, flipbookId,currentCurrency) {
     const modalRoot = document.createElement('div');
     modalRoot.id = 'dynamic-modal-root';
     modalRoot.style.position = 'relative';
@@ -22,6 +22,7 @@ export function showModal(ModalComponent, htmlData, flipbookId) {
             }}
             htmlData={htmlData}
             flipbookId={flipbookId}
+            currentCurrency={currentCurrency}
         />
     );
 }

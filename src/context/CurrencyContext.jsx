@@ -30,9 +30,7 @@ export function CurrencyProvider({ children }) {
         setLoading(false);
       }
     };
-    if (isAuthenticated) {
-      fetchCurrencies();
-    }
+    fetchCurrencies();
   }, [isAuthenticated]);
 
   return (

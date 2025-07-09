@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
-import GenericSelection from "@/utils/GenericSelection";
 import FlipbookSummary from "./Statistics/FlipbookSummary";
 import OrdersTable from "./Statistics/Orders/OrdersTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,31 +13,32 @@ import Question from "./Statistics/Question";
 import ContactForm from "./Statistics/ContactForm";
 import { GetFlipbookStatisticsApi } from "@/service/flipbook.publish.service";
 import PopularProductsTable from "./Statistics/PopularProductsTable";
+import FlipbookStatistics from "@/utils/FlipbookStatistics";
+import CountryViewsTable from "./Statistics/CountryViewsTable";
+import DevicePieChart from "./Statistics/DevicePieChart";
 
 export default function Statistics({ flipbookId }) {
+    const today = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(today.getMonth() - 1);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [statisticsFilter, setStatisticsFilter] = useState([]);
     const [displayValue, setDisplayValue] = useState({
-        from: new Date(),
-        to: new Date(),
+        from: oneMonthAgo,
+        to: today,
     });
     const [stats, setStats] = useState(null);
     const [loadingStats, setLoadingStats] = useState(true);
-
-    const options = [{
-        name: "Trackable links",
-        groups: [
-            { value: 'bv', label: 'bv' },
-            { value: 'sg', label: 'sg' },
-            { value: 'up', label: 'up' }
-        ]
-    }];
 
     useEffect(() => {
         async function fetchStats() {
             setLoadingStats(true);
             try {
-                const response = await GetFlipbookStatisticsApi(flipbookId);
+                const payload = {
+                    startDate: displayValue.from ? format(displayValue.from, "yyyy-MM-dd") : undefined,
+                    endDate: displayValue.to ? format(displayValue.to, "yyyy-MM-dd") : undefined,
+                };
+                const response = await GetFlipbookStatisticsApi(flipbookId, payload);
                 setStats(response.data);
             } catch (e) {
                 setStats(null);
@@ -46,8 +46,8 @@ export default function Statistics({ flipbookId }) {
                 setLoadingStats(false);
             }
         }
-        if (flipbookId) fetchStats();
-    }, [flipbookId]);
+        if (flipbookId && displayValue.from && displayValue.to) fetchStats();
+    }, [flipbookId, displayValue]);
 
     const handleApplyDateRange = (dateRange) => {
         if (dateRange?.from && dateRange?.to) {
@@ -86,27 +86,29 @@ export default function Statistics({ flipbookId }) {
                         <span>Pick a date</span>
                     )}
                 </Button>
-                <GenericSelection
-                    options={options}
-                    selectedValues={statisticsFilter}
-                    onChange={setStatisticsFilter}
-                    allLabel="All statistics"
-                />
             </div>
             <FlipbookSummary
-                viewsCount={stats?.viewsCount || 0}
-                impressionCount={stats?.impressionCount || 0}
+                viewsCount={stats?.totalViews || 0}
+                impressionCount={stats?.totalImpressions || 0}
                 orderCount={stats?.orderCount || 0}
-                orderValues={stats?.orderValues || 0}
-                flipbookId={flipbookId}
+                orderValues={stats?.orderTotals || []}
                 loadingStats={loadingStats}
             />
-            <OrdersTable flipbookId={flipbookId} />
+            <OrdersTable orders={stats?.orders || []} loading={loadingStats} />
             <div className="mt-8">
                 <PopularProductsTable
                     products={stats?.popularProducts || []}
                     loading={loadingStats}
                 />
+            </div>
+            <div className="mt-8">
+                <DevicePieChart deviceCounts={stats?.deviceCounts || {}} loading={loadingStats} />
+            </div>
+            <div className="mt-8">
+                <CountryViewsTable countryViews={stats?.countryViews || []} loading={loadingStats} />
+            </div>
+            <div className="mt-8">
+                <FlipbookStatistics statsData={stats?.dayWiseStats || []} dates={displayValue} loading={loadingStats} />
             </div>
             <Card>
                 <CardHeader>

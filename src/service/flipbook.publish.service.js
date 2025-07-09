@@ -46,8 +46,8 @@ export const VerifyFlipbookPasswordApi = async (data) => {
     return response.data;
 }
 
-export const GetFlipbookStatisticsApi = async (flipbookId) => {
-    const response = await ApiClient().get(`/flipbook-publish/get-statistics/${flipbookId}`);
+export const GetFlipbookStatisticsApi = async (flipbookId, data) => {
+    const response = await ApiClient().post(`/flipbook-publish/get-statistics/${flipbookId}`, data);
     return response.data;
 }
 
