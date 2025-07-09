@@ -4,6 +4,7 @@ import { duplicateQuestionFormApi } from "@/service/question.service";
 import { duplicateQuizApi } from "@/service/quiz.service";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
+import { DeviceType } from "./enum";
 
 
 export const addStage = (mainStage, setMainStage, index, setSelectedIndex) => {
@@ -215,4 +216,27 @@ export const IsPublished = () => {
         return true;
     }
     return false;
+}
+
+export const detectDeviceType = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const width = window.innerWidth;
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    // Regular expressions for mobile and tablet detection
+    const mobileRegex = /android|iphone|ipod|webos|blackberry|iemobile|opera mini/i;
+    const tabletRegex = /tablet|ipad|playbook|android(?!.*mobile)/i;
+
+    // Check for tablets first
+    if (tabletRegex.test(userAgent) || (isTouchDevice && width > 768 && width <= 1024)) {
+        return DeviceType.TABLET;
+    }
+    // Check for mobile devices
+    else if (mobileRegex.test(userAgent) || (isTouchDevice && width <= 768)) {
+        return DeviceType.MOBILE
+    }
+    // Default to desktop
+    else {
+        return DeviceType.DESKTOP
+    }
 }

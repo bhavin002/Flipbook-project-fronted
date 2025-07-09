@@ -5,7 +5,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Download, Eye, Clock, BarChart2 } from "lucide-react"
+import { Download, Eye, BarChart2 } from "lucide-react"
 import FlipbookStatistics from "@/utils/FlipbookStatistics"
 
 export default function Summary() {
@@ -26,14 +26,6 @@ export default function Summary() {
             icon: <Eye className="h-5 w-5 text-purple-600" />,
             color: "bg-purple-600",
         },
-        // {
-        //     id: "timeSpent",
-        //     title: "00:00:28",
-        //     label: "Average time spent",
-        //     description: "Average duration users spend viewing your content per session.",
-        //     icon: <Clock className="h-5 w-5 text-orange-600" />,
-        //     color: "bg-orange-600",
-        // },
         {
             id: "downloads",
             title: "0",

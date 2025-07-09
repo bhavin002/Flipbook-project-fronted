@@ -12,20 +12,20 @@ export default function Details() {
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
-    
+
     const pathParts = location.pathname.split('/');
     const defaultTab = pathParts[1] || 'details';
-    
+
     const handleTabChange = (value) => {
         navigate(`/${value}/${id}`);
     };
 
     console.log("id ?? ", id);
-    
+
     return (
         <div className="p-6 max-md:w-[100vw] h-full overflow-y-hidden">
-            <Tabs 
-                defaultValue={defaultTab} 
+            <Tabs
+                defaultValue={defaultTab}
                 value={defaultTab}
                 onValueChange={handleTabChange}
                 className="flex flex-col h-full"
@@ -61,22 +61,22 @@ export default function Details() {
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="details" className="h-full overflow-y-auto">
-                    <DetailsTab flipbookId={id}/>
+                    <DetailsTab flipbookId={id} />
                 </TabsContent>
                 <TabsContent value="embed" className="h-full overflow-y-auto">
-                    <Embed/>
+                    <Embed />
                 </TabsContent>
                 <TabsContent value="send-email" className="h-full overflow-y-auto">
-                    <SendEmail/>
+                    <SendEmail />
                 </TabsContent>
                 <TabsContent value="download-qr" className="h-full overflow-y-auto">
-                    <DownloadQR/>
+                    <DownloadQR flipbookId={id} />
                 </TabsContent>
                 <TabsContent value="trackable-links" className="h-full overflow-y-auto">
-                    <TrackableLinks/>
+                    <TrackableLinks />
                 </TabsContent>
                 <TabsContent value="stats" className="h-full overflow-y-auto">
-                    <Statistics flipbookId={id}/>
+                    <Statistics flipbookId={id} />
                 </TabsContent>
             </Tabs>
         </div>

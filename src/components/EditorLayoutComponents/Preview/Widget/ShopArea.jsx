@@ -1,11 +1,13 @@
 import React from 'react';
 import ShopAreaModal from './ShopAreaModal';
 import { showModal } from '@/utils/ShowModal';
+import { useShopSettings } from '@/context/ShopSettingsContext';
 
 export default function ShopArea({ shape, visibilitySettings, flipbookId }) {
+    const { getCurrentCurrency } = useShopSettings();
     const handleClick = () => {
         if (shape.htmlType === 'shop-area' && shape.htmlData?.variantId) {
-            showModal(ShopAreaModal, shape.htmlData, flipbookId);
+            showModal(ShopAreaModal, shape.htmlData, flipbookId, getCurrentCurrency());
         }
     };
     return (

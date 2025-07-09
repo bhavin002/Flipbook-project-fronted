@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 export const FlipbookSettingsContext = createContext();
 
 export const FlipbookSettingsProvider = ({ children, publicData }) => {
-    console.log("publicData in FlipbookSettingsProvider:", publicData);
     const [settings, setSettings] = useState(null);
     const [hasFetched, setHasFetched] = useState(false);
     const [updateCounter, setUpdateCounter] = useState(0);

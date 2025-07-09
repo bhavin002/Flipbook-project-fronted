@@ -35,6 +35,7 @@ export const useFlipbookSettings = (settings) => {
       showAnimateInteraction: settings.animateInteraction == true,
       layoutStyle: settings.layoutStyle,
       pageTransition: settings.pageTransition,
+      showShoppingList: settings.showShoppingList == true,
     };
   }, [settings]);
 

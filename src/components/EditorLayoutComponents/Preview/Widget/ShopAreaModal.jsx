@@ -22,7 +22,7 @@ import { getProductApi, getPublishedProductApi } from '@/service/product.service
 import cartService from '@/service/IndexedDBCart.service';
 import { IsPublished } from '@/utils/Helper';
 
-const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
+const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurrency }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [productInfo, setProductInfo] = useState(null);
     const [selectedVariant, setSelectedVariant] = useState({});
@@ -37,7 +37,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
             const getProductInfo = async () => {
                 try {
                     setIsLoading(true);
-                    const response = IsPublished() ?await getPublishedProductApi(htmlData.variantId) : await getProductApi(htmlData.variantId);
+                    const response = IsPublished() ? await getPublishedProductApi(htmlData.variantId) : await getProductApi(htmlData.variantId);
                     setProductInfo(response.data);
 
                     if (response.data?.productAttributes?.length > 0) {
@@ -395,7 +395,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
                                         </Label>
                                         {productInfo.paidPersonalization && productInfo.personalizationPrice != null && (
                                             <Badge variant="secondary" className="text-xs">
-                                                + {productInfo.personalizationPrice} INR
+                                                + {productInfo.personalizationPrice} {currentCurrency}
                                             </Badge>
                                         )}
                                     </div>
@@ -426,11 +426,11 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId }) => {
                                 <div>
                                     {getCurrentPrice().discountPrice != null && getCurrentPrice().price > getCurrentPrice().discountPrice && (
                                         <p className="text-sm text-gray-500 line-through">
-                                            {getCurrentPrice().price} INR
+                                            {getCurrentPrice().price} {currentCurrency}
                                         </p>
                                     )}
                                     <p className="text-xl font-bold text-gray-900">
-                                        {getFinalPrice()} INR
+                                        {getFinalPrice()} {currentCurrency}
                                     </p>
                                 </div>
                             )}

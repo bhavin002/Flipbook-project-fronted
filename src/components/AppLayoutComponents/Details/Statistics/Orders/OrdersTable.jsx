@@ -17,18 +17,17 @@ import {
 import TablePagination from "@/utils/TablePagination";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { getOrderDataApi, deleteOrderApi } from "@/service/order.service";
+import { deleteOrderApi } from "@/service/order.service";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckoutType } from "@/utils/enum";
 import ProductDetails from "./ProductDetails";
 import CustomerDetails from "./CustomerDetails";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 
-export default function OrdersTable({ flipbookId }) {
+export default function OrdersTable({ orders = [], loading }) {
     const [currentPage, setCurrentPage] = useState(1);
     const recordsPerPage = 5;
-    const [orderData, setOrderData] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [orderData, setOrderData] = useState(orders);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [showOrderDialog, setShowOrderDialog] = useState(false);
     const [showCustomerDialog, setShowCustomerDialog] = useState(false);
@@ -37,6 +36,10 @@ export default function OrdersTable({ flipbookId }) {
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [orderToDelete, setOrderToDelete] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    useEffect(() => {
+        setOrderData(orders);
+    }, [orders]);
 
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
@@ -47,22 +50,6 @@ export default function OrdersTable({ flipbookId }) {
     const showInboxColumn = orderData.some(
         (order) => order.conditionalInbox?.option && order.conditionalInbox.option.trim() !== ""
     );
-
-    const fetchOrderData = async () => {
-        try {
-            setIsLoading(true);
-            const response = await getOrderDataApi(flipbookId);
-            setOrderData(response.data || []);
-        } catch (error) {
-            toast.error(error.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchOrderData();
-    }, [flipbookId]);
 
     const changePage = (page) => {
         if (page > 0 && page <= totalPages) {
@@ -132,7 +119,7 @@ export default function OrdersTable({ flipbookId }) {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {isLoading ? (
+                            {loading ? (
                                 Array.from({ length: 5 }).map((_, idx) => (
                                     <TableRow key={idx}>
                                         <TableCell><Skeleton className="h-4 w-24" /></TableCell>
