@@ -30,7 +30,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const progressBarRef = useRef(null);
     const flipBookRef = useRef(null);
     const containerRef = useRef(null);
-
+    const transformRef = useRef(null); // Reference for TransformWrapper
     console.log("isPublicView ??", isPublicView);
 
     useEffect(() => {
@@ -122,7 +122,6 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
             setCurrentPage(validPage);
             setTotalPages(validTotal);
         }
-
     };
 
     const setPage = (page) => {
@@ -148,7 +147,6 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         }
         if (pageType === "double" && totalPages % 2 !== 0 && page + 1 === totalPages) {
             page = totalPages;
-
         }
 
         // Update current page and flipbook
@@ -198,8 +196,24 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     }, [isDragging]);
 
 
-    const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.1, 2));
-    const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.1, 0.5));
+    const handleZoomIn = () => {
+        setZoomLevel((prev) => Math.min(prev + 0.1, 2));
+        if (transformRef.current) {
+            const transformWrapper = transformRef.current;
+            if (transformWrapper) {
+                transformWrapper.zoomIn(0.1, 0, 0);
+            }
+        }
+    };
+    const handleZoomOut = () => {
+        setZoomLevel((prev) => Math.max(prev - 0.1, 0.5))
+        if (transformRef.current) {
+            const transformWrapper = transformRef.current;
+            if (transformWrapper) {
+                transformWrapper.zoomOut(0.1, 0, 0);
+            }
+        }
+    };
 
     const toggleFullscreen = () => {
         if (!document.fullscreenElement) {
@@ -287,6 +301,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 >
                                     <ZoomOut className="w-4 h-4" />
                                 </Button>
+                                {/* Display current zoom level from TransformWrapper */}
+                                {/* {transformRef?.current && Math.floor(transformRef?.current?.state?.scale * 100)}% */}
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -408,6 +424,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                         >
                             <ZoomOut className="w-5 h-5" />
                         </Button>
+                        {/* Display current zoom level from TransformWrapper */}
+                        {/* {transformRef?.current && Math.floor(transformRef?.current?.state?.scale * 100)}% */}
                         <Button
                             variant="ghost"
                             size="icon"
@@ -547,6 +565,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         pageType={pageType}
                                         setPageType={setPageType}
                                         zoomLevel={zoomLevel}
+                                        transformRef={transformRef}
                                         isMobile={activeTab.toLowerCase() === "mobile"}
                                         component={component}
                                         previewId={id}
@@ -591,6 +610,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                             zoomLevel={zoomLevel}
                                             isMobile={activeTab.toLowerCase() === "mobile"}
                                             component={component}
+                                            transformRef={transformRef}
                                             previewId={id}
                                             isPageOverviewOpen={isPageOverviewOpen}
                                             setIsPageOverviewOpen={setIsPageOverviewOpen}
@@ -613,8 +633,6 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                     )}
                 </div>
             </div>
-
         </>
-
     );
 }
