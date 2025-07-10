@@ -15,6 +15,7 @@ import Slider from "../Helper/Slider.jsx";
 import PageOverviewModal from "./PageOverviewModal.jsx";
 import ShoppingCartPopover from "./ShoppingCartPopover.jsx";
 import { detectDeviceType } from "@/utils/Helper.js";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
 const debounce = (func, delay) => {
     let timeoutId;
@@ -24,7 +25,7 @@ const debounce = (func, delay) => {
     };
 };
 
-const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView, publicFlipbookData }, ref) {
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef }, ref) {
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
     const [divWidth, setDivWidth] = useState(793);
@@ -36,7 +37,6 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
     const [viewCountUpdated, setViewCountUpdated] = useState(false);
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
-
     const myRef = useRef(null);
 
     const calculateNewDivSize = (screenWidth, screenHeight, divWidth, divHeight) => {
@@ -142,6 +142,15 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
         }
     }, [pageContent, totalPages, onPageChange, visibilitySettings.pageTransition]);
 
+    // zoomLevel
+    // useEffect(() => {
+    //     if (transformRef.current) {
+    //         const transformWrapper = transformRef.current;
+    //         if (transformWrapper) {
+    //             transformWrapper.zoomIn(0.1, 0, 0);
+    //         }
+    //     }
+    // }, [zoomLevel]);
     useImperativeHandle(ref, () => ({
         setPage: (page) => {
             if (visibilitySettings.pageTransition === 0 && myRef.current) {
@@ -208,9 +217,13 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                 setCurrentPage(2); // Go to pages 2 and 3 (second slide)
                 onPageChange(2, totalPages);
             } else if (pageType === "double") {
-                if (totalPages % 2 !== 0 && currentPage + 3 == totalPages) {
-                    setCurrentPage(totalPages); // Move forward two pages
-                    onPageChange(totalPages, totalPages);
+                // Prevent going past last spread
+                if (
+                    (totalPages % 2 === 0 && currentPage + 2 > totalPages) ||
+                    (totalPages % 2 !== 0 && currentPage + 1 >= totalPages)
+                ) {
+                    // Do nothing, already at last spread
+                    return;
                 } else {
                     setCurrentPage(currentPage + 2); // Move forward two pages
                     onPageChange(currentPage + 2, totalPages);
@@ -262,65 +275,79 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
             </div>
 
             <div className="wrapper flex flex-col items-center justify-center relative" onClick={handleFlipbookClick}>
-                <div className="aspect" style={{ width, height }}>
-                    <div className="aspect-inner">
-                        {visibilitySettings.pageTransition === 0 ? (
-                            <Turn
-                                className="flipbook"
-                                id="flipbook"
-                                width={width}
-                                height={height}
-                                pageType={pageType}
-                                myRef={myRef}
-                                onLoad={handleBookLoad}
-                                visibilitySettings={visibilitySettings}
-                            >
-                                {pageContent.map((page, index) => (
-                                    <div key={index} className="page">
-                                        <div
-                                            style={{
-                                                transformOrigin: "left top",
-                                                transform: `scale(${width / (pageType === "double" ? divWidth * 2 : divWidth)}, ${height / divHeight})`,
-                                                width: `${pageType === "double" ? divWidth : divWidth}px`,
-                                                height: `${divHeight}px`,
-                                                backgroundColor: page?.background || visibilitySettings.backgroundColor || "white",
-                                                position: "relative",
-                                                overflow: "hidden",
-                                            }}
-                                        >
-                                            {page.pageData.map((data, idx) => (
-                                                <PageContentRenderer
-                                                    key={idx}
-                                                    data={data}
-                                                    index={idx}
-                                                    visibilitySettings={visibilitySettings}
-                                                    flipbookRef={myRef}
-                                                    flipbookId={flipbookId}
-                                                />
-                                            ))}
-                                        </div>
-                                    </div>
-                                ))}
-                            </Turn>
-                        ) : (
-                            <Slider
-                                width={width}
-                                height={height}
-                                pageType={pageType}
-                                pageContent={pageContent}
-                                currentPage={currentPage}
-                                setCurrentPage={setCurrentPage}
-                                onPageChange={onPageChange}
-                                totalPages={totalPages}
-                                divWidth={divWidth}
-                                divHeight={divHeight}
-                                visibilitySettings={visibilitySettings}
-                                onLoad={handleBookLoad}
-                                flipbookId={flipbookId}
-                            />
-                        )}
-                    </div>
-                </div>
+                <TransformWrapper
+                    ref={transformRef}
+                    initialScale={1}
+                    minScale={0.5}
+                    maxScale={2}
+                    centerOnInit={true}
+                    doubleClick={{ mode: "reset" }}
+                    wheel={{ step:0.3, wheelDisabled: true }} // Enable wheel/touchpad zooming with smooth increments
+                    pinch={{ disabled: false, step: 0.05 }} // Keep pinch-to-zoom for touch devices
+                    style={{ width: '100%', height: '100%' }}
+                >
+                    <TransformComponent>
+                        <div className="aspect" style={{ width, height }}>
+                            <div className="aspect-inner">
+                                {visibilitySettings.pageTransition === 0 ? (
+                                    <Turn
+                                        className="flipbook"
+                                        id="flipbook"
+                                        width={width}
+                                        height={height}
+                                        pageType={pageType}
+                                        myRef={myRef}
+                                        onLoad={handleBookLoad}
+                                        visibilitySettings={visibilitySettings}
+                                    >
+                                        {pageContent.map((page, index) => (
+                                            <div key={index} className="page">
+                                                <div
+                                                    style={{
+                                                        transformOrigin: "left top",
+                                                        transform: `scale(${width / (pageType === "double" ? divWidth * 2 : divWidth)}, ${height / divHeight})`,
+                                                        width: `${pageType === "double" ? divWidth : divWidth}px`,
+                                                        height: `${divHeight}px`,
+                                                        backgroundColor: page?.background || visibilitySettings.backgroundColor || "white",
+                                                        position: "relative",
+                                                        overflow: "hidden",
+                                                    }}
+                                                >
+                                                    {page.pageData.map((data, idx) => (
+                                                        <PageContentRenderer
+                                                            key={idx}
+                                                            data={data}
+                                                            index={idx}
+                                                            visibilitySettings={visibilitySettings}
+                                                            flipbookRef={myRef}
+                                                            flipbookId={flipbookId}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </Turn>
+                                ) : (
+                                    <Slider
+                                        width={width}
+                                        height={height}
+                                        pageType={pageType}
+                                        pageContent={pageContent}
+                                        currentPage={currentPage}
+                                        setCurrentPage={setCurrentPage}
+                                        onPageChange={onPageChange}
+                                        totalPages={totalPages}
+                                        divWidth={divWidth}
+                                        divHeight={divHeight}
+                                        visibilitySettings={visibilitySettings}
+                                        onLoad={handleBookLoad}
+                                        flipbookId={flipbookId}
+                                    />
+                                )}
+                            </div>
+                        </div>
+                    </TransformComponent>
+                </TransformWrapper>
                 {visibilitySettings.showNavigationArrow && (
                     <>
                         {currentPage > 1 && (
@@ -346,29 +373,31 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                                 </svg>
                             </button>
                         )}
-                        {currentPage < totalPages && (
-                            <button
-                                onClick={handleNextPage}
-                                className="absolute flex hover:bg-[#ffffff40] rounded-full p-2 items-center right-5 transition-all duration-300 ease-in-out"
-                                aria-label="Next page"
-                            >
-                                <svg aria-hidden="true" width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        fill="#FFFFFF"
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M12.6864 4.5552C13.4264 3.81523 14.6262 3.81526 15.3662 4.55528L31.2028 20.3929C32.0908 21.2809 32.0908 22.7206 31.2028 23.6086L15.3661 39.4452C14.6261 40.1852 13.4263 40.1852 12.6863 39.4452C11.9463 38.7052 11.9463 37.5055 12.6863 36.7655L27.4512 22.0007L12.6863 7.23497C11.9463 6.49495 11.9464 5.29518 12.6864 4.5552Z"
-                                    />
-                                    <path
-                                        fill="#000000"
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M11.2721 40.8595C9.75109 39.3384 9.75108 36.8723 11.2721 35.3513L24.6228 22.0006L11.2721 8.64915C9.75105 7.12806 9.75112 4.66195 11.2722 3.14095C12.7933 1.61995 15.2594 1.62002 16.7804 3.14111L32.6171 18.9787C34.2861 20.6478 34.286 23.3538 32.617 25.0228L16.7803 40.8595C15.2593 42.3805 12.7932 42.3805 11.2721 40.8595ZM12.6863 36.7655C11.9463 37.5055 11.9463 38.7052 12.6863 39.4452C13.4263 40.1852 14.6261 40.1852 15.3661 39.4452L31.2028 23.6086C32.0908 22.7206 32.0908 21.2809 31.2028 20.3929L15.3662 4.55528C14.6262 3.81526 13.4264 3.81523 12.6864 4.5552C11.9464 5.29518 11.9463 6.49495 12.6863 7.23497L27.4512 22.0007L12.6863 36.7655Z"
-                                        fillOpacity="0.2"
-                                    />
-                                </svg>
-                            </button>
-                        )}
+                        {/* Fix: Only show Next arrow if not on last spread in double page mode */}
+                        {((pageType !== "double" && currentPage < totalPages) ||
+                            (pageType === "double" && currentPage < (totalPages % 2 === 0 ? totalPages - 1 : totalPages - 1))) && (
+                                <button
+                                    onClick={handleNextPage}
+                                    className="absolute flex hover:bg-[#ffffff40] rounded-full p-2 items-center right-5 transition-all duration-300 ease-in-out"
+                                    aria-label="Next page"
+                                >
+                                    <svg aria-hidden="true" width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            fill="#FFFFFF"
+                                            fillRule="evenodd"
+                                            clipRule="evenodd"
+                                            d="M12.6864 4.5552C13.4264 3.81523 14.6262 3.81526 15.3662 4.55528L31.2028 20.3929C32.0908 21.2809 32.0908 22.7206 31.2028 23.6086L15.3661 39.4452C14.6261 40.1852 13.4263 40.1852 12.6863 39.4452C11.9463 38.7052 11.9463 37.5055 12.6863 36.7655L27.4512 22.0007L12.6863 7.23497C11.9463 6.49495 11.9464 5.29518 12.6864 4.5552Z"
+                                        />
+                                        <path
+                                            fill="#000000"
+                                            fillRule="evenodd"
+                                            clipRule="evenodd"
+                                            d="M11.2721 40.8595C9.75109 39.3384 9.75108 36.8723 11.2721 35.3513L24.6228 22.0006L11.2721 8.64915C9.75105 7.12806 9.75112 4.66195 11.2722 3.14095C12.7933 1.61995 15.2594 1.62002 16.7804 3.14111L32.6171 18.9787C34.2861 20.6478 34.286 23.3538 32.617 25.0228L16.7803 40.8595C15.2593 42.3805 12.7932 42.3805 11.2721 40.8595ZM12.6863 36.7655C11.9463 37.5055 11.9463 38.7052 12.6863 39.4452C13.4263 40.1852 14.6261 40.1852 15.3661 39.4452L31.2028 23.6086C32.0908 22.7206 32.0908 21.2809 31.2028 20.3929L15.3662 4.55528C14.6262 3.81526 13.4264 3.81523 12.6864 4.5552C11.9464 5.29518 11.9463 6.49495 12.6863 7.23497L27.4512 22.0007L12.6863 36.7655Z"
+                                            fillOpacity="0.2"
+                                        />
+                                    </svg>
+                                </button>
+                            )}
                     </>
                 )}
             </div>
