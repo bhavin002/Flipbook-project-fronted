@@ -33,7 +33,7 @@ export default function FilterCom() {
                 setTeammates(response.data.teammateData || []);
             } catch (error) {
                 toast.error("Failed to fetch teammates", {
-                    description: error.message
+                    description: error.message || "Oops! Something went wrong."
                 });
             } finally {
                 setIsLoading(false);
@@ -231,7 +231,7 @@ export default function FilterCom() {
         } catch (error) {
             console.error("Filter error:", error);
             toast.error("Failed to apply filters", {
-                description: error.message
+                description: error.message || "Oops! Something went wrong."
             });
         } finally {
             setIsLoading(false);
@@ -254,7 +254,7 @@ export default function FilterCom() {
         } catch (error) {
             console.error("Clear filters error:", error);
             toast.error("Failed to clear filters", {
-                description: error.message
+                description: error.message || "Oops! Something went wrong."
             });
         } finally {
             setIsLoading(false);

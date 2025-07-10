@@ -1,3 +1,5 @@
+import { Skeleton } from "@/components/ui/skeleton";
+import { Loader2 } from "lucide-react";
 
 export const FolderSkeleton = () => {
   return (
@@ -46,4 +48,32 @@ export function MediaImageSkeleton() {
       ))}
     </div>
   );
+}
+
+export function DetailsTabSkeleton() {
+  return (
+    <div className="py-6 max-w-[100vw] overflow-auto space-y-4">
+      <Skeleton className="h-20 w-full rounded-lg" />
+      <Skeleton className="h-32 w-full rounded-lg" />
+      <div className="flex gap-4 flex-wrap">
+        <div className="lg:w-[40%] w-full space-y-4">
+          <Skeleton className="h-64 w-full rounded-lg" />
+          <Skeleton className="h-40 w-full rounded-lg" />
+        </div>
+        <Skeleton className="flex-grow h-96 rounded-lg" />
+      </div>
+      <Skeleton className="h-40 w-full rounded-lg" />
+      <Skeleton className="h-24 w-full rounded-lg" />
+    </div>
+  );
+}
+
+export function LoadingOverlay() {
+  return (
+    <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10">
+      <div className="flex flex-col items-center space-y-3">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    </div>
+  )
 }

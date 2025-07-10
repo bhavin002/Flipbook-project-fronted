@@ -116,7 +116,7 @@ export default function MenuControls() {
                 setBackgroundAudioFile({ name: file.name, url: URL.createObjectURL(file) });
                 setCheckedItems(prev => ({ ...prev, "background-audio": true }));
             } catch (error) {
-                toast.error("Failed to upload audio", { description: error.message });
+                toast.error("Failed to upload audio", { description: error.message || "Oops! Something went wrong." });
             }
         }
     };
@@ -126,7 +126,7 @@ export default function MenuControls() {
             updateSettings({ backgroundAudioFile: null });
             setBackgroundAudioFile(null);
         } catch (error) {
-            toast.error("Failed to remove audio", { description: error.message });
+            toast.error("Failed to remove audio", { description: error.message || "Oops! Something went wrong." });
         }
     };
 

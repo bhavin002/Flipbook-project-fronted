@@ -28,7 +28,7 @@ export const FlipbookSettingsProvider = ({ children, publicData }) => {
             setHasFetched(true);
         } catch (error) {
             toast.error('Failed to fetch flipbook settings', {
-                description: error.message,
+                description: error.message || "Oops! Something went wrong.",
             });
         }
     }, [flipbookId, hasFetched]);
@@ -108,7 +108,7 @@ export const FlipbookSettingsProvider = ({ children, publicData }) => {
             });
         } catch (error) {
             setUpdateCounter(prev => prev - 1);
-            toast.error("Failed to update settings", { description: error.message });
+            toast.error("Failed to update settings", { description: error.message || "Oops! Something went wrong." });
             throw error;
         }
     };

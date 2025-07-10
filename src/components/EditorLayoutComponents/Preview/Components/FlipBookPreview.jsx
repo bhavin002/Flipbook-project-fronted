@@ -99,7 +99,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                 await cartService.saveCart(flipbookId, updatedCartItems);
                 console.log("Cart successfully updated in IndexedDB");
             } catch (error) {
-                toast.error('Failed to sync cart prices', { description: error.message });
+                toast.error('Failed to sync cart prices', { description: error.message || "Oops! Something went wrong." });
             }
         };
         syncCartPrices();

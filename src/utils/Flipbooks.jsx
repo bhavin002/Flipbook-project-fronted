@@ -208,16 +208,16 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
 
     const SkeletonCard = () => (
         <div className="bg-white rounded-xl overflow-hidden shadow-md border border-violet-100 animate-pulse">
-            <div className="relative bg-gray-200 h-[200px]"></div>
+            <div className="relative bg-[#ede9f5] h-[200px]"></div>
             <div className="px-4 pt-4 mt-[-15px] rounded-t-xl z-[11] relative bg-white">
                 <div className="flex items-center justify-between">
-                    <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-8 w-8 bg-gray-200 rounded-full"></div>
+                    <div className="h-6 bg-[#ede9f5] rounded w-3/4"></div>
+                    <div className="h-8 w-8 bg-[#ede9f5] rounded-full"></div>
                 </div>
-                <div className="h-4 bg-gray-200 rounded w-1/2 mt-2"></div>
+                <div className="h-4 bg-[#ede9f5] rounded w-1/2 mt-2"></div>
                 <div className="flex gap-2 justify-center py-3 flex-wrap">
                     {[...Array(6)].map((_, index) => (
-                        <div key={index} className="h-8 w-8 bg-gray-200 rounded-lg"></div>
+                        <div key={index} className="h-8 w-8 bg-[#ede9f5] rounded-lg"></div>
                     ))}
                 </div>
             </div>
@@ -261,11 +261,11 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                 </div>
                             </div>
 
-                            <div className="relative bg-gray-200 backdrop-blur-sm">
+                            <div className="relative bg-[#ede9f5] backdrop-blur-sm p-3">
                                 <img
-                                    src="/src/assets/profile.jpg"
+                                    src={`${flipbook.thumbnail ? flipbook.thumbnail : "/src/assets/book_thumbnail.jpg"}`}
                                     alt="Flipbook Cover"
-                                    className={`max-h-[200px] h-full m-auto transition-transform duration-500`}
+                                    className={`max-h-[200px] h-full m-auto transition-transform duration-500 rounded-t-md`}
                                 />
                             </div>
 

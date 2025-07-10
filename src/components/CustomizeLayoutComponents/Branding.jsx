@@ -138,7 +138,7 @@ export default function Branding() {
             updateSettings({ brandLogoId: null });
             setSelectedLogo(null);
         } catch (error) {
-            toast.error("Failed to remove logo", { description: error.message });
+            toast.error("Failed to remove logo", { description: error.message || "Oops! Something went wrong." });
         } finally {
             setIsLogoLoading(false);
         }
@@ -168,7 +168,7 @@ export default function Branding() {
             
             updateSettings({ backgroundImage: file , backgroundImageURL: imageUrl });
         } catch (error) {
-            toast.error("Failed to upload background image", { description: error.message });
+            toast.error("Failed to upload background image", { description: error.message || "Oops! Something went wrong." });
         } finally {
             setIsImageUploading(false);
         }
@@ -179,7 +179,7 @@ export default function Branding() {
             updateSettings({ backgroundImage: null });
             setBackgroundImage(null);
         } catch (error) {
-            toast.error("Failed to remove background image", { description: error.message });
+            toast.error("Failed to remove background image", { description: error.message || "Oops! Something went wrong." });
         }
     };
 

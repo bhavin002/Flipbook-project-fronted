@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select"
 import { useState, useEffect } from "react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertTriangle, Loader2 } from "lucide-react"
+import { AlertTriangle } from "lucide-react"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useWorkspaces } from "@/context/WorkspaceContext"
 import { MoveToWorkspaceApi } from "@/service/flipbook.service"
@@ -26,7 +26,6 @@ import { toast } from "sonner"
 import LoadingButton from "@/utils/LoadingButton"
 
 export default function MoveToWorkspaceDialog({ isMoveToWorkspaceModalOpen, setIsMoveToWorkspaceModalOpen, flipbookId, setFlipbooks }) {
-    console.log("MoveToWorkspaceDialog rendered with flipbookId:", flipbookId)
     const { workspaces } = useWorkspaces()
     const [selectedWorkspace, setSelectedWorkspace] = useState("")
     const [agreed, setAgreed] = useState(false)

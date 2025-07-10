@@ -41,7 +41,7 @@ export default function ContactForm({ flipbookId }) {
                     setSelectedForm(contactForms[0].value);
                 }
             } catch (error) {
-                toast.error("Error fetching contact forms", { description: error.message });
+                toast.error("Error fetching contact forms", { description: error.message || "Oops! Something went wrong." });
             } finally {
                 setFormsLoading(false);
             }
@@ -59,7 +59,7 @@ export default function ContactForm({ flipbookId }) {
                 setSubmissions(submissions || []);
                 setCurrentPage(1);
             } catch (error) {
-                toast.error("Error fetching contact submissions", { description: error.message });
+                toast.error("Error fetching contact submissions", { description: error.message || "Oops! Something went wrong." });
             } finally {
                 setSubmissionsLoading(false);
             }

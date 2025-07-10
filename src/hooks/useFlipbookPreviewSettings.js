@@ -17,7 +17,7 @@ export const useFlipbookPreviewSettings = () => {
                     setEnabledFields(globalEnabledFields);
                 } catch (error) {
                     toast.error('Failed to fetch flipbook preview settings',{
-                        description: error.message
+                        description: error.message || "Oops! Something went wrong."
                     });
                 }
             }

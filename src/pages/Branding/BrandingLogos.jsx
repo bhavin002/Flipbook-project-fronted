@@ -30,6 +30,9 @@ export default function BrandingLogos() {
                 type: logo.fileType
             })));
         } catch (error) {
+            toast.error("Error fetching logos", {
+                description: error.message || "Oops! Something went wrong."
+            })
             console.error("Error fetching logos:", error);
         } finally {
             setIsLoading(false);
