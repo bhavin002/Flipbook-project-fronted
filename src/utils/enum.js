@@ -107,6 +107,13 @@ export const CheckoutType = {
     2: "Slack",
 }
 
+export const VisibilityType = {
+    0: "Public",
+    1: "Private",
+    2: "Password",
+    3: "Readers only"
+}
+
 export const DeviceType = {
     "MOBILE": 1,
     "TABLET": 2,

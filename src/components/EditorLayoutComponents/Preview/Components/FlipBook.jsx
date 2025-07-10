@@ -112,7 +112,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                 setTotalPages(flipbookRes.pages.length);
             } catch (error) {
                 toast.error("Failed to load flipbook", {
-                    description: error.message,
+                    description: error.message || "Oops! Something went wrong.",
                 });
             }
         };
@@ -177,7 +177,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                 setViewCountUpdated(true);
             } catch (error) {
                 toast.error("Failed to update view count", {
-                    description: error.message
+                    description: error.message || "Oops! Something went wrong."
                 })
             }
         }

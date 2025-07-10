@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Check, Copy, Info, Crown, Mail } from 'lucide-react';
+import { Check, Copy, Info, Crown, Mail, Pencil } from 'lucide-react';
 import {
     Tooltip,
     TooltipContent,
@@ -12,12 +12,30 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import ChangeVisibilityDialog from "./ChangeVisibilityDialog";
 import { CalanderDialog } from "./CalanderDialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FlipBookPreview from "@/components/EditorLayoutComponents/Preview/Components/FlipBookPreview";
 import { toast } from "sonner";
+import { GetFlipbookDetailsApi, UpdateFlipbookDetailsApi } from "@/service/flipbook.publish.service";
+import { format } from "date-fns";
+import { DetailsTabSkeleton } from "@/utils/Skeleton";
+import { VisibilityType } from "@/utils/enum";
+import { useNavigate } from "react-router-dom";
+import {
+    FacebookShareButton,
+    TwitterShareButton,
+    WhatsappShareButton,
+    LinkedinShareButton,
+} from "react-share";
 
 export default function DetailsTab({ flipbookId }) {
     const [copied, setCopied] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [flipbookDetails, setFlipbookDetails] = useState(null);
+    const [isVisibilityDialogOpen, setVisibilityDialogOpen] = useState(false);
+    const [checkedIsVisible, setCheckedIsVisible] = useState(false);
+    const [checkedIsPublishDtVisible, setCheckedIsPublishDtVisible] = useState(false);
+    const navigate = useNavigate();
+
     const handleCopy = () => {
         const shareUrl = `${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`;
         navigator.clipboard.writeText(shareUrl)
@@ -30,10 +48,76 @@ export default function DetailsTab({ flipbookId }) {
                 toast.error("Failed to copy link");
             });
     }
+
+    useEffect(() => {
+        const getFlipbookData = async () => {
+            try {
+                setIsLoading(true);
+                const response = await GetFlipbookDetailsApi(flipbookId);
+                if (!response.data.isPublished) {
+                    navigate("/myflipbooks")
+                }
+                setFlipbookDetails(response.data);
+            } catch (error) {
+                toast.error("Error fetching flipbook details", {
+                    description: error.message || "Oops! Something went wrong."
+                })
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        getFlipbookData();
+    }, [flipbookId]);
+
+    // Always define these after flipbookDetails is available
+    const publishData = flipbookDetails?.publishFlipbookData || {};
+    const flipbookData = flipbookDetails?.flipbookData || {};
+
+    useEffect(() => {
+        setCheckedIsVisible(!!publishData.isVisible);
+        setCheckedIsPublishDtVisible(!!publishData.isPublishDtVisible);
+    }, [publishData.isVisible, publishData.isPublishDtVisible]);
+
+    const handleToggleIsVisible = async (checked) => {
+        setCheckedIsVisible(checked);
+        try {
+            const response = await UpdateFlipbookDetailsApi({
+                flipbookId,
+                isVisible: checked,
+            });
+            setFlipbookDetails(response.data);
+            toast.success("Success", { description: response.message });
+        } catch (err) {
+            toast.error("Failed to update visibility", { description: err?.message || "Something went wrong." });
+            setCheckedIsVisible(!checked);
+        }
+    };
+
+    const handleToggleIsPublishDtVisible = async (checked) => {
+        setCheckedIsPublishDtVisible(checked);
+        try {
+            const response = await UpdateFlipbookDetailsApi({
+                flipbookId,
+                isPublishDtVisible: checked,
+            });
+            setFlipbookDetails(response.data);
+            toast.success("Success", { description: response.message });
+        } catch (err) {
+            toast.error("Failed to update publish date visibility", { description: err?.message || "Something went wrong." });
+            setCheckedIsPublishDtVisible(!checked);
+        }
+    };
+
+    if (isLoading) {
+        return <DetailsTabSkeleton />;
+    }
+
+    const shareUrl = `${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`;
+
     return (
         <div className="py-6 max-w-[100vw] overflow-auto space-y-4">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
-                <h1 className="text-2xl font-bold mb-2">Details of New Flipbook</h1>
+                <h1 className="text-2xl font-bold mb-2">Details of <span className="text-primary">{flipbookData.name || "New Flipbook"}</span></h1>
                 <p className="text-gray-500">Access share, embed and download options, as well as statistics.</p>
             </div>
             <Card>
@@ -89,38 +173,40 @@ export default function DetailsTab({ flipbookId }) {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-gray-50 p-4 rounded-md w-full">
                                     <div className="text-gray-500 text-sm">Created on</div>
-                                    <div className="font-medium">Mar 16, 2025</div>
+                                    <div className="font-medium">{publishData.createdOn ? format(new Date(publishData.createdOn), "MMM dd, yyyy") : "--"}</div>
                                 </div>
-
                                 <div className="flex justify-between w-full bg-gray-50 p-4 gap-4 items-center rounded-md">
                                     <div>
                                         <div className="text-gray-500 text-sm">Published on</div>
-                                        <div className="font-medium">Mar 18, 2025</div>
+                                        <div className="font-medium">{publishData.publishedOn ? format(new Date(publishData.publishedOn), "MMM dd, yyyy") : "--"}</div>
                                     </div>
-                                    <CalanderDialog />
+                                    <CalanderDialog
+                                        flipbookId={flipbookId}
+                                        publishedOn={publishData.publishedOn}
+                                        setFlipbookDetails={setFlipbookDetails}
+                                    />
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="bg-gray-50 w-full p-4 rounded-md">
                                     <div className="text-gray-500 text-sm">Created by</div>
-                                    <div className="font-medium w-full truncate">Bhavin Vasavada Arvindbhai</div>
+                                    <div className="font-medium w-full truncate">{publishData.createdBy || "--"}</div>
                                 </div>
                                 <div className="bg-gray-50 w-full p-4 rounded-md">
                                     <div className="text-gray-500 text-sm">Last updated on</div>
-                                    <div className="font-medium">Mar 18, 2025</div>
+                                    <div className="font-medium">{publishData.updatedOn ? format(new Date(publishData.updatedOn), "MMM dd, yyyy") : "--"}</div>
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="flex justify-between bg-gray-50 w-full p-4 gap-4 items-center rounded-md">
                                     <div>
                                         <div className="text-gray-500 text-sm">Visibility</div>
-                                        <div className="font-medium">Public</div>
+                                        <div className="font-medium">{VisibilityType[publishData.visibility] || "--"}</div>
                                     </div>
-                                    <ChangeVisibilityDialog />
-                                </div>
-                                <div className="bg-gray-50 w-full p-4 rounded-md">
-                                    <div className="text-gray-500 text-sm">Workflow tag</div>
-                                    <div className="font-medium">Untagged</div>
+                                    <Button variant="ghost" size="sm" onClick={() => setVisibilityDialogOpen(true)}>
+                                        <Pencil className="h-4 w-4" />
+                                    </Button>
+                                    <ChangeVisibilityDialog open={isVisibilityDialogOpen} setOpen={setVisibilityDialogOpen} flipbookId={flipbookId} setFlipbookDetails={setFlipbookDetails} />
                                 </div>
                             </div>
                         </CardContent>
@@ -164,7 +250,7 @@ export default function DetailsTab({ flipbookId }) {
                                 <div className="border rounded-md p-4 flex justify-between items-center">
                                     <div className="flex items-center">
                                         <div className="text-gray-400 mr-2">
-                                            <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>png-icon</title><g fillRule="nonzero" fill="none"><path d="M12.2404969 0H4.22198758C3.05055901 0 2.09714286.95407867 2.09714286 2.12484472v4.86215435H.83291773C.3601227 6.98699907 0 7.52679089 0 8v7.2227558c0 .4731677.39729912.8561905.87013556.8561905h1.26422512l-.03721782 1.7605568c0 1.1720497.95341615 2.1248447 2.12484472 2.1248447l11.66322272-.0253526c1.1706833 0 2.1242236-.9528365 2.1242236-2.1248448V5.00359143L12.2404969 0zm2.9590266 18.0130475H4.84892957c-.45358178 0-.83444229-.3780235-.83444229-.8322264l.01209525-1.1018748H16.1776159c.4728779 0 .8562733-.3830228.8562733-.8561905l-.0372178-7.37948344c0-.47320911-.3833954-.85627329-.8562733-.85627329H4.02076116l-.03139645-4.15758099c0-.45291925.36939958-.82227743.82293996-.82227743l6.23207083-.0078675v2.50522893c0 .81316771.659793 1.47358178 1.4735818 1.47358178l3.4775876-.00782608.0262146 11.21918722c0 .4542443-.3686957.8236025-.822236.8236025z" fillOpacity=".87" fill="#000"></path><path d="M3.93813477 13.5v-1.4955078h.678125c.53684895 0 .95916341-.1286621 1.26694335-.3859863.30777995-.2573243.46166993-.6009278.46166993-1.0308106 0-.290625-.07114258-.550472-.21342774-.779541-.14228515-.22906901-.34309896-.40566407-.6024414-.52978516-.25934245-.12412109-.55753581-.18618164-.89458008-.18618164H2.87553711V13.5h1.06259766zm.69628906-2.315918h-.69628906V9.91259766h.70839843c.19173177.00201823.34309896.06458333.45410157.18769534.1110026.1231119.1665039.2875976.1665039.493457 0 .1876953-.05398763.3330078-.16196289.4359375-.10797526.1029297-.26489258.1543945-.47075195.1543945zM8.07358398 13.5v-2.7427734L9.63569336 13.5h1.05654294V9.0921875H9.63266602v2.7427734L8.07358398 9.0921875H7.01098633V13.5h1.06259765zm5.24648442.0605469c.3753906 0 .7205078-.0555013 1.0353515-.1665039.3148438-.1110026.5540039-.2573242.7174805-.4389649v-1.8103515H12.837207v.7295898h.7386718v.6841797c-.1352213.123112-.3410807.184668-.6175781.184668-.32291666 0-.55955403-.1104981-.7099121-.3314942-.15035808-.2209961-.22553711-.5514811-.22553711-.9914551v-.2664062c.00201823-.4197917.07568359-.7427083.22099609-.96875.1453125-.22604167.35117187-.33906251.61757812-.33906251.22200521 0 .39355469.05247396.51464844.15742191.12109375.1049479.19980469.2805338.23613281.5267578h1.02324219c-.05045573-.4985026-.22755534-.87338869-.53129883-1.12465822-.30374349-.25126953-.7300944-.3769043-1.27905273-.3769043-.37539063 0-.70587565.08728841-.99145508.26186524-.28557943.17457682-.50506185.42382812-.65844726.74775388-.15338542.3239258-.23007813.7028483-.23007813 1.1367676l.00302734.3814453c.02421875.6296875.20888672 1.1211263.55400391 1.4743164.34511719.3531901.80628255.5297852 1.38349609.5297852zM9.74755859 13.5V9.0921875H8.68798828V13.5h1.05957031zm2.20126951 0v-1.7558594h1.7134766v-.8173828h-1.7134766V9.91259766h1.8860352V9.0921875h-2.9486328V13.5h1.0625976z" fill="#FFF"></path></g></svg>
+                                            <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><title>png-icon</title><g fillRule="nonzero" fill="none"><path d="M12.2404969 0H4.22198758C3.05055901 0 2.09714286.95407867 2.09714286 2.12484472v4.86215435H.83291773C.3601227 6.98699907 0 7.52679089 0 8v7.2227558c0 .4731677.39729912.8561905.87013556.8561905h1.26422512l-.03721782 1.7605568c0 1.1720497.95341615 2.1248447 2.12484472 2.1248447l11.66322272-.0253526c1.1706833 0 2.1242236-.9528365 2.1242236-2.1248448V5.00359143L12.2404969 0zm2.9590266 18.0130475H4.84892957c-.45358178 0-.83444229-.3780235-.83444229-.8322264l.01209525-1.1018748H16.1776159c.4728779 0 .8562733-.3830228.8562733-.8561905l-.0372178-7.37948344c0-.47320911-.3833954-.85627329-.8562733-.85627329H4.02076116l-.03139645-4.15758099c0-.45291925.36939958-.82227743.82293996-.82227743l6.23207083-.0078675v2.50522893c0 .81316771.659793 1.47358178 1.4735818 1.47358178l3.4775876-.00782608.0262146 11.21918722c0 .4542443-.3686957.8236025-.822236.8236025z" fill="#000" fillOpacity=".87"></path><path d="M3.93813477 13.5v-1.4955078h.678125c.53684895 0 .95916341-.1286621 1.26694335-.3859863.30777995-.2573243.46166993-.6009278.46166993-1.0308106 0-.290625-.07114258-.550472-.21342774-.779541-.14228515-.22906901-.34309896-.40566407-.6024414-.52978516-.25934245-.12412109-.55753581-.18618164-.89458008-.18618164H2.87553711V13.5h1.06259766zm.69628906-2.315918h-.69628906V9.91259766h.70839843c.19173177.00201823.34309896.06458333.45410157.18769534.1110026.1231119.1665039.2875976.1665039.493457 0 .1876953-.05398763.3330078-.16196289.4359375-.10797526.1029297-.26489258.1543945-.47075195.1543945zM8.07358398 13.5v-2.7427734L9.63569336 13.5h1.05654294V9.0921875H9.63266602v2.7427734L8.07358398 9.0921875H7.01098633V13.5h1.06259765zm5.24648442.0605469c.3753906 0 .7205078-.0555013 1.0353515-.1665039.3148437-.1110026.5540039-.2573242.7174805-.4389649v-1.8103515H12.837207v.7295898h.7386719v.6841797c-.1352213.123112-.3410807.184668-.6175781.184668-.32291666 0-.55955403-.1104981-.7099121-.3314942-.15035808-.2209961-.22553711-.5514811-.22553711-.9914551v-.2664062c.00201823-.4197917.07568359-.7427083.22099609-.96875.1453125-.22604167.35117187-.33906251.61757812-.33906251.22200521 0 .39355469.05247396.51464844.15742191.12109375.1049479.19980469.2805338.23613281.5267578h1.02324219c-.05045573-.4985026-.22755534-.87338869-.53129883-1.12465822-.30374349-.25126953-.7300944-.3769043-1.27905273-.3769043-.37539063 0-.70587565.08728841-.99145508.26186524-.28557943.17457682-.50506185.42382812-.65844726.74775388-.15338542.3239258-.23007813.7028483-.23007813 1.1367676l.00302734.3814453c.02421875.6296875.20888672 1.1211263.55400391 1.4743164.34511719.3531901.80628255.5297852 1.38349609.5297852zM9.74755859 13.5V9.0921875H8.68798828V13.5h1.05957031zm2.20126951 0v-1.7558594h1.7134766v-.8173828h-1.7134766V9.91259766h1.8860352V9.0921875h-2.9486328V13.5h1.0625976z" fill="#FFF"></path></g></svg>
                                         </div>
                                         <div>PNG</div>
                                     </div>
@@ -214,22 +300,35 @@ export default function DetailsTab({ flipbookId }) {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-center gap-2 flex-wrap">
-                        <Button variant="outline">
-                            <img className="w-7" src="/src/assets/social/facebook.png" alt="Facebook" />
-                        </Button>
-                        <Button variant="outline">
-                            <img className="w-7" src="/src/assets/social/whatsapp.png" alt="Facebook" />
-                        </Button>
-                        <Button variant="outline">
-                            <img className="w-7" src="/src/assets/social/linkedin.png" alt="Facebook" />
-                        </Button>
-                        <Button variant="outline">
+                        <FacebookShareButton url={shareUrl} quote={flipbookData.name || "Check out this flipbook!"}>
+                            <Button variant="outline">
+                                <img className="w-7" src="/src/assets/social/facebook.png" alt="Facebook" />
+                            </Button>
+                        </FacebookShareButton>
+                        <TwitterShareButton url={shareUrl} title={flipbookData.name || "Check out this flipbook!"}>
+                            <Button variant="outline">
+                                <img className="w-7" src="/src/assets/social/twitter.png" alt="Twitter" />
+                            </Button>
+                        </TwitterShareButton>
+                        <WhatsappShareButton url={shareUrl} title={flipbookData.name || "Check out this flipbook!"}>
+                            <Button variant="outline">
+                                <img className="w-7" src="/src/assets/social/whatsapp.png" alt="Whatsapp" />
+                            </Button>
+                        </WhatsappShareButton>
+                        <LinkedinShareButton url={shareUrl} title={flipbookData.name || "Check out this flipbook!"}>
+                            <Button variant="outline">
+                                <img className="w-7" src="/src/assets/social/linkedin.png" alt="Linkedin" />
+                            </Button>
+                        </LinkedinShareButton>
+                        <Button variant="outline" onClick={() => {
+                            navigate(`/send-email/${flipbookId}`)
+                        }}>
                             <Mail /> Send Email
                         </Button>
                     </div>
                     <div className="flex items-center space-x-2">
                         <Input
-                            value="https://www.flipnova.com/F9D7AD99E8C/new-flipbook-71pfukuo7k/full-view.html"
+                            value={`${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`}
                             readOnly
                         />
                         <Button variant="outline" onClick={handleCopy}>
@@ -247,13 +346,21 @@ export default function DetailsTab({ flipbookId }) {
                         </Button>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Checkbox id="publication" />
+                        <Checkbox
+                            id="publication"
+                            checked={checkedIsVisible}
+                            onCheckedChange={handleToggleIsVisible}
+                        />
                         <Label htmlFor="publication" className="text-sm font-medium leading-none">
                             Show publication on my profile
                         </Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <Checkbox id="publish" />
+                        <Checkbox
+                            id="publish"
+                            checked={checkedIsPublishDtVisible}
+                            onCheckedChange={handleToggleIsPublishDtVisible}
+                        />
                         <Label htmlFor="publish" className="text-sm font-medium leading-none">
                             Show publish date
                         </Label>

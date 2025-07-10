@@ -2,7 +2,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
-const COLORS = ["#FFD600", "#FF9100", "#FFB300"];
+const COLORS = ["#8B5CF6", "#C4B5FD", "#F472B6"];
 const DEVICE_LABELS = ["desktop", "mobile", "tablet"];
 
 export default function DevicePieChart({ deviceCounts = {}, loading }) {

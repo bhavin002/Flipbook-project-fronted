@@ -32,6 +32,7 @@ import { toast } from "sonner";
 import LoadingButton from "@/utils/LoadingButton";
 import { useNavigate } from "react-router-dom";
 import { UpdateFlipbookPageDataApi } from "@/service/flipbook.service";
+import { LoadingOverlay } from "@/utils/Skeleton";
 
 export default function PublishFlipbookDialog({
     isPublishModalOpen,
@@ -457,13 +458,7 @@ export default function PublishFlipbookDialog({
         (activeTab === "private" && selectedRadio === "readers" && createdByFilter.length === 0) ||
         publishing;
 
-    const LoadingOverlay = () => (
-        <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10">
-            <div className="flex flex-col items-center space-y-3">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-        </div>
-    )
+   
 
     return (
         <Dialog open={isPublishModalOpen} onOpenChange={setIsPublishModalOpen}>

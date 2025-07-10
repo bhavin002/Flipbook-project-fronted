@@ -19,6 +19,7 @@ import {
 import { UploadBrandLogoApi, GetBrandLogosApi, DeleteBrandLogoApi } from "@/service/brandLogo.service";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import LoadingButton from "@/utils/LoadingButton";
+import { toast } from "sonner";
 
 export default function SelectLogoDialog({ onLogoSelect, mode = "select", disabled = false }) {
     const [logos, setLogos] = useState([]);
@@ -86,16 +87,25 @@ export default function SelectLogoDialog({ onLogoSelect, mode = "select", disabl
 
     const handleDelete = async () => {
         if (!logoToDelete) return;
-        
+
         try {
             setIsDeleting(true);
-            await DeleteBrandLogoApi(logoToDelete.id);
+            const response = await DeleteBrandLogoApi(logoToDelete.id);
+            if (response.data === 401) {
+                toast.error("Logo deletion failed", {
+                    description: response.message || "Oops! Something went wrong.",
+                });
+                return
+            }
             setLogos(logos.filter(logo => logo.id !== logoToDelete.id));
-            setLogoToDelete(null);
         } catch (error) {
+            toast.error("Logo deletion failed", {
+                description: error.message || "Oops! Something went wrong.",
+            });
             console.error("Error deleting logo:", error);
         } finally {
             setIsDeleting(false);
+            setLogoToDelete(null);
         }
     };
 
@@ -139,14 +149,14 @@ export default function SelectLogoDialog({ onLogoSelect, mode = "select", disabl
                             accept="image/*"
                             className="hidden"
                         />
-                        <Button 
+                        <Button
                             variant="outline"
                             onClick={() => fileInputRef.current?.click()}
                             disabled={isUploading}
                         >
                             {isUploading ? <LoadingButton /> : "Upload logo"}
                         </Button>
-                        <Button 
+                        <Button
                             onClick={handleInsert}
                             disabled={!hasSelectedLogo}
                         >
@@ -155,7 +165,7 @@ export default function SelectLogoDialog({ onLogoSelect, mode = "select", disabl
                     </div>
                     <div className="max-h-[calc(100vh-300px)] flex flex-wrap overflow-auto">
                         {logos.map((logo) => (
-                            <LogoCard 
+                            <LogoCard
                                 key={logo.id}
                                 logo={logo}
                                 onDelete={() => setLogoToDelete(logo)}
@@ -199,89 +209,89 @@ function LogoCard({ logo, onDelete, onToggleSelect }) {
             onClick={() => onToggleSelect(logo.id)}
         >
             <div className="relative w-full h-full border border-gray-200 rounded-lg shadow-sm hover:shadow transition-all cursor-pointer">
-                  <div
-                className="absolute inset-0 bg-center bg-repeat"
-                style={{ backgroundImage: 'url(https://cdn.flipsnack.com/site/images/transparent-bg-pattern.png)' }}
-            />
+                <div
+                    className="absolute inset-0 bg-center bg-repeat"
+                    style={{ backgroundImage: 'url(https://cdn.flipsnack.com/site/images/transparent-bg-pattern.png)' }}
+                />
 
-            <img
-                src={logo.src}
-                alt={logo.alt}
-                className="w-full h-full object-contain p-2 relative z-10 select-none"
-                draggable="false"
-                onDragStart={preventDrag}
-            />
+                <img
+                    src={logo.src}
+                    alt={logo.alt}
+                    className="w-full h-full object-contain p-2 relative z-10 select-none"
+                    draggable="false"
+                    onDragStart={preventDrag}
+                />
 
 
 
-            {(isHovering || logo.selected) && (
-                <>
-                    <div className="absolute bottom-2 left-2 bg-gray-700 text-white text-[10px] px-1 rounded opacity-70 z-20">
-                        {logo.type}
-                    </div>
-                    <div className="absolute inset-0 bg-black bg-opacity-20 z-20">
-                        <div
-                            className="absolute top-2 left-2"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onToggleSelect(logo.id);
-                            }}
-                        >
-                            {logo.selected ? (
-                                <div className="rounded-full bg-purple-600 text-white p-1">
-                                    <Check size={16} />
-                                </div>
-                            ) : (
-                                <div className="rounded-full border-2 border-white w-6 h-6" />
-                            )}
+                {(isHovering || logo.selected) && (
+                    <>
+                        <div className="absolute bottom-2 left-2 bg-gray-700 text-white text-[10px] px-1 rounded opacity-70 z-20">
+                            {logo.type}
                         </div>
+                        <div className="absolute inset-0 bg-black bg-opacity-20 z-20">
+                            <div
+                                className="absolute top-2 left-2"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onToggleSelect(logo.id);
+                                }}
+                            >
+                                {logo.selected ? (
+                                    <div className="rounded-full bg-purple-600 text-white p-1">
+                                        <Check size={16} />
+                                    </div>
+                                ) : (
+                                    <div className="rounded-full border-2 border-white w-6 h-6" />
+                                )}
+                            </div>
 
-                        <DropdownMenu
-                            open={dropdownOpen}
-                            onOpenChange={(open) => {
-                                setDropdownOpen(open);
-                                if (!open && !isHovering) {
-                                    setIsHovering(false);
-                                }
-                            }}
-                        >
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="absolute top-2 right-2 text-white hover:bg-black hover:bg-opacity-20 z-30 p-1 h-6 w-6 rounded-full"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                    }}
-                                >
-                                    <MoreVertical size={16} />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-48 z-50" align="start">
-                                <DropdownMenuItem
-                                    className="flex items-center gap-2"
-                                >
-                                    <Download size={16} />
-                                    <span>Download original</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    className="flex items-center gap-2 text-red-600 focus:text-red-600"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onDelete(logo.id);
-                                    }}
-                                >
-                                    <Trash2 size={16} />
-                                    <span>Delete</span>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </>
+                            <DropdownMenu
+                                open={dropdownOpen}
+                                onOpenChange={(open) => {
+                                    setDropdownOpen(open);
+                                    if (!open && !isHovering) {
+                                        setIsHovering(false);
+                                    }
+                                }}
+                            >
+                                <DropdownMenuTrigger asChild>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="absolute top-2 right-2 text-white hover:bg-black hover:bg-opacity-20 z-30 p-1 h-6 w-6 rounded-full"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                        }}
+                                    >
+                                        <MoreVertical size={16} />
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-48 z-50" align="start">
+                                    <DropdownMenuItem
+                                        className="flex items-center gap-2"
+                                    >
+                                        <Download size={16} />
+                                        <span>Download original</span>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                        className="flex items-center gap-2 text-red-600 focus:text-red-600"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onDelete(logo.id);
+                                        }}
+                                    >
+                                        <Trash2 size={16} />
+                                        <span>Delete</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </div>
+                    </>
 
-            )}
+                )}
             </div>
-          
+
         </Card>
     );
 }

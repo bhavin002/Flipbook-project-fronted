@@ -39,7 +39,7 @@ export default function Question({ flipbookId }) {
                     setSelectedQuestionId(questions[0]._id);
                 }
             } catch (error) {
-                toast.error("Error fetching questions", { description: error.message });
+                toast.error("Error fetching questions", { description: error.message || "Oops! Something went wrong." });
             } finally {
                 setQuestionsLoading(false);
             }
@@ -60,7 +60,7 @@ export default function Question({ flipbookId }) {
                 setResponses(questionResponses || []);
                 setCurrentPage(1);
             } catch (error) {
-                toast.error("Error fetching question responses", { description: error.message });
+                toast.error("Error fetching question responses", { description: error.message || "Oops! Something went wrong." });
             } finally {
                 setResponsesLoading(false);
             }

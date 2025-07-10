@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Info, Loader2 } from "lucide-react";
 import { GetUserRolePermissionsApi, UpdateUserRolePermissionsApi } from "@/service/userRolePermissions.service";
+import { toast } from "sonner";
 
 export default function SettingPermission() {
     const [roles, setRoles] = useState([]);
@@ -33,6 +34,9 @@ export default function SettingPermission() {
             // Initialize checkbox states based on API data
             initializeCheckboxStates(rolesData, permissionsData);
         } catch (error) {
+            toast.error("Error fetching permissions:", {
+                description: error.message || "Oops! Something went wrong."
+            })
             console.error('Error fetching permissions:', error);
         } finally {
             setLoading(false);
@@ -41,7 +45,6 @@ export default function SettingPermission() {
 
     const initializeCheckboxStates = (rolesData, permissionsData) => {
         const initialStates = {};
-        const initialHeaderStates = {};
 
         // Initialize all checkboxes based on API data
         permissionsData.forEach(section => {
@@ -67,7 +70,7 @@ export default function SettingPermission() {
 
         // Calculate new states first
         const newStates = { ...checkboxStates, [key]: !checkboxStates[key] };
-        
+
         // Update state
         setCheckboxStates(newStates);
         updateHeaderStates(newStates, roles, permissions);
@@ -157,6 +160,9 @@ export default function SettingPermission() {
 
         } catch (error) {
             console.error('Error updating permissions:', error);
+            toast.error("Error updating permissions:", {
+                description: error.message || "Oops! Something went wrong."
+            })
             // Optionally revert state on error
             fetchPermissions();
         } finally {

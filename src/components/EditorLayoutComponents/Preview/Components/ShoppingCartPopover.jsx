@@ -49,7 +49,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
                 setCartItems(items);
             } catch (error) {
                 toast.error('Failed to load cart', {
-                    description: error.message,
+                    description: error.message || "Oops! Something went wrong.",
                 });
             } finally {
                 setIsLoading(false);
@@ -94,7 +94,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
             await cartService.updateProductQuantityByCartId(flipbookId, cartId, newQuantity);
         } catch (error) {
             toast.error('Failed to update quantity', {
-                description: error.message,
+                description: error.message || "Oops! Something went wrong.",
             });
         }
     };
@@ -111,7 +111,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
             await cartService.updateProductQuantity(flipbookId, productIdentifier, newQuantity);
         } catch (error) {
             toast.error('Failed to update quantity', {
-                description: error.message,
+                description: error.message || "Oops! Something went wrong.",
             });
         }
     };
@@ -122,7 +122,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
             await cartService.removeFromCartByCartId(flipbookId, cartId);
         } catch (error) {
             toast.error('Failed to remove item', {
-                description: error.message,
+                description: error.message || "Oops! Something went wrong.",
             });
         }
     };
@@ -133,7 +133,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
             await cartService.removeFromCart(flipbookId, productIdentifier);
         } catch (error) {
             toast.error('Failed to remove item', {
-                description: error.message,
+                description: error.message || "Oops! Something went wrong.",
             });
         }
     };
@@ -145,7 +145,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
             setIsOpen(false);
         } catch (error) {
             toast.error('Failed to clear cart', {
-                description: error.message,
+                description: error.message || "Oops! Something went wrong.",
             });
         }
     };
