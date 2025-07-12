@@ -42,6 +42,7 @@ export default function Header() {
     };
 
     const logo = form.watch("logo");
+    const hasLogo = previewUrls.logo || logo;
     const isHeaderVisible = form.watch("isHeaderVisible");
     const isSearchBarVisible = form.watch("isSearchBarVisible");
     const headerColor = form.watch("headerColor");
@@ -94,7 +95,7 @@ export default function Header() {
                     <Button 
                         variant="outline" 
                         onClick={handleDelete}
-                        disabled={!logo}
+                        disabled={!hasLogo}
                     >
                         <Trash2 />
                     </Button>
@@ -110,11 +111,13 @@ export default function Header() {
                     <Upload size={14} className="mr-2" />
                     Upload Logo
                 </Button>
-                <img 
-                    src={previewUrls.logo || "/src/assets/logo.png"} 
-                    className="mx-auto max-h-[100px] max-w-[200px]" 
-                    alt="Logo" 
-                />
+                {hasLogo && (
+                    <img 
+                        src={previewUrls.logo} 
+                        className="mx-auto max-h-[100px] max-w-[200px]" 
+                        alt="Logo" 
+                    />
+                )}
                 <div className="flex flex-col gap-2">
                     <Label>Header color</Label>
                     <Input 

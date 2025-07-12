@@ -60,3 +60,8 @@ export const UpdateFlipbookDetailsApi = async (data) => {
     const response = await ApiClient().post(`/flipbook-publish/update-quick-details`, data);
     return response.data;
 }
+
+export const GetWorkspaceBookApi = async (id) => {
+    const response = await ApiClient().get(`/flipbook-publish/get-workspace-book/${id}`);
+    return response.data;
+}

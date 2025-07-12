@@ -14,14 +14,38 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
+import {
+    FacebookShareButton,
+    TwitterShareButton,
+    WhatsappShareButton,
+    LinkedinShareButton,
+} from "react-share"
 
-export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalOpen }) {
+export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalOpen, flipbookId }) {
     const [copied, setCopied] = useState(false)
+    const navigate = useNavigate();
 
     const handleCopy = () => {
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
+        const shareUrl = `${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`;
+        navigator.clipboard.writeText(shareUrl)
+            .then(() => {
+                setCopied(true);
+                toast.success("Link copied to clipboard!");
+                setTimeout(() => setCopied(false), 2000);
+            })
+            .catch(() => {
+                toast.error("Failed to copy link");
+            });
     }
+
+    const sendEmail = () => {
+        setIsShareModalOpen(false);
+        navigate(`/send-email/${flipbookId}`)
+    }
+
+    const shareUrl = `${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`;
 
     return (
         <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
@@ -31,16 +55,27 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                 </DialogHeader>
                 <div className="py-4">
                     <div className="flex items-center gap-2 flex-wrap">
-                        <Button variant="outline">
-                            <img className="w-7" src="/src/assets/social/facebook.png" alt="Facebook" />
-                        </Button>
-                        <Button variant="outline">
-                            <img className="w-7" src="/src/assets/social/whatsapp.png" alt="Facebook" />
-                        </Button>
-                        <Button variant="outline">
-                            <img className="w-7" src="/src/assets/social/linkedin.png" alt="Facebook" />
-                        </Button>
-                        <Button variant="outline">
+                        <FacebookShareButton url={shareUrl} quote="Check out this flipbook!">
+                            <Button variant="outline">
+                                <img className="w-7" src="/src/assets/social/facebook.png" alt="Facebook" />
+                            </Button>
+                        </FacebookShareButton>
+                        <TwitterShareButton url={shareUrl} title="Check out this flipbook!">
+                            <Button variant="outline">
+                                <img className="w-7" src="/src/assets/social/twitter.png" alt="Twitter" />
+                            </Button>
+                        </TwitterShareButton>
+                        <WhatsappShareButton url={shareUrl} title="Check out this flipbook!">
+                            <Button variant="outline">
+                                <img className="w-7" src="/src/assets/social/whatsapp.png" alt="WhatsApp" />
+                            </Button>
+                        </WhatsappShareButton>
+                        <LinkedinShareButton url={shareUrl} title="Check out this flipbook!">
+                            <Button variant="outline">
+                                <img className="w-7" src="/src/assets/social/linkedin.png" alt="LinkedIn" />
+                            </Button>
+                        </LinkedinShareButton>
+                        <Button variant="outline" onClick={sendEmail}>
                             <Mail /> Send Email
                         </Button>
                     </div>
@@ -48,7 +83,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                         <p className="text-[12px] font-medium text-gray-600">Link to fullscreen mode on Flipnova without Flipnova branding</p>
                         <div className="flex items-center gap-3">
                             <Input
-                                value="https://www.flipsnack.com/65BDD977C6F/d/a5a5f848-2a20-45ee-b4aa-4d21fa7fff08/"
+                                value={shareUrl}
                                 readOnly
                                 className="flex-1 text-sm border-gray-300 rounded-md focus:ring-2 focus:ring-purple-300"
                             />

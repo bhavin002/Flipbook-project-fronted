@@ -21,6 +21,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     const [actionLoading, setActionLoading] = useState(false);
     const router = useNavigate();
     const location = useLocation();
+    const [flipbookId, setFlipbookId] = useState(null);
 
     useEffect(() => {
         setSelectedFlipbooks([]);
@@ -32,6 +33,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
 
     const handleItemClick = (action, flipbookId) => {
         if (action === 'share') {
+            setFlipbookId(flipbookId)
             setIsShareModalOpen(true);
         } else if (action === 'publish') {
             router(`/editor/${flipbookId}`, {
@@ -49,7 +51,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
             router(`/editor/${flipbookId}`)
         } else if (action === "use-template") {
             router(`/editor/${flipbookId}`)
-        } else if (action === "view"){
+        } else if (action === "view") {
             window.open(`/public-flipbook/${flipbookId}`, '_blank');
         } else {
             console.error("Invalid action:", action);
@@ -308,7 +310,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     return (
         <>
             {renderContent()}
-            <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
+            <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} flipbookId={flipbookId} />
 
             <ConfirmationDialog
                 isConfirmModalOpen={isTrashModalOpen}

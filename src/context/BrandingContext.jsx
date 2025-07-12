@@ -24,6 +24,22 @@ export const BrandingProvider = ({ children }) => {
     profileImage: null,
     socialMediaImage: null,
   });
+  
+  // Track original image values to determine what to include in payload
+  const [originalImages, setOriginalImages] = useState({
+    favicon: null,
+    logo: null,
+    profileImage: null,
+    socialMediaImage: null,
+  });
+  
+  // Track image changes for payload generation
+  const [imageChanges, setImageChanges] = useState({
+    favicon: null, // null = unchanged, file = uploaded, 'deleted' = deleted
+    logo: null,
+    profileImage: null,
+    socialMediaImage: null,
+  });
 
   const form = useForm({
     resolver: zodResolver(brandingSchema),
@@ -62,6 +78,15 @@ export const BrandingProvider = ({ children }) => {
             url: link.url || '',
           })),
         });
+        
+        // Set original images for comparison
+        setOriginalImages({
+          favicon: response.data.favicon,
+          logo: response.data.logo,
+          profileImage: response.data.profileImage,
+          socialMediaImage: response.data.socialMediaImage,
+        });
+        
         setPreviewUrls({
           favicon: response.data.favicon,
           logo: response.data.logo,
@@ -113,6 +138,13 @@ export const BrandingProvider = ({ children }) => {
         [field]: base64
       }));
       form.setValue(field, file, { shouldDirty: true });
+      
+      // Mark as uploaded for payload generation
+      setImageChanges(prev => ({
+        ...prev,
+        [field]: file
+      }));
+      
       setHasChanges(true);
     } catch (error) {
       console.error('Error converting file to base64:', error);
@@ -125,6 +157,13 @@ export const BrandingProvider = ({ children }) => {
       [field]: null
     }));
     form.setValue(field, null, { shouldDirty: true });
+    
+    // Mark as deleted for payload generation
+    setImageChanges(prev => ({
+      ...prev,
+      [field]: 'deleted'
+    }));
+    
     setHasChanges(true);
   };
 
@@ -137,6 +176,32 @@ export const BrandingProvider = ({ children }) => {
     });
   };
 
+  // Function to get payload with proper image handling
+  const getPayload = () => {
+    const formData = form.getValues();
+    const payload = { ...formData };
+    
+    // Handle image fields based on changes
+    const imageFields = ['favicon', 'logo', 'profileImage', 'socialMediaImage'];
+    
+    imageFields.forEach(field => {
+      const change = imageChanges[field];
+      
+      if (change === 'deleted') {
+        // Include null for deleted images
+        payload[field] = null;
+      } else if (change instanceof File) {
+        // Include file for uploaded images
+        payload[field] = change;
+      } else {
+        // Remove field from payload if unchanged
+        delete payload[field];
+      }
+    });
+    
+    return payload;
+  };
+
   return (
     <BrandingContext.Provider
       value={{
@@ -145,6 +210,8 @@ export const BrandingProvider = ({ children }) => {
         hasChanges,
         setHasChanges,
         previewUrls,
+        imageChanges,
+        getPayload,
         handleInputChange,
         handleFileUpload,
         handleDeleteFile,

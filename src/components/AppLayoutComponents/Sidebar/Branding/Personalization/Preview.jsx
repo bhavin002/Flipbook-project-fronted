@@ -4,30 +4,43 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Search } from "lucide-react";
+import { Facebook, Twitter, Youtube, Instagram, Linkedin } from "lucide-react";
 import { useBranding } from "@/context/BrandingContext";
 import { toast } from "sonner";
 import { UpdateWorkspaceApi } from "@/service/workspace.service";
 import { useState } from "react";
+import { useWorkspaces } from "@/context/WorkspaceContext";
 
 export default function Preview() {
-    const { form, hasChanges, previewUrls, setHasChanges } = useBranding();
+    const { form, hasChanges, previewUrls, setHasChanges, getPayload } = useBranding();
     const formValues = form.watch();
     const [isLoading, setIsLoading] = useState(false);
+    const {myWorkspaceId} = useWorkspaces();
+
+    const socialIcons = {
+        facebook: Facebook,
+        twitter: Twitter,
+        youtube: Youtube,
+        instagram: Instagram,
+        linkedin: Linkedin,
+    };
 
     const handleSaveChanges = async () => {
         try {
             setIsLoading(true);
             const formData = new FormData();
-            const values = form.getValues();
+            const payload = getPayload();
 
-            Object.keys(values).forEach(key => {
-                if (values[key] !== null && values[key] !== undefined) {
+            Object.keys(payload).forEach(key => {
+                if (payload[key] instanceof File) {
+                    formData.append(key, payload[key]);
+                } else if (payload[key] === null) {
+                    formData.append(key, ""); // Send empty string for deleted images
+                } else if (payload[key] !== undefined) {
                     if (key === 'footerLinks') {
-                        formData.append(key, JSON.stringify(values[key]));
-                    } else if (values[key] instanceof File) {
-                        formData.append(key, values[key]);
+                        formData.append(key, JSON.stringify(payload[key]));
                     } else {
-                        formData.append(key, values[key]);
+                        formData.append(key, payload[key]);
                     }
                 }
             });
@@ -51,19 +64,14 @@ export default function Preview() {
         const value = formValues[platform];
         if (!value) return null;
 
-        try {
-            return (
-                <Button variant="outline" className="px-2">
-                    <img
-                        className="w-5 h-5"
-                        src={`/src/assets/social/theme/${platform}.png`}
-                        alt={platform}
-                    />
-                </Button>
-            );
-        } catch {
-            return null;
-        }
+        const IconComponent = socialIcons[platform];
+        if (!IconComponent) return null;
+
+        return (
+            <Button variant="outline" className="px-2">
+                <IconComponent className="w-5 h-5" style={{ color: formValues.elementColor }} />
+            </Button>
+        );
     };
 
     return (
@@ -76,13 +84,19 @@ export default function Preview() {
                     >
                         {isLoading ? "Saving..." : "Save Changes"}
                     </Button>
-                    <Button variant="outline">
-                        See my profile
-                    </Button>
+                    <a
+                        href={import.meta.env.VITE_APP_URL + `/profile/${myWorkspaceId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <Button variant="outline">
+                            See my profile
+                        </Button>
+                    </a>
                 </div>
             </CardHeader>
             <CardContent className="border p-0 m-6 mt-0 rounded-sm">
-                <div className="p-2 bg-gray-100 flex flex-row items-center space-x-2">
+                <div className="p-2 bg-[#e2e4ea] flex flex-row items-center space-x-2">
                     <div className="flex space-x-1.5">
                         <div className="w-3 h-3 rounded-full bg-red-500"></div>
                         <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
@@ -96,35 +110,39 @@ export default function Preview() {
                                 alt="Logo"
                             />
                             <span className="text-gray-500 truncate overflow-hidden whitespace-nowrap">
-                                https://www.flipnova.com/F9D7AD99E8C/
+                                {import.meta.env.VITE_APP_URL + `/profile/${myWorkspaceId}`}
                             </span>
                         </div>
                     </div>
                 </div>
                 {formValues.isHeaderVisible && (
                     <div className="p-4" style={{ backgroundColor: formValues.headerColor }}>
-                        <img
-                            src={previewUrls.logo || "/src/assets/logo.png"}
-                            width={200}
-                            alt="Cover"
-                        />
+                        {previewUrls.logo && (
+                            <img
+                                src={previewUrls.logo}
+                                width={200}
+                                alt="Cover"
+                            />
+                        )}
                     </div>
                 )}
                 {!formValues.isProfileInfoHidden && (
-                    <div className="py-4 px-8 flex max-md:flex-wrap gap-4">
-                        <div className="flex items-start">
-                            <img
-                                className="w-28 rounded-full"
-                                alt="profile"
-                                src={previewUrls.profileImage || "/src/assets/profile.jpg"}
-                            />
-                        </div>
+                    <div className="py-4 px-4 flex max-md:flex-wrap gap-4">
+                        {previewUrls.profileImage && (
+                            <div className="flex items-start">
+                                <img
+                                    className="w-28 rounded-full"
+                                    alt="profile"
+                                    src={previewUrls.profileImage}
+                                />
+                            </div>)}
                         <div className="w-fit space-y-2">
                             <p className="text-lg font-bold">{formValues.name}</p>
                             {formValues.websiteLink && (
                                 <a
                                     href={formValues.websiteLink}
-                                    className="text-[12px] font-medium text-blue-600 hover:underline"
+                                    className="text-[12px] font-medium hover:underline"
+                                    style={{ color: formValues.elementColor }}
                                 >
                                     {formValues.websiteLink}
                                 </a>
@@ -183,7 +201,16 @@ export default function Preview() {
                             <a
                                 key={index}
                                 href={link.url}
-                                className="text-gray-500"
+                                className="text-gray-500 hover:transition-colors duration-200"
+                                style={{ 
+                                    '--hover-color': formValues.elementColor 
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.target.style.color = formValues.elementColor;
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.color = '#6b7280'; // text-gray-500
+                                }}
                             >
                                 {link.title}
                             </a>

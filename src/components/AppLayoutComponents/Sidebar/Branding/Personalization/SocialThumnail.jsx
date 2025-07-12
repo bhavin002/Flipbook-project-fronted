@@ -43,6 +43,7 @@ export default function SocialThumnail() {
     };
 
     const socialMediaImage = form.watch("socialMediaImage");
+    const hasSocialMediaImage = previewUrls.socialMediaImage || socialMediaImage;
 
     return (
         <Card>
@@ -71,7 +72,7 @@ export default function SocialThumnail() {
                     <Button 
                         variant="outline" 
                         onClick={handleDelete}
-                        disabled={!socialMediaImage}
+                        disabled={!hasSocialMediaImage}
                     >
                         <Trash2 />
                     </Button>
@@ -88,11 +89,17 @@ export default function SocialThumnail() {
                     Upload Image
                 </Button>
                 <div className="flex justify-center items-center">
-                    <img 
-                        src={previewUrls.socialMediaImage || "/src/assets/social-media-thumbnail.png"} 
-                        className="w-auto" 
-                        alt="Social Media Thumbnail" 
-                    />
+                    {hasSocialMediaImage ? (
+                        <img 
+                            src={previewUrls.socialMediaImage} 
+                            className="w-auto" 
+                            alt="Social Media Thumbnail" 
+                        />
+                    ) : (
+                        <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded flex items-center justify-center">
+                            <Upload className="h-8 w-8 text-gray-400" />
+                        </div>
+                    )}
                 </div>
             </CardContent>
         </Card>

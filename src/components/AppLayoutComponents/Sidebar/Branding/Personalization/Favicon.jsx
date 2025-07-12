@@ -42,6 +42,7 @@ export default function Favicon() {
     };
 
     const favicon = form.watch("favicon");
+    const hasFavicon = previewUrls.favicon || favicon;
 
     return (
         <Card>
@@ -70,7 +71,7 @@ export default function Favicon() {
                     <Button
                         variant="outline"
                         onClick={handleDelete}
-                        disabled={!favicon}
+                        disabled={!hasFavicon}
                     >
                         <Trash2 />
                     </Button>

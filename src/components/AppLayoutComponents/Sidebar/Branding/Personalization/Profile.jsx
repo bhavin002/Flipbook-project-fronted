@@ -39,6 +39,7 @@ export default function Profile() {
     };
 
     const profileImage = form.watch("profileImage");
+    const hasProfileImage = previewUrls.profileImage || profileImage;
     const isProfileInfoHidden = form.watch("isProfileInfoHidden");
     const name = form.watch("name");
     const description = form.watch("description");
@@ -67,18 +68,24 @@ export default function Profile() {
                     <Button 
                         variant="outline" 
                         onClick={handleDelete}
-                        disabled={!profileImage}
+                        disabled={!hasProfileImage}
                     >
                         <Trash2 />
                     </Button>
                 </div>
                 <div className="flex items-center gap-4">
                     <div className="flex justify-center items-center size-20 rounded-full overflow-hidden">
-                        <img 
-                            src={previewUrls.profileImage || "/src/assets/profile.jpg"} 
-                            className="w-auto h-auto max-w-full" 
-                            alt="Profile" 
-                        />
+                        {hasProfileImage ? (
+                            <img 
+                                src={previewUrls.profileImage} 
+                                className="w-auto h-auto max-w-full" 
+                                alt="Profile" 
+                            />
+                        ) : (
+                            <div className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center">
+                                <Upload className="h-8 w-8 text-gray-400" />
+                            </div>
+                        )}
                     </div>
                     <div className="space-y-2">
                         <input

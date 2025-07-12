@@ -300,22 +300,22 @@ export default function DetailsTab({ flipbookId }) {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="flex items-center gap-2 flex-wrap">
-                        <FacebookShareButton url={shareUrl} quote={flipbookData.name || "Check out this flipbook!"}>
+                        <FacebookShareButton url={shareUrl} quote={"Check out this flipbook!"}>
                             <Button variant="outline">
                                 <img className="w-7" src="/src/assets/social/facebook.png" alt="Facebook" />
                             </Button>
                         </FacebookShareButton>
-                        <TwitterShareButton url={shareUrl} title={flipbookData.name || "Check out this flipbook!"}>
+                        <TwitterShareButton url={shareUrl} title={"Check out this flipbook!"}>
                             <Button variant="outline">
                                 <img className="w-7" src="/src/assets/social/twitter.png" alt="Twitter" />
                             </Button>
                         </TwitterShareButton>
-                        <WhatsappShareButton url={shareUrl} title={flipbookData.name || "Check out this flipbook!"}>
+                        <WhatsappShareButton url={shareUrl} title={"Check out this flipbook!"}>
                             <Button variant="outline">
                                 <img className="w-7" src="/src/assets/social/whatsapp.png" alt="Whatsapp" />
                             </Button>
                         </WhatsappShareButton>
-                        <LinkedinShareButton url={shareUrl} title={flipbookData.name || "Check out this flipbook!"}>
+                        <LinkedinShareButton url={shareUrl} title={"Check out this flipbook!"}>
                             <Button variant="outline">
                                 <img className="w-7" src="/src/assets/social/linkedin.png" alt="Linkedin" />
                             </Button>

@@ -63,6 +63,7 @@ import AdminEditorAppLayout from "./layout/AdminEditorAppLayout";
 import { ShopSettingsProvider } from "./context/ShopSettingsContext";
 import PublicFlipbook from "./public/PublicFlipbook";
 import NotFound404 from "./components/ui/NotFound404";
+import MyProfile from "./pages/MyProfile";
 
 // Route configurations
 const brandingRoutes = [
@@ -105,6 +106,7 @@ export default function App() {
         <Route path="/account/confirm-account" element={<PublicRoute><ConfirmAccount /></PublicRoute>} />
         <Route path="/accept-invitation/:token" element={<VerifyReader />} />
         <Route path="/public-flipbook/:id" element={<PublicFlipbook />} />
+        <Route path="/profile/:id" element={<MyProfile />} />
 
         {/* Private/protected routes (wrapped in providers) */}
         <Route

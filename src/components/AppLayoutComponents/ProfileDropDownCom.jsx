@@ -2,16 +2,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "@/context/AuthContext";
-import { CircleUser, BookUser, Settings, Wrench, LogOut, ChevronRight, Check, Loader2 } from 'lucide-react';
+import { CircleUser, BookUser, Settings, Wrench, LogOut, ChevronRight, Check, Loader2, SquareArrowOutUpRight } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { useWorkspaces } from "@/context/WorkspaceContext";
 
 export default function ProfileDropDownCom() {
     const navigate = useNavigate();
     const { logout, userMeta } = useAuth();
-    const { workspaces, isLoading, setIsNeededRefetch } = useWorkspaces();
-
-    const currentWorkspace = workspaces.find(w => w.isCurrent) || workspaces[0];
+    const { currentWorkspace, workspaces, isLoading, setIsNeededRefetch, myWorkspaceId } = useWorkspaces();
 
     const handleItemClick = (action) => {
         if (action === "setting") {
@@ -21,6 +19,12 @@ export default function ProfileDropDownCom() {
         } else if (action === "logout") {
             logout();
             navigate("/auth/sign-in");
+        }
+    };
+
+    const handleMyProfileClick = () => {
+        if (myWorkspaceId) {
+            window.open(`/profile/${myWorkspaceId}`, '_blank');
         }
     };
 
@@ -123,8 +127,14 @@ export default function ProfileDropDownCom() {
 
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
-                        <CircleUser className="mr-2 h-4 w-4" /> My profile
+                    <DropdownMenuItem onClick={handleMyProfileClick}>
+                        <div className="flex justify-between items-center w-full">
+                            <div className="flex items-center">
+                                <CircleUser className="mr-2 h-4 w-4" />
+                                <span>My profile</span>
+                            </div>
+                            <SquareArrowOutUpRight className="h-4 w-4" />
+                        </div>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
