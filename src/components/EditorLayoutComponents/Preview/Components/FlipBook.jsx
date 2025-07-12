@@ -25,12 +25,12 @@ const debounce = (func, delay) => {
     };
 };
 
-const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef }, ref) {
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef, setZoomLevel }, ref) {
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
     const [divWidth, setDivWidth] = useState(793);
     const [divHeight, setDivHeight] = useState(793);
-
+    const [isMouseDown, setIsMouseDown] = useState(false);
     const [pageContent, setPageContent] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -278,11 +278,17 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                 <TransformWrapper
                     ref={transformRef}
                     initialScale={1}
-                    minScale={0.5}
+                    minScale={1}
                     maxScale={2}
                     centerOnInit={true}
+                    smooth={true}
+                    onTransformed={(e) => {
+                        const { scale } = e.state;
+                        setZoomLevel(scale);
+                    }}
+                    disabled={zoomLevel == 1 && isMouseDown}
                     doubleClick={{ mode: "reset" }}
-                    wheel={{ step:0.3, wheelDisabled: true }} // Enable wheel/touchpad zooming with smooth increments
+                    wheel={{smoothStep: 0.01, wheelDisabled: true }} // Enable wheel/touchpad zooming with smooth increments
                     pinch={{ disabled: false, step: 0.05 }} // Keep pinch-to-zoom for touch devices
                     style={{ width: '100%', height: '100%' }}
                 >
@@ -291,6 +297,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                             <div className="aspect-inner">
                                 {visibilitySettings.pageTransition === 0 ? (
                                     <Turn
+                                        isDisabled={zoomLevel > 1 || isMouseDown}
                                         className="flipbook"
                                         id="flipbook"
                                         width={width}
@@ -301,7 +308,13 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                                         visibilitySettings={visibilitySettings}
                                     >
                                         {pageContent.map((page, index) => (
-                                            <div key={index} className="page">
+                                            <div
+                                                key={index}
+                                                className="page"
+                                                style={{ cursor: zoomLevel > 1 ? (isMouseDown ? 'grabbing' : 'grab') : 'default' }}
+                                                onMouseDown={() => setIsMouseDown(true)}
+                                                onMouseUp={() => setIsMouseDown(false)}
+                                            >
                                                 <div
                                                     style={{
                                                         transformOrigin: "left top",

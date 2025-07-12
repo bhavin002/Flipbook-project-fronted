@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import $ from "jquery";
 import pageTurnSound from "/src/assets/page-turn02-103822.mp3";
-
 function Turn({
   style = {},
   className = "",
@@ -10,7 +9,8 @@ function Turn({
   pageType,
   children,
   myRef,
-  visibilitySettings
+  visibilitySettings,
+  isDisabled = false,
 }) {
   const audio = new Audio(pageTurnSound);
 
@@ -68,7 +68,7 @@ function Turn({
       $(flipbookEL).turn("display", pageType);
       $(flipbookEL).turn("direction", visibilitySettings?.rightToLeftOrientation ? "rtl" : "ltr");
 
-      $(flipbookEL).off('turning').on('turning', function(e, page, view) {
+      $(flipbookEL).off('turning').on('turning', function (e, page, view) {
         if (visibilitySettings?.flipSound) {
           audio.currentTime = 0;
           audio.play().catch(error => {
@@ -82,9 +82,9 @@ function Turn({
   useEffect(() => {
     const flipbookEL = myRef.current;
     let autoPlayInterval = null;
-    
+
     if (flipbookEL && visibilitySettings?.automaticTransition) {
-      autoPlayInterval = setInterval(function() {
+      autoPlayInterval = setInterval(function () {
         const $flipbook = $(flipbookEL);
         if ($flipbook.turn('page') == $flipbook.turn('pages')) {
           $flipbook.turn('page', 1);
@@ -101,6 +101,16 @@ function Turn({
     };
   }, [visibilitySettings?.automaticTransition, visibilitySettings?.automaticTransitionDelay]);
 
+  useEffect(() => {
+    const flipbookEL = myRef.current;
+    if (flipbookEL) {
+      if (isDisabled) {
+        $(flipbookEL).turn("disable", true);
+      } else {
+        $(flipbookEL).turn("disable", false);
+      }
+    }
+  }, [isDisabled]);
   return (
     <div className={className} style={{ ...style }} ref={myRef}>
       {children}
