@@ -13,12 +13,15 @@ import LeadFormModel from "./LeadFormModel";
 import cartService from '@/service/IndexedDBCart.service';
 import { getProductCartInfoApi } from '@/service/product.service.js';
 import { toast } from "sonner";
+import { Slider } from "@/components/ui/slider.jsx";
+import { FilterSlider } from "@/components/ui/filterSlider.jsx";
 
 export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false, publicFlipbookData }) {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [isDragging, setIsDragging] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(1);
+    const [zoomProgress, setZoomProgress] = useState(0);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
@@ -31,7 +34,6 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const flipBookRef = useRef(null);
     const containerRef = useRef(null);
     const transformRef = useRef(null); // Reference for TransformWrapper
-    console.log("isPublicView ??", isPublicView);
 
     useEffect(() => {
         const syncCartPrices = async () => {
@@ -197,20 +199,35 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
 
 
     const handleZoomIn = () => {
-        setZoomLevel((prev) => Math.min(prev + 0.1, 2));
+        setZoomLevel((prev) => Math.min(prev + 0.2, 2));
+        setZoomProgress(((Math.min(zoomLevel + 0.2, 2) - 1) / 1) * 100); // Update progress
         if (transformRef.current) {
             const transformWrapper = transformRef.current;
             if (transformWrapper) {
-                transformWrapper.zoomIn(0.1, 0, 0);
+                transformWrapper.zoomIn(0.2, 0, 0);
             }
         }
     };
+
     const handleZoomOut = () => {
-        setZoomLevel((prev) => Math.max(prev - 0.1, 0.5))
+        setZoomLevel((prev) => Math.max(prev - 0.2, 1));
+        setZoomProgress(((Math.max(zoomLevel - 0.2, 1) - 1) / 1) * 100); // Update progress
         if (transformRef.current) {
             const transformWrapper = transformRef.current;
             if (transformWrapper) {
-                transformWrapper.zoomOut(0.1, 0, 0);
+                transformWrapper.zoomOut(0.2, 0, 0);
+            }
+        }
+    };
+
+    const handleZoomChange = (value) => {
+        const newZoomLevel = Math.max(1, Math.min(value, 2));
+        setZoomLevel(newZoomLevel);
+        setZoomProgress(((newZoomLevel - 1) / 1) * 100);
+        if (transformRef.current) {
+            const transformWrapper = transformRef.current;
+            if (transformWrapper) {
+                transformWrapper.centerView(newZoomLevel, 0, "linear");
             }
         }
     };
@@ -297,17 +314,23 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                     variant="ghost"
                                     size="icon"
                                     className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
-                                    onClick={handleZoomOut}
+                                    onClick={() => handleZoomChange(Math.max(1, zoomLevel - 0.1))}
                                 >
                                     <ZoomOut className="w-4 h-4" />
                                 </Button>
-                                {/* Display current zoom level from TransformWrapper */}
-                                {/* {transformRef?.current && Math.floor(transformRef?.current?.state?.scale * 100)}% */}
+                                <FilterSlider
+                                    min={1}
+                                    max={2}
+                                    step={0.1}
+                                    value={[zoomLevel]}
+                                    onValueChange={(values) => handleZoomChange(values[0])}
+                                    className="w-[80px]"
+                                />
                                 <Button
                                     variant="ghost"
                                     size="icon"
                                     className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
-                                    onClick={handleZoomIn}
+                                    onClick={() => handleZoomChange(Math.min(2, zoomLevel + 0.1))}
                                 >
                                     <ZoomIn className="w-4 h-4" />
                                 </Button>
@@ -384,7 +407,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                         }`}
                 >
                     <div className="flex items-center text-primary-foreground text-sm flex-1">
-                        <span className="mr-6 font-medium bg-primary-foreground/10 px-4 py-1.5 rounded-full">
+                        <span className="mr-6 font-medium bg-primary-foreground/10 px-4 py-1 rounded-full">
                             {pageDisplay} / {displayTotalPages}
                         </span>
                         <BackgroundAudioPlayer visibilitySettings={visibilitySettings} />
@@ -419,20 +442,26 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                            onClick={handleZoomOut}
+                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                            onClick={() => handleZoomChange(Math.max(1, zoomLevel - 0.1))}
                         >
-                            <ZoomOut className="w-5 h-5" />
+                            <ZoomOut className="w-4 h-4" />
                         </Button>
-                        {/* Display current zoom level from TransformWrapper */}
-                        {/* {transformRef?.current && Math.floor(transformRef?.current?.state?.scale * 100)}% */}
+                        <FilterSlider
+                            min={1}
+                            max={2}
+                            step={0.1}
+                            value={[zoomLevel]}
+                            onValueChange={(values) => handleZoomChange(values[0])}
+                            className="w-[80px]"
+                        />
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-                            onClick={handleZoomIn}
+                            className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                            onClick={() => handleZoomChange(Math.min(2, zoomLevel + 0.1))}
                         >
-                            <ZoomIn className="w-5 h-5" />
+                            <ZoomIn className="w-4 h-4" />
                         </Button>
                         {visibilitySettings.showPageOverview && (
                             <Button
@@ -565,6 +594,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         pageType={pageType}
                                         setPageType={setPageType}
                                         zoomLevel={zoomLevel}
+                                        setZoomLevel={setZoomLevel}
                                         transformRef={transformRef}
                                         isMobile={activeTab.toLowerCase() === "mobile"}
                                         component={component}
@@ -608,6 +638,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                             pageType={pageType}
                                             setPageType={setPageType}
                                             zoomLevel={zoomLevel}
+                                            setZoomLevel={setZoomLevel}
                                             isMobile={activeTab.toLowerCase() === "mobile"}
                                             component={component}
                                             transformRef={transformRef}
