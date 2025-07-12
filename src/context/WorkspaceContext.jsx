@@ -20,6 +20,13 @@ export const WorkspaceProvider = ({ children }) => {
   const [isNeededRefetch, setIsNeededRefetch] = useState(false);
   const { isAuthenticated } = useAuth();
 
+  const updateWorkspaceName = (workspaceId, newName) => {
+    setWorkspaces(prev =>
+      prev.map(ws =>
+        ws._id === workspaceId ? { ...ws, name: newName } : ws
+      )
+    );
+  };
   console.log("workspaces ><><>",workspaces)
 
   // Compute MyWorkspace ID (workspace where user is owner)
@@ -67,7 +74,8 @@ export const WorkspaceProvider = ({ children }) => {
       fetchWorkspaces, 
       setIsNeededRefetch,
       myWorkspaceId,
-      currentWorkspace
+      currentWorkspace,
+      updateWorkspaceName
     }}>
       {children}
     </WorkspaceContext.Provider>

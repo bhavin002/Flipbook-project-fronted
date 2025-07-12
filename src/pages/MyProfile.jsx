@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +10,7 @@ import { GetWorkspaceBookApi } from "@/service/flipbook.publish.service";
 import { toast } from "sonner";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
+import { Loader } from "@/components/ui/loader";
 
 export default function MyProfile() {
     const [data, setData] = useState(null);
@@ -37,11 +38,7 @@ export default function MyProfile() {
 
     if (loading) {
         return (
-            <Card>
-                <CardContent>
-                    <Skeleton className="w-full h-96" />
-                </CardContent>
-            </Card>
+            <Loader />
         );
     }
 

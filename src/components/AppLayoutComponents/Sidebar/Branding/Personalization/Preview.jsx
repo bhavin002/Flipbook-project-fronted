@@ -15,7 +15,7 @@ export default function Preview() {
     const { form, hasChanges, previewUrls, setHasChanges, getPayload } = useBranding();
     const formValues = form.watch();
     const [isLoading, setIsLoading] = useState(false);
-    const {myWorkspaceId} = useWorkspaces();
+    const {myWorkspaceId, updateWorkspaceName} = useWorkspaces();
 
     const socialIcons = {
         facebook: Facebook,
@@ -49,14 +49,17 @@ export default function Preview() {
             toast.success("profile updated successfully", {
                 description: response.message || "Profile updated successfully",
             });
-
+            setHasChanges(false);
+            // Update workspace name in context if changed
+            if (payload.name) {
+                updateWorkspaceName(myWorkspaceId, payload.name);
+            }
         } catch (error) {
             toast.error("Failed to update profile", {
                 description: error.message || "Something went wrong while saving changes",
             });
         } finally {
             setIsLoading(false);
-            setHasChanges(false);
         }
     };
 

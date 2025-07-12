@@ -13,7 +13,6 @@ import LeadFormModel from "./LeadFormModel";
 import cartService from '@/service/IndexedDBCart.service';
 import { getProductCartInfoApi } from '@/service/product.service.js';
 import { toast } from "sonner";
-import { Slider } from "@/components/ui/slider.jsx";
 import { FilterSlider } from "@/components/ui/filterSlider.jsx";
 
 export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false, publicFlipbookData }) {
@@ -21,7 +20,6 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const [totalPages, setTotalPages] = useState(1);
     const [isDragging, setIsDragging] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(1);
-    const [zoomProgress, setZoomProgress] = useState(0);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
@@ -34,6 +32,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const flipBookRef = useRef(null);
     const containerRef = useRef(null);
     const transformRef = useRef(null); // Reference for TransformWrapper
+
+    console.log("zoomLevel ??",zoomLevel)
 
     useEffect(() => {
         const syncCartPrices = async () => {
@@ -197,33 +197,9 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         };
     }, [isDragging]);
 
-
-    const handleZoomIn = () => {
-        setZoomLevel((prev) => Math.min(prev + 0.2, 2));
-        setZoomProgress(((Math.min(zoomLevel + 0.2, 2) - 1) / 1) * 100); // Update progress
-        if (transformRef.current) {
-            const transformWrapper = transformRef.current;
-            if (transformWrapper) {
-                transformWrapper.zoomIn(0.2, 0, 0);
-            }
-        }
-    };
-
-    const handleZoomOut = () => {
-        setZoomLevel((prev) => Math.max(prev - 0.2, 1));
-        setZoomProgress(((Math.max(zoomLevel - 0.2, 1) - 1) / 1) * 100); // Update progress
-        if (transformRef.current) {
-            const transformWrapper = transformRef.current;
-            if (transformWrapper) {
-                transformWrapper.zoomOut(0.2, 0, 0);
-            }
-        }
-    };
-
     const handleZoomChange = (value) => {
         const newZoomLevel = Math.max(1, Math.min(value, 2));
         setZoomLevel(newZoomLevel);
-        setZoomProgress(((newZoomLevel - 1) / 1) * 100);
         if (transformRef.current) {
             const transformWrapper = transformRef.current;
             if (transformWrapper) {
@@ -321,8 +297,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 <FilterSlider
                                     min={1}
                                     max={2}
-                                    step={0.1}
-                                    value={[zoomLevel]}
+                                    step={0.01}
+                                    value={zoomLevel}
                                     onValueChange={(values) => handleZoomChange(values[0])}
                                     className="w-[80px]"
                                 />
@@ -450,7 +426,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                         <FilterSlider
                             min={1}
                             max={2}
-                            step={0.1}
+                            step={0.01}
                             value={[zoomLevel]}
                             onValueChange={(values) => handleZoomChange(values[0])}
                             className="w-[80px]"

@@ -59,7 +59,6 @@ export const BrandingProvider = ({ children }) => {
       elementColor: '#7B39ED',
       isHeaderVisible: true,
       isSearchBarVisible: true,
-      isProfilePrivate: false,
       profileImage: null,
       socialMediaImage: null,
       favicon: null,

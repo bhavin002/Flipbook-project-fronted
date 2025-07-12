@@ -21,7 +21,6 @@ export const brandingSchema = z.object({
   elementColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, "Invalid color code"),
   isHeaderVisible: z.boolean(),
   isSearchBarVisible: z.boolean(),
-  isProfilePrivate: z.boolean(),
   profileImage: z.any().nullable(),
   socialMediaImage: z.any().nullable(),
   favicon: z.any().nullable(),
