@@ -724,173 +724,180 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
             className="relative"
             onDrop={async (e) => {
                 if (isCropping) return;
-                stage.dragRect.current = mainStage[selectedIndex].dragRect.current;
-                setSelectedIndex(index);
-                e.preventDefault();
+                const interval = setInterval(() => {
+                    if (mainStage[selectedIndex].dragRect.current === null) return;
+                    clearInterval(interval);
+                    stage.dragRect.current = mainStage[selectedIndex].dragRect.current;
+                    setSelectedIndex(index);
+                    e.preventDefault();
 
-                if (stage.dragRect.current.type === 'drag-template') {
-                    setIsTemplateModalOpen(true);
-                    return;
-                }
-
-                if (stage.dragRect.current.type === 'drag-page') {
-                    setIsPageModalOpen(true);
-                    return;
-                }
-
-                stage.stageref.current.setPointersPositions(e);
-                const pointerPosition = stage.stageref.current.getPointerPosition();
-
-                if (stage.dragRect.current) {
-                    const dropX = (pointerPosition.x - rectProps.x) / scale.scaleX;
-                    const dropY = (pointerPosition.y - rectProps.y) / scale.scaleY;
-
-                    // Check if dropping over a shape-widget or masked-image
-                    let isOverShapeWidget = false;
-                    let isOverMaskedImage = false;
-                    let targetShape = null;
-                    let shapeWidgetData = [];
-
-                    mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(shape => {
-                        const shapeLeft = shape.attrs.x;
-                        const shapeRight = shape.attrs.x + (shape.attrs.width * (shape.attrs.scaleX || 1));
-                        const shapeTop = shape.attrs.y;
-                        const shapeBottom = shape.attrs.y + (shape.attrs.height * (shape.attrs.scaleY || 1));
-
-                        if (dropX >= shapeLeft && dropX <= shapeRight && dropY >= shapeTop && dropY <= shapeBottom) {
-                            if (shape.attrs.title === 'shape-widget') {
-                                isOverShapeWidget = true;
-                                targetShape = shape.attrs;
-                                shapeWidgetData = shape.children[0].dataArray;
-                            } else if (shape.attrs.isMasked && (shape.attrs.title === 'masked-image' || shape.attrs.title === 'masked-gif' || shape.attrs.title === 'masked-sticker')) {
-                                isOverMaskedImage = true;
-                                targetShape = shape.attrs;
-                            }
-                        }
-                    });
-
-                    // Variable to hold the new shape
-                    let newShape = null;
-
-                    // Handle the drop
-                    if (isOverMaskedImage && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker' || stage.dragRect.current.htmlType === 'upload-photo')) {
-                        // Replace the existing masked-image
-                        mainStage[selectedIndex].selectedShapes = [];
-                        const htmlType = stage.dragRect.current.htmlType;
-                        const typeMapping = {
-                            'upload-photo': 'masked-image',
-                            'stock-gif': 'masked-gif',
-                            'stock-photo': 'masked-image',
-                            'stock-sticker': 'masked-sticker'
-                        };
-                        const shapeType = typeMapping[htmlType] || 'masked-sticker'; // Default to 'masked-sticker' for unknown types
-                        setMainStage(prevState => {
-                            const updatedState = [...prevState];
-                            const updatedShapes = updatedState[index].shapes.map((shape, idx) => {
-                                if (shape.id !== targetShape.id) return shape;
-                                const shapeNode = updatedState[index].stageref.current.children[0].children[1].children[idx].attrs;
-                                return {
-                                    ...shape,
-                                    title: shapeType,
-                                    layer: shapeType,
-                                    htmlType: shapeType,
-                                    x: shapeNode.x,
-                                    y: shapeNode.y,
-                                    scaleX: shapeNode.scaleX,
-                                    scaleY: shapeNode.scaleY,
-                                    width: shapeNode.width,
-                                    height: shapeNode.height,
-                                    src: stage.dragRect.current.src,
-                                    type: 'img',
-                                };
-                            });
-                            updatedState[index] = {
-                                ...updatedState[index],
-                                shapes: updatedShapes,
-                            };
-                            return updatedState;
-                        });
-                    } else if (isOverShapeWidget && targetShape?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker' || stage.dragRect.current.htmlType === 'upload-photo')) {
-                        // Create a new masked-image
-                        const htmlType = stage.dragRect.current.htmlType;
-                        const typeMapping = {
-                            'upload-photo': 'masked-image',
-                            'stock-gif': 'masked-gif',
-                            'stock-photo': 'masked-image',
-                            'stock-sticker': 'masked-sticker'
-                        };
-                        const shapeType = typeMapping[htmlType] || 'masked-sticker'; // Default to 'masked-sticker' for unknown types
-                        newShape = {
-                            src: stage.dragRect.current.src,
-                            height: Number(targetShape.height),
-                            width: Number(targetShape.width),
-                            x: targetShape.x,
-                            y: targetShape.y,
-                            scaleX: targetShape.scaleX,
-                            scaleY: targetShape.scaleY,
-                            skewX: targetShape.skewX,
-                            skewY: targetShape.skewY,
-                            title: shapeType,
-                            layer: shapeType,
-                            htmlType: shapeType,
-                            type: 'img',
-                            isMasked: true,
-                            data: targetShape.data,
-                            maskData: shapeWidgetData,
-                            maskType: targetShape.maskType,
-                            draggable: true,
-                            visible: true,
-                            id: uuid(),
-                        };
-                        mainStage[selectedIndex].selectedShapes = [];
-                        setMainStage(prevState => {
-                            const updatedState = [...prevState];
-                            const updatedShapes = updatedState[index].shapes.filter(shape => shape.id !== targetShape.id);
-                            updatedState[index] = {
-                                ...updatedState[index],
-                                shapes: [...updatedShapes, newShape],
-                            };
-                            return updatedState;
-                        });
-                    } else {
-                        // Default case: Add a new shape (non-masked)
-                        newShape = {
-                            x: dropX,
-                            y: dropY,
-                            ...stage.dragRect.current,
-                            id: uuid(),
-                        };
-
-                        setMainStage(prevState => {
-                            const updatedState = [...prevState];
-                            updatedState[index] = {
-                                ...updatedState[index],
-                                shapes: [...updatedState[index].shapes, newShape],
-                            };
-                            return updatedState;
-                        });
+                    if (stage.dragRect.current.type === 'drag-template') {
+                        setIsTemplateModalOpen(true);
+                        return;
                     }
 
-                    // If a new shape was created, select it after a delay
-                    if (newShape) {
-                        setTimeout(() => {
-                            stage.stageref.current.children[0].children[1].children.forEach((child) => {
-                                if (child.attrs.id === newShape.id) {
-                                    setMainStage(prevState => {
-                                        const updatedState = [...prevState];
-                                        updatedState[index] = {
-                                            ...updatedState[index],
-                                            selectedShapes: [child],
-                                        };
-                                        return updatedState;
-                                    });
+                    if (stage.dragRect.current.type === 'drag-page') {
+                        setIsPageModalOpen(true);
+                        return;
+                    }
+
+                    stage.stageref.current.setPointersPositions(e);
+                    const pointerPosition = stage.stageref.current.getPointerPosition();
+
+                    if (stage.dragRect.current) {
+                        const dropX = (pointerPosition.x - rectProps.x) / scale.scaleX;
+                        const dropY = (pointerPosition.y - rectProps.y) / scale.scaleY;
+
+                        // Check if dropping over a shape-widget or masked-image
+                        let isOverShapeWidget = false;
+                        let isOverMaskedImage = false;
+                        let targetShape = null;
+                        let shapeWidgetData = [];
+
+                        mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(shape => {
+                            const shapeLeft = shape.attrs.x;
+                            const shapeRight = shape.attrs.x + (shape.attrs.width * (shape.attrs.scaleX || 1));
+                            const shapeTop = shape.attrs.y;
+                            const shapeBottom = shape.attrs.y + (shape.attrs.height * (shape.attrs.scaleY || 1));
+
+                            if (dropX >= shapeLeft && dropX <= shapeRight && dropY >= shapeTop && dropY <= shapeBottom) {
+                                if (shape.attrs.title === 'shape-widget') {
+                                    isOverShapeWidget = true;
+                                    targetShape = shape.attrs;
+                                    shapeWidgetData = shape.children[0].dataArray;
+                                } else if (shape.attrs.isMasked && (shape.attrs.title === 'masked-image' || shape.attrs.title === 'masked-gif' || shape.attrs.title === 'masked-sticker')) {
+                                    isOverMaskedImage = true;
+                                    targetShape = shape.attrs;
                                 }
-                            });
-                        }, 100);
-                    }
+                            }
+                        });
 
-                    stage.dragRect.current = null;
-                }
+                        // Variable to hold the new shape
+                        let newShape = null;
+
+                        // Handle the drop
+                        if (isOverMaskedImage && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker' || stage.dragRect.current.htmlType === 'upload-photo')) {
+                            // Replace the existing masked-image
+                            mainStage[selectedIndex].selectedShapes = [];
+                            const htmlType = stage.dragRect.current.htmlType;
+                            const typeMapping = {
+                                'upload-photo': 'masked-image',
+                                'stock-gif': 'masked-gif',
+                                'stock-photo': 'masked-image',
+                                'stock-sticker': 'masked-sticker'
+                            };
+                            const shapeType = typeMapping[htmlType] || 'masked-sticker'; // Default to 'masked-sticker' for unknown types
+                            setMainStage(prevState => {
+                                const updatedState = [...prevState];
+                                const updatedShapes = updatedState[index].shapes.map((shape, idx) => {
+                                    if (shape.id !== targetShape.id) return shape;
+                                    const shapeNode = updatedState[index].stageref.current.children[0].children[1].children[idx].attrs;
+                                    return {
+                                        ...shape,
+                                        title: shapeType,
+                                        layer: shapeType,
+                                        htmlType: shapeType,
+                                        x: shapeNode.x,
+                                        y: shapeNode.y,
+                                        scaleX: shapeNode.scaleX,
+                                        scaleY: shapeNode.scaleY,
+                                        width: shapeNode.width,
+                                        height: shapeNode.height,
+                                        src: stage.dragRect.current.src,
+                                        type: 'img',
+                                    };
+                                });
+                                updatedState[index] = {
+                                    ...updatedState[index],
+                                    shapes: updatedShapes,
+                                };
+                                return updatedState;
+                            });
+                        } else if (isOverShapeWidget && targetShape?.isMasked && (stage.dragRect.current.htmlType === 'stock-photo' || stage.dragRect.current.htmlType === 'stock-gif' || stage.dragRect.current.htmlType === 'stock-sticker' || stage.dragRect.current.htmlType === 'upload-photo')) {
+                            // Create a new masked-image
+                            const htmlType = stage.dragRect.current.htmlType;
+                            const typeMapping = {
+                                'upload-photo': 'masked-image',
+                                'stock-gif': 'masked-gif',
+                                'stock-photo': 'masked-image',
+                                'stock-sticker': 'masked-sticker'
+                            };
+                            const shapeType = typeMapping[htmlType] || 'masked-sticker'; // Default to 'masked-sticker' for unknown types
+                            newShape = {
+                                src: stage.dragRect.current.src,
+                                height: Number(targetShape.height),
+                                width: Number(targetShape.width),
+                                x: targetShape.x,
+                                y: targetShape.y,
+                                scaleX: targetShape.scaleX,
+                                scaleY: targetShape.scaleY,
+                                skewX: targetShape.skewX,
+                                skewY: targetShape.skewY,
+                                title: shapeType,
+                                layer: shapeType,
+                                htmlType: shapeType,
+                                type: 'img',
+                                isMasked: true,
+                                data: targetShape.data,
+                                maskData: shapeWidgetData,
+                                maskType: targetShape.maskType,
+                                draggable: true,
+                                visible: true,
+                                id: uuid(),
+                            };
+                            mainStage[selectedIndex].selectedShapes = [];
+                            setMainStage(prevState => {
+                                const updatedState = [...prevState];
+                                const updatedShapes = updatedState[index].shapes.filter(shape => shape.id !== targetShape.id);
+                                updatedState[index] = {
+                                    ...updatedState[index],
+                                    shapes: [...updatedShapes, newShape],
+                                };
+                                return updatedState;
+                            });
+                        } else {
+                            // Default case: Add a new shape (non-masked)
+                            newShape = {
+                                x: dropX,
+                                y: dropY,
+                                ...stage.dragRect.current,
+                                id: uuid(),
+                            };
+
+                            setMainStage(prevState => {
+                                const updatedState = [...prevState];
+                                updatedState[index] = {
+                                    ...updatedState[index],
+                                    shapes: [...updatedState[index].shapes, newShape],
+                                };
+                                return updatedState;
+                            });
+                        }
+
+                        // If a new shape was created, select it after a delay
+                        if (newShape) {
+                            setTimeout(() => {
+                                stage.stageref.current.children[0].children[1].children.forEach((child) => {
+                                    if (child.attrs.id === newShape.id) {
+                                        setMainStage(prevState => {
+                                            const updatedState = [...prevState];
+                                            updatedState[index] = {
+                                                ...updatedState[index],
+                                                selectedShapes: [child],
+                                            };
+                                            return updatedState;
+                                        });
+                                    }
+                                });
+                            }, 100);
+                        }
+
+                        stage.dragRect.current = null;
+                    }
+                }, 500);
+                setTimeout(() => {
+                    clearInterval(interval);
+                }, 4000);
             }}
             onDragOver={(e) => e.preventDefault()}
         >
