@@ -65,3 +65,8 @@ export const GetWorkspaceBookApi = async (id) => {
     const response = await ApiClient().get(`/flipbook-publish/get-workspace-book/${id}`);
     return response.data;
 }
+
+export const GetFlipbookThumbnailsApi = async (id) => {
+    const response = await ApiClient().get(`/flipbook-publish/get-thumbnails/${id}`);
+    return response.data;
+}

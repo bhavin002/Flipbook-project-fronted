@@ -1,6 +1,14 @@
 import React from 'react';
 
 export default function MaskedImageWidget({ shape }) {
+    let directUrl = shape.src;
+    if (typeof shape.src === 'string' && shape.src.includes('src=')) {
+        const match = shape.src.match(/src=([^&]+)/);
+        if (match && match[1]) {
+            directUrl = decodeURIComponent(match[1]);
+        }
+    }
+
     const maskId = `mask-${shape.id}`;
     return (
         <svg
@@ -29,7 +37,7 @@ export default function MaskedImageWidget({ shape }) {
                 </clipPath>
             </defs>
             <image
-                href={shape.src}
+                href={directUrl}
                 width={shape.width}
                 height={shape.height}
                 clipPath={shape.maskData ? `url(#${maskId})` : undefined}

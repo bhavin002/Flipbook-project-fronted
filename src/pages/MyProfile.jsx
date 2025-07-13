@@ -89,6 +89,7 @@ export default function MyProfile() {
                                                 href={data.websiteLink}
                                                 className="text-[15px] font-medium hover:underline break-all"
                                                 style={{ color: data.elementColor }}
+                                                target="_blank"
                                             >
                                                 {data.websiteLink.replace(/^https?:\/\//, "")}
                                             </a>

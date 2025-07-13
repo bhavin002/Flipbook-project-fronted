@@ -6,19 +6,38 @@ import CustomDomainSettings from "../../components/AppLayoutComponents/Sidebar/B
 import { Label } from "@/components/ui/label";
 import { useWorkspaces } from "@/context/WorkspaceContext";
 import { useState, useEffect } from "react";
-import { UpdateWorkspaceApi } from "@/service/workspace.service";
+import { UpdateWorkspaceApi, GetWorkspaceInfoApi } from "@/service/workspace.service";
 import { toast } from "sonner";
 
 export default function BrandingSettings() {
   const { myWorkspaceId } = useWorkspaces();
   const [isProfilePrivate, setIsProfilePrivate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWorkspaceInfo = async () => {
+      try {
+        const response = await GetWorkspaceInfoApi();
+        setIsProfilePrivate(response.isProfilePrivate || false);
+      } catch (error) {
+        console.error("Failed to fetch workspace info:", error);
+        toast.error("Failed to load workspace settings", {
+          description: "Could not load your profile privacy settings.",
+        });
+      } finally {
+        setIsInitialLoading(false);
+      }
+    };
+
+    fetchWorkspaceInfo();
+  }, []);
 
   const handleProfilePrivacyChange = async (checked) => {
     setIsLoading(true);
     try {
       const formData = new FormData();
-      formData.append('isProfileInfoHidden', checked);
+      formData.append('isProfilePrivate', checked);
 
       const response = await UpdateWorkspaceApi(formData);
 
@@ -44,50 +63,56 @@ export default function BrandingSettings() {
         <h1 className="text-2xl font-bold mb-2">Settings</h1>
         <p className="text-gray-500">Set your profile private and add advanced integrations.</p>
       </div>
+      <div>
+        {
+          isInitialLoading ? <div className="h-[298px] bg-gray-200 rounded-lg animate-pulse"></div> : <>
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between w-full">
+                  <CardTitle>Settings</CardTitle>
+                  <Button variant="outline">See my profile</Button>
+                </div>
+              </CardHeader>
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center justify-between w-full">
-            <CardTitle>Settings</CardTitle>
-            <Button variant="outline">See my profile</Button>
-          </div>
-        </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-4">
+                  <h3 className="text-base font-medium">Profile privacy</h3>
+                  <div className="flex items-center">
+                    <Switch
+                      id="profile-privacy"
+                      checked={isProfilePrivate}
+                      onCheckedChange={handleProfilePrivacyChange}
+                      disabled={isLoading}
+                    />
+                    <Label htmlFor="profile-privacy" className="ml-3 text-gray-700">
+                      Make my profile private
+                    </Label>
+                  </div>
+                </div>
 
-        <CardContent className="space-y-4">
-          <div className="space-y-4">
-            <h3 className="text-base font-medium">Profile privacy</h3>
-            <div className="flex items-center">
-              <Switch
-                id="profile-privacy"
-                checked={isProfilePrivate}
-                onCheckedChange={handleProfilePrivacyChange}
-                disabled={isLoading}
-              />
-              <Label htmlFor="profile-privacy" className="ml-3 text-gray-700">
-                Make my profile private
-              </Label>
-            </div>
-          </div>
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-base font-medium">Default workspace profile URL</h3>
+                  </div>
 
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-base font-medium">Default workspace profile URL</h3>
-            </div>
+                  <Input
+                    className="max-w-md"
+                    value={import.meta.env.VITE_APP_URL + `/profile/${myWorkspaceId}`}
+                    readOnly
+                    disabled
+                  />
 
-            <Input
-              className="max-w-md"
-              value={import.meta.env.VITE_APP_URL + `/profile/${myWorkspaceId}`}
-              readOnly
-              disabled
-            />
+                  <p className="text-gray-500 text-sm">
+                    This username cannot be changed later on.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </>
+        }
+        <CustomDomainSettings />
+      </div>
 
-            <p className="text-gray-500 text-sm">
-              This username cannot be changed later on.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-      <CustomDomainSettings />
     </div>
 
   );

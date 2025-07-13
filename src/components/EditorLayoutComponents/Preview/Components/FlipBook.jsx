@@ -37,7 +37,14 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
     const [viewCountUpdated, setViewCountUpdated] = useState(false);
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
+    const [currentPages, setCurrentPages] = useState([0, 1]);
+    console.log("currentPages:", currentPages);
+
     const myRef = useRef(null);
+
+    console.log("pageType ?? >", pageType);
+
+    console.log("width ??>", width, "height ?? >", height, "divWidth ?? >", divWidth, "divHeight ?? >", divHeight);
 
     const calculateNewDivSize = (screenWidth, screenHeight, divWidth, divHeight) => {
         pageType === "double" ? (divWidth *= 2) : (divWidth *= 1);
@@ -306,6 +313,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                                         myRef={myRef}
                                         onLoad={handleBookLoad}
                                         visibilitySettings={visibilitySettings}
+                                        setCurrentPages={setCurrentPages}
                                     >
                                         {pageContent.map((page, index) => (
                                             <div
@@ -418,14 +426,11 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                 <PageOverviewModal
                     isOpen={isPageOverviewOpen}
                     onClose={() => setIsPageOverviewOpen(false)}
-                    pageContent={pageContent}
-                    visibilitySettings={visibilitySettings}
-                    myRef={myRef}
+                    width={divWidth}
+                    height={divHeight}
+                    currentPages={currentPages}
+                    totalPages={totalPages}
                     pageType={pageType}
-                    divWidth={divWidth}
-                    divHeight={divHeight}
-                    width={width}
-                    height={height}
                     flipbookId={flipbookId}
                 />
             )}

@@ -36,6 +36,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPreviewLoading, setIsPreviewLoading] = useState(false);
     const [isCustomizeLoading, setIsCustomizeLoading] = useState(false);
     const location = useLocation();
+    const [publishing, setPublishing] = useState(false);
     const state = location.state;
 
     console.log("mainStage ??", mainStage)
@@ -89,13 +90,13 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (id && mainStage.length > 0) {
+            if (id && mainStage.length > 0 && !publishing) {
                 updatePageData();
             }
         }, 10000);
 
         return () => clearInterval(interval);
-    }, [mainStage]);
+    }, [mainStage, publishing]);
 
     const [selectedSubMenu, setSelectedSubMenu] = useState(null);
     const [isShapeDrawerOpen, setIsShapeDrawerOpen] = useState(false);
@@ -394,8 +395,10 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         mainStage={mainStage}
                         stageWidth={stageWidth}
                         stageHeight={stageHeight}
+                        publishing={publishing}
+                        setPublishing={setPublishing}
                     />
-                    <PreviewDialog 
+                    <PreviewDialog
                         open={isPreviewOpen}
                         onOpenChange={setIsPreviewOpen}
                         flipbookId={id}

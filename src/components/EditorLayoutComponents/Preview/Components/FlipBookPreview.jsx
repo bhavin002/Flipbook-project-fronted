@@ -298,7 +298,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                     min={1}
                                     max={2}
                                     step={0.01}
-                                    value={zoomLevel}
+                                    value={[zoomLevel]}
                                     onValueChange={(values) => handleZoomChange(values[0])}
                                     className="w-[80px]"
                                 />

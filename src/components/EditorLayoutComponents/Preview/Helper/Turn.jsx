@@ -11,6 +11,7 @@ function Turn({
   myRef,
   visibilitySettings,
   isDisabled = false,
+  setCurrentPages
 }) {
   const audio = new Audio(pageTurnSound);
 
@@ -47,6 +48,7 @@ function Turn({
         when: {
           turned: function (e, page) {
             console.log("Current view: ", $(this).turn("view"));
+            setCurrentPages($(this).turn("view"));
           },
           turning: function (e, page, view) {
             console.log("Turning to: ", page);

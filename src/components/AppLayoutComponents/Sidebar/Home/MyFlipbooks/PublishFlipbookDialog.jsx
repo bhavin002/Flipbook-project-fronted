@@ -41,7 +41,9 @@ export default function PublishFlipbookDialog({
     onPublishSuccess, // Optional callback for success handling
     mainStage,
     stageWidth,
-    stageHeight
+    stageHeight,
+    publishing,
+    setPublishing
 }) {
     const [selectedRadio, setSelectedRadio] = useState("email");
     const [emailInput, setEmailInput] = useState("");
@@ -55,12 +57,10 @@ export default function PublishFlipbookDialog({
     const [groups, setGroups] = useState([]);
     const [readers, setReaders] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [publishing, setPublishing] = useState(false);
     const [sendNotification, setSendNotification] = useState(false);
     const [trackReaders, setTrackReaders] = useState(false);
     const [isPublished, setIsPublished] = useState(false);
     const navigate = useNavigate();
-    console.log("mainStage in PublishFlipbookDialog", mainStage)
 
     // Email validation regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

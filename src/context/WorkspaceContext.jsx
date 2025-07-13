@@ -27,7 +27,6 @@ export const WorkspaceProvider = ({ children }) => {
       )
     );
   };
-  console.log("workspaces ><><>",workspaces)
 
   // Compute MyWorkspace ID (workspace where user is owner)
   const myWorkspaceId = useMemo(() => {

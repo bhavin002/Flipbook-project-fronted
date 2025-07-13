@@ -10,6 +10,15 @@ function parseHexToRgb(hex) {
 
 export default function StockPhoto({ shape }) {
     let crop = {};
+
+    let directUrl = shape.src;
+    if (typeof shape.src === 'string' && shape.src.includes('src=')) {
+        const match = shape.src.match(/src=([^&]+)/);
+        if (match && match[1]) {
+            directUrl = decodeURIComponent(match[1]);
+        }
+    }
+
     if (shape.cropImage) {
         try {
             crop = JSON.parse(shape.cropImage).attrs;
@@ -93,7 +102,7 @@ export default function StockPhoto({ shape }) {
             }}>
                 <img
                     className="stock-photo"
-                    src={shape.src}
+                    src={directUrl}
                     alt={shape.title}
                     style={{
                         position: "absolute",

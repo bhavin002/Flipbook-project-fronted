@@ -40,7 +40,7 @@ export default function Profile() {
 
     const profileImage = form.watch("profileImage");
     const hasProfileImage = previewUrls.profileImage || profileImage;
-    const isProfileInfoHidden = form.watch("isProfileInfoHidden");
+    const isProfilePrivate = form.watch("isProfilePrivate");
     const name = form.watch("name");
     const description = form.watch("description");
     const websiteLink = form.watch("websiteLink");
@@ -54,8 +54,8 @@ export default function Profile() {
                 <div className="flex items-center">
                     <Switch 
                         id="hide-profile-info" 
-                        checked={isProfileInfoHidden}
-                        onCheckedChange={(checked) => handleInputChange("isProfileInfoHidden", checked)}
+                        checked={isProfilePrivate}
+                        onCheckedChange={(checked) => handleInputChange("isProfilePrivate", checked)}
                     />
                     <Label htmlFor="hide-profile-info" className="ml-3 text-gray-700">
                         Hide profile information
