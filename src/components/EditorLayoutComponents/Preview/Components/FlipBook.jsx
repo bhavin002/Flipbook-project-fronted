@@ -3,7 +3,7 @@ import Turn from "../Helper/Turn.jsx";
 import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import JsonToHtml from "../Helper/JsonToHtml.jsx";
 import { GetFlipbookApi } from "@/service/flipbook.service.js";
-import { GetPublishFlipbookApi, UpdateFlipbookViewCountApi } from "@/service/flipbook.publish.service.js";
+import { GetPublishFlipbookApi, UpdateFlipbookViewCountApi, GetFlipbookThumbnailsApi } from "@/service/flipbook.publish.service.js";
 import { toast } from "sonner";
 import $ from "jquery";
 import { Loader2 } from "lucide-react";
@@ -38,6 +38,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
     const [currentPages, setCurrentPages] = useState([0, 1]);
+    const [thumbnails, setThumbnails] = useState([]);
     console.log("currentPages:", currentPages);
 
     const myRef = useRef(null);
@@ -99,16 +100,27 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
             try {
                 setPageContent([]);
                 let flipbookRes = null;
-                if (isPublicView && publicFlipbookData) {
-                    flipbookRes = publicFlipbookData;
-                } else if (isPublicView) {
-                    const response = await GetPublishFlipbookApi(flipbookId);
-                    flipbookRes = response.data.flipbook;
+                let fetchedThumbnails = [];
+                if (isPublicView) {
+                    let flipbookPromise;
+                    if (publicFlipbookData) {
+                        flipbookRes = publicFlipbookData;
+                        flipbookPromise = Promise.resolve({ data: { flipbook: publicFlipbookData } });
+                    } else {
+                        flipbookPromise = GetPublishFlipbookApi(flipbookId);
+                    }
+                    const [publishRes, thumbRes] = await Promise.all([
+                        flipbookPromise,
+                        GetFlipbookThumbnailsApi(flipbookId)
+                    ]);
+                    if (!flipbookRes) {
+                        flipbookRes = publishRes.data.flipbook;
+                    }
+                    fetchedThumbnails = thumbRes.data.thumbnails || [];
                 } else {
                     const response = await GetFlipbookApi(flipbookId, false);
                     flipbookRes = response.data;
                 }
-                console.log(flipbookRes);
                 setDivHeight(flipbookRes.height);
                 setDivWidth(flipbookRes.width);
 
@@ -117,6 +129,11 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                     setPageContent((prev) => [...prev, data]);
                 });
                 setTotalPages(flipbookRes.pages.length);
+                if (isPublicView) {
+                    setThumbnails(fetchedThumbnails);
+                } else {
+                    setThumbnails([]);
+                }
             } catch (error) {
                 toast.error("Failed to load flipbook", {
                     description: error.message || "Oops! Something went wrong.",
@@ -149,15 +166,28 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
         }
     }, [pageContent, totalPages, onPageChange, visibilitySettings.pageTransition]);
 
-    // zoomLevel
-    // useEffect(() => {
-    //     if (transformRef.current) {
-    //         const transformWrapper = transformRef.current;
-    //         if (transformWrapper) {
-    //             transformWrapper.zoomIn(0.1, 0, 0);
-    //         }
-    //     }
-    // }, [zoomLevel]);
+    useEffect(() => {
+        if (pageType === "single") {
+            setCurrentPages([currentPage]);
+        } else if (pageType === "double") {
+            if (currentPage === 1) {
+                setCurrentPages([1]);
+            } else {
+                let leftPage;
+                if (currentPage % 2 === 0) {
+                    leftPage = currentPage;
+                } else {
+                    leftPage = currentPage - 1;
+                }
+                const pages = [leftPage];
+                if (leftPage + 1 <= totalPages) {
+                    pages.push(leftPage + 1);
+                }
+                setCurrentPages(pages);
+            }
+        }
+    }, [pageType, currentPage, totalPages]);
+
     useImperativeHandle(ref, () => ({
         setPage: (page) => {
             if (visibilitySettings.pageTransition === 0 && myRef.current) {
@@ -432,6 +462,9 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                     totalPages={totalPages}
                     pageType={pageType}
                     flipbookId={flipbookId}
+                    flipbookRef={myRef}
+                    isPublicView={isPublicView}
+                    thumbnails={thumbnails}
                 />
             )}
         </>
