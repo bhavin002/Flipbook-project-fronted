@@ -70,7 +70,6 @@ export default function ContactForm({ flipbookId }) {
     const indexOfLastRecord = currentPage * recordsPerPage;
     const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
     const currentSubmissions = submissions.slice(indexOfFirstRecord, indexOfLastRecord);
-    console.log("currentSubmissions ??",currentSubmissions)
     const totalPages = Math.ceil(submissions.length / recordsPerPage);
 
     const changePage = (page) => {
@@ -88,6 +87,14 @@ export default function ContactForm({ flipbookId }) {
             }
         });
     });
+
+    if (formsLoading) {
+        return (
+            <div className="w-full h-32 flex items-center justify-center">
+                <Skeleton className="h-24 w-full rounded-md" />
+            </div>
+        );
+    }
 
     // Zero state: no contact forms
     if (!formsLoading && contactForms.length === 0) {
@@ -183,7 +190,7 @@ export default function ContactForm({ flipbookId }) {
                 {submissionsLoading
                     ? <Skeleton className="h-4 w-40 mx-auto" />
                     : submissions.length > 0
-                        && `Showing ${indexOfFirstRecord + 1}-${Math.min(indexOfLastRecord, submissions.length)} of ${submissions.length} submissions`
+                    && `Showing ${indexOfFirstRecord + 1}-${Math.min(indexOfLastRecord, submissions.length)} of ${submissions.length} submissions`
                 }
             </div>
         </div>
