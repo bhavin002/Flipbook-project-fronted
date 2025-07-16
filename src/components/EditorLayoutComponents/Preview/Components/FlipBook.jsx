@@ -225,50 +225,53 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
     };
 
     const handlePrevPage = () => {
-        if (visibilitySettings.pageTransition === 0 && myRef.current && currentPage > 1) {
-            $(myRef.current).turn("previous");
-        } else if (currentPage > 1) {
-            if (pageType === "double" && currentPage === 2) {
-                setCurrentPage(1); // Go to page 1 (first slide)
-                onPageChange(1, totalPages);
-            } else if (pageType === "double") {
-                setCurrentPage(currentPage - 2); // Move back two pages
-                onPageChange(currentPage - 2, totalPages);
-            } else {
-                setCurrentPage(currentPage - 1); // Move back one page
-                onPageChange(currentPage - 1, totalPages);
+        transformRef.current?.resetTransform(200);
+        setTimeout(() => {
+            if (visibilitySettings.pageTransition === 0 && myRef.current && currentPage > 1) {
+                $(myRef.current).turn("previous");
+            } else if (currentPage > 1) {
+                if (pageType === "double" && currentPage === 2) {
+                    setCurrentPage(1); // Go to page 1 (first slide)
+                    onPageChange(1, totalPages);
+                } else if (pageType === "double") {
+                    setCurrentPage(currentPage - 2); // Move back two pages
+                    onPageChange(currentPage - 2, totalPages);
+                } else {
+                    setCurrentPage(currentPage - 1); // Move back one page
+                    onPageChange(currentPage - 1, totalPages);
+                }
             }
-        }
+        }, 250);
     };
 
     const handleNextPage = () => {
-        if (visibilitySettings.pageTransition === 0 && myRef.current && currentPage < totalPages) {
-            $(myRef.current).turn("next");
-        } else if (currentPage < totalPages) {
-            if (pageType === "double" && currentPage === 1) {
-                setCurrentPage(2); // Go to pages 2 and 3 (second slide)
-                onPageChange(2, totalPages);
-            } else if (pageType === "double") {
-                // Prevent going past last spread
-                if (
-                    (totalPages % 2 === 0 && currentPage + 2 > totalPages) ||
-                    (totalPages % 2 !== 0 && currentPage + 1 >= totalPages)
-                ) {
-                    // Do nothing, already at last spread
-                    return;
-                } else {
-                    setCurrentPage(currentPage + 2); // Move forward two pages
-                    onPageChange(currentPage + 2, totalPages);
-                }
-            } else {
-                setCurrentPage(currentPage + 1); // Move forward one page
-                onPageChange(currentPage + 1, totalPages);
-            }
-        }
+        transformRef.current?.resetTransform(200);
         setTimeout(() => {
 
-
-        }, 1000);
+            if (visibilitySettings.pageTransition === 0 && myRef.current && currentPage < totalPages) {
+                $(myRef.current).turn("next");
+            } else if (currentPage < totalPages) {
+                if (pageType === "double" && currentPage === 1) {
+                    setCurrentPage(2); // Go to pages 2 and 3 (second slide)
+                    onPageChange(2, totalPages);
+                } else if (pageType === "double") {
+                    // Prevent going past last spread
+                    if (
+                        (totalPages % 2 === 0 && currentPage + 2 > totalPages) ||
+                        (totalPages % 2 !== 0 && currentPage + 1 >= totalPages)
+                    ) {
+                        // Do nothing, already at last spread
+                        return;
+                    } else {
+                        setCurrentPage(currentPage + 2); // Move forward two pages
+                        onPageChange(currentPage + 2, totalPages);
+                    }
+                } else {
+                    setCurrentPage(currentPage + 1); // Move forward one page
+                    onPageChange(currentPage + 1, totalPages);
+                }
+            }
+        }, 250);
 
     };
 
@@ -320,7 +323,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                     }}
                     disabled={zoomLevel == 1 && isMouseDown}
                     doubleClick={{ mode: "reset" }}
-                    wheel={{smoothStep: 0.01, wheelDisabled: true }} // Enable wheel/touchpad zooming with smooth increments
+                    wheel={{ smoothStep: 0.01, wheelDisabled: true }} // Enable wheel/touchpad zooming with smooth increments
                     pinch={{ disabled: false, step: 0.05 }} // Keep pinch-to-zoom for touch devices
                     style={{ width: '100%', height: '100%' }}
                 >
