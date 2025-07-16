@@ -86,7 +86,6 @@ function SortableAttributeItem({ attribute, onDelete, onAttributeChange, onOptio
 export default function ProductAttributes({ setValue, errors, watch }) {
   const [attributes, setAttributes] = useState(() => {
     const productAttrs = watch("productAttributes") || [];
-    console.log("productAttrs ProductAttributes", productAttrs);
     return productAttrs.map((attr, index) => ({
       id: attr._id,
       name: attr.attributeName,
@@ -184,7 +183,6 @@ export default function ProductAttributes({ setValue, errors, watch }) {
 
     // Get existing product variants to preserve visibility settings
     const existingVariants = watch("productVariants") || [];
-    console.log("existingVariants ProductAttributes", existingVariants);
     
     // Generate all possible combinations first
     let combinations = validAttributes[0].options.map(option => ({

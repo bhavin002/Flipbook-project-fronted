@@ -202,8 +202,6 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurren
                 personalizationText: productInfo.customizableProduct ? personalizationText : null,
             };
 
-            console.log("productData ????", productData);
-
             await cartService.addToCart(flipbookId, productData);
             onOpenChange(false);
         } catch (error) {

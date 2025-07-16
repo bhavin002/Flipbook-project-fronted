@@ -135,8 +135,6 @@ export default function DownloadQR({ flipbookId }) {
         }
     };
 
-    console.log("Redirect URL ::", redirectURL);
-
     return (
         <div className="py-6 max-w-[100vw] overflow-auto space-y-4">
             <div className="p-4 md:p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">

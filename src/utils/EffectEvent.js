@@ -1,8 +1,6 @@
 import Konva from 'konva';
 
 export const EffectEvent = (shape, ractnode, imgNode) => {
-    console.log("shape EffectEvent", shape, ractnode, imgNode);
-
     const effect = shape.effect || {};
 
     if (!imgNode || !ractnode) return;

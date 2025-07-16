@@ -244,7 +244,6 @@ export default function UploadSection({
       img.onerror = () => reject("Error loading image");
     });
 
-    console.log("dimensions ??", dimensions)
     function scaleDimensions(width, height, maxSize = 600) {
       const aspectRatio = width / height;
       if (width > maxSize || height > maxSize) {

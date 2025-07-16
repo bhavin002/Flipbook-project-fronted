@@ -31,7 +31,6 @@ export default function MyUpload({ mainStage, selectedIndex, setMainStage,setIsE
             setFolders(response.data);
 
             const defaultFolder = response.data.find(folder => folder.byDefault);
-            console.log("defaultFolder ??", defaultFolder)
 
             if (defaultFolder) {
                 setMediaFiles(defaultFolder.media || []);

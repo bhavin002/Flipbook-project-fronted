@@ -32,7 +32,6 @@ export default function Question({ flipbookId }) {
             setQuestionsLoading(true);
             try {
                 const response = await getQuestionFormResponsesApi(flipbookId);
-                console.log("response ??", response.data)
                 const questions = response.data
                 setQuestions(questions || []);
                 if (questions && questions.length > 0) {

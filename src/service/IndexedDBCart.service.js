@@ -98,8 +98,6 @@ class IndexedDBCartService {
     async _addToCart(flipbookId, productData) {
         const existingCartItems = await this.getCart(flipbookId);
 
-        console.log("productData.paidPersonalization ????", productData.paidPersonalization);
-        
         const newCartItem = {
             cartId: uuid(), // Generate unique cart ID
             productTitle: productData.productTitle,
@@ -217,7 +215,6 @@ class IndexedDBCartService {
 
     // Helper method to calculate personalization cost
     getPersonalizationCost(item) {
-        console.log("item ????", item);
         if (item.paidPersonalization && item.personalizationText && item.personalizationText.length > 0 && item.pricingMethod && item.personalizationPrice) {
             if (item.pricingMethod === 'PER_CHAR') {
                 return item.personalizationPrice * item.personalizationText.length;

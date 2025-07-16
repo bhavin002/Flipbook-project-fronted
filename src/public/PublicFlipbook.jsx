@@ -34,7 +34,6 @@ export default function PublicFlipbook() {
             try {
                 const response = await GetConfigApi(id);
                 const flipbookVisibilityConfig = response.data;
-                console.log("flipbookVisibilityConfig =>", flipbookVisibilityConfig);
                 if (flipbookVisibilityConfig.visibility === flipbookVisibility.PUBLIC) {
                     const response = await GetPublishFlipbookApi(id);
                     setPublicData(response.data);

@@ -20,8 +20,6 @@ export default function Details() {
         navigate(`/${value}/${id}`);
     };
 
-    console.log("id ?? ", id);
-
     return (
         <div className="p-6 max-md:w-[100vw] h-full overflow-y-hidden">
             <Tabs

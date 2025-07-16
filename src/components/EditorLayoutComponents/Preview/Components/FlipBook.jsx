@@ -39,13 +39,8 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
     const visibilitySettings = useFlipbookSettings(latestJson);
     const [currentPages, setCurrentPages] = useState([0, 1]);
     const [thumbnails, setThumbnails] = useState([]);
-    console.log("currentPages:", currentPages);
 
     const myRef = useRef(null);
-
-    console.log("pageType ?? >", pageType);
-
-    console.log("width ??>", width, "height ?? >", height, "divWidth ?? >", divWidth, "divHeight ?? >", divHeight);
 
     const calculateNewDivSize = (screenWidth, screenHeight, divWidth, divHeight) => {
         pageType === "double" ? (divWidth *= 2) : (divWidth *= 1);

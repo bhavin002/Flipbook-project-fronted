@@ -132,8 +132,6 @@ export default function ProductDialog({
         }
     });
 
-    console.log("errors ??", errors)
-
     const onSale = watch("onSale");
 
     const handleNumberInputChange = (e, fieldName) => {

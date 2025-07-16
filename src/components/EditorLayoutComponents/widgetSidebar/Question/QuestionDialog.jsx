@@ -84,8 +84,6 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                 response = await createQuestionFormApi(data);
             }
 
-            console.log("response.data ??", response.data)
-
             const output = {
                 data: {
                     variantId: response.data.questionForm._id

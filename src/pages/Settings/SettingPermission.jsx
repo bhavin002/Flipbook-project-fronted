@@ -155,7 +155,6 @@ export default function SettingPermission() {
             });
 
             const payload = { restrictions };
-            console.log('Sending payload:', payload); // Debug log
             await UpdateUserRolePermissionsApi(payload);
 
         } catch (error) {

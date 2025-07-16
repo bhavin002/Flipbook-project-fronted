@@ -160,7 +160,6 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
             formData[field.label] = data[`field_${index}`];
         });
 
-        console.log('Form submitted:', formData);
         toast.success('Form submitted successfully!');
         setCurrentView('success');
     };

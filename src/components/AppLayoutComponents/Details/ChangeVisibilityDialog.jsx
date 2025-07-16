@@ -28,7 +28,6 @@ export default function ChangeVisibilityDialog({ open, setOpen, flipbookId, setF
     const [groups, setGroups] = useState([]);
     const [readers, setReaders] = useState([]);
     const [loading, setLoading] = useState(false);
-    console.log("loading statesssssssssssss ??",loading)
     const [isUpdating, setIsUpdating] = useState(false);
 
     // Email validation regex

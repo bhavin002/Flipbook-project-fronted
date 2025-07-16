@@ -13,8 +13,6 @@ export const FlipbookSettingsProvider = ({ children, publicData }) => {
     const [latestJson, setLatestJson] = useState(null)
     const { id: flipbookId } = useParams();
 
-    console.log("updateCounter :", updateCounter);
-
     const fetchSettings = useCallback(async () => {
         if (!flipbookId || hasFetched) return;
         try {
@@ -77,8 +75,6 @@ export const FlipbookSettingsProvider = ({ children, publicData }) => {
                     formDataObj[key] = value;
                 }
             }
-
-            console.log("formDataObj ???", formDataObj);
 
             setLatestJson(prevLatestJson => ({
                 ...prevLatestJson,

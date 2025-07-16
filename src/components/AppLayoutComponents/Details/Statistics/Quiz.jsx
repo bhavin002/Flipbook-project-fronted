@@ -59,8 +59,6 @@ export default function Quiz({ flipbookId }) {
                     getQuizSummaryApi(selectedQuiz),
                     getQuizRespondentApi(selectedQuiz)
                 ]);
-                console.log("summaryData ???",summaryData)
-                console.log("respondentsData ??",respondentsData.data)
                 setSummary(summaryData.data);
                 setRespondents(respondentsData.data);
             } catch (err) {

@@ -36,7 +36,6 @@ export default function DynamicBreadcrumb() {
             const breadcrumbItems = [{ label: 'Home', path: '/myflipbooks' }];
 
             pathSegments.forEach((segment) => {
-                console.log("segment", segment);
                 const displayName = breadcrumbNameConfig[segment] ||
                     segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
 
