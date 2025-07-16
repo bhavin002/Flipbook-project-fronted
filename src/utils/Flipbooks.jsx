@@ -59,7 +59,6 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     };
 
     const getButtonsForStatus = (status) => {
-        console.log("status", status);
         if (isTrash) {
             return [];
         }

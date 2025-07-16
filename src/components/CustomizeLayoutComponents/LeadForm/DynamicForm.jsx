@@ -216,7 +216,6 @@ const SortableField = ({
 };
 
 export default function DynamicForm({ fields: initialFields = [], onChange = () => { }, disabled }) {
-    console.log("initialFields ??", initialFields)
     const [fields, setFields] = useState([]);
     const [dropdownOptions, setDropdownOptions] = useState({});
 

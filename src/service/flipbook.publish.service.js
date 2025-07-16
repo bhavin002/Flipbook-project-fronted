@@ -51,6 +51,11 @@ export const GetFlipbookStatisticsApi = async (flipbookId, data) => {
     return response.data;
 }
 
+export const GetWorkspaceFlipbookStatisticsApi = async (data) => {
+    const response = await ApiClient().post(`/flipbook-publish/get-workspace-statistics`, data);
+    return response.data;
+}
+
 export const GetFlipbookDetailsApi = async (flipbookId) => {
     const response = await ApiClient().get(`/flipbook-publish/get-book-details/${flipbookId}`);
     return response.data;

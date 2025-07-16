@@ -42,13 +42,10 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
     const [quizResult, setQuizResult] = useState(null);
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
     const [gdprAccepted, setGdprAccepted] = useState(false);
-    const [marketingAccepted, setMarketingAccepted] = useState(false);
     const [submitLoading, setSubmitLoading] = useState(false);
     const [resultLoading, setResultLoading] = useState(false);
-    const [resultError, setResultError] = useState(null);
     const [detailedResultLoading, setDetailedResultLoading] = useState(false);
     const [detailedQuizResult, setDetailedQuizResult] = useState(null);
-    console.log("quizInfo ??",quizInfo)
 
     const {
         register,
@@ -144,7 +141,6 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
             return;
         }
         setSubmitLoading(true);
-        setResultError(null);
         try {
             // Build answers array for API
             const answers = quizInfo.questions.map((q, idx) => ({
@@ -169,7 +165,6 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
         } catch (error) {
             setSubmitLoading(false);
             setResultLoading(false);
-            setResultError(error.message || 'Failed to submit quiz');
             toast.error('Failed to submit quiz', { description: error.message });
         } finally {
             setSubmitLoading(false);
@@ -183,8 +178,6 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
         setDetailedQuizResult(null);
         setPrivacyAccepted(false);
         setGdprAccepted(false);
-        setMarketingAccepted(false);
-        setResultError(null);
         reset();
     };
 
@@ -198,7 +191,6 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
             const resultResponse = await getQuizAttemptApi(attemptId);
             setDetailedQuizResult(resultResponse.data);
         } catch (error) {
-            setResultError(error.message || 'Failed to fetch detailed results');
             toast.error('Failed to fetch detailed results', { description: error.message });
         } finally {
             setDetailedResultLoading(false);
@@ -211,8 +203,6 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
         setDetailedQuizResult(null);
         setPrivacyAccepted(false);
         setGdprAccepted(false);
-        setMarketingAccepted(false);
-        setResultError(null);
         reset();
         onOpenChange(false);
     };
@@ -229,20 +219,6 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
                         <div className="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
                         <div className="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
                     </div>
-                </DialogContent>
-            </Dialog>
-        );
-    }
-
-    if (resultError) {
-        return (
-            <Dialog open={open} onOpenChange={handleCloseModal}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                        <DialogTitle>Error</DialogTitle>
-                    </DialogHeader>
-                    <div className="text-red-500">{resultError}</div>
-                    <Button onClick={handleCloseModal} className="mt-4">Close</Button>
                 </DialogContent>
             </Dialog>
         );

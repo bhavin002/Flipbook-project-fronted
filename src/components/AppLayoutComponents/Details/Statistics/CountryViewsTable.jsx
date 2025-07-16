@@ -80,8 +80,6 @@ export default function CountryViewsTable({ countryViews = [], loading }) {
                                         const chart = chartWrapper.getChart();
                                         const selection = chart.getSelection();
                                         if (selection.length === 0) return;
-                                        const region = geoChartData[selection[0].row + 1];
-                                        console.log("Selected : " + region);
                                     },
                                 },
                             ]}

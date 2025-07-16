@@ -6,8 +6,6 @@ import { Badge } from "@/components/ui/badge";
 
 export default function TableOfContentsDrawer({ open, onClose, visibilitySettings, navigateToPage }) {
 
-    console.log(visibilitySettings.playerAccentColorHash);
-
     const [shouldDisablePointerEvents, setShouldDisablePointerEvents] = useState(!open);
 
     const accentColor = visibilitySettings.playerAccentColorHash || "#7c3aede6";

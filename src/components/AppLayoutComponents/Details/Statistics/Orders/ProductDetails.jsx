@@ -2,7 +2,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 export default function ProductDetails({ selectedOrder, showOrderDialog, setShowOrderDialog }) {
-    console.log("selectedOrder ??",selectedOrder)
     const showCustomText = selectedOrder?.products?.some(
         (product) => product.customizationText && product.customizationText.trim() !== ""
     );

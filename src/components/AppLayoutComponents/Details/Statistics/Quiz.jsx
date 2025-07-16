@@ -18,6 +18,7 @@ import RespondentAnswers from "./RespondentAnswers";
 import { getQuizByFlipbookId, getQuizSummaryApi, getQuizRespondentApi } from "@/service/quizAttempt.service";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Quiz({ flipbookId }) {
     const [quizList, setQuizList] = useState([]);
@@ -58,8 +59,6 @@ export default function Quiz({ flipbookId }) {
                     getQuizSummaryApi(selectedQuiz),
                     getQuizRespondentApi(selectedQuiz)
                 ]);
-                console.log("summaryData ???",summaryData)
-                console.log("respondentsData ??",respondentsData.data)
                 setSummary(summaryData.data);
                 setRespondents(respondentsData.data);
             } catch (err) {
@@ -84,6 +83,14 @@ export default function Quiz({ flipbookId }) {
             setCurrentPage(page);
         }
     };
+
+    if (loadingQuizList) {
+        return (
+            <div className="w-full h-32 flex items-center justify-center">
+                <Skeleton className="h-24 w-full rounded-md" />
+            </div>
+        );
+    }
 
     if (!loadingQuizList && quizList.length === 0) {
         return (

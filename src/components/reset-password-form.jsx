@@ -67,7 +67,6 @@ export function ResetPasswordForm({
     }, [navigate]);
 
     const onSubmit = async (data) => {
-        console.log(data)
         try {
             setIsLoading(true);
 

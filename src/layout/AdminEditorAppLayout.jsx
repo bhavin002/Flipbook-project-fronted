@@ -29,8 +29,6 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
     const [mainStage, setMainStage] = useState([]);
     const navigate = useNavigate();
 
-    console.log("mainStage ??", mainStage, stageWidth, stageHeight)
-
     useEffect(() => {
         const getFlipbook = async () => {
             try {
@@ -100,9 +98,7 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
                     pixelRatio: 1,
                     mimeType: 'image/png',
                 });
-                console.log("clippedImage ??", clippedImage)
                 const blob = await (await fetch(clippedImage)).blob();
-                console.log("blob ??", blob)
                 formData.append("thumbnails", blob, `image_${index}.jpg`);
             });
 

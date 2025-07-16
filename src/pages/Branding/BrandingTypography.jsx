@@ -86,7 +86,6 @@ export default function BrandingTypography() {
             prevEditors.map(editor => {
                 if (editor.id === editorId) {
                     const updatedEditor = { ...editor, ...updates };
-                    console.log(`Updated editor ${editorId}:`, updatedEditor);
                     return updatedEditor;
                 }
                 return editor;

@@ -23,7 +23,6 @@ const StockVideosView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selec
     const [searchQuery, setSearchQuery] = useState("");
     const [currentCategory, setCurrentCategory] = useState(null);
     const [page, setPage] = useState(1);
-    console.log("page ????", page)
     const [hasMore, setHasMore] = useState(true);
     const observer = useRef();
 

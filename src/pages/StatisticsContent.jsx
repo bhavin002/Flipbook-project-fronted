@@ -8,17 +8,45 @@ import {
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
 import { CalendarIcon, Info } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { DateRangePickerModal } from "../components/AppLayoutComponents/Filter/DateRangePickerModal"
 import TopFlipbooks from "../components/AppLayoutComponents/Sidebar/Statistics/TopFlipbooks"
 import Summary from "../components/AppLayoutComponents/Sidebar/Statistics/Summary"
+import { GetWorkspaceFlipbookStatisticsApi } from "@/service/flipbook.publish.service"
+import DevicePieChart from "../components/AppLayoutComponents/Details/Statistics/DevicePieChart"
+import CountryViewsTable from "../components/AppLayoutComponents/Details/Statistics/CountryViewsTable"
+import FlipbookStatistics from "@/utils/FlipbookStatistics"
 
 export default function StatisticsContent() {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const today = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(today.getMonth() - 1);
     const [displayValue, setDisplayValue] = useState({
-        from: new Date(),
-        to: new Date(),
+        from: oneMonthAgo,
+        to: today,
     });
+    const [stats, setStats] = useState(null);
+    const [loadingStats, setLoadingStats] = useState(true);
+
+    useEffect(() => {
+        async function fetchStats() {
+            setLoadingStats(true);
+            try {
+                const payload = {
+                    startDate: displayValue.from ? format(displayValue.from, "yyyy-MM-dd") : undefined,
+                    endDate: displayValue.to ? format(displayValue.to, "yyyy-MM-dd") : undefined,
+                };
+                const response = await GetWorkspaceFlipbookStatisticsApi(payload);
+                setStats(response.data);
+            } catch (e) {
+                setStats(null);
+            } finally {
+                setLoadingStats(false);
+            }
+        }
+        if (displayValue.from && displayValue.to) fetchStats();
+    }, [displayValue]);
 
     const handleApplyDateRange = (dateRange) => {
         if (dateRange?.from && dateRange?.to) {
@@ -80,8 +108,22 @@ export default function StatisticsContent() {
                 value={displayValue}
                 onApply={handleApplyDateRange}
             />
-            <Summary />
-            <TopFlipbooks/>
+            <Summary
+                totalImpressions={stats?.totalImpressions || 0}
+                totalViews={stats?.totalViews || 0}
+                totalDownloads={stats?.totalDownloads || 0}
+                loading={loadingStats}
+            />
+            <TopFlipbooks topFlipbooks={stats?.topFlipbooks || []} loading={loadingStats} />
+            <div className="mt-8">
+                <DevicePieChart deviceCounts={stats?.deviceCounts || {}} loading={loadingStats} />
+            </div>
+            <div className="mt-8">
+                <CountryViewsTable countryViews={stats?.countryViews || []} loading={loadingStats} />
+            </div>
+            <div className="mt-8">
+                <FlipbookStatistics statsData={stats?.dayWiseStats || []} dates={displayValue} loading={loadingStats} />
+            </div>
         </div>
     )
 }

@@ -223,7 +223,6 @@ export default function GeneralSettings({ form, clearErrors }) {
                     control={form.control}
                     name="currencyId"
                     render={({ field }) => {
-                        console.log("field", field);
                         return (
                             <FormItem>
                                 <FormLabel className="text-xs">Select currency</FormLabel>

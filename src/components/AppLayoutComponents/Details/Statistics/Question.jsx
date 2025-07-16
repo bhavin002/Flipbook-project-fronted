@@ -32,7 +32,6 @@ export default function Question({ flipbookId }) {
             setQuestionsLoading(true);
             try {
                 const response = await getQuestionFormResponsesApi(flipbookId);
-                console.log("response ??", response.data)
                 const questions = response.data
                 setQuestions(questions || []);
                 if (questions && questions.length > 0) {
@@ -83,6 +82,14 @@ export default function Question({ flipbookId }) {
             ? "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
             : "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800";
     };
+
+    if (questionsLoading) {
+        return (
+            <div className="w-full h-32 flex items-center justify-center">
+                <Skeleton className="h-24 w-full rounded-md" />
+            </div>
+        );
+    }
 
     // Zero state: no questions
     if (!questionsLoading && questions.length === 0) {

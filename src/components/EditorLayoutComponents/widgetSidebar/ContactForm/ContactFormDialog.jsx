@@ -47,8 +47,6 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
 
     const { formState: { errors }, clearErrors } = form;
 
-    console.log("errors ??", errors)
-
     const fetchContactForm = async () => {
         if (!variantId) {
             setOpen(true); // Open modal directly if no variantId (new form)

@@ -35,8 +35,6 @@ export default function CreateMediaFolderDialog({
                 scope: scope
             });
 
-            console.log("response ??", response)
-
             toast.success("Folder created", {
                 description: response.message
             });

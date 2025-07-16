@@ -29,7 +29,6 @@ export default function FilterCom() {
             try {
                 setIsLoading(true);
                 const response = await GetTeammatesApi();
-                console.log("Teammates fetched successfully:", response);
                 setTeammates(response.data.teammateData || []);
             } catch (error) {
                 toast.error("Failed to fetch teammates", {
@@ -223,8 +222,6 @@ export default function FilterCom() {
         try {
             setIsLoading(true);
             const payload = buildApiPayload();
-            console.log("Filter payload:", payload);
-
             await fetchFlipbooks(payload);
             // Update filter count only after successfully applying filters
             setFilterCount(calculateFilterCount());

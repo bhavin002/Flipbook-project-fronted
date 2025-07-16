@@ -51,7 +51,6 @@ export default function MoveToWorkspaceDialog({ isMoveToWorkspaceModalOpen, setI
     }
 
     const handleMoveWorkspace = async () => {
-        console.log("!selectedWorkspace || !flipbookId || !isWorkspaceChanged() ????", !selectedWorkspace, !flipbookId, !isWorkspaceChanged())
         if (!selectedWorkspace || !flipbookId || !isWorkspaceChanged()) return
 
         setIsLoading(true)

@@ -206,12 +206,6 @@ import { deleteShape } from "@/utils/Helper";
         this.on('dragmove', this.cropUpdateBinded);
         this.on('transform', this.resizAndCropUpdateBinded);
 
-        // Debug: Log the layer children to verify z-index
-        console.log('Layer children after setup:', layer.children.map(child => ({
-            name: child.name(),
-            zIndex: child.zIndex()
-        })));
-
         layer.batchDraw();
     };
 
@@ -438,7 +432,6 @@ export default function Editor() {
         undoStack.push({ stages: temp, selectedIndex });
         if (undoStack.length > MAX_HISTORY) undoStack.shift(); // Keep max 10 states
         setUndoStack(undoStack);
-        // console.log(undoStack);
 
         // Clear redo stack when a new action occurs
         setRedoStack([]);

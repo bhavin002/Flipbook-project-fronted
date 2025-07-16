@@ -18,7 +18,6 @@ const INITIAL_CATEGORIES = [
 ];
 
 const StockPhotosView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, onBackClick }) => {
-    console.log("StockPhotosView - selectedIndex", selectedIndex);
     const [categories, setCategories] = useState({});
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");

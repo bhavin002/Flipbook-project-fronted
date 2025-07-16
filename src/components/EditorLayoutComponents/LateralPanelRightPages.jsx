@@ -39,7 +39,6 @@ export default function LateralPanelRightPages({ setIsPageShow, isSidebarOpen, s
     };
 
     const closePanel = (isExpanded) => {
-        console.log(isExpanded);
         if (isExpanded) {
             setIsExpanded(false)
         } else {

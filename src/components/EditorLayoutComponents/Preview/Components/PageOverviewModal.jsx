@@ -44,7 +44,7 @@ const PageOverviewModal = ({
                     className="w-full h-full object-contain"
                     loading="lazy"
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-60 transition-opacity duration-200 pointer-events-none" />
+                <div className={`absolute inset-0 bg-black/40 transition-opacity duration-200 pointer-events-none ${isCurrent ? 'opacity-60' : 'opacity-0 group-hover:opacity-60'}`} />
                 <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-sm font-bold min-w-[32px] text-center rounded-md">
                     {pageNumber}
                 </div>
@@ -69,7 +69,7 @@ const PageOverviewModal = ({
                         className="w-full h-full object-contain"
                         loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-60 transition-opacity duration-200 pointer-events-none" />
+                    <div className={`absolute inset-0 bg-black/40 transition-opacity duration-200 pointer-events-none ${isCurrentLeft ? 'opacity-60' : 'opacity-0 group-hover:opacity-60'}`} />
                     <div className="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white text-sm font-bold min-w-[32px] text-center rounded-md">
                         {leftPageNumber}
                     </div>
@@ -85,7 +85,7 @@ const PageOverviewModal = ({
                         className="w-full h-full object-contain"
                         loading="lazy"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-60 transition-opacity duration-200 pointer-events-none" />
+                    <div className={`absolute inset-0 bg-black/40 transition-opacity duration-200 pointer-events-none ${isCurrentRight ? 'opacity-60' : 'opacity-0 group-hover:opacity-60'}`} />
                     <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-sm font-bold min-w-[32px] text-center rounded-md">
                         {rightPageNumber}
                     </div>

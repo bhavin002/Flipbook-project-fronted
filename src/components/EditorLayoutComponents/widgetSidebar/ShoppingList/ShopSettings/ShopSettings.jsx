@@ -63,8 +63,6 @@ export default function ShopSettings() {
 
     const { formState: { errors }, clearErrors } = form;
     
-    console.log("errors from shop settings", errors);
-
     // Update form when shopSettings changes
     useEffect(() => {
         if (shopSettings && open) {

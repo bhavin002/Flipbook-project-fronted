@@ -89,7 +89,6 @@ export default function CreateGroupDialog({ setGroups }) {
 
         try {
             setIsCreatingGroup(true);
-            console.log("selectedReaders ??", selectedReaders)
             const response = await CreateWorkspaceGroupApi({
                 name: data.groupName,
                 readerIds: selectedReaders

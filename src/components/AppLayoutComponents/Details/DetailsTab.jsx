@@ -163,7 +163,7 @@ export default function DetailsTab({ flipbookId }) {
                     </div>
                 </CardContent>
             </Card>
-            <div className="flex gap-4 flex-wrap">
+            <div className="flex gap-4 max-md:flex-wrap">
                 <div className="lg:w-[40%] w-full">
                     <Card className="shadow-sm rounded-lg mb-4">
                         <CardHeader>

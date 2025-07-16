@@ -27,20 +27,32 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
     const { activeTab, setActiveTab } = useViewMode();
+    
+    // Automatically switch tab based on window size
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setActiveTab("Mobile");
+            } else {
+                setActiveTab("Desktop");
+            }
+        };
+        handleResize(); // Set initial tab
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, [setActiveTab]);
+
     const [pageType, setPageType] = useState("double");
     const progressBarRef = useRef(null);
     const flipBookRef = useRef(null);
     const containerRef = useRef(null);
     const transformRef = useRef(null); // Reference for TransformWrapper
 
-    console.log("zoomLevel ??",zoomLevel)
-
     useEffect(() => {
         const syncCartPrices = async () => {
             if (!flipbookId) return;
             try {
                 const cartItems = await cartService.getCart(flipbookId);
-                console.log("cartItems ????", cartItems);
                 if (!cartItems || cartItems.length === 0) return;
 
                 const uniqMap = new Map();
@@ -58,14 +70,11 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                 let updatedProducts;
                 try {
                     const response = await getProductCartInfoApi(payload);
-                    console.log("getProductCartInfoApi ????", response.data);
                     updatedProducts = response.data;
                 } catch (err) {
                     toast.error('Failed to sync cart prices', { description: err.message });
                     return;
                 }
-                console.log("updatedProducts ????", updatedProducts);
-                console.log("cartItems ????", cartItems);
 
                 const updatedCartItems = cartItems.map(item => {
                     const updated = updatedProducts.find(
@@ -73,12 +82,6 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             p.productId === item.productId &&
                             (String(p.productVariantId || '') === String(item.productVariantId || ''))
                     );
-                    console.log(`Matching for item ${item.cartId}:`, {
-                        itemProductId: item.productId,
-                        itemVariantId: item.productVariantId,
-                        foundMatch: !!updated,
-                        updatedProduct: updated
-                    });
 
                     if (updated) {
                         return {
@@ -96,10 +99,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                     }
                     return item;
                 });
-
-                console.log("Final updatedCartItems:", updatedCartItems);
                 await cartService.saveCart(flipbookId, updatedCartItems);
-                console.log("Cart successfully updated in IndexedDB");
             } catch (error) {
                 toast.error('Failed to sync cart prices', { description: error.message || "Oops! Something went wrong." });
             }
@@ -256,7 +256,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
             return (
                 visibilitySettings.showControlBar && (
                     <div className="w-full flex flex-col items-center justify-center">
-                        <div className="w-[90%] max-w-[400px] bg-gradient-to-r from-primary/90 to-primary p-3 flex flex-col items-center justify-center shadow-lg space-y-3">
+                        <div className="max-md:w-full bg-gradient-to-r from-primary/90 to-primary p-3 flex flex-col items-center justify-center shadow-lg space-y-3">
                             {visibilitySettings.showNavigationBar && (
                                 <div className="flex items-center text-primary-foreground text-sm w-full">
                                     <div
@@ -379,7 +379,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         return (
             visibilitySettings.showControlBar && (
                 <div
-                    className={`w-full bg-gradient-to-r from-primary/90 to-primary p-4 flex items-center justify-between relative shadow-lg ${isMobile ? "rounded-b-lg" : ""
+                    className={`w-full bg-gradient-to-r from-primary/90 to-primary p-4 flex flex-wrap items-center justify-between relative shadow-lg ${isMobile ? "rounded-b-lg" : ""
                         }`}
                 >
                     <div className="flex items-center text-primary-foreground text-sm flex-1">
