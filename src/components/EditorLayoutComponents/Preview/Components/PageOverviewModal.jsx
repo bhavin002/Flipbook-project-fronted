@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import bookLogo from '@/assets/book_thumbnail.jpg';
 import { PageNavigationActions } from '@/components/EditorLayoutComponents/Preview/Helper/PageNavigationActions.js';
@@ -15,6 +15,7 @@ const PageOverviewModal = ({
     isPublicView,
     thumbnails = []
 }) => {
+    const containerRef = useRef(null); // Ref for the parent container
     const aspectRatioString = width && height ? `1 / ${height / width}` : '1 / 1';
 
     const getImageSrc = (pageNumber) => {
@@ -34,7 +35,9 @@ const PageOverviewModal = ({
         >
             <div
                 className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg ${pageType === 'double' && 'w-1/2'
-                    } flex items-center justify-center transition-all duration-300 ${isCurrent ? 'border-4 border-primary rounded-md overflow-hidden' : 'border-4 border-transparent rounded-md'
+                    } flex items-center justify-center transition-all duration-300 ${isCurrent
+                        ? 'border-4 border-primary rounded-md overflow-hidden'
+                        : 'border-4 border-transparent rounded-md'
                     } group-hover:border-4 group-hover:border-primary group-hover:rounded-md group-hover:shadow-lg group-hover:shadow-black/30`}
                 style={{ aspectRatio: aspectRatioString }}
             >
@@ -44,7 +47,10 @@ const PageOverviewModal = ({
                     className="w-full h-full object-contain"
                     loading="lazy"
                 />
-                <div className={`absolute inset-0 bg-black/40 transition-opacity duration-200 pointer-events-none ${isCurrent ? 'opacity-60' : 'opacity-0 group-hover:opacity-60'}`} />
+                <div
+                    className={`absolute inset-0 bg-black/40 transition-opacity duration-200 pointer-events-none ${isCurrent ? 'opacity-60' : 'opacity-0 group-hover:opacity-60'
+                        }`}
+                />
                 <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-sm font-bold min-w-[32px] text-center rounded-md">
                     {pageNumber}
                 </div>
@@ -55,12 +61,13 @@ const PageOverviewModal = ({
     const PairedThumbnailCard = ({ leftPageNumber, rightPageNumber, isCurrentLeft, isCurrentRight, onClick }) => (
         <div className="relative group flex justify-center" onClick={() => onClick(leftPageNumber)} style={{ cursor: 'pointer' }}>
             <div
-                className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg flex w-full transition-all duration-300 ${(isCurrentLeft || isCurrentRight) ? 'border-4 border-primary rounded-md' : 'border-4 border-transparent rounded-md'
+                className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg flex w-full transition-all duration-300 ${isCurrentLeft || isCurrentRight
+                    ? 'border-4 border-primary rounded-md'
+                    : 'border-4 border-transparent rounded-md'
                     } group-hover:border-4 group-hover:border-primary group-hover:rounded-md group-hover:shadow-lg group-hover:shadow-black/30`}
             >
                 <div
-                    className={`relative flex-1 flex items-center justify-center ${pageType === 'double' && 'w-1/2'
-                        }`}
+                    className={`relative flex-1 flex items-center justify-center ${pageType === 'double' && 'w-1/2'}`}
                     style={{ aspectRatio: aspectRatioString }}
                 >
                     <img
@@ -69,14 +76,16 @@ const PageOverviewModal = ({
                         className="w-full h-full object-contain"
                         loading="lazy"
                     />
-                    <div className={`absolute inset-0 bg-black/40 transition-opacity duration-200 pointer-events-none ${isCurrentLeft ? 'opacity-60' : 'opacity-0 group-hover:opacity-60'}`} />
+                    <div
+                        className={`absolute inset-0 bg-black/40 transition-opacity duration-200 pointer-events-none ${isCurrentLeft ? 'opacity-60' : 'opacity-0 group-hover:opacity-60'
+                            }`}
+                    />
                     <div className="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white text-sm font-bold min-w-[32px] text-center rounded-md">
                         {leftPageNumber}
                     </div>
                 </div>
                 <div
-                    className={`relative flex-1 flex items-center justify-center ${pageType === 'double' && 'w-1/2'
-                        }`}
+                    className={`relative flex-1 flex items-center justify-center ${pageType === 'double' && 'w-1/2'}`}
                     style={{ aspectRatio: aspectRatioString }}
                 >
                     <img
@@ -85,7 +94,10 @@ const PageOverviewModal = ({
                         className="w-full h-full object-contain"
                         loading="lazy"
                     />
-                    <div className={`absolute inset-0 bg-black/40 transition-opacity duration-200 pointer-events-none ${isCurrentRight ? 'opacity-60' : 'opacity-0 group-hover:opacity-60'}`} />
+                    <div
+                        className={`absolute inset-0 bg-black/40 transition-opacity duration-200 pointer-events-none ${isCurrentRight ? 'opacity-60' : 'opacity-0 group-hover:opacity-60'
+                            }`}
+                    />
                     <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 text-white text-sm font-bold min-w-[32px] text-center rounded-md">
                         {rightPageNumber}
                     </div>
@@ -177,23 +189,26 @@ const PageOverviewModal = ({
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent
-                className="max-h-[90vh] max-w-[90vw] z-[100] overflow-y-auto bg-transparent shadow-none border-0 text-white"
-                hideClose={true}
-            >
-                <div className="space-y-6">
-                    <div
-                        className={`grid ${pageType === 'double'
-                            ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4'
-                            : 'grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 2xl:grid-cols-12 gap-4'
-                            }`}
-                    >
-                        {renderThumbnails()}
+        <div ref={containerRef}>
+            <Dialog open={isOpen} onOpenChange={onClose}>
+                <DialogContent
+                    className="max-h-[90vh] max-w-[90vw] z-[100] overflow-y-auto bg-transparent shadow-none border-0 text-white"
+                    hideClose={true}
+                    container={containerRef.current} // Pass the container ref
+                >
+                    <div className="space-y-6">
+                        <div
+                            className={`grid ${pageType === 'double'
+                                ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4'
+                                : 'grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 2xl:grid-cols-12 gap-4'
+                                }`}
+                        >
+                            {renderThumbnails()}
+                        </div>
                     </div>
-                </div>
-            </DialogContent>
-        </Dialog>
+                </DialogContent>
+            </Dialog>
+        </div>
     );
 };
 
