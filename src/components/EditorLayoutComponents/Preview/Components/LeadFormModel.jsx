@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     Dialog,
     DialogContent,
@@ -20,7 +20,7 @@ const createLeadFormSchema = (fields, settings) => {
 
     fields.forEach((field, index) => {
         const fieldKey = `field_${index}`;
-        
+
         if (field.required) {
             switch (field.type) {
                 case 'email':
@@ -82,6 +82,7 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
     const [currentView, setCurrentView] = useState('form');
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
     const [gdprAccepted, setGdprAccepted] = useState(false);
+    const containerRef = useRef(null); // Ref for the parent container
 
     const {
         register,
@@ -109,7 +110,7 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
         for (let i = 0; i < leadFormData.fields.length; i++) {
             const field = leadFormData.fields[i];
             const value = watchedValues[`field_${i}`];
-            
+
             if (field.required && (!value || value.trim() === '')) {
                 return false;
             }
@@ -153,7 +154,7 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
             toast.error('Please complete all required fields');
             return;
         }
-        
+
         // Process form data
         const formData = {};
         leadFormData.fields.forEach((field, index) => {
@@ -235,18 +236,18 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
                 <div className="space-y-3 pt-4 border-t">
                     {leadFormData.addPrivacyPolicy && (
                         <div className="flex items-start space-x-2">
-                            <Checkbox 
-                                id="privacy" 
+                            <Checkbox
+                                id="privacy"
                                 checked={privacyAccepted}
                                 onCheckedChange={handlePrivacyChange}
                                 className="mt-0.5"
                             />
                             <Label htmlFor="privacy" className="text-sm leading-relaxed">
                                 I agree to the following company's Privacy Policy:
-                                <a 
-                                    href={leadFormData.privacyPolicyLink} 
-                                    target="_blank" 
-                                    rel="noopener noreferrer" 
+                                <a
+                                    href={leadFormData.privacyPolicyLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                     className="text-primary hover:underline ml-1"
                                 >
                                     {leadFormData.companyName}
@@ -257,8 +258,8 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
 
                     {leadFormData.gdprCompliancyCheck && (
                         <div className="flex items-start space-x-2">
-                            <Checkbox 
-                                id="gdpr" 
+                            <Checkbox
+                                id="gdpr"
                                 checked={gdprAccepted}
                                 onCheckedChange={handleGdprChange}
                                 className="mt-0.5"
@@ -307,17 +308,19 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
     );
 
     return (
-        <Dialog open={open} onOpenChange={handleCloseModal}>
-            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                    <DialogTitle className="text-lg text-gray-800">
-                        {leadFormData.title}
-                    </DialogTitle>
-                </DialogHeader>
-                {currentView === 'form' && renderFormView()}
-                {currentView === 'success' && renderSuccessView()}
-            </DialogContent>
-        </Dialog>
+        <div ref={containerRef}>
+            <Dialog open={open} onOpenChange={handleCloseModal}>
+                <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" container={containerRef.current}>
+                    <DialogHeader>
+                        <DialogTitle className="text-lg text-gray-800">
+                            {leadFormData.title}
+                        </DialogTitle>
+                    </DialogHeader>
+                    {currentView === 'form' && renderFormView()}
+                    {currentView === 'success' && renderSuccessView()}
+                </DialogContent>
+            </Dialog>
+        </div>
     );
 };
 
