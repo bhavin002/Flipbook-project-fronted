@@ -473,3 +473,21 @@ div:hover::-webkit-scrollbar-thumb {
     box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
   }
 }
+
+.infinite-progress-bar {
+  width: 40%;
+  background-color: #8141ee;
+  border-radius: 9999px;
+  animation: pingpong 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes pingpong {
+  0% {
+    margin-left: 0%;
+    margin-right: 60%;
+  }
+  100% {
+    margin-left: 60%;
+    margin-right: 0%;
+  }
+}

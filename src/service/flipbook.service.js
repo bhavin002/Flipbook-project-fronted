@@ -84,3 +84,12 @@ export const MoveToWorkspaceApi = async (data) => {
     const response = await ApiClient().post("/flipbook/move-to-workspace", data);
     return response.data;
 }
+
+export const UploadPdfApi = async (data) => {
+    const response = await ApiClient().post("/flipbook/upload-pdf", data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+    return response.data;
+}
