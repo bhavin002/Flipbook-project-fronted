@@ -174,6 +174,8 @@ export default function SettingPermission() {
         return checkboxStates[key] || false;
     };
 
+    const isOwnerRole = (role) => role.name && role.name.toLowerCase() === "owner";
+
     if (loading) {
         return (
             <div className="p-6 max-w-[100vw] overflow-auto space-y-4 pt-0 flex-1 flex flex-col max-md:max-h-[calc(100vh-156px-80px)]">
@@ -215,7 +217,7 @@ export default function SettingPermission() {
                                         <Checkbox
                                             id={`header-${role._id}`}
                                             checked={headerStates[role._id] === true}
-                                            disabled={updating}
+                                            disabled={updating || isOwnerRole(role)}
                                             ref={checkbox => {
                                                 if (checkbox) {
                                                     checkbox.indeterminate = headerStates[role._id] === 'indeterminate';
@@ -266,7 +268,7 @@ export default function SettingPermission() {
                                                     <Checkbox
                                                         id={`${feature.featureId}-${role._id}`}
                                                         checked={getCheckboxState(feature.featureId, role._id)}
-                                                        disabled={updating}
+                                                        disabled={updating || isOwnerRole(role)}
                                                         onCheckedChange={() => handleCheckboxChange(feature.featureId, role._id)}
                                                     />
                                                 </div>
