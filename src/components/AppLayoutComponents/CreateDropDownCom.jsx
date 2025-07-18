@@ -24,6 +24,8 @@ export default function CreateDropDownCom() {
     const handleItemClick = (action) => {
         if (action === "from-scratch") {
             navigate("/create")
+        } else if (action === "template") {
+            navigate("/create?ct=template");
         }
     };
 
@@ -82,7 +84,7 @@ export default function CreateDropDownCom() {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleItemClick("template")}> 
                         <LayoutPanelLeft />  Template
                     </DropdownMenuItem>
                     <DropdownMenuItem>

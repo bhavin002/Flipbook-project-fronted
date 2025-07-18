@@ -11,15 +11,19 @@ import { CreateFlipbookApi, GetPageLayoutsApi } from "@/service/flipbook.service
 import { Loader } from "@/components/ui/loader";
 import { toast } from "sonner";
 import { CheckCircle } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import LoadingButton from "@/utils/LoadingButton";
-import { CreateTemplateApi } from "@/service/template.service";
+import { CreateTemplateApi } from "@/service/flipbook.service";
+
 
 export default function FlipbookFromScratch() {
     const [isLoading, setIsLoading] = useState(true);
     const [templates, setTemplates] = useState([]);
     const [isFlipbookCreating, setIsFlipbookCreating] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const isTemplate = queryParams.get("ct") === "template";
 
     useEffect(() => {
         const getPageLayout = async () => {
@@ -65,27 +69,47 @@ export default function FlipbookFromScratch() {
         setHeight(parseInt(e.target.value) || 0);
     };
 
-    const createFlipBook = async () => {
+    const create = async () => {
         try {
             setIsFlipbookCreating(true);
-            const response = await CreateFlipbookApi({
-                width: width,
-                height: height,
-                pages: [{
-                    "pageData": JSON.stringify({
-                        stageref: null,
-                        CANVAS_WIDTH: width,
-                        CANVAS_HEIGHT: height,
-                        shapes: [],
-                        selectedShapes: [],
-                        background: "#fff"
-                    })
-                }]
-            })
-            const flipBookId = response.data.bookId;
-            navigate(`/editor/${flipBookId}`);
+            let response;
+            if (isTemplate) {
+                response = await CreateTemplateApi({
+                    width: width,
+                    height: height,
+                    pages: [{
+                        "pageData": JSON.stringify({
+                            stageref: null,
+                            CANVAS_WIDTH: width,
+                            CANVAS_HEIGHT: height,
+                            shapes: [],
+                            selectedShapes: [],
+                            background: "#fff"
+                        })
+                    }]
+                });
+                const templateId = response.data.bookId;
+                navigate(`/editor/${templateId}`);
+            } else {
+                response = await CreateFlipbookApi({
+                    width: width,
+                    height: height,
+                    pages: [{
+                        "pageData": JSON.stringify({
+                            stageref: null,
+                            CANVAS_WIDTH: width,
+                            CANVAS_HEIGHT: height,
+                            shapes: [],
+                            selectedShapes: [],
+                            background: "#fff"
+                        })
+                    }]
+                });
+                const flipBookId = response.data.bookId;
+                navigate(`/editor/${flipBookId}`);
+            }
         } catch (error) {
-            toast.error("Flipbook creation failed", {
+            toast.error(isTemplate ? "Template creation failed" : "Flipbook creation failed", {
                 description: error.message || "Oops! Something went wrong.",
             });
         } finally {
@@ -204,9 +228,9 @@ export default function FlipbookFromScratch() {
                         </div>
                     </div>
 
-                    <Button size="lg" className="text-[16px]" disabled={isFlipbookCreating} onClick={() => { createFlipBook() }}>
+                    <Button size="lg" className="text-[16px]" disabled={isFlipbookCreating} onClick={() => { create() }}>
                         {
-                            isFlipbookCreating ? <LoadingButton /> : "Create Flipbook"
+                            isFlipbookCreating ? <LoadingButton /> : "Create"
                         }
                     </Button>
                 </div>

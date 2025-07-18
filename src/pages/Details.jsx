@@ -37,10 +37,6 @@ export default function Details() {
                         <Code className="w-5 h-5" />
                         <span className="text-xs mt-1 lg:mt-0">Embed</span>
                     </TabsTrigger>
-                    <TabsTrigger className="py-2 flex flex-col lg:flex-row lg:items-center lg:gap-2" value="trackable-links">
-                        <Link className="w-5 h-5" />
-                        <span className="text-xs mt-1 lg:mt-0">Trackable links</span>
-                    </TabsTrigger>
                     <TabsTrigger className="py-2 flex flex-col lg:flex-row lg:items-center lg:gap-2" value="stats">
                         <ChartPie className="w-5 h-5" />
                         <span className="text-xs mt-1 lg:mt-0">Statistics</span>
@@ -69,9 +65,6 @@ export default function Details() {
                 </TabsContent>
                 <TabsContent value="download-qr" className="h-full overflow-y-auto">
                     <DownloadQR flipbookId={id} />
-                </TabsContent>
-                <TabsContent value="trackable-links" className="h-full overflow-y-auto">
-                    <TrackableLinks />
                 </TabsContent>
                 <TabsContent value="stats" className="h-full overflow-y-auto">
                     <Statistics flipbookId={id} />

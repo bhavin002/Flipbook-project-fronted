@@ -13,6 +13,11 @@ export const CreateFlipbookApi = async (data) => {
     return response.data;
 }
 
+export const CreateTemplateApi = async (data) => {
+    const response = await ApiClient().post("/flipbook/create-template", data);
+    return response.data;
+}
+
 export const GetFlipbookApi = async (flipbookId, loader = true) => {
     const response = await ApiClient().get(`/flipbook/get/${flipbookId}`, {
         showLoader: loader

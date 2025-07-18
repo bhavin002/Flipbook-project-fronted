@@ -17,6 +17,8 @@ import EditFlipbookName from "@/utils/EditFlipbookName";
 import PreviewDialog from "@/components/EditorLayoutComponents/Preview/PreviewDialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
+import { flipbookType } from "@/utils/enum";
+import RenameFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/RenameFlipbookDialog";
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
@@ -37,15 +39,24 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isCustomizeLoading, setIsCustomizeLoading] = useState(false);
     const location = useLocation();
     const [publishing, setPublishing] = useState(false);
+    const [isTemplate,setIsTemplate] = useState(false);
     const state = location.state;
+    const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+    const [flipbookObj, setFlipbookObj] = useState(null);
 
     useEffect(() => {
         const getFlipbook = async () => {
             try {
                 const response = await GetFlipbookApi(id);
+                setIsTemplate(response.data.flipbookType === flipbookType.TEMPLATE)
                 setFlipbookName(response.data.name);
                 setStageWidth(response.data.width);
                 setStageHeight(response.data.height);
+                setFlipbookObj({
+                    _id: response.data._id || response.data.id,
+                    name: response.data.name,
+                    description: response.data.description || ""
+                });
                 const validPageData = response.data.pages;
                 setMainStage(validPageData.map(e => JSON.parse(e.pageData)));
             } catch (error) {
@@ -313,7 +324,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         </div>
                         <div className="relative lg:flex hidden">
                             <div className="flex items-center gap-2">
-                                <EditFlipbookName isLoading={isLoading} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} updatePageData={updatePageData} />
+                                <EditFlipbookName isLoading={isLoading} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} updatePageData={updatePageData} isTemplate={isTemplate} />
                             </div>
                         </div>
                         <div className="flex gap-2 items-center">
@@ -352,13 +363,25 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
-
-                                <Button className="hidden max-md:block" onClick={() => setIsPublishModalOpen(true)}>
-                                    <Share2 />
-                                </Button>
-                                <Button className="max-md:hidden" onClick={() => setIsPublishModalOpen(true)}>
-                                    Share now
-                                </Button>
+                                {/* Save Template/Share now button logic */}
+                                {isTemplate ? (
+                                    <Button className="hidden max-md:block" onClick={() => setIsRenameModalOpen(true)}>
+                                        Save template
+                                    </Button>
+                                ) : (
+                                    <Button className="hidden max-md:block" onClick={() => setIsPublishModalOpen(true)}>
+                                        <Share2 />
+                                    </Button>
+                                )}
+                                {isTemplate ? (
+                                    <Button className="max-md:hidden" onClick={() => setIsRenameModalOpen(true)}>
+                                        Save template
+                                    </Button>
+                                ) : (
+                                    <Button className="max-md:hidden" onClick={() => setIsPublishModalOpen(true)}>
+                                        Share now
+                                    </Button>
+                                )}
                             </div>
                             <ProfileDropDownCom />
                         </div>
@@ -410,6 +433,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 </>
                 }
             </div>
+            <RenameFlipbookDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} flipbook={flipbookObj} />
         </>
     );
 }

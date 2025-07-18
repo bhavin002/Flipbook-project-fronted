@@ -46,11 +46,13 @@ export default function RenameFlipbookDialog({ isRenameModalOpen, setIsRenameMod
             toast.success("Flipbook renamed", {
                 description: response.message || "Flipbook has been renamed successfully"
             });
-            setFlipbooks(prev => prev.map(f => f._id === response.data._id ? {
-                ...f,
-                name: response.data.name,
-                description: response.data.description
-            } : f));
+            if (setFlipbooks) {
+                setFlipbooks(prev => prev.map(f => f._id === response.data._id ? {
+                    ...f,
+                    name: response.data.name,
+                    description: response.data.description
+                } : f));
+            }
             setIsRenameModalOpen(false);
         } catch (error) {
             toast.error("Failed to rename flipbook", {

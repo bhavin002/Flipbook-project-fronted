@@ -209,18 +209,12 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 <DropdownMenuItem onClick={() => handleItemClick('embed')}>
                     <Code className="mr-2 h-4 w-4" /> Embed
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleItemClick('trackableLinks')}>
-                    <Link2 className="mr-2 h-4 w-4" /> Trackable links
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleItemClick('download')}>
                     <Download className="mr-2 h-4 w-4" /> Download
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleItemClick('stats')}>
                     <ChartPie className="mr-2 h-4 w-4" /> Stats
-                </DropdownMenuItem>
-                <DropdownMenuItem >
-                    <ChartColumnIncreasing className="mr-2 h-4 w-4" /> Analytics
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleItemClick('moveToWorkspace')}>
@@ -265,18 +259,12 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 <DropdownMenuItem onClick={() => handleItemClick('embed')}>
                     <Code className="mr-2 h-4 w-4" /> Embed
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleItemClick('trackableLinks')}>
-                    <Link2 className="mr-2 h-4 w-4" /> Trackable links
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleItemClick('download')}>
                     <Download className="mr-2 h-4 w-4" /> Download
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleItemClick('stats')}>
                     <ChartPie className="mr-2 h-4 w-4" /> Stats
-                </DropdownMenuItem>
-                <DropdownMenuItem >
-                    <ChartColumnIncreasing className="mr-2 h-4 w-4" /> Analytics
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleItemClick('moveToWorkspace')}>
@@ -378,25 +366,25 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
             )
         } else {
             switch (status) {
-                case 'draft':
+                case 'Draft':
                     return (
                         <>
                             {draftItems}
                         </>
                     );
-                case 'published':
+                case 'Published':
                     return (
                         <>
                             {publishedItems}
                         </>
                     );
-                case 'unpublished':
+                case 'Not Published':
                     return (
                         <>
                             {unpublishedItems}
                         </>
                     );
-                case 'template':
+                case 'Template':
                     return (
                         <>
                             {templateItems}

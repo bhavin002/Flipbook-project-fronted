@@ -4,9 +4,15 @@ import { Input } from "@/components/ui/input";
 import { CircleCheckBig, X, Pencil, RefreshCw } from "lucide-react";
 import { UpdateFlipbookApi } from "@/service/flipbook.service";
 import { toast } from "sonner";
+import {
+    TooltipProvider,
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent,
+} from "@/components/ui/tooltip";
 
 export default function EditFlipbookName({
-    flipbookName, setFlipbookName, flipbookId, isLoading, updatePageData
+    flipbookName, setFlipbookName, flipbookId, isLoading, updatePageData, isTemplate
 }) {
     const [isEditing, setIsEditing] = useState(false);
     const [tempName, setTempName] = useState(flipbookName);
@@ -65,7 +71,7 @@ export default function EditFlipbookName({
     };
 
     return (
-        <>
+        <div className="flex items-center gap-2">
             <div
                 className="relative w-56 max-md:w-full"
                 onMouseEnter={() => !isEditing && setIsHovering(true)}
@@ -122,6 +128,27 @@ export default function EditFlipbookName({
             >
                 {renderIcon()}
             </Button>
-        </>
+            {isTemplate && (
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div
+                                className="bg-primary text-white px-4 py-1 rounded-md font-medium text-sm cursor-pointer select-none"
+                                tabIndex={0}
+                            >
+                                Template
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent
+                            side="bottom"
+                            align="center"
+                            className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                        >
+                            <p className="text-sm">You are working on a template. All the edits that you make now will become a part of the template.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            )}
+        </div>
     );
 }
