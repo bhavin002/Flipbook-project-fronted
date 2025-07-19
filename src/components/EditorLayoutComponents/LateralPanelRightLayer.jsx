@@ -241,7 +241,7 @@ export default function LateralPanelRightLayer({ selectedShape, setIsPageShow, s
                         <Button size="sm" variant="ghost" disabled={!selectedShapes.length} onClick={() => { copyInAllPages() }}>
                             <Files className='h-4 w-4' />
                         </Button>
-                        {mainStage[selectedIndex]?.shapes.some(e => !e.draggable) ?
+                        {mainStage[selectedIndex]?.selectedShapes.some(e => !e.attrs.draggable) ?
                             <Button onClick={() => { selectedShapes.length && toggleLock(null, true) }} size="sm" variant="ghost" disabled={!selectedShapes.length}>
                                 <Lock className='h-4 w-4' />
                             </Button> :

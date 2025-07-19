@@ -97,13 +97,14 @@ export default function BottomSidebarNavigation() {
     };
 
     const renderDrawerPanel = () => {
+        const onCloseDrawer = () => setIsDrawerOpen(false);
         switch (selectedItem) {
             case 'home':
-                return <HomeDrawerPanel />;
+                return <HomeDrawerPanel onCloseDrawer={onCloseDrawer} />;
             case 'branding':
-                return <BrandingDrawerPanel />;
+                return <BrandingDrawerPanel onCloseDrawer={onCloseDrawer} />;
             case 'settings':
-                return <SettingsDrawerPanel />;
+                return <SettingsDrawerPanel onCloseDrawer={onCloseDrawer} />;
             default:
                 return null;
         }

@@ -193,10 +193,10 @@ const PageOverviewModal = ({
             <Dialog open={isOpen} onOpenChange={onClose}>
                 <DialogContent
                     className="max-h-[90vh] max-w-[90vw] z-[100] overflow-y-auto bg-transparent shadow-none border-0 text-white"
-                    hideClose={true}
+                    isCustomX={true}
                     container={containerRef.current} // Pass the container ref
                 >
-                    <div className="space-y-6">
+                    <div className="space-y-6  px-4 py-8">
                         <div
                             className={`grid ${pageType === 'double'
                                 ? 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4'

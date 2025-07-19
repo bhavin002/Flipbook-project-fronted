@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const COLORS = ["#8B5CF6", "#C4B5FD", "#F472B6"];
 const DEVICE_LABELS = ["desktop", "mobile", "tablet"];
@@ -11,6 +12,11 @@ export default function DevicePieChart({ deviceCounts = {}, loading }) {
         value: deviceCounts[type] || 0,
     })).filter(d => d.value > 0);
     const total = data.reduce((sum, d) => sum + d.value, 0);
+
+    const isMobile = useIsMobile();
+    const chartHeight = isMobile ? 260 : 300;
+    const innerRadius = isMobile ? 40 : 70;
+    const outerRadius = isMobile ? 65 : 110;
 
     if (loading) {
         return (
@@ -37,7 +43,7 @@ export default function DevicePieChart({ deviceCounts = {}, loading }) {
                     <div className="text-center text-gray-500 w-full h-full flex items-center justify-center mb-4">No device data available.</div>
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center">
-                        <ResponsiveContainer width="100%" height={300}>
+                        <ResponsiveContainer width="100%" height={chartHeight}>
                             <PieChart>
                                 <Pie
                                     data={data}
@@ -45,8 +51,8 @@ export default function DevicePieChart({ deviceCounts = {}, loading }) {
                                     nameKey="name"
                                     cx="50%"
                                     cy="50%"
-                                    innerRadius={70}
-                                    outerRadius={110}
+                                    innerRadius={innerRadius}
+                                    outerRadius={outerRadius}
                                     label={({ name, percent }) => `${name} (${(percent * 100).toFixed(1)}%)`}
                                 >
                                     {data.map((entry, idx) => (

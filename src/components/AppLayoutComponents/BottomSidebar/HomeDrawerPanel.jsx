@@ -12,7 +12,7 @@ import { FolderSkeleton } from "@/utils/Skeleton";
 import { FolderPlus } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function HomeDrawerPanel() {
+export default function HomeDrawerPanel({ onCloseDrawer }) {
   const [isLoading, setIsLoading] = useState(false);
   const [folders, setFolders] = useState([]);
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
@@ -90,6 +90,7 @@ export default function HomeDrawerPanel() {
     } else if (sectionId === "trash") {
       navigate("/myflipbooks/trash");
     }
+    if (onCloseDrawer) onCloseDrawer();
   };
 
   const handleFolderRenamed = (updatedFolder) => {
@@ -247,7 +248,7 @@ export default function HomeDrawerPanel() {
           <div className="space-y-1">
             <MenuButton
               isActive={selectedItem.sectionId === 'trash'}
-              onClick={() => handleItemSelect('trash')}
+              onClick={() => { handleItemSelect('trash'); if (onCloseDrawer) onCloseDrawer(); }}
             >
               <Trash className="h-4 w-4 mr-2" />
               Trash
@@ -256,14 +257,14 @@ export default function HomeDrawerPanel() {
           <div className="space-y-2 mt-2">
             <Button
               className="w-full bg-violet-700"
-              onClick={() => navigate('/settings/teammates')}
+              onClick={() => { navigate('/settings/teammates'); if (onCloseDrawer) onCloseDrawer(); }}
             >
               <Users className="h-4 w-4 mr-2" />
               Invite teammates
             </Button>
             <Button
               className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-600 hover:to-indigo-700"
-              onClick={() => navigate('/settings/billing/subscription')}
+              onClick={() => { navigate('/settings/billing/subscription'); if (onCloseDrawer) onCloseDrawer(); }}
             >
               <Crown className="h-4 w-4 mr-2" />Upgrade
             </Button>

@@ -5,7 +5,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getData } from "@/utils/datas";
 
-export default function SettingsDrawerPanel() {
+export default function SettingsDrawerPanel({ onCloseDrawer }) {
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -69,6 +69,7 @@ export default function SettingsDrawerPanel() {
       }
       
       navigate(selectedItem.path);
+      if (onCloseDrawer) onCloseDrawer();
     }
   };
 
@@ -81,6 +82,7 @@ export default function SettingsDrawerPanel() {
     
     if (selectedSubItem) {
       navigate(selectedSubItem.path);
+      if (onCloseDrawer) onCloseDrawer();
     }
   };
 

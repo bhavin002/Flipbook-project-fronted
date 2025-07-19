@@ -9,7 +9,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getData } from "@/utils/datas";
 
-export default function BrandingDrawerPanel() {
+export default function BrandingDrawerPanel({ onCloseDrawer }) {
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -62,6 +62,7 @@ export default function BrandingDrawerPanel() {
         const firstSubItem = selectedItem.subItems[0];
         setSelectedSubItem(firstSubItem.id);
         navigate(firstSubItem.path);
+        if (onCloseDrawer) onCloseDrawer();
       } else {
         setIsProfileOpen(false);
       }
@@ -74,6 +75,7 @@ export default function BrandingDrawerPanel() {
       }
       
       navigate(selectedItem.path);
+      if (onCloseDrawer) onCloseDrawer();
     }
   };
 
@@ -86,6 +88,7 @@ export default function BrandingDrawerPanel() {
     
     if (selectedSubItem) {
       navigate(selectedSubItem.path);
+      if (onCloseDrawer) onCloseDrawer();
     }
   };
 
