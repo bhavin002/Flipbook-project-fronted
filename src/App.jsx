@@ -127,8 +127,9 @@ export default function App() {
                           <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
                         </PrivateRoute>
                       }>
-                        <Route index element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
-                        <Route path="folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
+                        <Route index element={<Navigate to="flipbooks" replace />} />
+                        <Route path="flipbooks" element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
+                        <Route path="flipbooks/folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
                         <Route path="template" element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
                         <Route path="template/folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
                         <Route path="shared-with-me" element={<SharedWithMe isSidebarOpen={isSidebarOpen} />} />

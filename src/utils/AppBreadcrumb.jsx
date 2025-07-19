@@ -7,6 +7,7 @@ import {
     BreadcrumbList,
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useFolders } from "@/context/FolderContext"; 
 
 const breadcrumbNameConfig = {
     'myflipbooks': 'My Flipbooks',
@@ -23,19 +24,41 @@ const breadcrumbNameConfig = {
 export default function DynamicBreadcrumb() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { folders } = useFolders(); 
     const [breadcrumbs, setBreadcrumbs] = useState([]);
 
     useEffect(() => {
-        const generateBreadcrumbs = () => {
-            const pathSegments = location.pathname.split('/').filter(segment => segment);
-            if (pathSegments.length === 0) {
-                setBreadcrumbs([{ label: 'Home', path: '/myflipbooks' }]);
-                return;
-            }
-
-            const breadcrumbItems = [{ label: 'Home', path: '/myflipbooks' }];
-
-            pathSegments.forEach((segment) => {
+        const pathSegments = location.pathname.split('/').filter(segment => segment);
+        
+        const breadcrumbItems = [
+            { label: 'Home', path: '/' },
+            { label: 'My Flipbooks', path: '/myflipbooks' }
+        ];
+        
+        if (
+            pathSegments[0] === "myflipbooks" &&
+            (pathSegments[1] === "flipbooks" || pathSegments[1] === "template") &&
+            pathSegments[2] === "folder" &&
+            pathSegments[3]
+        ) {
+            
+            breadcrumbItems.push({
+                label: pathSegments[1] === "flipbooks" ? "Flipbooks" : "Template",
+                path: `/myflipbooks/${pathSegments[1]}`
+            });
+            
+            breadcrumbItems.push({
+                label: "Personal",
+                path: "#"
+            });
+            
+            const folder = folders.find(f => f._id === pathSegments[3]);
+            breadcrumbItems.push({
+                label: folder ? folder.name : "Folder",
+                path: location.pathname
+            });
+        } else {
+            pathSegments.slice(1).forEach((segment) => {
                 const displayName = breadcrumbNameConfig[segment] ||
                     segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ');
 
@@ -44,12 +67,10 @@ export default function DynamicBreadcrumb() {
                     path: '#'
                 });
             });
+        }
 
-            setBreadcrumbs(breadcrumbItems);
-        };
-
-        generateBreadcrumbs();
-    }, [location]);
+        setBreadcrumbs(breadcrumbItems);
+    }, [location, folders]);
 
     const handleHomeClick = (e) => {
         e.preventDefault();
