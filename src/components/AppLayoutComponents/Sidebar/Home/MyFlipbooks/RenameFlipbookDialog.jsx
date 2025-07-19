@@ -14,11 +14,15 @@ import { useEffect, useState } from "react";
 import LoadingButton from "@/utils/LoadingButton";
 import { toast } from "sonner";
 import { UpdateFlipbookApi } from "@/service/flipbook.service";
+import { flipbookType } from "@/utils/enum";
+import { useNavigate } from "react-router-dom";
 
-export default function RenameFlipbookDialog({ isRenameModalOpen, setIsRenameModalOpen, flipbook, setFlipbooks }) {
+export default function RenameFlipbookDialog({ isRenameModalOpen, setIsRenameModalOpen, flipbook, setFlipbooks, redirectToTemplate = false }) {
+
     const [flipbookName, setFlipbookName] = useState("");
     const [flipbookDescription, setFlipbookDescription] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isRenameModalOpen && flipbook) {
@@ -43,15 +47,20 @@ export default function RenameFlipbookDialog({ isRenameModalOpen, setIsRenameMod
                 name: flipbookName,
                 description: flipbookDescription
             });
-            toast.success("Flipbook renamed", {
+            toast.success("Renamed Successfully", {
                 description: response.message || "Flipbook has been renamed successfully"
             });
-            setFlipbooks(prev => prev.map(f => f._id === response.data._id ? {
-                ...f,
-                name: response.data.name,
-                description: response.data.description
-            } : f));
+            if (setFlipbooks) {
+                setFlipbooks(prev => prev.map(f => f._id === response.data._id ? {
+                    ...f,
+                    name: response.data.name,
+                    description: response.data.description
+                } : f));
+            }
             setIsRenameModalOpen(false);
+            if(redirectToTemplate){
+                navigate("/myflipbooks/template")
+            }
         } catch (error) {
             toast.error("Failed to rename flipbook", {
                 description: error.message || "Something went wrong"
@@ -69,7 +78,7 @@ export default function RenameFlipbookDialog({ isRenameModalOpen, setIsRenameMod
         <Dialog open={isRenameModalOpen} onOpenChange={setIsRenameModalOpen}>
             <DialogContent className="sm:max-w-[540px] w-[90vw]">
                 <DialogHeader>
-                    <DialogTitle>RENAME FLIPBOOK</DialogTitle>
+                    <DialogTitle>{flipbook?.flipbookType === flipbookType.FLIPBOOK ? "RENAME FLIPBOOK" : "RENAME TEMPLATE"} </DialogTitle>
                     <DialogDescription>
                         Change the name and description of your flipbook
                     </DialogDescription>

@@ -14,11 +14,13 @@ import { useEffect, useState } from "react";
 import LoadingButton from "@/utils/LoadingButton";
 import { SaveFlipbookAsTemplateApi } from "@/service/flipbook.service";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export default function SaveAsTemplateDialog({ isSaveAsTemplateModalOpen, setIsSaveAsTemplateModalOpen, flipbook }) {
     const [newFlipbookName, setNewFlipbookName] = useState(flipbook?.name || "");
     const [newFlipbookDescription, setNewFlipbookDescription] = useState(flipbook?.description || "");
     const [isLoading, setIsLoading] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isSaveAsTemplateModalOpen && flipbook) {
@@ -44,6 +46,7 @@ export default function SaveAsTemplateDialog({ isSaveAsTemplateModalOpen, setIsS
                 description: response.message
             })
             setIsSaveAsTemplateModalOpen(false);
+            navigate("/myflipbooks/template")
         } catch (error) {
             toast.error("Failed to save flipbook as template", {
                 description: error.message || "Something went wrong",

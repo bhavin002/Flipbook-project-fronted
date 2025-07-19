@@ -70,12 +70,13 @@ export default function HomeSidebarPanel() {
         const path = location.pathname;
 
         // Extract folder ID if present in the path
-        const folderIdMatch = path.match(/\/folder\/([^/]+)/);
-        const folderId = folderIdMatch ? folderIdMatch[1] : null;
+        const flipbooksFolderMatch = path.match(/\/myflipbooks\/flipbooks\/folder\/([^/]+)/);
+        const templateFolderMatch = path.match(/\/myflipbooks\/template\/folder\/([^/]+)/);
+        const folderId = flipbooksFolderMatch ? flipbooksFolderMatch[1] : (templateFolderMatch ? templateFolderMatch[1] : null);
 
         if (path.includes('/myflipbooks/template/folder/')) {
             return { sectionId: "template-team", folderId };
-        } else if (path.includes('/myflipbooks/folder/')) {
+        } else if (path.includes('/myflipbooks/flipbooks/folder/')) {
             return { sectionId: "flipbooks-team", folderId };
         } else if (path.includes('/myflipbooks/template')) {
             return { sectionId: "template-team", folderId: null };
@@ -83,7 +84,7 @@ export default function HomeSidebarPanel() {
             return { sectionId: "share-with-me", folderId: null };
         } else if (path.includes('/myflipbooks/trash')) {
             return { sectionId: "trash", folderId: null };
-        } else if (path.includes('/myflipbooks')) {
+        } else if (path.includes('/myflipbooks/flipbooks')) {
             return { sectionId: "flipbooks-team", folderId: null };
         }
 
@@ -105,10 +106,10 @@ export default function HomeSidebarPanel() {
             if (sectionId === "template-team") {
                 navigate(`/myflipbooks/template/folder/${folderId}`);
             } else {
-                navigate(`/myflipbooks/folder/${folderId}`);
+                navigate(`/myflipbooks/flipbooks/folder/${folderId}`);
             }
         } else if (sectionId === "flipbooks-team") {
-            navigate("/myflipbooks");
+            navigate("/myflipbooks/flipbooks");
         } else if (sectionId === "template-team") {
             navigate("/myflipbooks/template");
         } else if (sectionId === "share-with-me") {
@@ -137,7 +138,7 @@ export default function HomeSidebarPanel() {
             if (selectedItem.sectionId === "template-team") {
                 navigate("/myflipbooks/template");
             } else {
-                navigate("/myflipbooks");
+                navigate("/myflipbooks/flipbooks");
             }
         }
     };

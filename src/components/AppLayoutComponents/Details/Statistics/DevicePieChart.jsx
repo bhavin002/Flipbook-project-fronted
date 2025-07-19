@@ -34,7 +34,7 @@ export default function DevicePieChart({ deviceCounts = {}, loading }) {
             </CardHeader>
             <CardContent className="flex-1 flex flex-col justify-center items-center p-0">
                 {data.length === 0 ? (
-                    <div className="text-center text-gray-500 w-full h-full flex items-center justify-center">No device data available.</div>
+                    <div className="text-center text-gray-500 w-full h-full flex items-center justify-center mb-4">No device data available.</div>
                 ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center">
                         <ResponsiveContainer width="100%" height={300}>

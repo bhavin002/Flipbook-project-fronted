@@ -49,7 +49,7 @@ export default function HomeDrawerPanel() {
     
     if (path.includes('/myflipbooks/template/folder/')) {
       return { sectionId: "template-team", folderId };
-    } else if (path.includes('/myflipbooks/folder/')) {
+    } else if (path.includes('/myflipbooks/flipbooks/folder/')) {
       return { sectionId: "flipbooks-team", folderId };
     } else if (path.includes('/myflipbooks/template')) {
       return { sectionId: "template-team", folderId: null };
@@ -79,7 +79,7 @@ export default function HomeDrawerPanel() {
       if (sectionId === "template-team") {
         navigate(`/myflipbooks/template/folder/${folderId}`);
       } else {
-        navigate(`/myflipbooks/folder/${folderId}`);
+        navigate(`/myflipbooks/flipbooks/folder/${folderId}`);
       }
     } else if (sectionId === "flipbooks-team") {
       navigate("/myflipbooks");

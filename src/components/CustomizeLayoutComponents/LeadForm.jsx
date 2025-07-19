@@ -88,28 +88,30 @@ export default function LeadForm() {
 
     useEffect(() => {
         const dataToUse = isFirstLoad ? latestSettings : settings;
-        
-        if (dataToUse && dataToUse.leadForm) {
+
+        if (dataToUse) {
             setIsLeadFormActivated(dataToUse.isLeadForm || false);
-            setLeadFormState({
-                title: dataToUse.leadForm.title || "",
-                submitButtonText: dataToUse.leadForm.submitButtonText || "Submit",
-                setOnPage: dataToUse.leadForm.setOnPage || 1,
-                companyName: dataToUse.leadForm.companyName || "",
-                privacyPolicyLink: dataToUse.leadForm.privacyPolicyLink || "",
-                gdprMessage: dataToUse.leadForm.gdprMessage || "",
-                skipButtonText: dataToUse.leadForm.skipButtonText || "",
-                addPrivacyPolicy: dataToUse.leadForm.addPrivacyPolicy || false,
-                gdprCompliancyCheck: dataToUse.leadForm.gdprCompliancyCheck || false,
-                allowSkip: dataToUse.leadForm.allowSkip || false,
-                fields: dataToUse.leadForm.fields.map((field) => ({
-                    id: field._id || `field-${Date.now()}`,
-                    name: field.label,
-                    type: field.type,
-                    required: !!field.required,
-                    options: field.options || [],
-                })),
-            });
+            if (dataToUse.leadForm) {
+                setLeadFormState({
+                    title: dataToUse.leadForm.title || "",
+                    submitButtonText: dataToUse.leadForm.submitButtonText || "Submit",
+                    setOnPage: dataToUse.leadForm.setOnPage || 1,
+                    companyName: dataToUse.leadForm.companyName || "",
+                    privacyPolicyLink: dataToUse.leadForm.privacyPolicyLink || "",
+                    gdprMessage: dataToUse.leadForm.gdprMessage || "",
+                    skipButtonText: dataToUse.leadForm.skipButtonText || "",
+                    addPrivacyPolicy: dataToUse.leadForm.addPrivacyPolicy || false,
+                    gdprCompliancyCheck: dataToUse.leadForm.gdprCompliancyCheck || false,
+                    allowSkip: dataToUse.leadForm.allowSkip || false,
+                    fields: dataToUse.leadForm.fields.map((field) => ({
+                        id: field._id || `field-${Date.now()}`,
+                        name: field.label,
+                        type: field.type,
+                        required: !!field.required,
+                        options: field.options || [],
+                    })),
+                });
+            }
 
             if (isFirstLoad) {
                 setIsFirstLoad(false);
