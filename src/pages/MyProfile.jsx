@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
 import { Loader } from "@/components/ui/loader";
+import bookLogo from '@/assets/book_thumbnail.jpg';
 
 export default function MyProfile() {
     const [data, setData] = useState(null);
@@ -45,68 +46,68 @@ export default function MyProfile() {
     if (data.isProfilePrivate) {
         return (
             <div className="flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 relative overflow-hidden py-4 h-[100vh]">
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-100 rounded-full opacity-20 animate-pulse"></div>
-                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-100 rounded-full opacity-20 animate-pulse"></div>
-            </div>
+                <div className="absolute inset-0 overflow-hidden">
+                    <div className="absolute -top-40 -right-40 w-96 h-96 bg-purple-100 rounded-full opacity-20 animate-pulse"></div>
+                    <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-100 rounded-full opacity-20 animate-pulse"></div>
+                </div>
 
-            <div className="relative z-10 max-w-md w-full mx-4 animate-fade-in">
-                <div className="flex justify-center mb-8">
-                    <div className="relative p-8 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 shadow-2xl transform hover:scale-110 transition-all duration-700">
-                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 opacity-50 blur-xl animate-pulse"></div>
-                        <Lock className="w-12 h-12 text-white relative z-10 animate-bounce" />
-                        <Shield className="absolute -top-2 -right-2 w-6 h-6 text-purple-300 animate-ping" />
-                        <Eye className="absolute -bottom-1 -left-2 w-5 h-5 text-purple-300 animate-pulse" />
-                        <EyeOff className="absolute top-0 left-0 w-4 h-4 text-purple-300 animate-ping" />
+                <div className="relative z-10 max-w-md w-full mx-4 animate-fade-in">
+                    <div className="flex justify-center mb-8">
+                        <div className="relative p-8 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 shadow-2xl transform hover:scale-110 transition-all duration-700">
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 opacity-50 blur-xl animate-pulse"></div>
+                            <Lock className="w-12 h-12 text-white relative z-10 animate-bounce" />
+                            <Shield className="absolute -top-2 -right-2 w-6 h-6 text-purple-300 animate-ping" />
+                            <Eye className="absolute -bottom-1 -left-2 w-5 h-5 text-purple-300 animate-pulse" />
+                            <EyeOff className="absolute top-0 left-0 w-4 h-4 text-purple-300 animate-ping" />
+                        </div>
+                    </div>
+
+                    <div className="text-center space-y-6 px-6">
+                        <div className="space-y-3">
+                            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent">
+                                Private Profile
+                            </h1>
+                            <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-purple-500 mx-auto rounded-full"></div>
+                        </div>
+
+                        <p className="text-xl text-gray-700 font-medium">
+                            Access Restricted
+                        </p>
+
+                        <p className="text-gray-500 leading-relaxed">
+                            This publisher's profile is set to private. You don't have permission to view the content at this time.
+                        </p>
+
+                        <div className="flex justify-center space-x-8 pt-6">
+                            <div className="flex flex-col items-center space-y-2 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                                <div className="p-3 bg-gray-100 rounded-full hover:bg-purple-100 transition-colors duration-300">
+                                    <Shield className="w-5 h-5 text-gray-600 hover:text-purple-600 transition-colors duration-300" />
+                                </div>
+                                <span className="text-xs text-gray-500 font-medium">Protected</span>
+                            </div>
+
+                            <div className="flex flex-col items-center space-y-2 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                                <div className="p-3 bg-gray-100 rounded-full hover:bg-purple-100 transition-colors duration-300">
+                                    <Lock className="w-5 h-5 text-gray-600 hover:text-purple-600 transition-colors duration-300" />
+                                </div>
+                                <span className="text-xs text-gray-500 font-medium">Secure</span>
+                            </div>
+
+                            <div className="flex flex-col items-center space-y-2 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                                <div className="p-3 bg-gray-100 rounded-full hover:bg-purple-100 transition-colors duration-300">
+                                    <EyeOff className="w-5 h-5 text-gray-600 hover:text-purple-600 transition-colors duration-300" />
+                                </div>
+                                <span className="text-xs text-gray-500 font-medium">Private</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="text-center space-y-6 px-6">
-                    <div className="space-y-3">
-                        <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-purple-500 bg-clip-text text-transparent">
-                            Private Profile
-                        </h1>
-                        <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-purple-500 mx-auto rounded-full"></div>
-                    </div>
-                    
-                    <p className="text-xl text-gray-700 font-medium">
-                        Access Restricted
-                    </p>
-                    
-                    <p className="text-gray-500 leading-relaxed">
-                        This publisher's profile is set to private. You don't have permission to view the content at this time.
-                    </p>
-
-                    <div className="flex justify-center space-x-8 pt-6">
-                        <div className="flex flex-col items-center space-y-2 opacity-60 hover:opacity-100 transition-opacity duration-300">
-                            <div className="p-3 bg-gray-100 rounded-full hover:bg-purple-100 transition-colors duration-300">
-                                <Shield className="w-5 h-5 text-gray-600 hover:text-purple-600 transition-colors duration-300" />
-                            </div>
-                            <span className="text-xs text-gray-500 font-medium">Protected</span>
-                        </div>
-                        
-                        <div className="flex flex-col items-center space-y-2 opacity-60 hover:opacity-100 transition-opacity duration-300">
-                            <div className="p-3 bg-gray-100 rounded-full hover:bg-purple-100 transition-colors duration-300">
-                                <Lock className="w-5 h-5 text-gray-600 hover:text-purple-600 transition-colors duration-300" />
-                            </div>
-                            <span className="text-xs text-gray-500 font-medium">Secure</span>
-                        </div>
-                        
-                        <div className="flex flex-col items-center space-y-2 opacity-60 hover:opacity-100 transition-opacity duration-300">
-                            <div className="p-3 bg-gray-100 rounded-full hover:bg-purple-100 transition-colors duration-300">
-                                <EyeOff className="w-5 h-5 text-gray-600 hover:text-purple-600 transition-colors duration-300" />
-                            </div>
-                            <span className="text-xs text-gray-500 font-medium">Private</span>
-                        </div>
-                    </div>
-                </div>
+                <div className="absolute top-10 left-10 w-8 h-8 bg-purple-200 rounded-full opacity-30 animate-ping"></div>
+                <div className="absolute bottom-10 right-10 w-6 h-6 bg-purple-200 rounded-full opacity-30 animate-ping"></div>
+                <div className="absolute top-1/3 right-20 w-4 h-4 bg-purple-300 rounded-full opacity-40 animate-bounce"></div>
+                <div className="absolute bottom-1/3 left-20 w-5 h-5 bg-purple-300 rounded-full opacity-40 animate-bounce"></div>
             </div>
-
-            <div className="absolute top-10 left-10 w-8 h-8 bg-purple-200 rounded-full opacity-30 animate-ping"></div>
-            <div className="absolute bottom-10 right-10 w-6 h-6 bg-purple-200 rounded-full opacity-30 animate-ping"></div>
-            <div className="absolute top-1/3 right-20 w-4 h-4 bg-purple-300 rounded-full opacity-40 animate-bounce"></div>
-            <div className="absolute bottom-1/3 left-20 w-5 h-5 bg-purple-300 rounded-full opacity-40 animate-bounce"></div>
-        </div>
         );
     }
 
@@ -219,20 +220,34 @@ export default function MyProfile() {
                                     onMouseEnter={() => setHoveredId(fb._id)}
                                     onMouseLeave={() => setHoveredId(null)}
                                 >
-                                    <div className="flex-grow flex items-end justify-center">
+                                    <a
+                                        href={`/public-flipbook/${fb._id}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex-grow flex items-end justify-center"
+                                        style={{ textDecoration: 'none' }}
+                                    >
                                         <img
-                                            src={fb.thumbnail}
+                                            src={fb.thumbnail ? fb.thumbnail : bookLogo}
                                             alt={fb.name}
                                             className="rounded-md max-h-56 shadow-md hover:shadow-xl transition duration-200 hover:opacity-80 cursor-pointer"
                                         />
-                                    </div>
+                                    </a>
                                     <div className="space-y-2">
-                                        <p
-                                            className="font-semibold"
-                                            style={hoveredId === fb._id ? { color: data.elementColor } : {}}
+                                        <a
+                                            href={`/public-flipbook/${fb._id}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ textDecoration: 'none' }}
                                         >
-                                            {fb.name}
-                                        </p>
+                                            <p
+                                                className="font-semibold truncate"
+                                                title={fb.name}
+                                                style={hoveredId === fb._id ? { color: data.elementColor } : {}}
+                                            >
+                                                {fb.name}
+                                            </p>
+                                        </a>
                                         {fb.isPublishDtVisible && (
                                             <p className="text-xs text-[#2d516e] font-bold">
                                                 Published on {format(new Date(fb.publishedOn), "MMM dd, yyyy")}

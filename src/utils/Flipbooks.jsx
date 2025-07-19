@@ -1,7 +1,6 @@
 import MyFlipbookDropdown from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/MyFlipbookDropdown'
 import ShareFlipbookDialog from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/ShareFlipbookDialog'
 import { useEffect, useState } from 'react';
-import PublishFlipbookDialog from '../components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog'
 import { getData } from '@/utils/datas';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';

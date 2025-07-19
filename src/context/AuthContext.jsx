@@ -57,14 +57,6 @@ export function AuthProvider({ children }) {
         const isValid = await isTokenVerified(data.token);
         if (isValid) {
             setIsAuthenticated(true);
-
-            const readerToken = localStorage.getItem('fn_invite_token');
-            if (readerToken) {
-                localStorage.removeItem('fn_invite_token');
-                navigate(`/accept-invitation/${readerToken}`);
-                return true;
-            }
-
             return true;
         } else {
             localStorage.removeItem('fn_access_token');

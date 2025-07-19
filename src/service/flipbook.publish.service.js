@@ -75,3 +75,8 @@ export const GetFlipbookThumbnailsApi = async (id) => {
     const response = await ApiClient().get(`/flipbook-publish/get-thumbnails/${id}`);
     return response.data;
 }
+
+export const CancelDraftFlipbookApi = async (flipbookId) => {
+    const response = await ApiClient().delete(`/flipbook-publish/cancel-draft-flipbook/${flipbookId}`);
+    return response.data;
+}

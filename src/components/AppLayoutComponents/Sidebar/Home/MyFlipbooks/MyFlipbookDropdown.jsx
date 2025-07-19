@@ -14,11 +14,11 @@ import ShareFlipbookDialog from "./ShareFlipbookDialog";
 import DownloadDialog from "./DownloadDialog";
 import MoveToWorkspaceDialog from "./MoveToWorkspaceDialog";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
-import PublishFlipbookDialog from "./PublishFlipbookDialog";
 import { useNavigate } from "react-router-dom";
 import { MakeCopyOfFlipbookApi, MoveToTrashFlipbookApi, DeleteFlipbookApi, RecoverFlipbookApi } from "@/service/flipbook.service";
 import { toast } from "sonner";
 import { flipbookType } from "@/utils/enum";
+import { CancelDraftFlipbookApi } from "@/service/flipbook.publish.service";
 
 export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isTrash }) {
     const [isSaveAsTemplateModalOpen, setIsSaveAsTemplateModalOpen] = useState(false);
@@ -32,6 +32,8 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
     const [isLoading, setIsLoading] = useState(false);
     const [isCopying, setIsCopying] = useState(false);
     const [isRecovering, setIsRecovering] = useState(false);
+    const [isCancelDraftModalOpen, setIsCancelDraftModalOpen] = useState(false);
+    const [isCancelDraftLoading, setIsCancelDraftLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleDropdownOpenChange = (open) => {
@@ -126,6 +128,9 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
         } else if (action === "deleteForever") {
             setIsDeleteForeverModalOpen(true);
             closeDropdown();
+        } else if (action === "cancelDraft") {
+            setIsCancelDraftModalOpen(true);
+            closeDropdown();
         } else {
             console.error("Invalid action:", action);
         }
@@ -176,6 +181,34 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
             }
         } else {
             setIsDeleteForeverModalOpen(false);
+        }
+    };
+
+    const handleCancelDraftConfirmation = async (confirmed) => {
+        if (confirmed) {
+            setIsCancelDraftLoading(true);
+            try {
+                const response = await CancelDraftFlipbookApi(flipbook._id);
+                toast.success("Draft discarded", {
+                    description: response.message || "The draft was successfully discarded"
+                });
+                setFlipbooks(prev =>
+                    prev.map(item =>
+                        item._id === flipbook._id
+                            ? { ...item, status: "Published" }
+                            : item
+                    )
+                );
+                setIsCancelDraftModalOpen(false);
+            } catch (error) {
+                toast.error("Failed to discard draft", {
+                    description: error.message || "Something went wrong",
+                });
+            } finally {
+                setIsCancelDraftLoading(false);
+            }
+        } else {
+            setIsCancelDraftModalOpen(false);
         }
     };
 
@@ -232,7 +265,12 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => {
+                        setIsCancelDraftModalOpen(true);
+                        closeDropdown();
+                    }}
+                >
                     <PencilOff className="mr-2 h-4 w-4" /> Cancel draft
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -432,6 +470,15 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 isLoading={isLoading}
                 onConfirm={() => handleDeleteForeverConfirmation(true)}
                 onCancel={() => handleDeleteForeverConfirmation(false)}
+            />
+            <ConfirmationDialog
+                isConfirmModalOpen={isCancelDraftModalOpen}
+                setIsConfirmModalOpen={setIsCancelDraftModalOpen}
+                title="Discard draft"
+                description="You are about to discard this collection's draft. All changes saved in the draft will be lost. Are you sure you want to proceed?"
+                isLoading={isCancelDraftLoading}
+                onConfirm={() => handleCancelDraftConfirmation(true)}
+                onCancel={() => handleCancelDraftConfirmation(false)}
             />
         </>
     );

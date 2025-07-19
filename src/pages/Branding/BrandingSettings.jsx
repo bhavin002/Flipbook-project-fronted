@@ -19,7 +19,7 @@ export default function BrandingSettings() {
     const fetchWorkspaceInfo = async () => {
       try {
         const response = await GetWorkspaceInfoApi();
-        setIsProfilePrivate(response.isProfilePrivate || false);
+        setIsProfilePrivate(response.data.isProfilePrivate || false);
       } catch (error) {
         console.error("Failed to fetch workspace info:", error);
         toast.error("Failed to load workspace settings", {

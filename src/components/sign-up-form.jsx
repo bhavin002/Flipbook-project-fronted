@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label"
 import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useEffect } from "react"
 
 import * as z from "zod"
 import { toast } from "sonner"
@@ -33,21 +34,29 @@ const signUpSchema = z.object({
     .min(8, "Password must be at least 8 characters long")
 });
 
-export function SignUpForm({ className, ...props }) {
+export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emailReadOnly = false, setEmailReadOnly, teammateToken = null, setTeammateToken, ...props }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
+    setValue,
+    reset,
     formState: { errors }
   } = useForm({
-    resolver: zodResolver(signUpSchema)
+    resolver: zodResolver(signUpSchema),
+    defaultValues: { email: defaultEmail }
   });
+
+  useEffect(() => {
+    if (defaultEmail) setValue("email", defaultEmail);
+  }, [defaultEmail, setValue]);
 
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const response = await SignUpApi(data);
+      const payload = teammateToken ? { ...data, teammateToken } : data;
+      const response = await SignUpApi(payload);
       localStorage.setItem("fn_confirm_token", response.data.token);
       navigate("/account/confirm-account");
     } catch (error) {
@@ -56,6 +65,10 @@ export function SignUpForm({ className, ...props }) {
       });
     } finally {
       setIsLoading(false);
+      reset();
+      if (setDefaultEmail) setDefaultEmail("");
+      if (setEmailReadOnly) setEmailReadOnly(false);
+      if (setTeammateToken) setTeammateToken(null);
     }
   };
 
@@ -115,6 +128,9 @@ export function SignUpForm({ className, ...props }) {
                   placeholder="m@example.com"
                   className={`${errors.email ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}`}
                   {...register("email")}
+                  value={defaultEmail || undefined}
+                  readOnly={emailReadOnly}
+                  disabled={emailReadOnly}
                 />
                 {errors.email && (
                   <span className="text-red-500 text-xs font-medium">{errors.email.message}</span>

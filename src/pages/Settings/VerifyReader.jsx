@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { VerifyReaderTokenApi } from "@/service/helper.service";
+import { CheckStatusApi } from "@/service/helper.service";
+import { tokenStatus } from "@/utils/enum";
 
 export default function VerifyReader() {
     const navigate = useNavigate();
@@ -11,41 +13,47 @@ export default function VerifyReader() {
     const [isVerified, setIsVerified] = useState(false);
     const [error, setError] = useState(null);
     const [isProcessing, setIsProcessing] = useState(true);
+    const [alreadyRegistered, setAlreadyRegistered] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const { isAuthenticated, isLoading } = useAuth();
 
     useEffect(() => {
-        const verifyToken = async () => {
+        const handleInvitation = async () => {
+            if (!token) {
+                navigate("/auth/sign-in");
+                return;
+            }
+            setIsProcessing(true);
             try {
-                if (!token) {
-                    navigate("/auth/sign-in");
-                    return;
+                const statusRes = await CheckStatusApi(token);
+                const code = statusRes?.data?.code;
+                const email = statusRes?.data?.email;
+                switch (code) {
+                    case tokenStatus.READY_TO_ACCEPT:
+                        await VerifyReaderTokenApi(token);
+                        setIsVerified(true);
+                        break;
+                    case tokenStatus.NEED_TO_REGISTER:
+                        navigate("/auth/sign-up", { state: { email, emailReadOnly: true, teammateToken: token } });
+                        break;
+                    case tokenStatus.ALREADY_REGISTERED:
+                        setAlreadyRegistered(true);
+                        break;
+                    case tokenStatus.ERROR:
+                    default:
+                        setError("general");
+                        setErrorMessage(statusRes?.message || "Invalid or expired invitation link.");
+                        break;
                 }
-
-                if (!isLoading && isAuthenticated) {
-                    setIsProcessing(true);
-                    await VerifyReaderTokenApi(token);
-                    setIsVerified(true);
-                    setIsProcessing(false);
-                    localStorage.removeItem("fn_invite_token");
-                } else if (!isLoading && !isAuthenticated) {
-                    setIsVerified(false);
-                    setError("authentication");
-                    setIsProcessing(false);
-                }
-            } catch (error) {
-                setIsVerified(false);
+            } catch (err) {
+                setError("general");
+                setErrorMessage(err?.message || "Something went wrong.");
+            } finally {
                 setIsProcessing(false);
-
-                if (error.status === 401) {
-                    setError("authentication");
-                } else {
-                    setError("general");
-                }
             }
         };
-
         if (!isLoading && token) {
-            verifyToken();
+            handleInvitation();
         }
     }, [token, navigate, isAuthenticated, isLoading]);
 
@@ -56,7 +64,6 @@ export default function VerifyReader() {
         navigate("/auth/sign-in");
     };
 
-    // Show loading while auth state is being determined
     if (isLoading || isProcessing) {
         return (
             <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
@@ -88,45 +95,30 @@ export default function VerifyReader() {
                             </div>
                             {isVerified ? (
                                 <CardTitle>Invitation Accepted Successfully!</CardTitle>
+                            ) : alreadyRegistered ? (
+                                <CardTitle>Invitation Already Accepted</CardTitle>
                             ) : (
                                 <CardTitle>
                                     {error === "authentication" ? "Authentication Required" : "Verification Failed"}
                                 </CardTitle>
                             )}
-
                             <CardDescription>
                                 {isVerified ? (
                                     "Your invitation has been accepted successfully. You now have access to the flipbooks."
+                                ) : alreadyRegistered ? (
+                                    "You have already accepted this invitation. Please sign in to continue."
                                 ) : error === "authentication" ? (
                                     "You need to sign in or create an account with Flipnova to accept this invitation."
                                 ) : (
-                                    "We couldn't verify your invitation. The link may have expired or is invalid."
+                                    errorMessage || "We couldn't verify your invitation. The link may have expired or is invalid."
                                 )}
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
                             <div className="grid gap-6">
-                                {isVerified ? (
-                                    <button
-                                        onClick={() => navigate("/myflipbooks")}
-                                        className="bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md font-medium"
-                                    >
-                                        Go to My Flipbooks
-                                    </button>
-                                ) : <div className="text-center text-sm">
-                                    {error === "authentication" ? (
+                                <div className="text-center text-sm">
+                                    {(alreadyRegistered || isVerified || error === "authentication" || error === "general") && (
                                         <>
-                                            After signing in, you'll be able to accept this invitation.
-                                            <a
-                                                onClick={handleSignIn}
-                                                className="text-primary cursor-pointer ml-1 font-medium"
-                                            >
-                                                Return to sign in
-                                            </a>
-                                        </>
-                                    ) : (
-                                        <>
-                                            Having trouble?
                                             <a
                                                 onClick={handleSignIn}
                                                 className="text-primary cursor-pointer ml-1 font-medium"
@@ -135,7 +127,7 @@ export default function VerifyReader() {
                                             </a>
                                         </>
                                     )}
-                                </div>}
+                                </div>
                             </div>
                         </CardContent>
                     </Card>

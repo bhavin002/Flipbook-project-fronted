@@ -119,3 +119,10 @@ export const DeviceType = {
     "TABLET": 2,
     "DESKTOP": 3
 }
+
+export const tokenStatus = {
+    READY_TO_ACCEPT: 0,
+    NEED_TO_REGISTER: 1,
+    ALREADY_REGISTERED: 2,
+    ERROR: 3
+}
