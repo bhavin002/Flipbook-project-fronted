@@ -112,7 +112,7 @@ export default function Preview() {
                                 className="h-4 w-auto shrink-0"
                                 alt="Logo"
                             />
-                            <span className="text-gray-500 truncate overflow-hidden whitespace-nowrap">
+                            <span className="text-gray-500 max-md:max-w-[235px] truncate overflow-hidden whitespace-nowrap">
                                 {import.meta.env.VITE_APP_URL + `/profile/${myWorkspaceId}`}
                             </span>
                         </div>

@@ -1,13 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Plus } from 'lucide-react';
+import { ChevronRight, Plus } from 'lucide-react';
 import { Upload } from 'lucide-react';
 import { Brush } from 'lucide-react';
 import { ShoppingCart } from 'lucide-react';
 import { LayoutPanelLeft } from 'lucide-react';
 import { LibraryBig } from 'lucide-react';
-import { Folder } from 'lucide-react';
-import { Archive } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -73,30 +71,29 @@ export default function CreateDropDownCom() {
             <DropdownMenuContent className="w-56">
                 <DropdownMenuGroup>
                     <DropdownMenuItem onClick={handleUploadPdfClick}>
-                        <Upload />  Upload PDF
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleItemClick("from-scratch")}>
-                        <Brush /> From scratch
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        <ShoppingCart /> Product catalog
+                        <div className="flex justify-between items-center w-full">
+                            <div className="flex gap-2 items-center">
+                                <Upload className="h-4 w-4" />  Upload PDF
+                            </div>
+                            <ChevronRight className="h-4 w-4" />
+                        </div>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem onClick={() => handleItemClick("template")}> 
+                    <DropdownMenuItem onClick={() => handleItemClick("from-scratch")}>
+                        <Brush /> From scratch
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleItemClick("template")}>
                         <LayoutPanelLeft />  Template
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        <LibraryBig /> Bookshelf
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                        <Folder /> Folder
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
-                    <Archive /> Bulk upload
+                    <ShoppingCart /> Product catalog
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                    <LibraryBig /> Bookshelf
                 </DropdownMenuItem>
             </DropdownMenuContent>
             <input

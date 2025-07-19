@@ -39,7 +39,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isCustomizeLoading, setIsCustomizeLoading] = useState(false);
     const location = useLocation();
     const [publishing, setPublishing] = useState(false);
-    const [isTemplate,setIsTemplate] = useState(false);
+    const [isTemplate, setIsTemplate] = useState(false);
     const state = location.state;
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
     const [flipbookObj, setFlipbookObj] = useState(null);
@@ -55,7 +55,8 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 setFlipbookObj({
                     _id: response.data._id || response.data.id,
                     name: response.data.name,
-                    description: response.data.description || ""
+                    description: response.data.description || "",
+                    flipbookType: response.data.flipbookType
                 });
                 const validPageData = response.data.pages;
                 setMainStage(validPageData.map(e => JSON.parse(e.pageData)));
@@ -433,7 +434,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 </>
                 }
             </div>
-            <RenameFlipbookDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} flipbook={flipbookObj} />
+            <RenameFlipbookDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} flipbook={flipbookObj} redirectToTemplate={true} />
         </>
     );
 }
