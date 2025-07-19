@@ -321,6 +321,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                         const { scale } = e.state;
                         setZoomLevel(scale);
                     }}
+                    disablePadding={true}
                     disabled={zoomLevel == 1 && isMouseDown}
                     doubleClick={{ mode: "reset" }}
                     wheel={{ smoothStep: 0.01, wheelDisabled: true }} // Enable wheel/touchpad zooming with smooth increments
@@ -422,9 +423,10 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                                 </svg>
                             </button>
                         )}
+                        {/* && currentPage < (totalPages % 2 === 0 ? totalPages - 1 : totalPages - 1) */}
                         {/* Fix: Only show Next arrow if not on last spread in double page mode */}
                         {((pageType !== "double" && currentPage < totalPages) ||
-                            (pageType === "double" && currentPage < (totalPages % 2 === 0 ? totalPages - 1 : totalPages - 1))) && (
+                            (pageType === "double" && currentPage < (totalPages % 2 == 0 ? totalPages : totalPages-1))) && (
                                 <button
                                     onClick={handleNextPage}
                                     className="absolute flex hover:bg-[#ffffff40] rounded-full p-2 items-center right-5 transition-all duration-300 ease-in-out"
