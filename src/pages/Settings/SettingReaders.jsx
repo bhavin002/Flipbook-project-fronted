@@ -16,10 +16,9 @@ import { Input } from '@/components/ui/input';
 import ReadersTable from "../../components/AppLayoutComponents/Sidebar/Setting/Readers/ReadersTable"
 import TablePagination from "@/utils/TablePagination";
 import { Label } from "@/components/ui/label";
-import { GetWorkspaceReadersApi, ResendReaderTokenApi } from "@/service/workspace.reader.service";
 import { toast } from "sonner";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
-import { DeleteReadersApi } from "@/service/workspace.reader.service";
+import { DeleteTeammatesApi, GetWorkspaceReadersApi } from "@/service/teammate.service";
 
 export default function SettingReaders() {
     const [selectedReaders, setSelectedReaders] = useState([]);
@@ -118,8 +117,8 @@ export default function SettingReaders() {
         if (confirmed) {
             setIsDeletingReaders(true);
             try {
-                const response = await DeleteReadersApi({
-                    readerIds: selectedReaders
+                const response = await DeleteTeammatesApi({
+                    teammateIds: selectedReaders
                 });
 
                 setReaders(readers.filter(reader => !selectedReaders.includes(reader._id)));

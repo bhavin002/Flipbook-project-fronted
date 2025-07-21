@@ -24,7 +24,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import GenericSelection from "@/utils/GenericSelection";
 import { GetWorkspaceGroupsApi } from "@/service/workspace.group.service";
-import { GetWorkspaceReadersApi } from "@/service/workspace.reader.service";
 import { GetFlipbookPublishInfoApi, UpdatePublishFlipbookApi } from "@/service/flipbook.publish.service"; // Import the new API
 import { PublishFlipbookApi } from "@/service/flipbook.publish.service";
 import { flipbookVisibility } from "@/utils/enum";
@@ -33,6 +32,7 @@ import LoadingButton from "@/utils/LoadingButton";
 import { useNavigate } from "react-router-dom";
 import { UpdateFlipbookPageDataApi } from "@/service/flipbook.service";
 import { LoadingOverlay } from "@/utils/Skeleton";
+import { GetWorkspaceReadersApi } from "@/service/teammate.service";
 
 export default function PublishFlipbookDialog({
     isPublishModalOpen,

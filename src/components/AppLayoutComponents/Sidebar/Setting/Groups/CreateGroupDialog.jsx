@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import SelectGroupMember from "./SelectGroupMember"
 import { useEffect, useState } from "react"
-import { GetWorkspaceReadersApi } from "@/service/workspace.reader.service"
 import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -21,6 +20,7 @@ import LoadingButton from "@/utils/LoadingButton"
 import { Skeleton } from "@/components/ui/skeleton"
 import { CreateWorkspaceGroupApi } from "@/service/workspace.group.service"
 import { AlertCircle } from "lucide-react"
+import { GetWorkspaceReadersApi } from "@/service/teammate.service"
 
 const groupSchema = z.object({
     groupName: z

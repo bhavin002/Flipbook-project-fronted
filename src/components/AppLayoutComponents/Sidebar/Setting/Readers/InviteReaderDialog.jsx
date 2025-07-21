@@ -15,8 +15,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { toast } from "sonner"
 import { useState } from "react"
-import { AddReaderApi } from "@/service/workspace.reader.service"
 import LoadingButton from "@/utils/LoadingButton"
+import { AddTeammateApi } from "@/service/teammate.service"
 
 const inviteSchema = z.object({
     email: z
@@ -41,7 +41,11 @@ export default function InviteReaderDialog({ setReaders }) {
     const onSubmit = async (data) => {
         try {
             setIsLoading(true);
-            const response = await AddReaderApi(data);
+            let payload = {
+                ...data,
+                userRole: import.meta.env.VITE_APP_READER_ROLE_ID
+            }
+            const response = await AddTeammateApi(payload);
             toast.success("Invitation sent", {
                 description: `Invite has been sent to ${data.email}`,
             });

@@ -10,12 +10,12 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import GenericSelection from "@/utils/GenericSelection";
 import { GetWorkspaceGroupsApi } from "@/service/workspace.group.service";
-import { GetWorkspaceReadersApi } from "@/service/workspace.reader.service";
 import { GetFlipbookPublishInfoApi, UpdateFlipbookDetailsApi } from "@/service/flipbook.publish.service";
 import { flipbookVisibility } from "@/utils/enum";
 import { toast } from "sonner";
 import LoadingButton from "@/utils/LoadingButton";
 import { LoadingOverlay } from "@/utils/Skeleton";
+import { GetWorkspaceReadersApi } from "@/service/teammate.service";
 
 export default function ChangeVisibilityDialog({ open, setOpen, flipbookId, setFlipbookDetails }) {
     const [selectedRadio, setSelectedRadio] = useState("email");

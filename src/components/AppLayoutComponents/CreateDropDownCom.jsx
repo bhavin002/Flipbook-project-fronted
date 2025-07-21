@@ -12,12 +12,14 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { UploadPdfApi } from "@/service/flipbook.service";
 import { toast } from "sonner";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { useFileUpload } from "@/context/FileUploadContext";
 
 export default function CreateDropDownCom() {
 
     const navigate = useNavigate();
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const fileInputRef = useRef(null);
+    const { setFiles } = useFileUpload();
 
     const handleItemClick = (action) => {
         if (action === "from-scratch") {
@@ -35,27 +37,48 @@ export default function CreateDropDownCom() {
     };
 
     const handleFileChange = async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-        if (file.type !== "application/pdf") {
-            alert("Please select a PDF file.");
+        const files = Array.from(event.target.files);
+        if (!files.length) return;
+        // Only allow supported types
+        const allowedTypes = [
+            "application/pdf",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation", // pptx
+            "application/vnd.oasis.opendocument.presentation", // odp
+            "image/jpeg",
+            "image/png"
+        ];
+        const allValid = files.every(file => allowedTypes.includes(file.type));
+        if (!allValid) {
+            alert("Please select only PDF, PPTX, ODP, JPG, or PNG files.");
             return;
         }
-        setUploadDialogOpen(true);
-        try {
-            const formData = new FormData();
-            formData.append("pdfFile", file);
-            const response = await UploadPdfApi(formData);
-            console.log("response ?>??", response)
-            const bookId = response.data.bookId;
-            setTimeout(() => {
-                setUploadDialogOpen(false);
-                navigate(`/customize/${bookId}`);
-            }, 100);
-        } catch (error) {
-            toast.error("Failed to upload pdf", {
-                description: error.message
-            })
+        if (files.length === 1) {
+            // Single file upload (keep current logic)
+            const file = files[0];
+            if (file.type !== "application/pdf") {
+                alert("Please select a PDF file.");
+                return;
+            }
+            setUploadDialogOpen(true);
+            try {
+                const formData = new FormData();
+                formData.append("pdfFile", file);
+                const response = await UploadPdfApi(formData);
+                console.log("response ?>??", response)
+                const bookId = response.data.bookId;
+                setTimeout(() => {
+                    setUploadDialogOpen(false);
+                    navigate(`/customize/${bookId}`);
+                }, 100);
+            } catch (error) {
+                toast.error("Failed to upload pdf", {
+                    description: error.message
+                })
+            }
+        } else {
+            console.log("files ?>??? CreateDropDownCom ",files)
+            setFiles(files);
+            navigate("/upload");
         }
     };
 
@@ -73,7 +96,7 @@ export default function CreateDropDownCom() {
                     <DropdownMenuItem onClick={handleUploadPdfClick}>
                         <div className="flex justify-between items-center w-full">
                             <div className="flex gap-2 items-center">
-                                <Upload className="h-4 w-4" />  Upload PDF
+                                <Upload className="h-4 w-4" />  Upload Files
                             </div>
                             <ChevronRight className="h-4 w-4" />
                         </div>
@@ -98,10 +121,11 @@ export default function CreateDropDownCom() {
             </DropdownMenuContent>
             <input
                 type="file"
-                accept="application/pdf"
+                accept=".pdf,.pptx,.odp,.jpg,.jpeg,.png"
                 ref={fileInputRef}
                 style={{ display: "none" }}
                 onChange={handleFileChange}
+                multiple
             />
             <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
                 <DialogContent hideClose>
