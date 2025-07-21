@@ -21,6 +21,11 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { UploadPdfApi } from "@/service/flipbook.service";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { FlipbookUploadMode } from '@/utils/enum';
+import LoadingButton from '@/utils/LoadingButton';
 
 function SortableFileItem({ file, index, onRemove, disableRemove }) {
   const {
@@ -99,11 +104,13 @@ function SortableFileItem({ file, index, onRemove, disableRemove }) {
 
 export default function FileUploadReorder() {
   const { files, setFiles } = useFileUpload();
-  console.log("files ?<>?<",files)
+  console.log("files ?<>?<", files)
   const [replaceFile, setReplaceFile] = useState(null);
   const fileInputRef = useRef(null);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [pendingDeleteIndex, setPendingDeleteIndex] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const navigate = useNavigate();
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -165,10 +172,27 @@ export default function FileUploadReorder() {
     fileInputRef.current?.click();
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (files.length === 0) return;
-
-    console.log('Files in order:', files.map((f, i) => `${i + 1}. ${f.name}`));
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      files.forEach(file => formData.append("files", file));
+      formData.append("mode", FlipbookUploadMode.COMBINE);
+      const response = await UploadPdfApi(formData);
+      // Assuming response.data.bookId for navigation
+      const bookId = response.data.bookId;
+      toast.success("Files merged and uploaded!");
+      setTimeout(() => {
+        navigate(`/customize/${bookId}`);
+      }, 100);
+    } catch (error) {
+      toast.error("Failed to upload files", {
+        description: error.message
+      });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleDragEnter = (e) => {
@@ -290,9 +314,9 @@ export default function FileUploadReorder() {
           <Button
             className="bg-purple-600 hover:bg-purple-700"
             onClick={handleContinue}
-            disabled={files.length === 0}
+            disabled={files.length === 0 || uploading}
           >
-            Continue <ArrowRight />
+            {uploading ? <LoadingButton /> : (<><span>Continue</span> <ArrowRight /></>)}
           </Button>
         </div>
       </div>

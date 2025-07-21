@@ -126,3 +126,8 @@ export const tokenStatus = {
     ALREADY_REGISTERED: 2,
     ERROR: 3
 }
+
+export const FlipbookUploadMode =  {
+    COMBINE: 1,
+    SEPARATELY: 2,
+}

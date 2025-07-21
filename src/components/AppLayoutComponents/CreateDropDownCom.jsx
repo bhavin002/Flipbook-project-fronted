@@ -7,12 +7,13 @@ import { ShoppingCart } from 'lucide-react';
 import { LayoutPanelLeft } from 'lucide-react';
 import { LibraryBig } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { UploadPdfApi } from "@/service/flipbook.service";
 import { toast } from "sonner";
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useFileUpload } from "@/context/FileUploadContext";
+import { FlipbookUploadMode } from "@/utils/enum";
+import LoadingButton from "@/utils/LoadingButton";
 
 export default function CreateDropDownCom() {
 
@@ -20,6 +21,9 @@ export default function CreateDropDownCom() {
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const fileInputRef = useRef(null);
     const { setFiles } = useFileUpload();
+    const [multiFileDialogOpen, setMultiFileDialogOpen] = useState(false);
+    const [pendingFiles, setPendingFiles] = useState([]);
+    const [uploadingSeparately, setUploadingSeparately] = useState(false);
 
     const handleItemClick = (action) => {
         if (action === "from-scratch") {
@@ -39,11 +43,8 @@ export default function CreateDropDownCom() {
     const handleFileChange = async (event) => {
         const files = Array.from(event.target.files);
         if (!files.length) return;
-        // Only allow supported types
         const allowedTypes = [
             "application/pdf",
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation", // pptx
-            "application/vnd.oasis.opendocument.presentation", // odp
             "image/jpeg",
             "image/png"
         ];
@@ -53,7 +54,6 @@ export default function CreateDropDownCom() {
             return;
         }
         if (files.length === 1) {
-            // Single file upload (keep current logic)
             const file = files[0];
             if (file.type !== "application/pdf") {
                 alert("Please select a PDF file.");
@@ -62,24 +62,49 @@ export default function CreateDropDownCom() {
             setUploadDialogOpen(true);
             try {
                 const formData = new FormData();
-                formData.append("pdfFile", file);
+                formData.append("files", file);
                 const response = await UploadPdfApi(formData);
                 console.log("response ?>??", response)
                 const bookId = response.data.bookId;
                 setTimeout(() => {
-                    setUploadDialogOpen(false);
                     navigate(`/customize/${bookId}`);
                 }, 100);
             } catch (error) {
                 toast.error("Failed to upload pdf", {
                     description: error.message
                 })
+            } finally {
+                setUploadDialogOpen(false)
             }
         } else {
-            console.log("files ?>??? CreateDropDownCom ",files)
-            setFiles(files);
-            navigate("/upload");
+            setPendingFiles(files);
+            setMultiFileDialogOpen(true);
         }
+    };
+
+    const handleUploadSeparately = async () => {
+        setUploadingSeparately(true);
+        try {
+            const formData = new FormData();
+            pendingFiles.forEach(file => formData.append("files", file));
+            formData.append("mode", FlipbookUploadMode.SEPARATELY);
+            await UploadPdfApi(formData);
+            setMultiFileDialogOpen(false);
+            setPendingFiles([]);
+        } catch (error) {
+            toast.error("Failed to upload files", {
+                description: error.message
+            });
+        } finally {
+            setUploadingSeparately(false);
+        }
+    };
+
+    const handleMergeIntoOne = () => {
+        setFiles(pendingFiles);
+        setMultiFileDialogOpen(false);
+        setPendingFiles([]);
+        navigate("/upload");
     };
 
     return (
@@ -130,16 +155,42 @@ export default function CreateDropDownCom() {
             <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
                 <DialogContent hideClose>
                     <div className="flex flex-col items-center justify-center p-4">
-                        <DotLottieReact
-                            src="public/Uploading_to_cloud.json"
-                            loop
-                            autoplay
+                        <img
+                            src="/src/assets/Uploading_cloud.gif"
                         />
                         <div className="text-lg font-semibold mb-5">Uploading your PDF...</div>
                         <div className="w-full mt-2 h-2 bg-gray-200 rounded overflow-hidden relative">
                             <div className="absolute inset-0">
                                 <div className="infinite-progress-bar h-full" />
                             </div>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+            <Dialog open={multiFileDialogOpen} onOpenChange={setMultiFileDialogOpen}>
+                <DialogContent hideClose>
+                    <div className="flex flex-col items-center justify-center space-y-4">
+                        <img src="/src/assets/box_lines.svg" />
+                        <div className="space-y-2 text-center">
+                            <div className="text-xl font-bold">You have selected {pendingFiles.length} files</div>
+                            <div className="text-center text-gray-600">How would you like to upload them?</div>
+                        </div>
+                        <div className="flex gap-4 w-full">
+                            <Button
+                                className="flex-1"
+                                variant="outline"
+                                onClick={handleUploadSeparately}
+                                disabled={uploadingSeparately}
+                            >
+                                {uploadingSeparately ? <LoadingButton /> : "Upload separately"}
+                            </Button>
+                            <Button
+                                className="flex-1"
+                                onClick={handleMergeIntoOne}
+                                disabled={uploadingSeparately}
+                            >
+                                Merge them into one
+                            </Button>
                         </div>
                     </div>
                 </DialogContent>

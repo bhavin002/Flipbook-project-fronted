@@ -91,7 +91,7 @@ export const MoveToWorkspaceApi = async (data) => {
 }
 
 export const UploadPdfApi = async (data) => {
-    const response = await ApiClient().post("/flipbook/upload-pdf", data, {
+    const response = await ApiClient().post("/flipbook/upload-multi-pdf-image", data, {
         headers: {
             'Content-Type': 'multipart/form-data'
         }
