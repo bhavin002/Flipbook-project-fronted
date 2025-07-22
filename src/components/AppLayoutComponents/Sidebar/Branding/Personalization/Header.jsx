@@ -24,9 +24,10 @@ export default function Header() {
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            // Validate file size (2MB)
             if (file.size > 2 * 1024 * 1024) {
-                alert("File size should be less than 2MB");
+                toast.error("File size", {
+                    description: "File size should be less than 2MB"
+                })
                 return;
             }
             handleFileUpload("logo", file);
@@ -55,8 +56,8 @@ export default function Header() {
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="flex items-center">
-                    <Switch 
-                        id="show-header" 
+                    <Switch
+                        id="show-header"
                         checked={isHeaderVisible}
                         onCheckedChange={(checked) => handleInputChange("isHeaderVisible", checked)}
                     />
@@ -65,8 +66,8 @@ export default function Header() {
                     </Label>
                 </div>
                 <div className="flex items-center">
-                    <Switch 
-                        id="show-search-bar" 
+                    <Switch
+                        id="show-search-bar"
                         checked={isSearchBarVisible}
                         onCheckedChange={(checked) => handleInputChange("isSearchBarVisible", checked)}
                     />
@@ -92,8 +93,8 @@ export default function Header() {
                             </Tooltip>
                         </TooltipProvider>
                     </Label>
-                    <Button 
-                        variant="outline" 
+                    <Button
+                        variant="outline"
                         onClick={handleDelete}
                         disabled={!hasLogo}
                     >
@@ -112,16 +113,16 @@ export default function Header() {
                     Upload Logo
                 </Button>
                 {hasLogo && (
-                    <img 
-                        src={previewUrls.logo} 
-                        className="mx-auto max-h-[100px] max-w-[200px]" 
-                        alt="Logo" 
+                    <img
+                        src={previewUrls.logo}
+                        className="mx-auto max-h-[100px] max-w-[200px]"
+                        alt="Logo"
                     />
                 )}
                 <div className="flex flex-col gap-2">
                     <Label>Header color</Label>
-                    <Input 
-                        type="color" 
+                    <Input
+                        type="color"
                         value={headerColor}
                         onChange={(e) => handleInputChange("headerColor", e.target.value)}
                     />
@@ -143,8 +144,8 @@ export default function Header() {
                             </Tooltip>
                         </TooltipProvider>
                     </Label>
-                    <Input 
-                        type="color" 
+                    <Input
+                        type="color"
                         value={elementColor}
                         onChange={(e) => handleInputChange("elementColor", e.target.value)}
                     />

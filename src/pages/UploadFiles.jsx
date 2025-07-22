@@ -228,17 +228,6 @@ export default function FileUploadReorder() {
 
   return (
     <div className="flex items-center justify-center w-full">
-      <ConfirmationDialog
-        isConfirmModalOpen={isConfirmModalOpen}
-        setIsConfirmModalOpen={setIsConfirmModalOpen}
-        title="Remove File"
-        description="Are you sure you want to remove this file?"
-        onConfirm={confirmRemove}
-        onCancel={() => {
-          setIsConfirmModalOpen(false);
-          setPendingDeleteIndex(null);
-        }}
-      />
       <div className="w-full bg-white flex h-full overflow-auto flex-col">
         <div className='flex flex-col overflow-y-auto'>
           <div className='flex flex-col justify-center m-auto max-w-2xl w-full'>
@@ -254,7 +243,7 @@ export default function FileUploadReorder() {
               <img src='/src/assets/upload_icon.svg' />
               <div className='space-y-1 flex flex-col justify-center text-center'>
                 <h3 className="text-lg font-medium">Drag and drop or upload your files</h3>
-                <p className="text-sm text-gray-500">Supported formats: PDF, PPTX, ODP, JPG, PNG.</p>
+                <p className="text-sm text-gray-500">Supported formats: PDF, PPTX, ODP, JPG, PNG, GIF.</p>
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -320,6 +309,17 @@ export default function FileUploadReorder() {
           </Button>
         </div>
       </div>
+      <ConfirmationDialog
+        isConfirmModalOpen={isConfirmModalOpen}
+        setIsConfirmModalOpen={setIsConfirmModalOpen}
+        title="Remove File"
+        description="Are you sure you want to remove this file?"
+        onConfirm={confirmRemove}
+        onCancel={() => {
+          setIsConfirmModalOpen(false);
+          setPendingDeleteIndex(null);
+        }}
+      />
     </div>
   );
 }

@@ -67,6 +67,9 @@ import MyProfile from "./pages/MyProfile";
 import UploadFiles from "./pages/UploadFiles";
 import { FileUploadProvider } from "./context/FileUploadContext";
 import UploadFilesLayout from "./layout/UploadFilesLayout";
+import ShelfCreateLayout from "./layout/ShelfCreateLayout";
+import CreateShelf from "./pages/CreateShelf";
+import OrganizeShelf from "./pages/OrganizeShelf";
 
 // Route configurations
 const brandingRoutes = [
@@ -138,6 +141,16 @@ export default function App() {
                           <Route path="template/folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
                           <Route path="shared-with-me" element={<SharedWithMe isSidebarOpen={isSidebarOpen} />} />
                           <Route path="trash" element={<Trash isSidebarOpen={isSidebarOpen} />} />
+                        </Route>
+
+                        <Route path="/shelf" element={
+                          <PrivateRoute>
+                            <ShelfCreateLayout  />
+                          </PrivateRoute>
+                        }>
+                          <Route index element={<Navigate to="select" replace />} />
+                          <Route path="select" element={<CreateShelf />} />
+                          <Route path="organize" element={<OrganizeShelf />} />
                         </Route>
 
                         <Route path="/automation" element={

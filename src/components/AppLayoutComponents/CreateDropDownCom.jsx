@@ -14,9 +14,10 @@ import { toast } from "sonner";
 import { useFileUpload } from "@/context/FileUploadContext";
 import { FlipbookUploadMode } from "@/utils/enum";
 import LoadingButton from "@/utils/LoadingButton";
+import { useFlipbook } from "@/context/FlipbookContext";
 
 export default function CreateDropDownCom() {
-
+    const { fetchFlipbooks } = useFlipbook();
     const navigate = useNavigate();
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const fileInputRef = useRef(null);
@@ -45,18 +46,25 @@ export default function CreateDropDownCom() {
         if (!files.length) return;
         const allowedTypes = [
             "application/pdf",
+            "application/vnd.ms-powerpoint",
+            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+            "application/vnd.oasis.opendocument.presentation",
             "image/jpeg",
             "image/png"
         ];
         const allValid = files.every(file => allowedTypes.includes(file.type));
         if (!allValid) {
-            alert("Please select only PDF, PPTX, ODP, JPG, or PNG files.");
+            toast.error("Invalid file type", {
+                description: "Please select only PDF, PPTX, ODP, JPG, or PNG files."
+            })
             return;
         }
         if (files.length === 1) {
             const file = files[0];
-            if (file.type !== "application/pdf") {
-                alert("Please select a PDF file.");
+            if (!allowedTypes.includes(file.type)) {
+                toast.error("Invalid file type", {
+                    description: "Please select only PDF, PPTX, ODP, JPG, or PNG files."
+                });
                 return;
             }
             setUploadDialogOpen(true);
@@ -70,7 +78,7 @@ export default function CreateDropDownCom() {
                     navigate(`/customize/${bookId}`);
                 }, 100);
             } catch (error) {
-                toast.error("Failed to upload pdf", {
+                toast.error("Failed to upload file", {
                     description: error.message
                 })
             } finally {
@@ -91,6 +99,7 @@ export default function CreateDropDownCom() {
             await UploadPdfApi(formData);
             setMultiFileDialogOpen(false);
             setPendingFiles([]);
+            fetchFlipbooks();
         } catch (error) {
             toast.error("Failed to upload files", {
                 description: error.message
@@ -140,7 +149,7 @@ export default function CreateDropDownCom() {
                 <DropdownMenuItem>
                     <ShoppingCart /> Product catalog
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/shelf/select")}>
                     <LibraryBig /> Bookshelf
                 </DropdownMenuItem>
             </DropdownMenuContent>

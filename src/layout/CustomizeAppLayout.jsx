@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom"
 import { Outlet, useNavigate, useParams } from "react-router-dom";
-import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
 import { Button } from "@/components/ui/button";
 import { useViewMode } from "@/context/ViewModeContext";
 import { Eye, Share2 } from "lucide-react";
