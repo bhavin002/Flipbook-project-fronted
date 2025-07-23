@@ -80,3 +80,8 @@ export const CancelDraftFlipbookApi = async (flipbookId) => {
     const response = await ApiClient().delete(`/flipbook-publish/cancel-draft-flipbook/${flipbookId}`);
     return response.data;
 }
+
+export const GetPublicFlipbookApi = async (workspaceId) => {
+    const response = await ApiClient().get(`/flipbook-publish/get-public-flipbook/${workspaceId}`);
+    return response.data;
+}

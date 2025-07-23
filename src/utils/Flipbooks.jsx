@@ -29,8 +29,9 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     const unpublishedButtons = getData('unpublishedButtons');
     const publishedButtons = getData('publishedButtons');
     const templateButtons = getData('templateButtons');
+    const bookshelfButtons = getData('bookshelfButtons');
 
-    const handleItemClick = (action, flipbookId) => {
+    const handleItemClick = (action, flipbookId, flipbookState) => {
         if (action === 'share') {
             setFlipbookId(flipbookId)
             setIsShareModalOpen(true);
@@ -47,7 +48,11 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
         } else if (action === "customize") {
             router(`/customize/${flipbookId}`)
         } else if (action === "edit") {
-            router(`/editor/${flipbookId}`)
+            if (flipbookState === "Bookshelf") {
+                router(`/shelf/select/${flipbookId}`);
+            } else {
+                router(`/editor/${flipbookId}`)
+            }
         } else if (action === "use-template") {
             router(`/editor/${flipbookId}`)
         } else if (action === "view") {
@@ -58,6 +63,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     };
 
     const getButtonsForStatus = (status) => {
+        console.log("status ><>>", status)
         if (isTrash) {
             return [];
         }
@@ -71,6 +77,8 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 return unpublishedButtons;
             case 'Template':
                 return templateButtons;
+            case "Bookshelf":
+                return bookshelfButtons;
         }
     };
 
@@ -84,6 +92,8 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 return 'bg-red-100/50 text-red-700';
             case 'Template':
                 return 'bg-[#ebd6ff] text-[#7a1f5b]';
+            case 'Bookshelf':
+                return 'bg-yellow-100/50 text-yellow-700';
             case 'Deleted':
                 return 'bg-gray-100/50 text-gray-700';
             default:
@@ -103,6 +113,8 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 return 'Template';
             case 'Deleted':
                 return 'Deleted';
+            case 'Bookshelf':
+                return 'Bookshelf';
             default:
                 return 'Unknown';
         }
@@ -291,7 +303,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                             key={index}
                                             className={`p-2 hover:-translate-y-[1px] rounded-lg ${btn.color} ${btn.bg} ${btn.hover} hover:scale-110 transition-all duration-200`}
                                             title={btn.title}
-                                            onClick={() => handleItemClick(btn.value, flipbook._id)}
+                                            onClick={() => handleItemClick(btn.value, flipbook._id, (flipbook.tag ? flipbook.tag : flipbook.flipbookState))}
                                         >
                                             <btn.icon size={16} />
                                         </button>

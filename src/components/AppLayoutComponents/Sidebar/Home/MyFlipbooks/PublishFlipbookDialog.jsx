@@ -457,7 +457,7 @@ export default function PublishFlipbookDialog({
         (activeTab === "private" && selectedRadio === "readers" && createdByFilter.length === 0) ||
         publishing;
 
-   
+
 
     return (
         <Dialog open={isPublishModalOpen} onOpenChange={setIsPublishModalOpen}>
@@ -635,26 +635,12 @@ export default function PublishFlipbookDialog({
                     <Button variant="outline" onClick={() => setIsPublishModalOpen(false)}>
                         Close
                     </Button>
-                    <div className="flex items-center">
-                        <Button
-                            className="rounded-r-none flex-1 md:flex-none"
-                            disabled={isPublishDisabled}
-                            onClick={handlePublish}
-                        >
-                            {publishing ? <LoadingButton /> : 'Publish'}
-                        </Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button className="rounded-l-none" disabled={isPublishDisabled}>
-                                    <ChevronDown className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuItem>Save as draft</DropdownMenuItem>
-                                <DropdownMenuItem>Schedule publication</DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
+                    <Button
+                        disabled={isPublishDisabled}
+                        onClick={handlePublish}
+                    >
+                        {publishing ? <LoadingButton /> : 'Publish Now'}
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

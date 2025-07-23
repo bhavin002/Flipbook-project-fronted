@@ -149,8 +149,8 @@ export default function App() {
                           </PrivateRoute>
                         }>
                           <Route index element={<Navigate to="select" replace />} />
-                          <Route path="select" element={<CreateShelf />} />
-                          <Route path="organize" element={<OrganizeShelf />} />
+                          <Route path="select/:id?" element={<CreateShelf />} />
+                          <Route path="organize/:id?" element={<OrganizeShelf />} />
                         </Route>
 
                         <Route path="/automation" element={

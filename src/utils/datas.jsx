@@ -3292,6 +3292,8 @@ export function getData(dataType) {
             return publishedButtons;
         case 'templateButtons':
             return templateButtons;
+        case 'bookshelfButtons':
+            return publishedButtons;
         case 'sidebarSections':
             return sidebarSections;
         case 'downloadOptions':

@@ -131,6 +131,9 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
         } else if (action === "cancelDraft") {
             setIsCancelDraftModalOpen(true);
             closeDropdown();
+        } else if (action === "editbookshelf") {
+            navigate(`/shelf/select/${flipbook._id}`);
+            closeDropdown();
         } else {
             console.error("Invalid action:", action);
         }
@@ -396,6 +399,41 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
             </>
         );
 
+        const bookshelfItems = (
+            <>
+                <DropdownMenuItem onClick={() => handleItemClick('editbookshelf')}>
+                    <Pencil className="mr-2 h-4 w-4" /> Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    disabled={isCopying}
+                    onSelect={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleItemClick('makeCopy', e);
+                    }}
+                >
+                    <CopyPlus className="mr-2 h-4 w-4" /> {isCopying ? 'Making copy...' : 'Make a copy'}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleItemClick('rename')}>
+                    <PencilLine className="mr-2 h-4 w-4" /> Rename
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleItemClick('share')}>
+                    <Share2 className="mr-2 h-4 w-4" /> Sharing options
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleItemClick('embed')}>
+                    <Code className="mr-2 h-4 w-4" /> Embed
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleItemClick('stats')}>
+                    <ChartColumnIncreasing className="mr-2 h-4 w-4" /> Stats
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleItemClick('trash')}>
+                    <Trash className="mr-2 h-4 w-4" /> Move to trash
+                </DropdownMenuItem>
+            </>
+        );
+
         if (isTrash) {
             return (
                 <>
@@ -428,8 +466,12 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                             {templateItems}
                         </>
                     );
-                default:
-                    return unpublishedItems;
+                case 'Bookshelf':
+                    return (
+                        <>
+                            {bookshelfItems}
+                        </>
+                    );
             }
         }
     };
@@ -450,7 +492,7 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
             </DropdownMenu>
             <SaveAsTemplateDialog isSaveAsTemplateModalOpen={isSaveAsTemplateModalOpen} setIsSaveAsTemplateModalOpen={setIsSaveAsTemplateModalOpen} flipbook={flipbook} />
             <RenameFlipbookDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} flipbook={flipbook} setFlipbooks={setFlipbooks} />
-            <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} flipbookId={flipbook._id}/>
+            <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} flipbookId={flipbook._id} />
             <DownloadDialog isDownloadModalOpen={isDownloadModalOpen} setIsDownloadModalOpen={setIsDownloadModalOpen} />
             <MoveToWorkspaceDialog isMoveToWorkspaceModalOpen={isMoveToWorkspaceModalOpen} setIsMoveToWorkspaceModalOpen={setIsMoveToWorkspaceModalOpen} flipbookId={flipbook._id} setFlipbooks={setFlipbooks} />
             <ConfirmationDialog

@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, CheckCircle } from "lucide-react";
-import { GetWorkspaceBookApi } from "@/service/flipbook.publish.service";
+import { GetPublicFlipbookApi } from "@/service/flipbook.publish.service";
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 import bookLogo from '@/assets/book_thumbnail.jpg';
 import { useWorkspaces } from "@/context/WorkspaceContext";
 import { useShelfCreate } from "@/layout/ShelfCreateLayout";
+import { useParams } from "react-router-dom";
 
 export default function CreateShelf() {
     const [data, setData] = useState(null);
@@ -14,12 +15,14 @@ export default function CreateShelf() {
     const [search, setSearch] = useState("");
     const { currentWorkspace } = useWorkspaces();
     const { selectedFlipbooks, setSelectedFlipbooks } = useShelfCreate();
+    const { id } = useParams();
+    console.log("book shelf id", id);
 
     useEffect(() => {
         const fetchFlipbooks = async () => {
             setLoading(true);
             try {
-                const response = await GetWorkspaceBookApi(currentWorkspace._id);
+                const response = await GetPublicFlipbookApi(currentWorkspace._id);
                 setData(response.data);
             } catch (err) {
                 toast.error("Error fetching flipbooks", {
@@ -115,7 +118,7 @@ export default function CreateShelf() {
                                 >
                                     {fb.name}
                                 </p>
-                                <img src="/src/assets/globe.png" className="w-4 h-4"/>
+                                <img src="/src/assets/globe.png" className="w-4 h-4" />
                             </div>
                         </div>
                     ))

@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useState, createContext, useContext, useEffect } from "react";
+import PublishShelfDailog from "../components/ShelfLayoutComponents/PublishShelfDailog";
 
 export const ShelfCreateContext = createContext();
 export const useShelfCreate = () => useContext(ShelfCreateContext);
@@ -13,6 +14,7 @@ export default function ShelfCreateLayout() {
     const [activeTab, setActiveTab] = useState(location.pathname.includes("organize") ? "Organize" : "Select");
     const [selectedFlipbooks, setSelectedFlipbooks] = useState([]); 
     const [orderedFlipbooks, setOrderedFlipbooks] = useState([]); 
+    const [isPublishShelfModalOpen, setIsPublishShelfModalOpen] = useState(false);
 
     useEffect(() => {
         if (activeTab === "Organize") {
@@ -39,9 +41,8 @@ export default function ShelfCreateLayout() {
             setActiveTab("Organize");
             setOrderedFlipbooks(selectedFlipbooks);
             navigate("/shelf/organize");
-        } else if (!isSelectStep) {
-            
-            
+        } else if (!isSelectStep && canProceed) {
+            setIsPublishShelfModalOpen(true); // Open the dialog
         }
     };
 
@@ -82,14 +83,14 @@ export default function ShelfCreateLayout() {
                             <Button
                                 className="max-md:hidden"
                                 onClick={handleNextOrShare}
-                                disabled={isSelectStep ? !canProceed : false}
+                                disabled={!canProceed}
                             >
                                 {isSelectStep ? "Next step" : "Share now"}
                             </Button>
                             <Button
                                 className="max-md:block hidden"
                                 onClick={handleNextOrShare}
-                                disabled={isSelectStep ? !canProceed : false}
+                                disabled={!canProceed}
                             >
                                 <ArrowRight />
                             </Button>
@@ -101,6 +102,10 @@ export default function ShelfCreateLayout() {
                 <div className="max-md:flex mt-[64px] flex overflow-y-auto h-[calc(100vh-64px)]">
                     <Outlet />
                 </div>
+                <PublishShelfDailog
+                    isPublishShelfModalOpen={isPublishShelfModalOpen}
+                    setIsPublishShelfModalOpen={setIsPublishShelfModalOpen}
+                />
             </div>
         </ShelfCreateContext.Provider>
     )
