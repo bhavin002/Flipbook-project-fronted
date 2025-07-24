@@ -7,16 +7,19 @@ import { Loader } from "@/components/ui/loader";
 import bookLogo from '@/assets/book_thumbnail.jpg';
 import { useWorkspaces } from "@/context/WorkspaceContext";
 import { useShelfCreate } from "@/layout/ShelfCreateLayout";
-import { useParams } from "react-router-dom";
 
 export default function CreateShelf() {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const { currentWorkspace } = useWorkspaces();
-    const { selectedFlipbooks, setSelectedFlipbooks } = useShelfCreate();
-    const { id } = useParams();
-    console.log("book shelf id", id);
+    const { 
+        selectedFlipbooks, 
+        setSelectedFlipbooks,
+        isEditMode,
+        shelfData,
+        loading: shelfLoading
+    } = useShelfCreate();
 
     useEffect(() => {
         const fetchFlipbooks = async () => {
@@ -24,6 +27,14 @@ export default function CreateShelf() {
             try {
                 const response = await GetPublicFlipbookApi(currentWorkspace._id);
                 setData(response.data);
+                if (isEditMode && shelfData && response.data.flipbooks) {
+                    const flipbookIds = shelfData.flipbooks || [];
+                    const preSelectedFlipbooks = response.data.flipbooks.filter(fb => 
+                        flipbookIds.includes(fb._id)
+                    );
+                    setSelectedFlipbooks(preSelectedFlipbooks);
+                    console.log("Pre-selected flipbooks:", preSelectedFlipbooks);
+                }
             } catch (err) {
                 toast.error("Error fetching flipbooks", {
                     description: err.message
@@ -32,12 +43,13 @@ export default function CreateShelf() {
                 setLoading(false);
             }
         };
-        if (currentWorkspace) {
+        
+        if (currentWorkspace && (!isEditMode || shelfData)) {
             fetchFlipbooks();
         }
-    }, [currentWorkspace]);
+    }, [currentWorkspace, isEditMode, shelfData, setSelectedFlipbooks]);
 
-    if (loading) {
+    if (loading || shelfLoading) {
         return <Loader />;
     }
 
@@ -62,7 +74,9 @@ export default function CreateShelf() {
     return (
         <div className="w-full px-4 md:px-6 mt-4">
             <div className="flex justify-between items-center gap-3">
-                <p className="text-lg font-semibold">Select flipbooks ({selectedFlipbooks.length})</p>
+                <p className="text-lg font-semibold">
+                    {isEditMode ? "Edit" : "Select"} flipbooks ({selectedFlipbooks.length})
+                </p>
                 <div className="grid items-center gap-1.5">
                     <div className="relative">
                         <div className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground">

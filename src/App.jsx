@@ -70,6 +70,8 @@ import UploadFilesLayout from "./layout/UploadFilesLayout";
 import ShelfCreateLayout from "./layout/ShelfCreateLayout";
 import CreateShelf from "./pages/CreateShelf";
 import OrganizeShelf from "./pages/OrganizeShelf";
+import BookShelfDetails from "./pages/BookShelfDetails";
+import PublicBookShelf from "./public/PublicBookShelf";
 
 // Route configurations
 const brandingRoutes = [
@@ -112,6 +114,7 @@ export default function App() {
         <Route path="/account/confirm-account" element={<PublicRoute><ConfirmAccount /></PublicRoute>} />
         <Route path="/accept-invitation/:token" element={<VerifyReader />} />
         <Route path="/public-flipbook/:id" element={<PublicFlipbook />} />
+        <Route path="/public-bookshelf/:id" element={<PublicBookShelf />} />
         <Route path="/profile/:id" element={<MyProfile />} />
 
         {/* Private/protected routes (wrapped in providers) */}
@@ -230,19 +233,6 @@ export default function App() {
                         }>
                           <Route index element={<Details />} />
                         </Route>
-                        <Route path="/trackable-links/:id" element={
-                          <PrivateRoute>
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PrivateRoute>
-                        }>
-                          <Route index element={<Details />} />
-                        </Route>
                         <Route path="/stats/:id" element={
                           <PrivateRoute>
                             <ViewModeProvider>
@@ -281,6 +271,86 @@ export default function App() {
                           </PrivateRoute>
                         }>
                           <Route index element={<Details />} />
+                        </Route>
+
+                        {/* shelf page routes */}
+                        <Route path="/shelf/details/:id" element={
+                          <PrivateRoute>
+                            <ViewModeProvider>
+                              <FlipbookSettingsProvider>
+                                <ShopSettingsProvider>
+                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                </ShopSettingsProvider>
+                              </FlipbookSettingsProvider>
+                            </ViewModeProvider>
+                          </PrivateRoute>
+                        }>
+                          <Route index element={<BookShelfDetails />} />
+                        </Route>
+                        <Route path="/shelf/customize/:id" element={
+                          <PrivateRoute>
+                            <ViewModeProvider>
+                              <FlipbookSettingsProvider>
+                                <ShopSettingsProvider>
+                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                </ShopSettingsProvider>
+                              </FlipbookSettingsProvider>
+                            </ViewModeProvider>
+                          </PrivateRoute>
+                        }>
+                          <Route index element={<BookShelfDetails />} />
+                        </Route>
+                        <Route path="/shelf/embed/:id" element={
+                          <PrivateRoute>
+                            <ViewModeProvider>
+                              <FlipbookSettingsProvider>
+                                <ShopSettingsProvider>
+                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                </ShopSettingsProvider>
+                              </FlipbookSettingsProvider>
+                            </ViewModeProvider>
+                          </PrivateRoute>
+                        }>
+                          <Route index element={<BookShelfDetails />} />
+                        </Route>
+                        <Route path="/shelf/stats/:id" element={
+                          <PrivateRoute>
+                            <ViewModeProvider>
+                              <FlipbookSettingsProvider>
+                                <ShopSettingsProvider>
+                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                </ShopSettingsProvider>
+                              </FlipbookSettingsProvider>
+                            </ViewModeProvider>
+                          </PrivateRoute>
+                        }>
+                          <Route index element={<BookShelfDetails />} />
+                        </Route>
+                        <Route path="/shelf/send-email/:id" element={
+                          <PrivateRoute>
+                            <ViewModeProvider>
+                              <FlipbookSettingsProvider>
+                                <ShopSettingsProvider>
+                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                </ShopSettingsProvider>
+                              </FlipbookSettingsProvider>
+                            </ViewModeProvider>
+                          </PrivateRoute>
+                        }>
+                          <Route index element={<BookShelfDetails />} />
+                        </Route>
+                        <Route path="/shelf/download-qr/:id" element={
+                          <PrivateRoute>
+                            <ViewModeProvider>
+                              <FlipbookSettingsProvider>
+                                <ShopSettingsProvider>
+                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                </ShopSettingsProvider>
+                              </FlipbookSettingsProvider>
+                            </ViewModeProvider>
+                          </PrivateRoute>
+                        }>
+                          <Route index element={<BookShelfDetails />} />
                         </Route>
 
                         {/* my account page routes */}

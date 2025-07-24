@@ -12,12 +12,12 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Globe, ListX } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from "sonner"
-import { CreateBookShelfApi } from "@/service/bookshelf.service"
+import { CreateBookShelfApi, UpdateBookShelfApi } from "@/service/bookshelf.service"
 import { useShelfCreate } from "@/layout/ShelfCreateLayout"
 import LoadingButton from "@/utils/LoadingButton"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
 export default function PublishShelfDailog({ isPublishShelfModalOpen, setIsPublishShelfModalOpen }) {
     const [activeTab, setActiveTab] = useState("public")
@@ -25,8 +25,24 @@ export default function PublishShelfDailog({ isPublishShelfModalOpen, setIsPubli
     const [description, setDescription] = useState("")
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
+    const { id } = useParams()
 
-    const { orderedFlipbooks,setOrderedFlipbooks,setSelectedFlipbooks } = useShelfCreate()
+    const { 
+        orderedFlipbooks,
+        setOrderedFlipbooks,
+        setSelectedFlipbooks,
+        isEditMode,
+        shelfData
+    } = useShelfCreate()
+
+    // Pre-fill form data in edit mode
+    useEffect(() => {
+        if (isEditMode && shelfData && isPublishShelfModalOpen) {
+            setTitle(shelfData.name || "New flipbook")
+            setDescription(shelfData.description || "")
+            setActiveTab(shelfData.isVisible ? "public" : "unlisted")
+        }
+    }, [isEditMode, shelfData, isPublishShelfModalOpen])
 
     const isPublishDisabled = !title.trim() || orderedFlipbooks.length === 0
 
@@ -39,23 +55,47 @@ export default function PublishShelfDailog({ isPublishShelfModalOpen, setIsPubli
                 isVisible: activeTab === "public",
                 flipbookPublishIds: orderedFlipbooks.map(fb => fb._id)
             }
-            const response = await CreateBookShelfApi(payload)
-            toast.success("Bookshelf published successfully!", {
-                description: response.message
-            })
+
+            let response;
+            if (isEditMode) {
+                response = await UpdateBookShelfApi(id, payload)
+                toast.success("Bookshelf updated successfully!", {
+                    description: response.message
+                })
+            } else {
+                response = await CreateBookShelfApi(payload)
+                toast.success("Bookshelf published successfully!", {
+                    description: response.message
+                })
+            }
+
             setIsPublishShelfModalOpen(false)
+            setOrderedFlipbooks([]) 
+            setSelectedFlipbooks([])
+            navigate("/myflipbooks")
+            
+            // Reset form only if not in edit mode
+            if (!isEditMode) {
+                setTitle("New flipbook")
+                setDescription("")
+                setActiveTab("public")
+            }
         } catch (error) {
-            toast.error("Failed to publish bookshelf", {
+            toast.error(`Failed to ${isEditMode ? 'update' : 'publish'} bookshelf`, {
                 description: error.message
             })
         } finally {
             setIsLoading(false)
+        }
+    }
+
+    const handleClose = () => {
+        setIsPublishShelfModalOpen(false)
+        // Reset form only if not in edit mode
+        if (!isEditMode) {
             setTitle("New flipbook")
             setDescription("")
             setActiveTab("public")
-            setOrderedFlipbooks([]) 
-            setSelectedFlipbooks([])
-            navigate("/myflipbooks")
         }
     }
 
@@ -64,7 +104,9 @@ export default function PublishShelfDailog({ isPublishShelfModalOpen, setIsPubli
             <Dialog open={isPublishShelfModalOpen} onOpenChange={setIsPublishShelfModalOpen}>
                 <DialogContent className="sm:max-w-[540px] w-[90vw]">
                     <DialogHeader>
-                        <DialogTitle>Publish your work</DialogTitle>
+                        <DialogTitle>
+                            {isEditMode ? "Update your bookshelf" : "Publish your work"}
+                        </DialogTitle>
                         <DialogDescription className="sr-only">
                             Description
                         </DialogDescription>
@@ -125,14 +167,14 @@ export default function PublishShelfDailog({ isPublishShelfModalOpen, setIsPubli
                     </div>
 
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsPublishShelfModalOpen(false)}>
+                        <Button variant="outline" onClick={handleClose}>
                             Close
                         </Button>
                         <Button
                             disabled={isPublishDisabled || isLoading}
                             onClick={handlePublish}
                         >
-                            {isLoading ? <LoadingButton /> : "Publish Now"}
+                            {isLoading ? <LoadingButton /> : (isEditMode ? "Update Now" : "Publish Now")}
                         </Button>
                     </DialogFooter>
                 </DialogContent>

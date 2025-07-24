@@ -44,8 +44,8 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
     useEffect(() => {
         const currentPath = location.pathname;
         const currentPathBase = currentPath.split('/').slice(0, 2).join('/');
-        const pathsToCloseSidebarWithSelecteSidebarTab = ["/statistics", "/automation", "/details", "/embed", "/trackable-links", "/stats", "/send-email", "/download-qr", "/account"];
-        const pathsToCloseSidebarWithoutSelecteSidebarTab = ["/details", "/embed", "/trackable-links", "/stats", "/send-email", "/download-qr", "/account"];
+        const pathsToCloseSidebarWithSelecteSidebarTab = ["/statistics", "/automation", "/details", "/embed", "/trackable-links", "/stats", "/send-email", "/download-qr", "/account", "/shelf"];
+        const pathsToCloseSidebarWithoutSelecteSidebarTab = ["/details", "/embed", "/trackable-links", "/stats", "/send-email", "/download-qr", "/account", "/shelf/details", "/shelf/embed", "/shelf/stats", "/shelf/send-email", "/shelf/download-qr"];
 
         if (pathsToCloseSidebarWithSelecteSidebarTab.includes(currentPathBase)) {
             setOpen(false);

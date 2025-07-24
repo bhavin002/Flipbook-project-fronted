@@ -5,7 +5,7 @@ import { getData } from '@/utils/datas';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Trash2, Clock } from 'lucide-react';
+import { X, Trash2, Clock, Globe, Users, EyeOff, LockKeyhole } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MoveToFolderDropdown from '@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/MoveToFolderDropdown';
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
@@ -42,11 +42,23 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 }
             })
         } else if (action === "details") {
-            router(`/details/${flipbookId}`)
+            if (flipbookState === "Bookshelf") {
+                router(`/shelf/details/${flipbookId}`)
+            } else {
+                router(`/details/${flipbookId}`)
+            }
         } else if (action === "stats") {
-            router(`/stats/${flipbookId}`)
+            if (flipbookState === "Bookshelf") {
+                router(`/shelf/stats/${flipbookId}`)
+            } else {
+                router(`/stats/${flipbookId}`)
+            }
         } else if (action === "customize") {
-            router(`/customize/${flipbookId}`)
+            if (flipbookState === "Bookshelf") {
+                router(`/shelf/customize/${flipbookId}`)
+            } else {
+                router(`/customize/${flipbookId}`)
+            }
         } else if (action === "edit") {
             if (flipbookState === "Bookshelf") {
                 router(`/shelf/select/${flipbookId}`);
@@ -56,7 +68,11 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
         } else if (action === "use-template") {
             router(`/editor/${flipbookId}`)
         } else if (action === "view") {
-            window.open(`/public-flipbook/${flipbookId}`, '_blank');
+            if (flipbookState === "Bookshelf") {
+                window.open(`/public-bookshelf/${flipbookId}`, '_blank');
+            } else {
+                window.open(`/public-flipbook/${flipbookId}`, '_blank');
+            }
         } else {
             console.error("Invalid action:", action);
         }
@@ -117,6 +133,19 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 return 'Bookshelf';
             default:
                 return 'Unknown';
+        }
+    };
+
+    const getVisibilityIcon = (visibilityStatus) => {
+        switch (visibilityStatus) {
+            case 'Public':
+                return <Globe className='w-4 h-4' />;
+            case 'Unlisted':
+                return <EyeOff className='w-4 h-4' />;
+            case 'Password Protected':
+                return <LockKeyhole className='w-4 h-4' />;
+            case 'Private' || 'Readers Only':
+                return <Users className='w-4 h-4' />;
         }
     };
 
@@ -282,10 +311,13 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                             </div>
 
                             <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white h-full">
-                                <span className={`text-xs font-medium px-2 py-0.5 rounded-sm inline-flex items-center ${getStatusBadgeStyle(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}`}>
-                                    <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-70"></span>
-                                    {getStatusDisplayText(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                    <span className={`text-xs font-medium px-2 py-0.5 rounded-sm inline-flex items-center ${getStatusBadgeStyle(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}`}>
+                                        <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-70"></span>
+                                        {getStatusDisplayText(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}
+                                    </span>
+                                    {getVisibilityIcon(flipbook.visibilityStatus)}
+                                </div>
                                 <div className="flex items-center justify-between">
                                     <h3 className="font-semibold text-violet-900 transition-colors duration-200 hover:text-violet-600">
                                         {flipbook.name}

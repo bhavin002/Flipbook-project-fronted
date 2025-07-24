@@ -134,6 +134,12 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
         } else if (action === "editbookshelf") {
             navigate(`/shelf/select/${flipbook._id}`);
             closeDropdown();
+        } else if (action === "bookshelfEmbed") {
+            navigate(`/shelf/embed/${flipbook._id}`);
+            closeDropdown();
+        } else if (action === "bookshelfStats") {
+            navigate(`/shelf/stats/${flipbook._id}`);
+            closeDropdown();
         } else {
             console.error("Invalid action:", action);
         }
@@ -421,10 +427,10 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 <DropdownMenuItem onClick={() => handleItemClick('share')}>
                     <Share2 className="mr-2 h-4 w-4" /> Sharing options
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleItemClick('embed')}>
+                <DropdownMenuItem onClick={() => handleItemClick('bookshelfEmbed')}>
                     <Code className="mr-2 h-4 w-4" /> Embed
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleItemClick('stats')}>
+                <DropdownMenuItem onClick={() => handleItemClick('bookshelfStats')}>
                     <ChartColumnIncreasing className="mr-2 h-4 w-4" /> Stats
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

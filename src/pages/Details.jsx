@@ -5,7 +5,6 @@ import DetailsTab from "../components/AppLayoutComponents/Details/DetailsTab"
 import Embed from "../components/AppLayoutComponents/Details/Embed"
 import SendEmail from "../components/AppLayoutComponents/Details/SendEmail"
 import DownloadQR from "../components/AppLayoutComponents/Details/DownloadQR"
-import TrackableLinks from "../components/AppLayoutComponents/Details/TrackableLinks"
 import Statistics from "../components/AppLayoutComponents/Details/Statistics"
 
 export default function Details() {

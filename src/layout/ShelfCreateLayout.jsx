@@ -1,9 +1,11 @@
 import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom"
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet, useNavigate, useLocation, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { useState, createContext, useContext, useEffect } from "react";
 import PublishShelfDailog from "../components/ShelfLayoutComponents/PublishShelfDailog";
+import { GetShelfFlipbookIdsApi } from "@/service/bookshelf.service";
+import { toast } from "sonner";
 
 export const ShelfCreateContext = createContext();
 export const useShelfCreate = () => useContext(ShelfCreateContext);
@@ -11,10 +13,37 @@ export const useShelfCreate = () => useContext(ShelfCreateContext);
 export default function ShelfCreateLayout() {
     const navigate = useNavigate();
     const location = useLocation();
+    const { id } = useParams();
     const [activeTab, setActiveTab] = useState(location.pathname.includes("organize") ? "Organize" : "Select");
     const [selectedFlipbooks, setSelectedFlipbooks] = useState([]); 
     const [orderedFlipbooks, setOrderedFlipbooks] = useState([]); 
     const [isPublishShelfModalOpen, setIsPublishShelfModalOpen] = useState(false);
+    const [shelfData, setShelfData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    
+    const isEditMode = Boolean(id);
+    console.log("book shelf id ShelfCreateLayout", id, "isEditMode:", isEditMode);
+
+    // Fetch shelf data if in edit mode
+    useEffect(() => {
+        const fetchShelfData = async () => {
+            if (!isEditMode) return;
+            
+            setLoading(true);
+            try {
+                const response = await GetShelfFlipbookIdsApi(id);
+                setShelfData(response.data);
+            } catch (error) {
+                toast.error("Failed to fetch shelf data", {
+                    description: error.message
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchShelfData();
+    }, [id, isEditMode]);
 
     useEffect(() => {
         if (activeTab === "Organize") {
@@ -28,11 +57,10 @@ export default function ShelfCreateLayout() {
     const handleTabClick = (label) => {
         setActiveTab(label);
         if (label === "Select") {
-            navigate("/shelf/select");
+            navigate(isEditMode ? `/shelf/select/${id}` : "/shelf/select");
         } else if (label === "Organize" && canProceed) {
-            
             if (orderedFlipbooks.length === 0) setOrderedFlipbooks(selectedFlipbooks);
-            navigate("/shelf/organize");
+            navigate(isEditMode ? `/shelf/organize/${id}` : "/shelf/organize");
         }
     };
 
@@ -40,9 +68,9 @@ export default function ShelfCreateLayout() {
         if (isSelectStep && canProceed) {
             setActiveTab("Organize");
             setOrderedFlipbooks(selectedFlipbooks);
-            navigate("/shelf/organize");
+            navigate(isEditMode ? `/shelf/organize/${id}` : "/shelf/organize");
         } else if (!isSelectStep && canProceed) {
-            setIsPublishShelfModalOpen(true); // Open the dialog
+            setIsPublishShelfModalOpen(true);
         }
     };
 
@@ -63,7 +91,10 @@ export default function ShelfCreateLayout() {
         <ShelfCreateContext.Provider value={{
             selectedFlipbooks, setSelectedFlipbooks,
             orderedFlipbooks, setOrderedFlipbooks,
-            canProceed
+            canProceed,
+            isEditMode,
+            shelfData,
+            loading
         }}>
             <div className="flex flex-col min-h-screen">
                 <header className="fixed top-0 left-0 right-0 z-10 bg-white">
@@ -85,7 +116,7 @@ export default function ShelfCreateLayout() {
                                 onClick={handleNextOrShare}
                                 disabled={!canProceed}
                             >
-                                {isSelectStep ? "Next step" : "Share now"}
+                                {isSelectStep ? "Next step" : (isEditMode ? "Update now" : "Share now")}
                             </Button>
                             <Button
                                 className="max-md:block hidden"

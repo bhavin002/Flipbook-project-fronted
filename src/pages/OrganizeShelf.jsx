@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useShelfCreate } from "@/layout/ShelfCreateLayout";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove, SortableContext, useSortable, rectSortingStrategy } from "@dnd-kit/sortable";
@@ -57,7 +57,26 @@ function SortableFlipbookCard({ flipbook }) {
 }
 
 export default function OrganizeShelf() {
-  const { orderedFlipbooks, setOrderedFlipbooks } = useShelfCreate();
+  const { 
+    orderedFlipbooks, 
+    setOrderedFlipbooks, 
+    selectedFlipbooks,
+    isEditMode,
+    shelfData
+  } = useShelfCreate();
+
+  useEffect(() => {
+    if (isEditMode && selectedFlipbooks.length > 0 && orderedFlipbooks.length === 0) {
+      if (shelfData && shelfData.flipbooks) {
+        const orderedByShelfData = shelfData.flipbooks.map(id => selectedFlipbooks.find(fb => fb._id === id)).filter(Boolean);
+        setOrderedFlipbooks(orderedByShelfData);
+      } else {
+        setOrderedFlipbooks(selectedFlipbooks);
+      }
+    } else if (!isEditMode && selectedFlipbooks.length > 0 && orderedFlipbooks.length === 0) {
+      setOrderedFlipbooks(selectedFlipbooks);
+    }
+  }, [selectedFlipbooks, isEditMode, shelfData, orderedFlipbooks.length, setOrderedFlipbooks]);
 
   if (!orderedFlipbooks || orderedFlipbooks.length === 0) {
     return <div className="flex flex-col items-center w-full px-4 md:px-6 mt-4"><p className="text-lg text-gray-500 mt-8">No flipbooks selected. Please select flipbooks first.</p></div>;
@@ -81,7 +100,9 @@ export default function OrganizeShelf() {
   return (
     <div className="w-full px-4 md:px-6 mt-4">
       <div className="flex justify-between items-center gap-3">
-        <p className="text-lg font-semibold">Organize flipbooks ({orderedFlipbooks.length})</p>
+        <p className="text-lg font-semibold">
+          {isEditMode ? "Reorganize" : "Organize"} flipbooks ({orderedFlipbooks.length})
+        </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8 gap-4 py-4">
         <DndContext
