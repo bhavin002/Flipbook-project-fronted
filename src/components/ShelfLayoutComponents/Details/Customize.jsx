@@ -3,7 +3,7 @@ import EmbedCode from "./Embed/EmbedCode";
 import DomainRestriction from "./Embed/DomainRestriction";
 import EmbedPreview from "./Embed/EmbedPreview";
 
-export default function Customize() {
+export default function Customize({ flipbookId }) {
     return (
         <div className="py-6 max-w-[100vw] overflow-auto space-y-4 h-full flex flex-col">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
@@ -17,7 +17,7 @@ export default function Customize() {
                     <DomainRestriction />
                 </div>
                 <div className="lg:w-[60%] w-full sticky top-[-22px] h-fit">
-                    <EmbedPreview />
+                    <EmbedPreview flipbookId={flipbookId}/>
                 </div>
             </div>
         </div>

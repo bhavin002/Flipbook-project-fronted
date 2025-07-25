@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/tooltip"
 import { useState } from "react";
 import { toast } from "sonner";
+import BookShelfView from "../BookShelfView";
 
 export default function DetailsTab({ flipbookId }) {
     const [copied, setCopied] = useState(false);
@@ -75,6 +76,7 @@ export default function DetailsTab({ flipbookId }) {
                         </TooltipProvider>
                     </div>
                 </CardContent>
+                <BookShelfView id={flipbookId} />
             </Card>
         </div>
     )

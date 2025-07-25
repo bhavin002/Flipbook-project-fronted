@@ -58,10 +58,10 @@ export default function BookShelfDetails() {
                     <DetailsTab flipbookId={id} />
                 </TabsContent>
                 <TabsContent value="customize" className="h-full overflow-y-auto">
-                    <Customize />
+                    <Customize flipbookId={id}/>
                 </TabsContent>
                 <TabsContent value="embed" className="h-full overflow-y-auto">
-                    <Embed />
+                    <Embed flipbookId={id}/>
                 </TabsContent>
                 <TabsContent value="send-email" className="h-full overflow-y-auto">
                     <SendEmail />

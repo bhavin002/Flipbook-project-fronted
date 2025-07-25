@@ -1,7 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import BookShelfView from "../../BookShelfView";
 
-export default function EmbedPreview() {
+export default function EmbedPreview({ flipbookId }) {
     return (
         <Card className="pt-6">
             <CardContent className="border p-0 m-6 mt-0 rounded-sm">
@@ -16,7 +17,8 @@ export default function EmbedPreview() {
                     <Skeleton className="w-1/4 h-6 rounded-md" />
                 </div>
                 <div className="px-6 py-4">
-                    <div className="h-48 md:h-96  w-full bg-gray-500">
+                    <div className="h-48 md:h-96 w-full">
+                        <BookShelfView id={flipbookId}/>
                     </div>
                 </div>
                 <div className="w-full px-6 py-4 flex flex-col md:flex-row gap-6">
