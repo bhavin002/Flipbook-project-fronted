@@ -1,55 +1,21 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, CheckCircle } from "lucide-react";
-import { GetPublicFlipbookApi } from "@/service/flipbook.publish.service";
-import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 import bookLogo from '@/assets/book_thumbnail.jpg';
-import { useWorkspaces } from "@/context/WorkspaceContext";
 import { useShelfCreate } from "@/layout/ShelfCreateLayout";
 
 export default function CreateShelf() {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
-    const { currentWorkspace } = useWorkspaces();
     const { 
         selectedFlipbooks, 
         setSelectedFlipbooks,
         isEditMode,
-        shelfData,
-        loading: shelfLoading
+        loading,
+        data
     } = useShelfCreate();
 
-    useEffect(() => {
-        const fetchFlipbooks = async () => {
-            setLoading(true);
-            try {
-                const response = await GetPublicFlipbookApi(currentWorkspace._id);
-                setData(response.data);
-                if (isEditMode && shelfData && response.data.flipbooks) {
-                    const flipbookIds = shelfData.flipbooks || [];
-                    const preSelectedFlipbooks = response.data.flipbooks.filter(fb => 
-                        flipbookIds.includes(fb._id)
-                    );
-                    setSelectedFlipbooks(preSelectedFlipbooks);
-                    console.log("Pre-selected flipbooks:", preSelectedFlipbooks);
-                }
-            } catch (err) {
-                toast.error("Error fetching flipbooks", {
-                    description: err.message
-                });
-            } finally {
-                setLoading(false);
-            }
-        };
-        
-        if (currentWorkspace && (!isEditMode || shelfData)) {
-            fetchFlipbooks();
-        }
-    }, [currentWorkspace, isEditMode, shelfData, setSelectedFlipbooks]);
-
-    if (loading || shelfLoading) {
+    if (loading) {
         return <Loader />;
     }
 

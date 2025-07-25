@@ -6,6 +6,8 @@ import { useState, createContext, useContext, useEffect } from "react";
 import PublishShelfDailog from "../components/ShelfLayoutComponents/PublishShelfDailog";
 import { GetShelfFlipbookIdsApi } from "@/service/bookshelf.service";
 import { toast } from "sonner";
+import { useWorkspaces } from "@/context/WorkspaceContext";
+import { GetPublicFlipbookApi } from "@/service/flipbook.publish.service";
 
 export const ShelfCreateContext = createContext();
 export const useShelfCreate = () => useContext(ShelfCreateContext);
@@ -20,11 +22,11 @@ export default function ShelfCreateLayout() {
     const [isPublishShelfModalOpen, setIsPublishShelfModalOpen] = useState(false);
     const [shelfData, setShelfData] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [data, setData] = useState(null);
+    const { currentWorkspace } = useWorkspaces();
     
     const isEditMode = Boolean(id);
-    console.log("book shelf id ShelfCreateLayout", id, "isEditMode:", isEditMode);
 
-    // Fetch shelf data if in edit mode
     useEffect(() => {
         const fetchShelfData = async () => {
             if (!isEditMode) return;
@@ -44,6 +46,33 @@ export default function ShelfCreateLayout() {
 
         fetchShelfData();
     }, [id, isEditMode]);
+
+    useEffect(() => {
+        const fetchFlipbooks = async () => {
+            setLoading(true);
+            try {
+                const response = await GetPublicFlipbookApi(currentWorkspace._id);
+                setData(response.data);
+                if (isEditMode && shelfData && response.data.flipbooks) {
+                    const flipbookIds = shelfData.flipbooks || [];
+                    const preSelectedFlipbooks = response.data.flipbooks.filter(fb => 
+                        flipbookIds.includes(fb._id)
+                    );
+                    setSelectedFlipbooks(preSelectedFlipbooks);
+                }
+            } catch (err) {
+                toast.error("Error fetching flipbooks", {
+                    description: err.message
+                });
+            } finally {
+                setLoading(false);
+            }
+        };
+        
+        if (currentWorkspace && (!isEditMode || shelfData)) {
+            fetchFlipbooks();
+        }
+    }, [currentWorkspace, isEditMode, shelfData, setSelectedFlipbooks]);
 
     useEffect(() => {
         if (activeTab === "Organize") {
@@ -94,7 +123,8 @@ export default function ShelfCreateLayout() {
             canProceed,
             isEditMode,
             shelfData,
-            loading
+            loading,
+            data
         }}>
             <div className="flex flex-col min-h-screen">
                 <header className="fixed top-0 left-0 right-0 z-10 bg-white">

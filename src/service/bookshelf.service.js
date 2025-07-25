@@ -1,12 +1,16 @@
 import ApiClient from "@/utils/ApiClient"
 
 export const CreateBookShelfApi = async (data) => {
-    const response = await ApiClient().post("/bookshelf/create", data);
+    const response = await ApiClient().post("/bookshelf/create", data, {
+        showLoader: true
+    });
     return response.data;
 }
 
 export const GetShelfFlipbookIdsApi = async (shelfId) => {
-    const response = await ApiClient().get(`/bookshelf/get-flipbook-ids/${shelfId}`);
+    const response = await ApiClient().get(`/bookshelf/get-flipbook-ids/${shelfId}`,{
+        showLoader: true
+    });
     return response.data;
 }
 

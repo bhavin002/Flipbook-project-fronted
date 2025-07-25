@@ -5,6 +5,7 @@ import { arrayMove, SortableContext, useSortable, rectSortingStrategy } from "@d
 import { CSS } from "@dnd-kit/utilities";
 import bookLogo from '@/assets/book_thumbnail.jpg';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
+import { Loader } from "@/components/ui/loader";
 
 function SortableFlipbookCard({ flipbook }) {
   const {
@@ -18,7 +19,7 @@ function SortableFlipbookCard({ flipbook }) {
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition: transition || 'all 0.2s cubic-bezier(.22,.68,0,1.71)',
+    transition: transition || 'all cubic-bezier(.22,.68,0,1.71)',
     cursor: 'move',
   };
 
@@ -60,27 +61,9 @@ export default function OrganizeShelf() {
   const { 
     orderedFlipbooks, 
     setOrderedFlipbooks, 
-    selectedFlipbooks,
     isEditMode,
-    shelfData
+    loading,
   } = useShelfCreate();
-
-  useEffect(() => {
-    if (isEditMode && selectedFlipbooks.length > 0 && orderedFlipbooks.length === 0) {
-      if (shelfData && shelfData.flipbooks) {
-        const orderedByShelfData = shelfData.flipbooks.map(id => selectedFlipbooks.find(fb => fb._id === id)).filter(Boolean);
-        setOrderedFlipbooks(orderedByShelfData);
-      } else {
-        setOrderedFlipbooks(selectedFlipbooks);
-      }
-    } else if (!isEditMode && selectedFlipbooks.length > 0 && orderedFlipbooks.length === 0) {
-      setOrderedFlipbooks(selectedFlipbooks);
-    }
-  }, [selectedFlipbooks, isEditMode, shelfData, orderedFlipbooks.length, setOrderedFlipbooks]);
-
-  if (!orderedFlipbooks || orderedFlipbooks.length === 0) {
-    return <div className="flex flex-col items-center w-full px-4 md:px-6 mt-4"><p className="text-lg text-gray-500 mt-8">No flipbooks selected. Please select flipbooks first.</p></div>;
-  }
 
   const sensors = useSensors(
     useSensor(PointerSensor)
@@ -96,6 +79,18 @@ export default function OrganizeShelf() {
       });
     }
   };
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (!orderedFlipbooks || orderedFlipbooks.length === 0) {
+    return (
+      <div className="flex flex-col items-center w-full px-4 md:px-6 mt-4">
+        <p className="text-lg text-gray-500 mt-8">No flipbooks selected. Please select flipbooks first.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full px-4 md:px-6 mt-4">
@@ -123,4 +118,4 @@ export default function OrganizeShelf() {
       </div>
     </div>
   );
-} 
+}
