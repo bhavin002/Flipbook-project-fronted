@@ -168,7 +168,7 @@ export default function PublishShelfDailog({ isPublishShelfModalOpen, setIsPubli
 
                     <DialogFooter>
                         <Button variant="outline" onClick={handleClose}>
-                            Close
+                            Cancel
                         </Button>
                         <Button
                             disabled={isPublishDisabled || isLoading}

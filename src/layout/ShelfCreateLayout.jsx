@@ -55,9 +55,16 @@ export default function ShelfCreateLayout() {
                 setData(response.data);
                 if (isEditMode && shelfData && response.data.flipbooks) {
                     const flipbookIds = shelfData.flipbooks || [];
-                    const preSelectedFlipbooks = response.data.flipbooks.filter(fb => 
-                        flipbookIds.includes(fb._id)
-                    );
+                    
+                    const flipbookMap = new Map();
+                    response.data.flipbooks.forEach(fb => {
+                        flipbookMap.set(fb._id, fb);
+                    });
+                    
+                    const preSelectedFlipbooks = flipbookIds
+                        .map(id => flipbookMap.get(id))
+                        .filter(Boolean);
+                    
                     setSelectedFlipbooks(preSelectedFlipbooks);
                 }
             } catch (err) {
