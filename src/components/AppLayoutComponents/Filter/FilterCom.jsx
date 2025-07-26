@@ -57,7 +57,6 @@ export default function FilterCom() {
 
     const updateUrlWithFilters = (filterData = null) => {
         const filtersToEncode = filterData || getCurrentFilterState();
-
         const hasActiveFilters =
             filtersToEncode.status.length > 0 ||
             filtersToEncode.visibility.length > 0 ||
@@ -65,19 +64,16 @@ export default function FilterCom() {
             (filtersToEncode.dateCreated && filtersToEncode.dateCreated !== "anytime") ||
             (filtersToEncode.lastUpdated && filtersToEncode.lastUpdated !== "anytime");
 
-        const searchParams = new URLSearchParams(location.search);
-
+        const searchParams = new URLSearchParams();
         if (hasActiveFilters) {
             const encodedFilters = encodeFiltersToUrl(filtersToEncode);
             if (encodedFilters) {
                 searchParams.set('filter', encodedFilters);
-                console.log("Setting filter in URL:", encodedFilters);
             }
-        } else {
-            searchParams.delete('filter');
         }
 
-        const newUrl = `${location.pathname}${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
+        const basePath = '/myflipbooks/flipbooks';
+        const newUrl = `${basePath}${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
         navigate(newUrl, { replace: true });
     };
 
@@ -110,7 +106,7 @@ export default function FilterCom() {
 
             const newSearchParams = new URLSearchParams(location.search);
             newSearchParams.delete('filter');
-            navigate(`${location.pathname}${newSearchParams.toString() ? '?' + newSearchParams.toString() : ''}`, { replace: true });
+            navigate(`/myflipbooks/flipbooks${newSearchParams.toString() ? '?' + newSearchParams.toString() : ''}`, { replace: true });
         }
 
         setCreatedByFilter([]);
@@ -304,7 +300,6 @@ export default function FilterCom() {
                     case 'published':
                         statusValues.push(flipbookStatus.PUBLISHED);
                         break;
-                    case 'notpublished':
                     case 'not published':
                         statusValues.push(flipbookStatus.NOT_PUBLISHED);
                         break;
@@ -364,9 +359,9 @@ export default function FilterCom() {
     const applyFilters = async () => {
         try {
             setIsLoading(true);
+            navigate(`/myflipbooks/flipbooks`);
             const payload = buildApiPayload();
             await fetchFlipbooks(payload);
-
             updateUrlWithFilters();
         } catch (error) {
             console.error("Filter error:", error);
@@ -388,11 +383,7 @@ export default function FilterCom() {
             setLastUpdatedFilter("anytime");
             setFilterCount(0);
 
-            const searchParams = new URLSearchParams(location.search);
-            searchParams.delete('filter');
-            const newUrl = `${location.pathname}${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
-            navigate(newUrl, { replace: true });
-
+            navigate('/myflipbooks/flipbooks', { replace: true });
             await fetchFlipbooks();
         } catch (error) {
             console.error("Clear filters error:", error);
