@@ -5,12 +5,12 @@ import * as React from "react"
 import { useState, useEffect } from "react"
 import FilterDropdownCom from "./FilterDropdownCom";
 import FilterSelectCom from "./FilterSelectCom";
-import CreatedByFilter from "./CreatedByFilter"; // Import the new component
+import CreatedByFilter from "./CreatedByFilter";
 import { GetTeammatesApi } from "@/service/teammate.service";
 import { toast } from "sonner";
 import { flipbookVisibility, flipbookStatus } from "@/utils/enum";
 import { useFlipbook } from "@/context/FlipbookContext";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export default function FilterCom() {
     const [createdByFilter, setCreatedByFilter] = useState([]);
@@ -23,6 +23,103 @@ export default function FilterCom() {
     const [filterCount, setFilterCount] = useState(0);
     const { fetchFlipbooks } = useFlipbook();
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const encodeFiltersToUrl = (filterData) => {
+        try {
+            const jsonString = JSON.stringify(filterData);
+            return btoa(jsonString);
+        } catch (error) {
+            console.error("Error encoding filters:", error);
+            return null;
+        }
+    };
+
+    const decodeFiltersFromUrl = (encodedString) => {
+        try {
+            const jsonString = atob(encodedString);
+            return JSON.parse(jsonString);
+        } catch (error) {
+            console.error("Error decoding filters:", error);
+            return null;
+        }
+    };
+
+    const getCurrentFilterState = () => {
+        return {
+            status: statusFilter,
+            visibility: visibilityFilter,
+            createdBy: createdByFilter,
+            dateCreated: dateCreatedFilter !== "anytime" ? dateCreatedFilter : "",
+            lastUpdated: lastUpdatedFilter !== "anytime" ? lastUpdatedFilter : ""
+        };
+    };
+
+    const updateUrlWithFilters = (filterData = null) => {
+        const filtersToEncode = filterData || getCurrentFilterState();
+
+        const hasActiveFilters =
+            filtersToEncode.status.length > 0 ||
+            filtersToEncode.visibility.length > 0 ||
+            filtersToEncode.createdBy.length > 0 ||
+            (filtersToEncode.dateCreated && filtersToEncode.dateCreated !== "anytime") ||
+            (filtersToEncode.lastUpdated && filtersToEncode.lastUpdated !== "anytime");
+
+        const searchParams = new URLSearchParams(location.search);
+
+        if (hasActiveFilters) {
+            const encodedFilters = encodeFiltersToUrl(filtersToEncode);
+            if (encodedFilters) {
+                searchParams.set('filter', encodedFilters);
+                console.log("Setting filter in URL:", encodedFilters);
+            }
+        } else {
+            searchParams.delete('filter');
+        }
+
+        const newUrl = `${location.pathname}${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
+        navigate(newUrl, { replace: true });
+    };
+
+    const loadFiltersFromUrl = () => {
+        const searchParams = new URLSearchParams(location.search);
+        const encodedFilters = searchParams.get('filter');
+
+        if (encodedFilters) {
+            try {
+                const decodedFilters = decodeFiltersFromUrl(encodedFilters);
+
+                if (decodedFilters && typeof decodedFilters === 'object') {
+                    const statusArray = Array.isArray(decodedFilters.status) ? decodedFilters.status : [];
+                    const visibilityArray = Array.isArray(decodedFilters.visibility) ? decodedFilters.visibility : [];
+                    const createdByArray = Array.isArray(decodedFilters.createdBy) ? decodedFilters.createdBy : [];
+                    const dateCreated = decodedFilters.dateCreated || "anytime";
+                    const lastUpdated = decodedFilters.lastUpdated || "anytime";
+
+                    setStatusFilter(statusArray);
+                    setVisibilityFilter(visibilityArray);
+                    setCreatedByFilter(createdByArray);
+                    setDateCreatedFilter(dateCreated);
+                    setLastUpdatedFilter(lastUpdated);
+
+                    return decodedFilters;
+                }
+            } catch (error) {
+                console.error("Error processing filters from URL:", error);
+            }
+
+            const newSearchParams = new URLSearchParams(location.search);
+            newSearchParams.delete('filter');
+            navigate(`${location.pathname}${newSearchParams.toString() ? '?' + newSearchParams.toString() : ''}`, { replace: true });
+        }
+
+        setCreatedByFilter([]);
+        setVisibilityFilter([]);
+        setStatusFilter([]);
+        setDateCreatedFilter("anytime");
+        setLastUpdatedFilter("anytime");
+        return null;
+    };
 
     useEffect(() => {
         const GetTeammates = async () => {
@@ -39,20 +136,43 @@ export default function FilterCom() {
             }
         }
         GetTeammates();
-    }, [])
-
+    }, []);
 
     useEffect(() => {
-        setFilterCount(0);
-        // Reset filters when the path changes
-        setCreatedByFilter([]);
-        setVisibilityFilter([]);
-        setStatusFilter([]);
-        setDateCreatedFilter("anytime");
-        setLastUpdatedFilter("anytime");
-    }, [location.pathname]);
+        const applyFiltersFromUrl = async () => {
+            try {
+                setIsLoading(true);
+                const filtersFromUrl = loadFiltersFromUrl();
 
-    // Calculate active filter count
+                if (filtersFromUrl) {
+                    const hasActiveFilters =
+                        (filtersFromUrl.status && filtersFromUrl.status.length > 0) ||
+                        (filtersFromUrl.visibility && filtersFromUrl.visibility.length > 0) ||
+                        (filtersFromUrl.createdBy && filtersFromUrl.createdBy.length > 0) ||
+                        (filtersFromUrl.dateCreated && filtersFromUrl.dateCreated !== "anytime" && filtersFromUrl.dateCreated !== "") ||
+                        (filtersFromUrl.lastUpdated && filtersFromUrl.lastUpdated !== "anytime" && filtersFromUrl.lastUpdated !== "");
+
+                    if (hasActiveFilters) {
+                        const payload = buildApiPayloadFromFilterData(filtersFromUrl);
+                        await fetchFlipbooks(payload);
+                    } else {
+                        await fetchFlipbooks();
+                    }
+                } else {
+                    await fetchFlipbooks();
+                }
+            } catch (error) {
+                toast.error("Failed to load filtered data");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (teammates.length > 0 || !location.search.includes('filter=')) {
+            applyFiltersFromUrl();
+        }
+    }, [location.search, teammates]);
+
     const calculateFilterCount = () => {
         let count = 0;
         if (createdByFilter.length > 0) count++;
@@ -63,7 +183,14 @@ export default function FilterCom() {
         return count;
     };
 
-    // Helper function to calculate date ranges
+    useEffect(() => {
+        if (location.search.includes('filter=')) {
+            setFilterCount(calculateFilterCount());
+        } else {
+            setFilterCount(0);
+        }
+    }, [createdByFilter, visibilityFilter, statusFilter, dateCreatedFilter, lastUpdatedFilter]);
+
     const getDateRange = (filterValue) => {
         const today = new Date();
         const formatDate = (date) => date.toISOString().split('T')[0];
@@ -107,7 +234,6 @@ export default function FilterCom() {
         }
     };
 
-    // Helper function to parse custom date range
     const parseCustomDateRange = (customValue) => {
         if (customValue.includes(' - ')) {
             const [startStr, endStr] = customValue.split(' - ');
@@ -125,53 +251,68 @@ export default function FilterCom() {
         return null;
     };
 
-    // Build API payload
     const buildApiPayload = () => {
+        const filterData = getCurrentFilterState();
+        return buildApiPayloadFromFilterData(filterData);
+    };
+
+    const buildApiPayloadFromFilterData = (filterData) => {
         const payload = {};
 
-        // Handle visibility filter
-        if (visibilityFilter.length > 0) {
+        if (filterData.visibility && filterData.visibility.length > 0) {
             const visibilityValues = [];
             let isVisible = true;
 
-            visibilityFilter.forEach(visibility => {
-                switch (visibility) {
-                    case 'Public':
+            filterData.visibility.forEach(visibility => {
+                const visibilityLower = visibility.toLowerCase();
+                switch (visibilityLower) {
+                    case 'public':
                         visibilityValues.push(flipbookVisibility.PUBLIC);
                         break;
-                    case 'Unlisted':
+                    case 'unlisted':
                         visibilityValues.push(flipbookVisibility.PUBLIC);
                         isVisible = false;
                         break;
-                    case 'Password protected':
+                    case 'password':
+                    case 'password protected':
                         visibilityValues.push(flipbookVisibility.PASSWORD);
                         break;
-                    case 'Private with specific people':
+                    case 'private':
+                    case 'private with specific people':
                         visibilityValues.push(flipbookVisibility.PRIVATE);
                         break;
+                    default:
+                        console.warn("Unknown visibility value:", visibility);
                 }
             });
 
             if (visibilityValues.length > 0) {
-                payload.visibility = [...new Set(visibilityValues)]; // Remove duplicates
-                payload.isVisible = isVisible;
+                payload.visibility = [...new Set(visibilityValues)];
+                if (filterData.visibility.some(v => v.toLowerCase() === 'unlisted')) {
+                    payload.isVisible = false;
+                } else {
+                    payload.isVisible = true;
+                }
             }
         }
 
-        // Handle status filter
-        if (statusFilter.length > 0) {
+        if (filterData.status && filterData.status.length > 0) {
             const statusValues = [];
-            statusFilter.forEach(status => {
-                switch (status) {
-                    case 'Published':
+            filterData.status.forEach(status => {
+                const statusLower = status.toLowerCase();
+                switch (statusLower) {
+                    case 'published':
                         statusValues.push(flipbookStatus.PUBLISHED);
                         break;
-                    case 'Not Published':
+                    case 'notpublished':
+                    case 'not published':
                         statusValues.push(flipbookStatus.NOT_PUBLISHED);
                         break;
-                    case 'Draft':
+                    case 'draft':
                         statusValues.push(flipbookStatus.DRAFT);
                         break;
+                    default:
+                        console.warn("Unknown status value:", status);
                 }
             });
             if (statusValues.length > 0) {
@@ -179,18 +320,23 @@ export default function FilterCom() {
             }
         }
 
-        // Handle createdBy filter - now works with IDs directly
-        if (createdByFilter.length > 0) {
-            payload.createdBy = createdByFilter; // Direct assignment since we're already storing IDs
+        if (filterData.createdBy && filterData.createdBy.length > 0) {
+            if (teammates.length > 0) {
+                const validTeammateIds = teammates.map(t => t.userId || t._id);
+                const validCreatedByIds = filterData.createdBy.filter(id => validTeammateIds.includes(id));
+                if (validCreatedByIds.length > 0) {
+                    payload.createdBy = validCreatedByIds;
+                }
+            } else {
+                payload.createdBy = filterData.createdBy;
+            }
         }
 
-        // Handle date created filter
-        if (dateCreatedFilter && dateCreatedFilter !== 'anytime') {
-            let dateRange = getDateRange(dateCreatedFilter);
+        if (filterData.dateCreated && filterData.dateCreated !== 'anytime' && filterData.dateCreated !== '') {
+            let dateRange = getDateRange(filterData.dateCreated);
 
-            // Check if it's a custom date range
-            if (!dateRange && dateCreatedFilter.includes(' - ')) {
-                dateRange = parseCustomDateRange(dateCreatedFilter);
+            if (!dateRange && filterData.dateCreated.includes(' - ')) {
+                dateRange = parseCustomDateRange(filterData.dateCreated);
             }
 
             if (dateRange) {
@@ -199,13 +345,11 @@ export default function FilterCom() {
             }
         }
 
-        // Handle last updated filter
-        if (lastUpdatedFilter && lastUpdatedFilter !== 'anytime') {
-            let dateRange = getDateRange(lastUpdatedFilter);
+        if (filterData.lastUpdated && filterData.lastUpdated !== 'anytime' && filterData.lastUpdated !== '') {
+            let dateRange = getDateRange(filterData.lastUpdated);
 
-            // Check if it's a custom date range
-            if (!dateRange && lastUpdatedFilter.includes(' - ')) {
-                dateRange = parseCustomDateRange(lastUpdatedFilter);
+            if (!dateRange && filterData.lastUpdated.includes(' - ')) {
+                dateRange = parseCustomDateRange(filterData.lastUpdated);
             }
 
             if (dateRange) {
@@ -217,14 +361,13 @@ export default function FilterCom() {
         return payload;
     };
 
-    // Apply filters function
     const applyFilters = async () => {
         try {
             setIsLoading(true);
             const payload = buildApiPayload();
             await fetchFlipbooks(payload);
-            // Update filter count only after successfully applying filters
-            setFilterCount(calculateFilterCount());
+
+            updateUrlWithFilters();
         } catch (error) {
             console.error("Filter error:", error);
             toast.error("Failed to apply filters", {
@@ -238,15 +381,18 @@ export default function FilterCom() {
     const clearAllFilters = async () => {
         try {
             setIsLoading(true);
-            // Clear all filters
             setCreatedByFilter([]);
             setVisibilityFilter([]);
             setStatusFilter([]);
             setDateCreatedFilter("anytime");
             setLastUpdatedFilter("anytime");
-            // Reset filter count
             setFilterCount(0);
-            // Fetch all flipbooks without filters
+
+            const searchParams = new URLSearchParams(location.search);
+            searchParams.delete('filter');
+            const newUrl = `${location.pathname}${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
+            navigate(newUrl, { replace: true });
+
             await fetchFlipbooks();
         } catch (error) {
             console.error("Clear filters error:", error);
@@ -258,24 +404,21 @@ export default function FilterCom() {
         }
     };
 
-    // Generate filter options from teammates data
     const getCreatedByOptions = () => {
         return teammates
-            .filter(teammate => teammate.status === 1) // Only show active teammates
+            .filter(teammate => teammate.status === 1)
             .map(teammate => {
-                // Use name if available, otherwise use email username
                 const displayName = teammate.name && teammate.name.trim()
                     ? teammate.name
                     : teammate.email.split('@')[0].charAt(0).toUpperCase() + teammate.email.split('@')[0].slice(1);
 
                 return {
-                    value: teammate.userId || teammate._id, // Use userId if available, fallback to _id
+                    value: teammate.userId || teammate._id,
                     label: displayName
                 };
             });
     };
 
-    // Only visibility and status filters now use FilterDropdownCom
     const filters = [
         {
             id: 'visibility',
@@ -354,7 +497,6 @@ export default function FilterCom() {
                     <SheetTitle>Filter options</SheetTitle>
                 </SheetHeader>
                 <div className="space-y-4">
-                    {/* Separate CreatedByFilter component */}
                     <CreatedByFilter
                         label="Created by"
                         options={getCreatedByOptions()}
@@ -362,7 +504,6 @@ export default function FilterCom() {
                         onChange={setCreatedByFilter}
                     />
 
-                    {/* Other filters using FilterDropdownCom */}
                     {filters.map((filter) => (
                         <FilterDropdownCom
                             key={filter.id}
@@ -373,7 +514,6 @@ export default function FilterCom() {
                         />
                     ))}
 
-                    {/* Select filters */}
                     {selectFilters.map((filter) => (
                         <FilterSelectCom
                             key={filter.id}

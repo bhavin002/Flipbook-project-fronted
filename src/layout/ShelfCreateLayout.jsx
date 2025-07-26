@@ -16,9 +16,9 @@ export default function ShelfCreateLayout() {
     const navigate = useNavigate();
     const location = useLocation();
     const { id } = useParams();
-    const [activeTab, setActiveTab] = useState(location.pathname.includes("organize") ? "Organize" : "Select");
-    const [selectedFlipbooks, setSelectedFlipbooks] = useState([]); 
-    const [orderedFlipbooks, setOrderedFlipbooks] = useState([]); 
+    const [activeTab, setActiveTab] = useState("Select");
+    const [selectedFlipbooks, setSelectedFlipbooks] = useState([]);
+    const [orderedFlipbooks, setOrderedFlipbooks] = useState([]);
     const [isPublishShelfModalOpen, setIsPublishShelfModalOpen] = useState(false);
     const [shelfData, setShelfData] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -26,6 +26,15 @@ export default function ShelfCreateLayout() {
     const { currentWorkspace } = useWorkspaces();
     
     const isEditMode = Boolean(id);
+
+    useEffect(() => {
+        if (location.pathname.includes("organize")) {
+            setActiveTab("Organize")
+        }
+        if (location.pathname.includes("select")) {
+            setActiveTab("Select")
+        }
+    }, [location.pathname])
 
     useEffect(() => {
         const fetchShelfData = async () => {

@@ -3,31 +3,41 @@ import { useEffect, useState, useRef } from "react"
 import { toast } from "sonner"
 import { Loader } from "@/components/ui/loader";
 import bookLogo from '@/assets/book_thumbnail.jpg';
+import { Input } from "../ui/input";
+import { Search } from "lucide-react";
 
 export default function BookShelfView({ id }) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [itemsPerView, setItemsPerView] = useState(1);
+    const [currentPageCount, setCurrentPageCount] = useState(1);
     const containerRef = useRef(null);
 
     useEffect(() => {
         const updateItemsPerView = () => {
             if (containerRef.current) {
                 const width = containerRef.current.offsetWidth;
-                if (width >= 1536) setItemsPerView(8);
-                else if (width >= 1280) setItemsPerView(6);
-                else if (width >= 1024) setItemsPerView(4);
-                else if (width >= 768) setItemsPerView(2);
-                else setItemsPerView(1);
+                let newItemsPerView = 1;
+                if (width >= 1536) {
+                    newItemsPerView = 8;
+                } else if (width >= 1280) {
+                    newItemsPerView = 6;
+                } else if (width >= 1024) {
+                    newItemsPerView = 4;
+                } else if (width >= 768) {
+                    newItemsPerView = 2;
+                } else {
+                    newItemsPerView = 1;
+                }
+                setItemsPerView(newItemsPerView);
+                setCurrentPageCount(Math.min(newItemsPerView, data ? data.length - currentIndex : newItemsPerView));
             }
-
         };
-
         updateItemsPerView();
         window.addEventListener('resize', updateItemsPerView);
         return () => window.removeEventListener('resize', updateItemsPerView);
-    }, [data]);
+    }, [data, currentIndex]);
 
     useEffect(() => {
         const fetchShelfData = async () => {
@@ -50,8 +60,11 @@ export default function BookShelfView({ id }) {
     }, [id])
 
     useEffect(() => {
-        if (data && currentIndex >= data.length - itemsPerView) {
-            setCurrentIndex(Math.max(0, data.length - itemsPerView));
+        if (data && currentIndex >= data?.length - itemsPerView) {
+            setCurrentIndex(Math.max(0, data?.length - itemsPerView));
+            setCurrentPageCount(Math.min(itemsPerView, data?.length - currentIndex));
+        } else {
+            setCurrentPageCount(Math.min(itemsPerView, data?.length - currentIndex));
         }
     }, [itemsPerView, data, currentIndex]);
 
@@ -68,7 +81,7 @@ export default function BookShelfView({ id }) {
     };
 
     const canGoPrevious = currentIndex > 0;
-    const canGoNext = data && currentIndex < data.length - itemsPerView;
+    const canGoNext = data && currentIndex < data?.length - itemsPerView;
 
     if (loading) {
         return (
@@ -79,9 +92,26 @@ export default function BookShelfView({ id }) {
     if (!data) return null;
 
     return (
-        <div className="w-full h-full" id="bookshelf-preview-id" ref={containerRef}>
+        <div className="w-full h-full flex flex-col relative" id="bookshelf-preview-id" ref={containerRef}>
+            <div className="flex justify-end px-4 py-4 absolute top-0 right-0 items-center gap-3">
+                <p className="text-2xl font-semibold"></p>
+                <div className="grid items-center gap-1.5">
+                    <div className="relative">
+                        <div className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground">
+                            <Search className="h-4 w-4" />
+                        </div>
+                        <Input
+                            id="search"
+                            autoComplete="off"
+                            type="search"
+                            placeholder="Search publications"
+                            className="w-full rounded-lg bg-background pl-8"
+                        />
+                    </div>
+                </div>
+            </div>
             <div className="px-4 py-6 h-full flex items-center">
-                {data.length === 0 ? (
+                {data?.length === 0 ? (
                     <p className="text-center">No publications found.</p>
                 ) : (
                     <div className="relative flex items-center flex-wrap w-full">
@@ -110,67 +140,71 @@ export default function BookShelfView({ id }) {
                             </button>
                         )}
 
-                        <div
-
-                            className="overflow-hidden mx-16 z-10 content-center "
-                            style={{ width: 'calc(100% - 8rem)' }}
-                        >
-                            <div
-                                className="flex transition-transform duration-300 ease-in-out"
-                                style={{
-                                    transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
-                                }}
-                            >
-                                {data.map((book, index) => (
-                                    <div
-                                        key={book._id}
-                                        className="flex-shrink-0 px-3 my-2"
-                                        style={{
-                                            width: `${100 / itemsPerView}%`
-                                        }}
-                                    >
-                                        <div className="rounded-lg flex justify-center items-end h-full">
-                                            <a
-                                                href={`/public-flipbook/${book._id}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="block"
-                                                style={{ textDecoration: 'none' }}
-                                            >
-                                                <img
-                                                    src={book.thumbnail ? book.thumbnail : bookLogo}
-                                                    alt={`Book ${book._id}`}
-                                                    className="rounded-md max-h-56 w-auto shadow-md transition-all duration-200 hover:scale-105 hover:-translate-y-0.5 cursor-pointer mx-auto"
-                                                />
-                                            </a>
+                        <div className="overflow-hidden mx-16 z-10 content-center w-full">
+                            <div className="flex justify-center w-full flex-col items-center py-6">
+                                <div
+                                    className="flex transition-transform duration-300 ease-in-out z-10 relative"
+                                    style={{
+                                        transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
+                                        width: `${currentPageCount * (100 / itemsPerView)}%`,
+                                    }}
+                                >
+                                    {data?.map((book, index) => (
+                                        <div
+                                            key={book._id}
+                                            className="flex-shrink-0 px-5 my-2"
+                                            style={{
+                                                width: `${100 / currentPageCount}%`,
+                                            }}
+                                        >
+                                            <div className="rounded-lg flex justify-center items-end h-full">
+                                                <a
+                                                    href={`/public-flipbook/${book._id}`}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="block"
+                                                    style={{ textDecoration: "none" }}
+                                                >
+                                                    <img
+                                                        src={book.thumbnail ? book.thumbnail : bookLogo}
+                                                        alt={`Book ${book._id}`}
+                                                        className="rounded-md max-h-56 w-auto shadow-md transition-all duration-200 hover:scale-105 hover:-translate-y-0.5 cursor-pointer mx-auto"
+                                                    />
+                                                </a>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
+
+                                </div>
+                                <div className="relative w-full h-auto"
+                                style={{
+                                     width: `${currentPageCount * (100 / itemsPerView)}%`
+                                }}>
+                                    <div
+                                        className="opacity-76 w-full absolute -bottom-0.5"
+                                        style={{
+                                            borderBottom: '20px solid rgb(209, 209, 209)',
+                                            borderLeft: '22px solid transparent',
+                                            borderRight: '22px solid transparent'
+                                        }}
+                                    ></div>
+
+                                    <div
+                                        className="h-2.5 w-full absolute left-0 right-0 z-10 m-0 bg-neutral-300"
+                                        style={{ bottom: '-11px' }}
+                                    ></div>
+
+                                    <div
+                                        className="w-full h-2.5 absolute left-0 flex opacity-40"
+                                        style={{
+                                            bottom: '-21px',
+                                            background: 'linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 100%)'
+                                        }}
+                                    ></div>
+                                </div>
                             </div>
                         </div>
-                        <div className="relative w-full h-auto">
-                            <div
-                                className="opacity-76 w-full absolute -bottom-0.5"
-                                style={{
-                                    borderBottom: '20px solid rgb(209, 209, 209)',
-                                    borderLeft: '22px solid transparent',
-                                    borderRight: '22px solid transparent'
-                                }}
-                            ></div>
 
-                            <div
-                                className="h-2.5 w-full absolute left-0 right-0 z-10 m-0 bg-neutral-300"
-                                style={{ bottom: '-11px' }}
-                            ></div>
-
-                            <div
-                                className="w-full h-2.5 absolute left-0 flex opacity-40"
-                                style={{
-                                    bottom: '-21px',
-                                    background: 'linear-gradient(rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 100%)'
-                                }}
-                            ></div>
-                        </div>
 
                         {canGoNext && (
                             <button

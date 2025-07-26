@@ -76,6 +76,8 @@ export default function DetailsTab({ flipbookId }) {
                         </TooltipProvider>
                     </div>
                 </CardContent>
+            </Card>
+            <Card className="shadow-sm flex-grow rounded-lg w-full h-[569px]">
                 <BookShelfView id={flipbookId} />
             </Card>
         </div>
