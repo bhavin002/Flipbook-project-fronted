@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import BookShelfView from "../BookShelfView";
-import { Info, Upload, Plus, Trash2 } from "lucide-react";
+import { Info, Plus, Trash2 } from "lucide-react";
 import { useState, useRef } from "react";
 import SelectLogoDialog from "@/components/AppLayoutComponents/Sidebar/Setting/Workspace/SelectLogoDialog";
 
@@ -18,6 +18,7 @@ export default function Customize({ flipbookId }) {
     const [selectedPaletteColor, setSelectedPaletteColor] = useState(null);
     const [selectedLogo, setSelectedLogo] = useState(null);
     const [isLogoLoading, setIsLogoLoading] = useState(false);
+    const [logoLink, setLogoLink] = useState('');
     const colorPickerRef = useRef(null);
     const paletteColorPickerRef = useRef(null);
 
@@ -86,6 +87,10 @@ export default function Customize({ flipbookId }) {
         } finally {
             setIsLogoLoading(false);
         }
+    };
+
+    const handleLogoLinkChange = (e) => {
+        setLogoLink(e.target.value);
     };
 
     const renderBackgroundContent = () => {
@@ -296,6 +301,17 @@ export default function Customize({ flipbookId }) {
                                                     <Trash2 className="h-4 w-4" />
                                                 </Button>
                                             </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="logo-link">Add a link to your logo</Label>
+                                            <Input
+                                                id="logo-link"
+                                                type="url"
+                                                value={logoLink}
+                                                onChange={handleLogoLinkChange}
+                                                placeholder="Enter logo link URL"
+                                                className="w-full"
+                                            />
                                         </div>
                                     </div>
                                 ) : (

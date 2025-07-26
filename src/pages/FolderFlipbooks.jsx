@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
-import { GetFolderFlipbooksApi } from '@/service/flipbook.service';
+import { GetFlipbooksApi } from '@/service/flipbook.service';
 import { toast } from 'sonner';
 import Flipbooks from '@/utils/Flipbooks';
 import { useLocation, useParams } from 'react-router-dom';
 import ZeroState from '@/utils/ZeroState';
+import { useFlipbook } from '@/context/FlipbookContext';
 
 export default function FolderFlipbooks({ isSidebarOpen }) {
     const [isLoading, setIsLoading] = useState(true);
-    const [flipbooks, setFlipbooks] = useState([]);
     const { id: folderId } = useParams();
     const location = useLocation();
+    const { flipbooks, setFlipbooks } = useFlipbook();
 
     const isTemplateView = location.pathname.includes('/template');
 
@@ -17,7 +18,10 @@ export default function FolderFlipbooks({ isSidebarOpen }) {
         const getFlipbooks = async () => {
             try {
                 setIsLoading(true);
-                const response = await GetFolderFlipbooksApi(folderId);
+                const payload = {   
+                    folderId,
+                }
+                const response = await GetFlipbooksApi(payload);
                 setFlipbooks(response.data);
             } catch (error) {
                 toast.error("Flipbook fetch failed", {

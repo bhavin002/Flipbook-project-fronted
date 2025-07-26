@@ -1,33 +1,80 @@
 import { Input } from "@/components/ui/input";
 import { Search } from 'lucide-react';
 import { useFlipbook } from '@/context/FlipbookContext';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'; 
 
-export default function SearchInputCom({ searchValue, setSearchValue, isFocused, setIsFocused }) {
+export default function SearchInputCom({ searchValue, setSearchValue }) {
     const { fetchFlipbooks } = useFlipbook();
-    const [debouncedValue, setDebouncedValue] = useState(searchValue);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
 
-    const handleSearchChange = (e) => {
-        setSearchValue(e.target.value);
-        setDebouncedValue(e.target.value);
-    };
-
-    const handleFocus = () => {
-        setIsFocused(true);
+    const getFolderIdFromRoute = () => {
+        const path = location.pathname; 
+        const folderMatch = path.match(/\/myflipbooks\/flipbooks\/folder\/([^\/]+)/);
+        return folderMatch ? folderMatch[1] : null;
     };
 
     useEffect(() => {
-        if (!isFocused) return;
-
-        const handler = setTimeout(() => {
-            if (debouncedValue.trim()) {
-                fetchFlipbooks({ searchText: debouncedValue });
-            } else if (searchValue === '') {
-                fetchFlipbooks();
+        const searchFromUrl = searchParams.get('search') || '';
+        if (searchFromUrl !== searchValue) {
+            setSearchValue(searchFromUrl);
+            
+            if (searchFromUrl.trim()) {
+                performSearch(searchFromUrl);
+            } else {
+                performSearch('');
             }
-        }, 500);
-        return () => clearTimeout(handler);
-    }, [searchValue]);
+        }
+    }, [searchParams]);
+
+    const performSearch = (searchText) => {
+        const folderId = getFolderIdFromRoute();
+        
+        if (searchText.trim()) {
+            const payload = { searchText: searchText };
+            if (folderId) {
+                payload.folderId = folderId;
+            }
+            fetchFlipbooks(payload);
+        } else {
+            const payload = {};
+            if (folderId) {
+                payload.folderId = folderId;
+            }
+            fetchFlipbooks(payload);
+        }
+    };
+
+    const updateUrlParams = (searchText) => {
+        const currentParams = new URLSearchParams(searchParams);
+        
+        if (searchText.trim()) {
+            currentParams.set('search', searchText);
+        } else {
+            currentParams.delete('search');
+        }
+        
+        const newUrl = `${location.pathname}${currentParams.toString() ? '?' + currentParams.toString() : ''}`;
+        navigate(newUrl, { replace: true });
+    };
+
+    const handleSearchChange = (e) => {
+        if (e.target.value.trim() === '') {
+            updateUrlParams('');
+            performSearch('');
+        }
+        setSearchValue(e.target.value);
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            updateUrlParams(searchValue);
+            performSearch(searchValue);
+        }
+    };
 
     return (
         <div className="grid w-full items-center gap-1.5">
@@ -43,7 +90,7 @@ export default function SearchInputCom({ searchValue, setSearchValue, isFocused,
                     className="w-full rounded-lg bg-background pl-8"
                     value={searchValue}
                     onChange={handleSearchChange}
-                    onFocus={handleFocus}
+                    onKeyPress={handleKeyPress}
                 />
             </div>
         </div>

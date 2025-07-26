@@ -167,7 +167,7 @@ export default function FilterCom() {
         if (teammates.length > 0 || !location.search.includes('filter=')) {
             applyFiltersFromUrl();
         }
-    }, [location.search, teammates]);
+    }, [teammates]);
 
     const calculateFilterCount = () => {
         let count = 0;

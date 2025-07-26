@@ -6,7 +6,7 @@ import SidebarNavigation from "../components/AppLayoutComponents/SidebarNavigati
 import {
     SidebarProvider,
 } from "@/components/ui/sidebar"
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import AppBreadcrumbs from "@/utils/AppBreadcrumb";
 import CreateDropDownCom from "@/components/AppLayoutComponents/CreateDropDownCom";
 import { AppSidebar } from "@/utils/AppSidebar";
@@ -14,16 +14,17 @@ import BottomSidebarNavigation from "@/components/AppLayoutComponents/BottomSide
 
 export default function AppLayout({ setIsSidebarOpen }) {
     const [searchValue, setSearchValue] = useState("");
-    const [isFocused, setIsFocused] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const handleBlur = (e) => {
-        setTimeout(() => {
-            if (!e?.currentTarget?.contains(document.activeElement)) {
-                setIsFocused(false);
-            }
-        }, 200);
+    // Check if current path should show search and filter components
+    const shouldShowSearchAndFilter = () => {
+        const pathname = location.pathname;
+        return pathname === '/myflipbooks/flipbooks' ||
+               pathname.startsWith('/myflipbooks/flipbooks/folder/') ||
+               pathname === '/myflipbooks/template' ||
+               pathname.startsWith('/myflipbooks/template/folder/');
     };
 
     return (
@@ -36,29 +37,29 @@ export default function AppLayout({ setIsSidebarOpen }) {
                         }}>
                             <img src="/src/assets/logo.png" width={200} />
                         </div>
-                        <div className="relative md:flex gap-6 hidden" onBlur={handleBlur}>
-                            <SearchInputCom
-                                searchValue={searchValue}
-                                setSearchValue={setSearchValue}
-                                isFocused={isFocused}
-                                setIsFocused={setIsFocused}
-                            />
-                            <FilterCom />
-                        </div>
+                        {shouldShowSearchAndFilter() && (
+                            <div className="relative md:flex gap-6 hidden">
+                                <SearchInputCom
+                                    searchValue={searchValue}
+                                    setSearchValue={setSearchValue}
+                                />
+                                <FilterCom />
+                            </div>
+                        )}
                         <div className="flex md:gap-6 gap-2 items-center">
                             <CreateDropDownCom />
                             <ProfileDropDownCom />
                         </div>
                     </div>
-                    <div className="h-12 relative flex gap-2 justify-end mx-4 md:hidden items-center" onBlur={handleBlur}>
-                        <SearchInputCom
-                            searchValue={searchValue}
-                            setSearchValue={setSearchValue}
-                            isFocused={isFocused}
-                            setIsFocused={setIsFocused}
-                        />
-                        <FilterCom />
-                    </div>
+                    {shouldShowSearchAndFilter() && (
+                        <div className="h-12 relative flex gap-2 justify-end mx-4 md:hidden items-center">
+                            <SearchInputCom
+                                searchValue={searchValue}
+                                setSearchValue={setSearchValue}
+                            />
+                            <FilterCom />
+                        </div>
+                    )}
                     <div className="md:hidden px-4 py-3 sticky top-0 bg-white z-10">
                         <AppBreadcrumbs />
                     </div>

@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { GetWorkspaceFlipbooksApi, GetWorkspaceTemplatesApi, GetFlipbooksApi } from '@/service/flipbook.service';
+import { GetFlipbooksApi } from '@/service/flipbook.service';
 import { toast } from 'sonner';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
@@ -26,9 +26,10 @@ export function FlipbookProvider({ children }) {
                 }
                 response = await GetFlipbooksApi(filters);
             } else {
-                response = isTemplateView
-                    ? await GetWorkspaceTemplatesApi()
-                    : await GetWorkspaceFlipbooksApi();
+                const payload = {
+                    type: isTemplateView ? [1] : [0]
+                }
+                response = await GetFlipbooksApi(payload);
             }
 
             setFlipbooks(response.data);
@@ -43,7 +44,12 @@ export function FlipbookProvider({ children }) {
 
     useEffect(() => {
         if (!isAuthenticated) return;
-        fetchFlipbooks();
+        
+        const shouldFetchFlipbooks = location.pathname === '/myflipbooks/flipbooks' || location.pathname === '/myflipbooks/template';
+        
+        if (shouldFetchFlipbooks) {
+            fetchFlipbooks();
+        }
     }, [location.pathname, isAuthenticated]);
 
     const value = {

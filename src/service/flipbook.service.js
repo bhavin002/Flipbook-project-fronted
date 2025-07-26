@@ -40,20 +40,6 @@ export const GetFlipbooksApi = async (data) => {
     return response.data;
 }
 
-export const GetWorkspaceFlipbooksApi = async () => {
-    const response = await ApiClient().get(`/flipbook/get-folder-flipbook?flipbookType=${flipbookType.FLIPBOOK}`);
-    return response.data;
-}
-
-export const GetWorkspaceTemplatesApi = async () => {
-    const response = await ApiClient().get(`/flipbook/get-folder-flipbook?flipbookType=${flipbookType.TEMPLATE}`);
-    return response.data;
-}
-
-export const GetFolderFlipbooksApi = async (folderId) => {
-    const response = await ApiClient().get(`/flipbook/get-folder-flipbook?flipbookType=${flipbookType.FLIPBOOK}&folderId=${folderId}`);
-    return response.data;
-}
 
 export const SaveFlipbookAsTemplateApi = async (flipbookId, name, description) => {
     const response = await ApiClient().get(`/flipbook/save-as-template/${flipbookId}?name=${name}&description=${description}`);
