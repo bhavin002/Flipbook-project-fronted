@@ -90,7 +90,7 @@ export default function MaskEmailInput({
     <div className={`w-full ${className}`}>
       <div className={`flex flex-wrap items-start gap-2 p-2 rounded-md border ${
         error || isInvalid 
-          ? 'border-red-500' 
+          ? 'border-red-500 focus:outline-none focus-visible:ring-0' 
           : isFocused 
             ? 'border-primary' 
             : 'border-gray-300'

@@ -415,7 +415,7 @@ export default function Branding() {
                     value={logoLink}
                     onChange={handleLogoLinkChange}
                     onBlur={handleLogoLinkBlur}
-                    className={`placeholder:text-[#d8dce3] ${logoLink && !isValidUrl(logoLink) ? 'border-red-500' : ''}`}
+                    className={`placeholder:text-[#d8dce3] ${logoLink && !isValidUrl(logoLink) ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
                     disabled={!isFieldEnabled("logoLink")}
                 />
             </div>
@@ -464,7 +464,7 @@ export default function Branding() {
                     value={playerAccentColor}
                     onChange={handlePlayerAccentColorChange}
                     onBlur={handlePlayerAccentColorBlur}
-                    className={`${playerAccentColor && !isValidColor(playerAccentColor) ? 'border-red-500' : ''}`}
+                    className={`${playerAccentColor && !isValidColor(playerAccentColor) ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
                     disabled={!isFieldEnabled("playerAccentColorHash")}
                     placeholder="#C1080B"
                 />

@@ -370,7 +370,7 @@ export default function LeadForm() {
                                     value={leadFormState.privacyPolicyLink}
                                     onChange={handlePrivacyPolicyLinkChange}
                                     onBlur={handlePrivacyPolicyLinkBlur}
-                                    className={`placeholder:text-[#d8dce3] ${!isUrlValid ? 'border-red-500' : ''}`}
+                                    className={`placeholder:text-[#d8dce3] ${!isUrlValid ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
                                 />
                             </div>
                         </>

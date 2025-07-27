@@ -6,25 +6,199 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import BookShelfView from "../BookShelfView";
-import { Info, Plus, Trash2 } from "lucide-react";
-import { useState, useRef } from "react";
+import { Info, Plus, Trash2, Loader2 } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 import SelectLogoDialog from "@/components/AppLayoutComponents/Sidebar/Setting/Workspace/SelectLogoDialog";
+import { BackgroundImageType, BackgroundColorType } from "@/utils/enum.js";
+import { getBookShelfPreviewSetting, updateBookShelfPreviewSetting } from "@/service/bookshelfPreviewSetting.service";
+import { toast } from "sonner";
+import { z } from "zod";
+
+const urlSchema = z.string().regex(/^$|^(?!https?\.)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$|^https?:\/\/[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$/).or(z.literal(''));
 
 export default function Customize({ flipbookId }) {
-    const [bookshelfColor, setBookshelfColor] = useState('#ffffff');
-    const [selectedBackground, setSelectedBackground] = useState('transparent');
-    const [backgroundImage, setBackgroundImage] = useState(null);
-    const [isImageUploading, setIsImageUploading] = useState(false);
-    const [selectedPaletteColor, setSelectedPaletteColor] = useState(null);
-    const [selectedLogo, setSelectedLogo] = useState(null);
-    const [isLogoLoading, setIsLogoLoading] = useState(false);
-    const [logoLink, setLogoLink] = useState('');
+    const [bookshelfSettings, setBookshelfSettings] = useState({
+        bookshelfName: 'New shelf',
+        bookshelfColor: '#ffffff',
+        backgroundColorHash: '#5b21b6',
+        selectedBackground: 'transparent',
+        backgroundImage: null,
+        backgroundImageFile: null,
+        backgroundImageType: 'scale-crop',
+        selectedPaletteColor: null,
+        selectedLogo: null,
+        logoLink: '',
+        thumbnailSize: 200,
+        openInNewTab: false,
+        allowSearch: false,
+        showFlipbookName: false,
+        isImageUploading: false,
+        isLogoLoading: false,
+        isLoading: false,
+        isSaving: false
+    });
+
     const colorPickerRef = useRef(null);
     const paletteColorPickerRef = useRef(null);
 
+    const updateSetting = (key, value) => {
+        setBookshelfSettings(prev => ({
+            ...prev,
+            [key]: value
+        }));
+    };
+
+    const updateMultipleSettings = (updates) => {
+        setBookshelfSettings(prev => ({
+            ...prev,
+            ...updates
+        }));
+    };
+
+    useEffect(() => {
+        loadBookshelfSettings();
+    }, [flipbookId]);
+
+    const loadBookshelfSettings = async () => {
+        if (!flipbookId) return;
+
+        try {
+            updateSetting('isLoading', true);
+            const response = await getBookShelfPreviewSetting(flipbookId);
+            const settings = response.data;
+
+            const updates = {
+                bookshelfName: settings.name || 'New shelf',
+                bookshelfColor: settings.bookshelfColorHash || '#ffffff',
+                backgroundColorHash: settings.backgroundColorHash || '#5b21b6',
+                logoLink: settings.logoLink || '',
+                thumbnailSize: settings.setThumbnailSize || 200,
+                openInNewTab: settings.openInNewTab || false,
+                allowSearch: settings.allowSearch || false,
+                showFlipbookName: settings.showFlipbookName || false
+            };
+
+            const bgType = settings.backgroundColor;
+            if (bgType === BackgroundColorType.TRANSPARENT) {
+                updates.selectedBackground = 'transparent';
+            } else if (bgType === BackgroundColorType.SOLID) {
+                updates.selectedBackground = 'solidcolor';
+                updates.selectedPaletteColor = settings.backgroundColorHash;
+            } else if (bgType === BackgroundColorType.IMAGE) {
+                updates.selectedBackground = 'uploadimage';
+                updates.backgroundImage = settings.backgroundImageURL;
+            }
+
+            if (settings.backgroundImageType !== undefined) {
+                const imageTypeMap = {
+                    [BackgroundImageType.SCALE_CROP]: 'scale-crop',
+                    [BackgroundImageType.CENTER]: 'center',
+                    [BackgroundImageType.TILE]: 'tile'
+                };
+                updates.backgroundImageType = imageTypeMap[settings.backgroundImageType] || 'scale-crop';
+            }
+
+            if (settings.brandLogoId && settings.brandLogoLink) {
+                updates.selectedLogo = {
+                    id: settings.brandLogoId,
+                    src: settings.brandLogoLink
+                };
+            }
+
+            updateMultipleSettings(updates);
+        } catch (error) {
+            toast.error('Failed to load bookshelf settings', {
+                description: error.message
+            });
+        } finally {
+            updateSetting('isLoading', false);
+        }
+    };
+
+    const handleSaveChanges = async () => {
+        if (!flipbookId) {
+            toast.error('Flipbook ID is required');
+            return;
+        }
+
+        try {
+            updateSetting('isSaving', true);
+
+            const formData = new FormData();
+            const {
+                bookshelfName,
+                bookshelfColor,
+                backgroundColorHash,
+                selectedBackground,
+                selectedPaletteColor,
+                thumbnailSize,
+                openInNewTab,
+                allowSearch,
+                showFlipbookName,
+                logoLink,
+                backgroundImageType,
+                backgroundImageFile,
+                selectedLogo
+            } = bookshelfSettings;
+
+            formData.append('name', bookshelfName);
+            formData.append('bookshelfColorHash', bookshelfColor);
+            formData.append('backgroundColorHash', selectedBackground === 'solidcolor' ? (selectedPaletteColor || backgroundColorHash) : backgroundColorHash);
+            formData.append('setThumbnailSize', parseInt(thumbnailSize));
+            formData.append('openInNewTab', openInNewTab);
+            formData.append('allowSearch', allowSearch);
+            formData.append('showFlipbookName', showFlipbookName);
+            formData.append('logoLink', logoLink);
+
+            if (selectedBackground === 'transparent') {
+                formData.append('backgroundColor', BackgroundColorType.TRANSPARENT);
+            } else if (selectedBackground === 'solidcolor') {
+                formData.append('backgroundColor', BackgroundColorType.SOLID);
+            } else if (selectedBackground === 'uploadimage') {
+                formData.append('backgroundColor', BackgroundColorType.IMAGE);
+                const imageTypeMap = {
+                    'scale-crop': BackgroundImageType.SCALE_CROP,
+                    'center': BackgroundImageType.CENTER,
+                    'tile': BackgroundImageType.TILE
+                };
+                formData.append('backgroundImageType', imageTypeMap[backgroundImageType]);
+
+                if (backgroundImageFile) {
+                    formData.append('backgroundImage', backgroundImageFile);
+                }
+            }
+
+            if (selectedLogo) {
+                formData.append('brandLogoId', selectedLogo.id);
+            }
+
+            const response = await updateBookShelfPreviewSetting(flipbookId, formData);
+
+            toast.success('Bookshelf settings', {
+                description: response.message
+            });
+        } catch (error) {
+            toast.error('Failed to save bookshelf settings', {
+                description: error.message
+            });
+        } finally {
+            updateSetting('isSaving', false);
+        }
+    };
+
+    const isValidUrl = (url) => {
+        try {
+            const urlToValidate = url.startsWith('http') ? url : `https://${url}`;
+            urlSchema.parse(urlToValidate);
+            return true;
+        } catch {
+            return false;
+        }
+    };
+
     const handleColorPickerChange = (e) => {
         const value = e.target.value.toUpperCase();
-        setBookshelfColor(value);
+        updateSetting('bookshelfColor', value);
     };
 
     const handleColorSwatchClick = () => {
@@ -33,37 +207,62 @@ export default function Customize({ flipbookId }) {
 
     const handleColorInputChange = (e) => {
         const value = e.target.value;
-        setBookshelfColor(value);
+        updateSetting('bookshelfColor', value);
     };
 
     const handleBackgroundChange = (value) => {
-        setSelectedBackground(value);
+        const updates = { selectedBackground: value };
+
+        if (value !== 'solidcolor') {
+            updates.selectedPaletteColor = null;
+        }
+        if (value !== 'uploadimage') {
+            updates.backgroundImage = null;
+        }
+
+        updateMultipleSettings(updates);
     };
 
-    const handleImageUpload = (event) => {
+    const handleImageUpload = async (event) => {
         const file = event.target.files[0];
-        if (file) {
-            setIsImageUploading(true);
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setBackgroundImage(e.target.result);
-                setIsImageUploading(false);
-            };
-            reader.readAsDataURL(file);
+        if (!file) return;
+
+        try {
+            updateSetting('isImageUploading', true);
+            const imageUrl = URL.createObjectURL(file);
+            updateMultipleSettings({
+                backgroundImage: imageUrl,
+                backgroundImageFile: file
+            });
+        } catch (error) {
+            toast.error("Failed to upload background image", {
+                description: error.message || "Oops! Something went wrong."
+            });
+        } finally {
+            updateSetting('isImageUploading', false);
         }
     };
 
-    const handleImageDelete = () => {
-        setBackgroundImage(null);
+    const handleImageDelete = async () => {
+        try {
+            updateMultipleSettings({
+                backgroundImage: null,
+                backgroundImageFile: null
+            });
+        } catch (error) {
+            toast.error("Failed to remove background image", {
+                description: error.message || "Oops! Something went wrong."
+            });
+        }
     };
 
     const handlePaletteColorSelect = (color) => {
-        setSelectedPaletteColor(color);
+        updateSetting('selectedPaletteColor', color);
     };
 
     const handlePaletteColorPickerChange = (e) => {
         const color = e.target.value.toUpperCase();
-        setSelectedPaletteColor(color);
+        updateSetting('selectedPaletteColor', color);
     };
 
     const handleAddCustomColor = () => {
@@ -71,29 +270,45 @@ export default function Customize({ flipbookId }) {
     };
 
     const handleLogoSelect = (logo) => {
-        setSelectedLogo(logo);
-        // You can add any additional logic here like updating settings
-        // updateSettings({ brandLogoId: logo.id, brandLogoLink: logo.src });
+        updateSetting('selectedLogo', logo);
     };
 
     const handleLogoDelete = async () => {
         try {
-            setIsLogoLoading(true);
-            setSelectedLogo(null);
-            // You can add any additional logic here like updating settings
-            // updateSettings({ brandLogoId: null });
+            updateSetting('isLogoLoading', true);
+            updateSetting('selectedLogo', null);
         } catch (error) {
             console.error("Failed to remove logo", error);
         } finally {
-            setIsLogoLoading(false);
+            updateSetting('isLogoLoading', false);
         }
     };
 
     const handleLogoLinkChange = (e) => {
-        setLogoLink(e.target.value);
+        updateSetting('logoLink', e.target.value);
+    };
+
+    const formatUrl = (url) => {
+        if (!url) return "";
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+            return url;
+        }
+        return `https://${url}`;
+    };
+
+    const handleLogoLinkBlur = (e) => {
+        const value = e.target.value;
+        if (value) {
+            const formattedUrl = formatUrl(value);
+            if (isValidUrl(formattedUrl)) {
+                updateSetting('logoLink', formattedUrl);
+            }
+        }
     };
 
     const renderBackgroundContent = () => {
+        const { selectedBackground, selectedPaletteColor, backgroundImage, isImageUploading, backgroundImageType } = bookshelfSettings;
+
         switch (selectedBackground) {
             case 'solidcolor':
                 return (
@@ -120,9 +335,8 @@ export default function Customize({ flipbookId }) {
                                 {['#808080', '#A9A9A9'].map((color, index) => (
                                     <div
                                         key={index}
-                                        className={`w-8 h-8 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 ${
-                                            selectedPaletteColor === color ? 'ring-2 ring-blue-500' : 'border'
-                                        }`}
+                                        className={`w-8 h-8 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 ${selectedPaletteColor === color ? 'ring-2 ring-blue-500' : 'border'
+                                            }`}
                                         style={{ backgroundColor: color }}
                                         onClick={() => handlePaletteColorSelect(color)}
                                     />
@@ -152,9 +366,8 @@ export default function Customize({ flipbookId }) {
                                 ].map((color, index) => (
                                     <div
                                         key={index}
-                                        className={`w-8 h-8 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 ${
-                                            selectedPaletteColor === color ? 'ring-2 ring-blue-500' : 'border'
-                                        }`}
+                                        className={`w-8 h-8 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 ${selectedPaletteColor === color ? 'ring-2 ring-blue-500' : 'border'
+                                            }`}
                                         style={{ backgroundColor: color }}
                                         onClick={() => handlePaletteColorSelect(color)}
                                     />
@@ -201,7 +414,10 @@ export default function Customize({ flipbookId }) {
                                             className="hidden"
                                             id="background-image-replace"
                                         />
-                                        <Select defaultValue="scale-crop">
+                                        <Select
+                                            value={backgroundImageType}
+                                            onValueChange={(value) => updateSetting('backgroundImageType', value)}
+                                        >
                                             <SelectTrigger className="w-[150px]">
                                                 <SelectValue placeholder="Select style" />
                                             </SelectTrigger>
@@ -230,6 +446,21 @@ export default function Customize({ flipbookId }) {
         }
     };
 
+    const {
+        bookshelfName,
+        bookshelfColor,
+        selectedBackground,
+        selectedLogo,
+        logoLink,
+        thumbnailSize,
+        openInNewTab,
+        allowSearch,
+        showFlipbookName,
+        isLogoLoading,
+        isLoading,
+        isSaving
+    } = bookshelfSettings;
+
     return (
         <div className="py-6 max-w-[100vw] overflow-auto space-y-4 h-full flex flex-col">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
@@ -250,7 +481,8 @@ export default function Customize({ flipbookId }) {
                                 <Input
                                     id="bookshelf-name"
                                     placeholder="New shelf"
-                                    defaultValue="New shelf"
+                                    value={bookshelfName}
+                                    onChange={(e) => updateSetting('bookshelfName', e.target.value)}
                                 />
                             </div>
 
@@ -287,9 +519,9 @@ export default function Customize({ flipbookId }) {
                                                 />
                                             </div>
                                             <div className="flex gap-2 items-center">
-                                                <SelectLogoDialog 
-                                                    onLogoSelect={handleLogoSelect} 
-                                                    mode="replace" 
+                                                <SelectLogoDialog
+                                                    onLogoSelect={handleLogoSelect}
+                                                    mode="replace"
                                                 />
                                                 <Button
                                                     variant="outline"
@@ -309,8 +541,9 @@ export default function Customize({ flipbookId }) {
                                                 type="url"
                                                 value={logoLink}
                                                 onChange={handleLogoLinkChange}
+                                                onBlur={handleLogoLinkBlur}
+                                                className={`placeholder:text-[#d8dce3] ${logoLink && !isValidUrl(logoLink) ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''} w-full`}
                                                 placeholder="Enter logo link URL"
-                                                className="w-full"
                                             />
                                         </div>
                                     </div>
@@ -387,15 +620,19 @@ export default function Customize({ flipbookId }) {
                                 <Input
                                     id="thumbnail-size"
                                     type="number"
-                                    defaultValue="200"
+                                    value={thumbnailSize}
+                                    onChange={(e) => updateSetting('thumbnailSize', e.target.value)}
                                     className="w-24"
                                 />
-
                             </div>
 
                             <div className="space-y-4 pt-2">
                                 <div className="flex items-center gap-2">
-                                    <Switch id="open-flipbooks" />
+                                    <Switch
+                                        id="open-flipbooks"
+                                        checked={openInNewTab}
+                                        onCheckedChange={(checked) => updateSetting('openInNewTab', checked)}
+                                    />
                                     <div className="flex items-center gap-2">
                                         <Label htmlFor="open-flipbooks">
                                             Open flipbooks in new tab
@@ -418,14 +655,22 @@ export default function Customize({ flipbookId }) {
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Switch id="allow-searching" />
+                                    <Switch
+                                        id="allow-searching"
+                                        checked={allowSearch}
+                                        onCheckedChange={(checked) => updateSetting('allowSearch', checked)}
+                                    />
                                     <Label htmlFor="allow-searching">
                                         Allow searching in bookshelf
                                     </Label>
                                 </div>
 
                                 <div className="flex items-center gap-2">
-                                    <Switch id="show-flipbook-name" />
+                                    <Switch
+                                        id="show-flipbook-name"
+                                        checked={showFlipbookName}
+                                        onCheckedChange={(checked) => updateSetting('showFlipbookName', checked)}
+                                    />
                                     <Label htmlFor="show-flipbook-name">
                                         Show flipbook name on mouse hover
                                     </Label>
@@ -437,8 +682,13 @@ export default function Customize({ flipbookId }) {
                 <div className="lg:w-[60%] w-full sticky top-[-22px] h-fit">
                     <Card className="pt-6">
                         <CardContent className="p-0 m-6 mt-0 space-y-4 rounded-sm">
-                            <Button>
-                                Save changes
+                            <Button
+                                onClick={handleSaveChanges}
+                                disabled={isSaving || isLoading}
+                                className="flex items-center gap-2"
+                            >
+                                {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+                                {isSaving ? 'Saving...' : 'Save changes'}
                             </Button>
                             <div className="px-6 py-4 border">
                                 <div className="h-48 md:h-96 w-full">

@@ -19,9 +19,9 @@ export const UpdateBookShelfApi = async (bookshelfId, data) => {
     return response.data;
 }
 
-export const GetShelfPreview = async (shelfId) => {
+export const GetShelfPreview = async (shelfId, loader = false) => {
     const response = await ApiClient().get(`/bookshelf/get-flipbook-preview/${shelfId}`, {
-        showLoader: true
+        showLoader: loader
     });
     return response.data;
 }

@@ -321,7 +321,7 @@ const OrderForm = ({ open, onOpenChange, flipbookId }) => {
                         {shopSettings.conditionalInboxDescription || 'Select location'} <span className="text-red-500">*</span>
                     </Label>
                     <Select value={selectedLocation} onValueChange={handleLocationChange}>
-                        <SelectTrigger id="conditionalInboxOption" className={errors.conditionalInboxOption ? 'border-red-500' : ''}>
+                        <SelectTrigger id="conditionalInboxOption" className={errors.conditionalInboxOption ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}>
                             <SelectValue placeholder="Select location" />
                         </SelectTrigger>
                         <SelectContent>
