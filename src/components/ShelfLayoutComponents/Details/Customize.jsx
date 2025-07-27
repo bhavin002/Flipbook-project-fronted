@@ -7,184 +7,27 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import BookShelfView from "../BookShelfView";
 import { Info, Plus, Trash2, Loader2 } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useRef } from "react";
 import SelectLogoDialog from "@/components/AppLayoutComponents/Sidebar/Setting/Workspace/SelectLogoDialog";
-import { BackgroundImageType, BackgroundColorType } from "@/utils/enum.js";
-import { getBookShelfPreviewSetting, updateBookShelfPreviewSetting } from "@/service/bookshelfPreviewSetting.service";
-import { toast } from "sonner";
+import { useBookshelf } from "@/context/BookshelfContext";
 import { z } from "zod";
 
 const urlSchema = z.string().regex(/^$|^(?!https?\.)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$|^https?:\/\/[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$/).or(z.literal(''));
 
 export default function Customize({ flipbookId }) {
-    const [bookshelfSettings, setBookshelfSettings] = useState({
-        bookshelfName: 'New shelf',
-        bookshelfColor: '#ffffff',
-        backgroundColorHash: '#5b21b6',
-        selectedBackground: 'transparent',
-        backgroundImage: null,
-        backgroundImageFile: null,
-        backgroundImageType: 'scale-crop',
-        selectedPaletteColor: null,
-        selectedLogo: null,
-        logoLink: '',
-        thumbnailSize: 200,
-        openInNewTab: false,
-        allowSearch: false,
-        showFlipbookName: false,
-        isImageUploading: false,
-        isLogoLoading: false,
-        isLoading: false,
-        isSaving: false
-    });
+    const {
+        bookshelfSettings,
+        updateSetting,
+        updateMultipleSettings,
+        saveBookshelfSettings,
+        handleImageUpload,
+        handleImageDelete,
+        handleLogoSelect,
+        handleLogoDelete
+    } = useBookshelf();
 
     const colorPickerRef = useRef(null);
     const paletteColorPickerRef = useRef(null);
-
-    const updateSetting = (key, value) => {
-        setBookshelfSettings(prev => ({
-            ...prev,
-            [key]: value
-        }));
-    };
-
-    const updateMultipleSettings = (updates) => {
-        setBookshelfSettings(prev => ({
-            ...prev,
-            ...updates
-        }));
-    };
-
-    useEffect(() => {
-        loadBookshelfSettings();
-    }, [flipbookId]);
-
-    const loadBookshelfSettings = async () => {
-        if (!flipbookId) return;
-
-        try {
-            updateSetting('isLoading', true);
-            const response = await getBookShelfPreviewSetting(flipbookId);
-            const settings = response.data;
-
-            const updates = {
-                bookshelfName: settings.name || 'New shelf',
-                bookshelfColor: settings.bookshelfColorHash || '#ffffff',
-                backgroundColorHash: settings.backgroundColorHash || '#5b21b6',
-                logoLink: settings.logoLink || '',
-                thumbnailSize: settings.setThumbnailSize || 200,
-                openInNewTab: settings.openInNewTab || false,
-                allowSearch: settings.allowSearch || false,
-                showFlipbookName: settings.showFlipbookName || false
-            };
-
-            const bgType = settings.backgroundColor;
-            if (bgType === BackgroundColorType.TRANSPARENT) {
-                updates.selectedBackground = 'transparent';
-            } else if (bgType === BackgroundColorType.SOLID) {
-                updates.selectedBackground = 'solidcolor';
-                updates.selectedPaletteColor = settings.backgroundColorHash;
-            } else if (bgType === BackgroundColorType.IMAGE) {
-                updates.selectedBackground = 'uploadimage';
-                updates.backgroundImage = settings.backgroundImageURL;
-            }
-
-            if (settings.backgroundImageType !== undefined) {
-                const imageTypeMap = {
-                    [BackgroundImageType.SCALE_CROP]: 'scale-crop',
-                    [BackgroundImageType.CENTER]: 'center',
-                    [BackgroundImageType.TILE]: 'tile'
-                };
-                updates.backgroundImageType = imageTypeMap[settings.backgroundImageType] || 'scale-crop';
-            }
-
-            if (settings.brandLogoId && settings.brandLogoLink) {
-                updates.selectedLogo = {
-                    id: settings.brandLogoId,
-                    src: settings.brandLogoLink
-                };
-            }
-
-            updateMultipleSettings(updates);
-        } catch (error) {
-            toast.error('Failed to load bookshelf settings', {
-                description: error.message
-            });
-        } finally {
-            updateSetting('isLoading', false);
-        }
-    };
-
-    const handleSaveChanges = async () => {
-        if (!flipbookId) {
-            toast.error('Flipbook ID is required');
-            return;
-        }
-
-        try {
-            updateSetting('isSaving', true);
-
-            const formData = new FormData();
-            const {
-                bookshelfName,
-                bookshelfColor,
-                backgroundColorHash,
-                selectedBackground,
-                selectedPaletteColor,
-                thumbnailSize,
-                openInNewTab,
-                allowSearch,
-                showFlipbookName,
-                logoLink,
-                backgroundImageType,
-                backgroundImageFile,
-                selectedLogo
-            } = bookshelfSettings;
-
-            formData.append('name', bookshelfName);
-            formData.append('bookshelfColorHash', bookshelfColor);
-            formData.append('backgroundColorHash', selectedBackground === 'solidcolor' ? (selectedPaletteColor || backgroundColorHash) : backgroundColorHash);
-            formData.append('setThumbnailSize', parseInt(thumbnailSize));
-            formData.append('openInNewTab', openInNewTab);
-            formData.append('allowSearch', allowSearch);
-            formData.append('showFlipbookName', showFlipbookName);
-            formData.append('logoLink', logoLink);
-
-            if (selectedBackground === 'transparent') {
-                formData.append('backgroundColor', BackgroundColorType.TRANSPARENT);
-            } else if (selectedBackground === 'solidcolor') {
-                formData.append('backgroundColor', BackgroundColorType.SOLID);
-            } else if (selectedBackground === 'uploadimage') {
-                formData.append('backgroundColor', BackgroundColorType.IMAGE);
-                const imageTypeMap = {
-                    'scale-crop': BackgroundImageType.SCALE_CROP,
-                    'center': BackgroundImageType.CENTER,
-                    'tile': BackgroundImageType.TILE
-                };
-                formData.append('backgroundImageType', imageTypeMap[backgroundImageType]);
-
-                if (backgroundImageFile) {
-                    formData.append('backgroundImage', backgroundImageFile);
-                }
-            }
-
-            if (selectedLogo) {
-                formData.append('brandLogoId', selectedLogo.id);
-            }
-
-            const response = await updateBookShelfPreviewSetting(flipbookId, formData);
-
-            toast.success('Bookshelf settings', {
-                description: response.message
-            });
-        } catch (error) {
-            toast.error('Failed to save bookshelf settings', {
-                description: error.message
-            });
-        } finally {
-            updateSetting('isSaving', false);
-        }
-    };
 
     const isValidUrl = (url) => {
         try {
@@ -223,39 +66,6 @@ export default function Customize({ flipbookId }) {
         updateMultipleSettings(updates);
     };
 
-    const handleImageUpload = async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        try {
-            updateSetting('isImageUploading', true);
-            const imageUrl = URL.createObjectURL(file);
-            updateMultipleSettings({
-                backgroundImage: imageUrl,
-                backgroundImageFile: file
-            });
-        } catch (error) {
-            toast.error("Failed to upload background image", {
-                description: error.message || "Oops! Something went wrong."
-            });
-        } finally {
-            updateSetting('isImageUploading', false);
-        }
-    };
-
-    const handleImageDelete = async () => {
-        try {
-            updateMultipleSettings({
-                backgroundImage: null,
-                backgroundImageFile: null
-            });
-        } catch (error) {
-            toast.error("Failed to remove background image", {
-                description: error.message || "Oops! Something went wrong."
-            });
-        }
-    };
-
     const handlePaletteColorSelect = (color) => {
         updateSetting('selectedPaletteColor', color);
     };
@@ -267,21 +77,6 @@ export default function Customize({ flipbookId }) {
 
     const handleAddCustomColor = () => {
         paletteColorPickerRef.current?.click();
-    };
-
-    const handleLogoSelect = (logo) => {
-        updateSetting('selectedLogo', logo);
-    };
-
-    const handleLogoDelete = async () => {
-        try {
-            updateSetting('isLogoLoading', true);
-            updateSetting('selectedLogo', null);
-        } catch (error) {
-            console.error("Failed to remove logo", error);
-        } finally {
-            updateSetting('isLogoLoading', false);
-        }
     };
 
     const handleLogoLinkChange = (e) => {
@@ -683,12 +478,12 @@ export default function Customize({ flipbookId }) {
                     <Card className="pt-6">
                         <CardContent className="p-0 m-6 mt-0 space-y-4 rounded-sm">
                             <Button
-                                onClick={handleSaveChanges}
-                                disabled={isSaving || isLoading}
+                                onClick={saveBookshelfSettings}
+                                disabled={bookshelfSettings.isSaving || bookshelfSettings.isLoading}
                                 className="flex items-center gap-2"
                             >
-                                {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-                                {isSaving ? 'Saving...' : 'Save changes'}
+                                {bookshelfSettings.isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
+                                {bookshelfSettings.isSaving ? 'Saving...' : 'Save changes'}
                             </Button>
                             <div className="px-6 py-4 border">
                                 <div className="h-48 md:h-96 w-full">

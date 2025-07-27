@@ -4,8 +4,10 @@ import { toast } from "sonner"
 import bookLogo from '@/assets/book_thumbnail.jpg';
 import { Input } from "../ui/input";
 import { Loader2, Search } from "lucide-react";
+import { useBookshelf } from "@/context/BookshelfContext";
 
 export default function BookShelfView({ id }) {
+    const { bookshelfSettings } = useBookshelf();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -82,24 +84,118 @@ export default function BookShelfView({ id }) {
     const canGoPrevious = currentIndex > 0;
     const canGoNext = data && currentIndex < data?.length - itemsPerView;
 
+    // Apply bookshelf styling based on settings
+    const getBookshelfStyles = () => {
+        const styles = {
+            backgroundColor: 'transparent',
+            backgroundImage: 'none',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+        };
+
+        if (bookshelfSettings.selectedBackground === 'solidcolor') {
+            styles.backgroundColor = bookshelfSettings.selectedPaletteColor || bookshelfSettings.backgroundColorHash;
+        } else if (bookshelfSettings.selectedBackground === 'uploadimage' && bookshelfSettings.backgroundImage) {
+            styles.backgroundImage = `url(${bookshelfSettings.backgroundImage})`;
+            
+            switch (bookshelfSettings.backgroundImageType) {
+                case 'scale-crop':
+                    styles.backgroundSize = 'cover';
+                    styles.backgroundPosition = 'center';
+                    break;
+                case 'center':
+                    styles.backgroundSize = 'contain';
+                    styles.backgroundPosition = 'center';
+                    break;
+                case 'tile':
+                    styles.backgroundSize = 'auto';
+                    styles.backgroundRepeat = 'repeat';
+                    break;
+                default:
+                    styles.backgroundSize = 'cover';
+                    styles.backgroundPosition = 'center';
+            }
+        }
+
+        return styles;
+    };
+
+    const bookshelfStyles = getBookshelfStyles();
+
+    // Function to get contrasting text color based on background color
+    const getContrastColor = (hexColor) => {
+        // Remove the # if present
+        const hex = hexColor.replace('#', '');
+        
+        // Convert to RGB
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        
+        // Calculate luminance
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        
+        // Return black or white based on luminance
+        return luminance > 0.5 ? '#000000' : '#ffffff';
+    };
+
     return (
-        <div className="w-full h-full flex flex-col relative" id="bookshelf-preview-id" ref={containerRef}>
-            <div className="flex justify-end px-4 py-4 absolute top-0 right-0 items-center gap-3">
-                <p className="text-2xl font-semibold"></p>
-                <div className="grid items-center gap-1.5">
-                    <div className="relative">
-                        <div className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground">
-                            <Search className="h-4 w-4" />
+        <div 
+            className="w-full h-full flex flex-col relative" 
+            id="bookshelf-preview-id" 
+            ref={containerRef}
+            style={bookshelfStyles}
+        >
+            {/* Logo Display */}
+            {bookshelfSettings.selectedLogo && (
+                <div className="absolute top-4 left-4 z-20">
+                    <a 
+                        href={bookshelfSettings.logoLink || '#'} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="block"
+                    >
+                        <div className="relative w-16 h-12 bg-white border rounded overflow-hidden">
+                            <div
+                                className="absolute inset-0 bg-center bg-repeat opacity-20"
+                                style={{ backgroundImage: 'url(https://cdn.flipsnack.com/site/images/transparent-bg-pattern.png)' }}
+                            />
+                            <img
+                                src={bookshelfSettings.selectedLogo.src}
+                                alt="Logo"
+                                className="w-full h-full object-contain relative z-10"
+                            />
                         </div>
-                        <Input
-                            id="search"
-                            autoComplete="off"
-                            type="search"
-                            placeholder="Search publications"
-                            className="w-full rounded-lg bg-background pl-8"
-                        />
-                    </div>
+                    </a>
                 </div>
+            )}
+
+            {/* Search Bar */}
+            <div className="flex justify-end px-4 py-4 absolute top-0 right-0 items-center gap-3">
+                <p className="text-2xl font-semibold" style={{ color: bookshelfSettings.bookshelfColor }}>
+                    {bookshelfSettings.bookshelfName}
+                </p>
+                {bookshelfSettings.allowSearch && (
+                    <div className="grid items-center gap-1.5">
+                        <div className="relative">
+                            <div className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground">
+                                <Search className="h-4 w-4" />
+                            </div>
+                            <Input
+                                id="search"
+                                autoComplete="off"
+                                type="search"
+                                placeholder="Search publications"
+                                className="w-full rounded-lg bg-background pl-8"
+                                style={{ 
+                                    backgroundColor: bookshelfSettings.bookshelfColor,
+                                    color: getContrastColor(bookshelfSettings.bookshelfColor)
+                                }}
+                            />
+                        </div>
+                    </div>
+                )}
             </div>
             {
                 loading ? <div className="px-4 py-6 h-full flex items-center justify-center">
@@ -161,10 +257,10 @@ export default function BookShelfView({ id }) {
                                                     width: `${100 / currentPageCount}%`,
                                                 }}
                                             >
-                                                <div className="rounded-lg flex justify-center items-end h-full">
+                                                <div className="rounded-lg flex justify-center items-end h-full relative group">
                                                     <a
                                                         href={`/public-flipbook/${book._id}`}
-                                                        target="_blank"
+                                                        target={bookshelfSettings.openInNewTab ? "_blank" : "_self"}
                                                         rel="noopener noreferrer"
                                                         className="block"
                                                         style={{ textDecoration: "none" }}
@@ -172,8 +268,17 @@ export default function BookShelfView({ id }) {
                                                         <img
                                                             src={book.thumbnail ? book.thumbnail : bookLogo}
                                                             alt={`Book ${book._id}`}
-                                                            className="rounded-md max-h-56 w-auto shadow-md transition-all duration-200 hover:scale-105 hover:-translate-y-0.5 cursor-pointer mx-auto"
+                                                            className="rounded-md shadow-md transition-all duration-200 hover:scale-105 hover:-translate-y-0.5 cursor-pointer mx-auto"
+                                                            style={{ 
+                                                                maxHeight: `${bookshelfSettings.thumbnailSize}px`,
+                                                                width: 'auto'
+                                                            }}
                                                         />
+                                                        {bookshelfSettings.showFlipbookName && (
+                                                            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white text-xs p-2 rounded-b-md opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                                {book.name || `Book ${book._id}`}
+                                                            </div>
+                                                        )}
                                                     </a>
                                                 </div>
                                             </div>

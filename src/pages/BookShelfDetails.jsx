@@ -7,6 +7,7 @@ import Statistics from "@/components/ShelfLayoutComponents/Details/Statistics";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpenText, Code, Mail, Image, QrCode, ChartPie } from 'lucide-react';
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { BookshelfProvider } from "@/context/BookshelfContext";
 
 export default function BookShelfDetails() {
     const { id } = useParams();
@@ -21,13 +22,14 @@ export default function BookShelfDetails() {
     };
 
     return (
-        <div className="p-6 max-md:w-[100vw] h-full overflow-y-hidden">
-            <Tabs
-                defaultValue={defaultTab}
-                value={defaultTab}
-                onValueChange={handleTabChange}
-                className="flex flex-col h-full"
-            >
+        <BookshelfProvider flipbookId={id}>
+            <div className="p-6 max-md:w-[100vw] h-full overflow-y-hidden">
+                <Tabs
+                    defaultValue={defaultTab}
+                    value={defaultTab}
+                    onValueChange={handleTabChange}
+                    className="flex flex-col h-full"
+                >
                 <TabsList className="overflow-x-auto max-md:w-full w-fit justify-start overflow-y-hidden">
                     <TabsTrigger className="py-2 flex flex-col lg:flex-row lg:items-center lg:gap-2" value="details">
                         <BookOpenText className="w-5 h-5" />
@@ -74,5 +76,6 @@ export default function BookShelfDetails() {
                 </TabsContent>
             </Tabs>
         </div>
+        </BookshelfProvider>
     );
 }
