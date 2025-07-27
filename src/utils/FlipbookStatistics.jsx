@@ -62,12 +62,6 @@ export default function FlipbookStatistics({ statsData = [], dates, loading }) {
             color: "#8b5cf6",
             valueFormatter: (value) => Math.round(value),
         },
-        {
-            id: "downloads",
-            label: "Downloads",
-            color: "#10b981",
-            valueFormatter: (value) => Math.round(value),
-        },
     ];
 
     const CustomTooltip = ({ active, payload, label, valueFormatter }) => {

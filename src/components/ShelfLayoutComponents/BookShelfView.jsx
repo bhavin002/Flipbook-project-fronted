@@ -5,15 +5,20 @@ import bookLogo from '@/assets/book_thumbnail.jpg';
 import { Input } from "../ui/input";
 import { Loader2, Search } from "lucide-react";
 import { useBookshelf } from "@/context/BookshelfContext";
+import { detectDeviceType } from "@/utils/Helper";
+import { UpdateFlipbookViewCountApi } from "@/service/flipbook.publish.service";
 
-export default function BookShelfView({ id }) {
+export default function BookShelfView({ id, isPublicView = false }) {
     const { bookshelfSettings } = useBookshelf();
     const [data, setData] = useState(null);
+    const [filteredData, setFilteredData] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
     const [loading, setLoading] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [itemsPerView, setItemsPerView] = useState(1);
     const [currentPageCount, setCurrentPageCount] = useState(1);
     const containerRef = useRef(null);
+    const [viewCountUpdated, setViewCountUpdated] = useState(false);
 
     useEffect(() => {
         const updateItemsPerView = () => {
@@ -32,13 +37,13 @@ export default function BookShelfView({ id }) {
                     newItemsPerView = 1;
                 }
                 setItemsPerView(newItemsPerView);
-                setCurrentPageCount(Math.min(newItemsPerView, data ? data.length - currentIndex : newItemsPerView));
+                setCurrentPageCount(Math.min(newItemsPerView, filteredData ? filteredData.length - currentIndex : newItemsPerView));
             }
         };
         updateItemsPerView();
         window.addEventListener('resize', updateItemsPerView);
         return () => window.removeEventListener('resize', updateItemsPerView);
-    }, [data, currentIndex]);
+    }, [filteredData, currentIndex]);
 
     useEffect(() => {
         const fetchShelfData = async () => {
@@ -47,6 +52,7 @@ export default function BookShelfView({ id }) {
                 const response = await GetShelfPreview(id);
                 console.log(response.data)
                 setData(response.data);
+                setFilteredData(response.data); // Initialize filteredData with all books
             } catch (error) {
                 toast.error("Failed to fetch bookshelf", {
                     description: error.message
@@ -61,30 +67,39 @@ export default function BookShelfView({ id }) {
     }, [id])
 
     useEffect(() => {
-        if (data && currentIndex >= data?.length - itemsPerView) {
-            setCurrentIndex(Math.max(0, data?.length - itemsPerView));
-            setCurrentPageCount(Math.min(itemsPerView, data?.length - currentIndex));
-        } else {
-            setCurrentPageCount(Math.min(itemsPerView, data?.length - currentIndex));
+        if (data) {
+            const filtered = data.filter(book =>
+                book.name?.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+            setFilteredData(filtered);
+            setCurrentIndex(0);
         }
-    }, [itemsPerView, data, currentIndex]);
+    }, [searchQuery, data]);
+
+    useEffect(() => {
+        if (filteredData && currentIndex >= filteredData?.length - itemsPerView) {
+            setCurrentIndex(Math.max(0, filteredData?.length - itemsPerView));
+            setCurrentPageCount(Math.min(itemsPerView, filteredData?.length - currentIndex));
+        } else {
+            setCurrentPageCount(Math.min(itemsPerView, filteredData?.length - currentIndex));
+        }
+    }, [itemsPerView, filteredData, currentIndex]);
 
     const goToPrevious = () => {
         setCurrentIndex(prev => Math.max(0, prev - itemsPerView));
     };
 
     const goToNext = () => {
-        if (data) {
+        if (filteredData) {
             setCurrentIndex(prev =>
-                Math.min(data.length - itemsPerView, prev + itemsPerView)
+                Math.min(filteredData.length - itemsPerView, prev + itemsPerView)
             );
         }
     };
 
     const canGoPrevious = currentIndex > 0;
-    const canGoNext = data && currentIndex < data?.length - itemsPerView;
+    const canGoNext = filteredData && currentIndex < filteredData?.length - itemsPerView;
 
-    // Apply bookshelf styling based on settings
     const getBookshelfStyles = () => {
         const styles = {
             backgroundColor: 'transparent',
@@ -95,10 +110,10 @@ export default function BookShelfView({ id }) {
         };
 
         if (bookshelfSettings.selectedBackground === 'solidcolor') {
-            styles.backgroundColor = bookshelfSettings.selectedPaletteColor || bookshelfSettings.backgroundColorHash;
+            styles.backgroundColor = bookshelfSettings.backgroundColorHash;
         } else if (bookshelfSettings.selectedBackground === 'uploadimage' && bookshelfSettings.backgroundImage) {
             styles.backgroundImage = `url(${bookshelfSettings.backgroundImage})`;
-            
+
             switch (bookshelfSettings.backgroundImageType) {
                 case 'scale-crop':
                     styles.backgroundSize = 'cover';
@@ -123,59 +138,52 @@ export default function BookShelfView({ id }) {
 
     const bookshelfStyles = getBookshelfStyles();
 
-    // Function to get contrasting text color based on background color
-    const getContrastColor = (hexColor) => {
-        // Remove the # if present
-        const hex = hexColor.replace('#', '');
-        
-        // Convert to RGB
-        const r = parseInt(hex.substr(0, 2), 16);
-        const g = parseInt(hex.substr(2, 2), 16);
-        const b = parseInt(hex.substr(4, 2), 16);
-        
-        // Calculate luminance
-        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-        
-        // Return black or white based on luminance
-        return luminance > 0.5 ? '#000000' : '#ffffff';
+    const handleFlipbookClick = async () => {
+        if (isPublicView && !viewCountUpdated) {
+            try {
+                const data = {
+                    device: detectDeviceType()
+                }
+                await UpdateFlipbookViewCountApi(id, data);
+                setViewCountUpdated(true);
+            } catch (error) {
+                toast.error("Failed to update view count", {
+                    description: error.message || "Oops! Something went wrong."
+                })
+            }
+        }
+    };
+
+    const handleSearchChange = (e) => {
+        setSearchQuery(e.target.value);
     };
 
     return (
-        <div 
-            className="w-full h-full flex flex-col relative" 
-            id="bookshelf-preview-id" 
+        <div
+            className="w-full h-full flex flex-col relative"
+            id="bookshelf-preview-id"
             ref={containerRef}
             style={bookshelfStyles}
+            onClick={handleFlipbookClick}
         >
-            {/* Logo Display */}
             {bookshelfSettings.selectedLogo && (
                 <div className="absolute top-4 left-4 z-20">
-                    <a 
-                        href={bookshelfSettings.logoLink || '#'} 
-                        target="_blank" 
+                    <a
+                        href={bookshelfSettings.logoLink || '#'}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="block"
                     >
-                        <div className="relative w-16 h-12 bg-white border rounded overflow-hidden">
-                            <div
-                                className="absolute inset-0 bg-center bg-repeat opacity-20"
-                                style={{ backgroundImage: 'url(https://cdn.flipsnack.com/site/images/transparent-bg-pattern.png)' }}
-                            />
-                            <img
-                                src={bookshelfSettings.selectedLogo.src}
-                                alt="Logo"
-                                className="w-full h-full object-contain relative z-10"
-                            />
-                        </div>
+                        <img
+                            src={bookshelfSettings.selectedLogo.src}
+                            alt="Logo"
+                            className="max-h-[50px] max-w-[200px]"
+                        />
                     </a>
                 </div>
             )}
 
-            {/* Search Bar */}
             <div className="flex justify-end px-4 py-4 absolute top-0 right-0 items-center gap-3">
-                <p className="text-2xl font-semibold" style={{ color: bookshelfSettings.bookshelfColor }}>
-                    {bookshelfSettings.bookshelfName}
-                </p>
                 {bookshelfSettings.allowSearch && (
                     <div className="grid items-center gap-1.5">
                         <div className="relative">
@@ -188,10 +196,8 @@ export default function BookShelfView({ id }) {
                                 type="search"
                                 placeholder="Search publications"
                                 className="w-full rounded-lg bg-background pl-8"
-                                style={{ 
-                                    backgroundColor: bookshelfSettings.bookshelfColor,
-                                    color: getContrastColor(bookshelfSettings.bookshelfColor)
-                                }}
+                                value={searchQuery}
+                                onChange={handleSearchChange}
                             />
                         </div>
                     </div>
@@ -211,7 +217,7 @@ export default function BookShelfView({ id }) {
                         </span>
                     </div>
                 </div> : <div className="px-4 py-6 h-full flex items-center">
-                    {data?.length === 0 ? (
+                    {filteredData?.length === 0 ? (
                         <p className="text-center">No publications found.</p>
                     ) : (
                         <div className="relative flex items-center flex-wrap w-full">
@@ -249,7 +255,7 @@ export default function BookShelfView({ id }) {
                                             width: `${currentPageCount * (100 / itemsPerView)}%`,
                                         }}
                                     >
-                                        {data?.map((book, index) => (
+                                        {filteredData?.map((book, index) => (
                                             <div
                                                 key={book._id}
                                                 className="flex-shrink-0 px-5 my-2"
@@ -265,25 +271,29 @@ export default function BookShelfView({ id }) {
                                                         className="block"
                                                         style={{ textDecoration: "none" }}
                                                     >
-                                                        <img
-                                                            src={book.thumbnail ? book.thumbnail : bookLogo}
-                                                            alt={`Book ${book._id}`}
-                                                            className="rounded-md shadow-md transition-all duration-200 hover:scale-105 hover:-translate-y-0.5 cursor-pointer mx-auto"
-                                                            style={{ 
-                                                                maxHeight: `${bookshelfSettings.thumbnailSize}px`,
-                                                                width: 'auto'
-                                                            }}
-                                                        />
-                                                        {bookshelfSettings.showFlipbookName && (
-                                                            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white text-xs p-2 rounded-b-md opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                                                                {book.name || `Book ${book._id}`}
-                                                            </div>
-                                                        )}
+                                                        <div className="relative overflow-auto rounded-md shadow-md transition-all duration-200 hover:scale-105 hover:-translate-y-0.5">
+                                                            <img
+                                                                src={book.thumbnail ? book.thumbnail : bookLogo}
+                                                                alt={`Book ${book._id}`}
+                                                                className="  cursor-pointer mx-auto"
+                                                                style={{
+                                                                    minHeight: "100px",
+                                                                    maxHeight: `${bookshelfSettings.thumbnailSize > 300 ? 300 : bookshelfSettings.thumbnailSize}px`,
+                                                                    width: 'auto'
+                                                                }}
+                                                            />
+                                                            {bookshelfSettings.showFlipbookName && (
+                                                                <div className="absolute flex items-end top-0 bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 rounded-b-md opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                                                    <span className="w-full truncate">
+                                                                        {book.name || `Book ${book._id}`}
+                                                                    </span>
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </a>
                                                 </div>
                                             </div>
                                         ))}
-
                                     </div>
                                     <div className="relative w-full h-auto"
                                         style={{
@@ -292,15 +302,18 @@ export default function BookShelfView({ id }) {
                                         <div
                                             className="opacity-76 w-full absolute -bottom-0.5"
                                             style={{
-                                                borderBottom: '20px solid rgb(209, 209, 209)',
+                                                borderBottom: `20px solid ${bookshelfSettings.bookshelfColor}`,
                                                 borderLeft: '22px solid transparent',
                                                 borderRight: '22px solid transparent'
                                             }}
                                         ></div>
 
                                         <div
-                                            className="h-2.5 w-full absolute left-0 right-0 z-10 m-0 bg-neutral-300"
-                                            style={{ bottom: '-11px' }}
+                                            className="h-2.5 w-full absolute left-0 right-0 z-10 m-0"
+                                            style={{
+                                                bottom: '-11px',
+                                                backgroundColor: bookshelfSettings.bookshelfColor
+                                            }}
                                         ></div>
 
                                         <div
@@ -313,7 +326,6 @@ export default function BookShelfView({ id }) {
                                     </div>
                                 </div>
                             </div>
-
 
                             {canGoNext && (
                                 <button

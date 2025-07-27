@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import LoadingButton from "@/utils/LoadingButton";
-import { Lock, Loader2 } from "lucide-react";
+import { Lock } from "lucide-react";
 import { GetConfigApi, GetPublishFlipbookApi, VerifyFlipbookPasswordApi } from "@/service/flipbook.publish.service";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { ViewModeProvider } from "@/context/ViewModeContext";

@@ -7,10 +7,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import BookShelfView from "../BookShelfView";
 import { Info, Plus, Trash2, Loader2 } from "lucide-react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import SelectLogoDialog from "@/components/AppLayoutComponents/Sidebar/Setting/Workspace/SelectLogoDialog";
 import { useBookshelf } from "@/context/BookshelfContext";
 import { z } from "zod";
+import LoadingButton from "@/utils/LoadingButton";
 
 const urlSchema = z.string().regex(/^$|^(?!https?\.)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$|^https?:\/\/[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$/).or(z.literal(''));
 
@@ -28,6 +29,7 @@ export default function Customize({ flipbookId }) {
 
     const colorPickerRef = useRef(null);
     const paletteColorPickerRef = useRef(null);
+    const [thumbnailSizeError, setThumbnailSizeError] = useState(false);
 
     const isValidUrl = (url) => {
         try {
@@ -57,7 +59,7 @@ export default function Customize({ flipbookId }) {
         const updates = { selectedBackground: value };
 
         if (value !== 'solidcolor') {
-            updates.selectedPaletteColor = null;
+            updates.backgroundColorHash = '#ffffff';
         }
         if (value !== 'uploadimage') {
             updates.backgroundImage = null;
@@ -67,12 +69,12 @@ export default function Customize({ flipbookId }) {
     };
 
     const handlePaletteColorSelect = (color) => {
-        updateSetting('selectedPaletteColor', color);
+        updateSetting('backgroundColorHash', color);
     };
 
     const handlePaletteColorPickerChange = (e) => {
         const color = e.target.value.toUpperCase();
-        updateSetting('selectedPaletteColor', color);
+        updateSetting('backgroundColorHash', color);
     };
 
     const handleAddCustomColor = () => {
@@ -101,8 +103,20 @@ export default function Customize({ flipbookId }) {
         }
     };
 
+    const handleThumbnailSizeChange = (e) => {
+        const value = e.target.value;
+        const parsedValue = parseInt(value, 10);
+        if (value === '' || isNaN(parsedValue) || parsedValue < 100 || parsedValue > 300) {
+            setThumbnailSizeError(true);
+            updateSetting('thumbnailSize', value);
+        } else {
+            setThumbnailSizeError(false);
+            updateSetting('thumbnailSize', parsedValue);
+        }
+    };
+
     const renderBackgroundContent = () => {
-        const { selectedBackground, selectedPaletteColor, backgroundImage, isImageUploading, backgroundImageType } = bookshelfSettings;
+        const { selectedBackground, backgroundColorHash, backgroundImage, isImageUploading, backgroundImageType } = bookshelfSettings;
 
         switch (selectedBackground) {
             case 'solidcolor':
@@ -130,7 +144,7 @@ export default function Customize({ flipbookId }) {
                                 {['#808080', '#A9A9A9'].map((color, index) => (
                                     <div
                                         key={index}
-                                        className={`w-8 h-8 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 ${selectedPaletteColor === color ? 'ring-2 ring-blue-500' : 'border'
+                                        className={`w-8 h-8 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 ${backgroundColorHash === color ? 'ring-2 ring-blue-500' : 'border'
                                             }`}
                                         style={{ backgroundColor: color }}
                                         onClick={() => handlePaletteColorSelect(color)}
@@ -161,7 +175,7 @@ export default function Customize({ flipbookId }) {
                                 ].map((color, index) => (
                                     <div
                                         key={index}
-                                        className={`w-8 h-8 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 ${selectedPaletteColor === color ? 'ring-2 ring-blue-500' : 'border'
+                                        className={`w-8 h-8 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 ${backgroundColorHash === color ? 'ring-2 ring-blue-500' : 'border'
                                             }`}
                                         style={{ backgroundColor: color }}
                                         onClick={() => handlePaletteColorSelect(color)}
@@ -213,7 +227,7 @@ export default function Customize({ flipbookId }) {
                                             value={backgroundImageType}
                                             onValueChange={(value) => updateSetting('backgroundImageType', value)}
                                         >
-                                            <SelectTrigger className="w-[150px]">
+                                            <SelectTrigger className="w-[100px]">
                                                 <SelectValue placeholder="Select style" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -396,7 +410,7 @@ export default function Customize({ flipbookId }) {
 
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2">
-                                    <Label>Set thumbnails size</Label>
+                                    <Label htmlFor="thumbnail-size">Set thumbnails size</Label>
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger>
@@ -407,7 +421,7 @@ export default function Customize({ flipbookId }) {
                                                 align="center"
                                                 className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
                                             >
-                                                <p className="text-sm">Set the size of book thumbnails</p>
+                                                <p className="text-sm">Set the size of book thumbnails (100-300)</p>
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -416,8 +430,11 @@ export default function Customize({ flipbookId }) {
                                     id="thumbnail-size"
                                     type="number"
                                     value={thumbnailSize}
-                                    onChange={(e) => updateSetting('thumbnailSize', e.target.value)}
-                                    className="w-24"
+                                    onChange={handleThumbnailSizeChange}
+                                    min={100}
+                                    max={300}
+                                    className={`w-24 ${thumbnailSizeError ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
+                                    required
                                 />
                             </div>
 
@@ -479,11 +496,10 @@ export default function Customize({ flipbookId }) {
                         <CardContent className="p-0 m-6 mt-0 space-y-4 rounded-sm">
                             <Button
                                 onClick={saveBookshelfSettings}
-                                disabled={bookshelfSettings.isSaving || bookshelfSettings.isLoading}
+                                disabled={bookshelfSettings.isSaving || bookshelfSettings.isLoading || thumbnailSizeError}
                                 className="flex items-center gap-2"
                             >
-                                {bookshelfSettings.isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-                                {bookshelfSettings.isSaving ? 'Saving...' : 'Save changes'}
+                                {bookshelfSettings.isSaving ? <LoadingButton /> : 'Save changes'}
                             </Button>
                             <div className="px-6 py-4 border">
                                 <div className="h-48 md:h-96 w-full">

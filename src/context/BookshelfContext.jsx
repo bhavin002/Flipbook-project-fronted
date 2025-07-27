@@ -17,12 +17,11 @@ export const BookshelfProvider = ({ children, flipbookId }) => {
     const [bookshelfSettings, setBookshelfSettings] = useState({
         bookshelfName: 'New shelf',
         bookshelfColor: '#ffffff',
-        backgroundColorHash: '#5b21b6',
+        backgroundColorHash: '#ffffff',
         selectedBackground: 'transparent',
         backgroundImage: null,
         backgroundImageFile: null,
         backgroundImageType: 'scale-crop',
-        selectedPaletteColor: null,
         selectedLogo: null,
         logoLink: '',
         thumbnailSize: 200,
@@ -60,7 +59,7 @@ export const BookshelfProvider = ({ children, flipbookId }) => {
             const updates = {
                 bookshelfName: settings.name || 'New shelf',
                 bookshelfColor: settings.bookshelfColorHash || '#ffffff',
-                backgroundColorHash: settings.backgroundColorHash || '#5b21b6',
+                backgroundColorHash: settings.backgroundColorHash || '#ffffff',
                 logoLink: settings.logoLink || '',
                 thumbnailSize: settings.setThumbnailSize || 200,
                 openInNewTab: settings.openInNewTab || false,
@@ -73,7 +72,7 @@ export const BookshelfProvider = ({ children, flipbookId }) => {
                 updates.selectedBackground = 'transparent';
             } else if (bgType === BackgroundColorType.SOLID) {
                 updates.selectedBackground = 'solidcolor';
-                updates.selectedPaletteColor = settings.backgroundColorHash;
+                updates.backgroundColorHash = settings.backgroundColorHash;
             } else if (bgType === BackgroundColorType.IMAGE) {
                 updates.selectedBackground = 'uploadimage';
                 updates.backgroundImage = settings.backgroundImageURL;
@@ -120,7 +119,6 @@ export const BookshelfProvider = ({ children, flipbookId }) => {
                 bookshelfColor,
                 backgroundColorHash,
                 selectedBackground,
-                selectedPaletteColor,
                 thumbnailSize,
                 openInNewTab,
                 allowSearch,
@@ -133,7 +131,7 @@ export const BookshelfProvider = ({ children, flipbookId }) => {
 
             formData.append('name', bookshelfName);
             formData.append('bookshelfColorHash', bookshelfColor);
-            formData.append('backgroundColorHash', selectedBackground === 'solidcolor' ? (selectedPaletteColor || backgroundColorHash) : backgroundColorHash);
+            formData.append('backgroundColorHash', selectedBackground === 'solidcolor' ? backgroundColorHash : '#ffffff');
             formData.append('setThumbnailSize', parseInt(thumbnailSize));
             formData.append('openInNewTab', openInNewTab);
             formData.append('allowSearch', allowSearch);

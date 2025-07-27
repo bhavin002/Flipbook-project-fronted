@@ -16,7 +16,7 @@ export default function DetailsTab({ flipbookId }) {
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
-        const shareUrl = `${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`;
+        const shareUrl = `${import.meta.env.VITE_APP_URL}/public-bookshelf/${flipbookId}`;
         navigator.clipboard.writeText(shareUrl)
             .then(() => {
                 setCopied(true);
