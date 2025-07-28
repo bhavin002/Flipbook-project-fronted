@@ -17,7 +17,7 @@ export const EditTemplateApi = async (templateId, data) => {
     return response.data;
 }
 
-export const CreateTemplateApi = async (data) => {
+export const CreateAdminTemplateApi = async (data) => {
     const response = await ApiClient().post("/template/create", data);
     return response.data;
 }
