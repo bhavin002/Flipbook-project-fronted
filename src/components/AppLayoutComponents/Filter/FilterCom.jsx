@@ -13,6 +13,7 @@ import { useFlipbook } from "@/context/FlipbookContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
+import LoadingButton from "@/utils/LoadingButton";
 
 export default function FilterCom() {
     const [createdByFilter, setCreatedByFilter] = useState([]);
@@ -56,140 +57,6 @@ export default function FilterCom() {
             dateCreated: dateCreatedFilter !== "anytime" ? dateCreatedFilter : "",
             lastUpdated: lastUpdatedFilter !== "anytime" ? lastUpdatedFilter : ""
         };
-    };
-
-    const updateUrlWithFilters = (filterData = null) => {
-        const filtersToEncode = filterData || getCurrentFilterState();
-        const hasActiveFilters =
-            filtersToEncode.status.length > 0 ||
-            filtersToEncode.visibility.length > 0 ||
-            filtersToEncode.createdBy.length > 0 ||
-            (filtersToEncode.dateCreated && filtersToEncode.dateCreated !== "anytime") ||
-            (filtersToEncode.lastUpdated && filtersToEncode.lastUpdated !== "anytime");
-
-        const searchParams = new URLSearchParams();
-        if (hasActiveFilters) {
-            const encodedFilters = encodeFiltersToUrl(filtersToEncode);
-            if (encodedFilters) {
-                searchParams.set('filter', encodedFilters);
-            }
-        }
-
-        const basePath = '/myflipbooks/flipbooks';
-        const newUrl = `${basePath}${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
-        navigate(newUrl, { replace: true });
-    };
-
-    const loadFiltersFromUrl = () => {
-        const searchParams = new URLSearchParams(location.search);
-        const encodedFilters = searchParams.get('filter');
-
-        if (encodedFilters) {
-            try {
-                const decodedFilters = decodeFiltersFromUrl(encodedFilters);
-
-                if (decodedFilters && typeof decodedFilters === 'object') {
-                    const statusArray = Array.isArray(decodedFilters.status) ? decodedFilters.status : [];
-                    const visibilityArray = Array.isArray(decodedFilters.visibility) ? decodedFilters.visibility : [];
-                    const createdByArray = Array.isArray(decodedFilters.createdBy) ? decodedFilters.createdBy : [];
-                    const dateCreated = decodedFilters.dateCreated || "anytime";
-                    const lastUpdated = decodedFilters.lastUpdated || "anytime";
-
-                    setStatusFilter(statusArray);
-                    setVisibilityFilter(visibilityArray);
-                    setCreatedByFilter(createdByArray);
-                    setDateCreatedFilter(dateCreated);
-                    setLastUpdatedFilter(lastUpdated);
-
-                    return decodedFilters;
-                }
-            } catch (error) {
-                console.error("Error processing filters from URL:", error);
-            }
-
-            const newSearchParams = new URLSearchParams(location.search);
-            newSearchParams.delete('filter');
-            navigate(`/myflipbooks/flipbooks${newSearchParams.toString() ? '?' + newSearchParams.toString() : ''}`, { replace: true });
-        }
-
-        setCreatedByFilter([]);
-        setVisibilityFilter([]);
-        setStatusFilter([]);
-        setDateCreatedFilter("anytime");
-        setLastUpdatedFilter("anytime");
-        return null;
-    };
-
-    useEffect(() => {
-        const applyFiltersFromUrl = async () => {
-            try {
-                setIsLoading(true);
-                const filtersFromUrl = loadFiltersFromUrl();
-
-                if (filtersFromUrl) {
-                    const hasActiveFilters =
-                        (filtersFromUrl.status && filtersFromUrl.status.length > 0) ||
-                        (filtersFromUrl.visibility && filtersFromUrl.visibility.length > 0) ||
-                        (filtersFromUrl.createdBy && filtersFromUrl.createdBy.length > 0) ||
-                        (filtersFromUrl.dateCreated && filtersFromUrl.dateCreated !== "anytime" && filtersFromUrl.dateCreated !== "") ||
-                        (filtersFromUrl.lastUpdated && filtersFromUrl.lastUpdated !== "anytime" && filtersFromUrl.lastUpdated !== "");
-
-                    if (hasActiveFilters) {
-                        const payload = buildApiPayloadFromFilterData(filtersFromUrl);
-                        await fetchFlipbooks(payload);
-                    } else {
-                        await fetchFlipbooks();
-                    }
-                } else {
-                    await fetchFlipbooks();
-                }
-            } catch (error) {
-                toast.error("Failed to load filtered data");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        if (location.search.includes('filter=')) {
-            applyFiltersFromUrl();
-        }
-    }, [teammates, location.search]);
-
-    useEffect(() => {
-        const fetchTeammates = async () => {
-            try {
-                setIsLoading(true);
-                const response = await GetTeammatesApi();
-                setTeammates(response.data.teammateData || []);
-            } catch (error) {
-                toast.error("Failed to fetch teammates", {
-                    description: error.message || "Oops! Something went wrong."
-                });
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        if ((isSheetOpen || location.search.includes('filter=')) && teammates.length === 0) {
-            fetchTeammates();
-        }
-    }, [isSheetOpen, location.search]);
-
-    useEffect(() => {
-        if (location.search.includes('filter=')) {
-            setFilterCount(calculateFilterCount());
-        } else {
-            setFilterCount(0);
-        }
-    }, [createdByFilter, visibilityFilter, statusFilter, dateCreatedFilter, lastUpdatedFilter, location.search]);
-
-    const calculateFilterCount = () => {
-        let count = 0;
-        if (createdByFilter.length > 0) count++;
-        if (visibilityFilter.length > 0) count++;
-        if (statusFilter.length > 0) count++;
-        if (dateCreatedFilter !== "anytime") count++;
-        if (lastUpdatedFilter !== "anytime") count++;
-        return count;
     };
 
     const getDateRange = (filterValue) => {
@@ -250,11 +117,6 @@ export default function FilterCom() {
             }
         }
         return null;
-    };
-
-    const buildApiPayload = () => {
-        const filterData = getCurrentFilterState();
-        return buildApiPayloadFromFilterData(filterData);
     };
 
     const buildApiPayloadFromFilterData = (filterData) => {
@@ -361,43 +223,122 @@ export default function FilterCom() {
         return payload;
     };
 
-    const applyFilters = async () => {
-        try {
-            setIsLoading(true);
-            navigate(`/myflipbooks/flipbooks`);
-            const payload = buildApiPayload();
-            await fetchFlipbooks(payload);
-            updateUrlWithFilters();
-        } catch (error) {
-            console.error("Filter error:", error);
-            toast.error("Failed to apply filters", {
-                description: error.message || "Oops! Something went wrong."
-            });
-        } finally {
-            setIsLoading(false);
-        }
+    const calculateFilterCount = (filterData) => {
+        let count = 0;
+        if (filterData.createdBy?.length > 0) count++;
+        if (filterData.visibility?.length > 0) count++;
+        if (filterData.status?.length > 0) count++;
+        if (filterData.dateCreated && filterData.dateCreated !== "anytime") count++;
+        if (filterData.lastUpdated && filterData.lastUpdated !== "anytime") count++;
+        return count;
     };
 
-    const clearAllFilters = async () => {
-        try {
-            setIsLoading(true);
-            setCreatedByFilter([]);
-            setVisibilityFilter([]);
-            setStatusFilter([]);
-            setDateCreatedFilter("anytime");
-            setLastUpdatedFilter("anytime");
-            setFilterCount(0);
+    useEffect(() => {
+        const fetchTeammates = async () => {
+            if (teammates.length > 0) return;
 
-            navigate('/myflipbooks/flipbooks', { replace: true });
-            await fetchFlipbooks();
-        } catch (error) {
-            console.error("Clear filters error:", error);
-            toast.error("Failed to clear filters", {
-                description: error.message || "Oops! Something went wrong."
-            });
-        } finally {
-            setIsLoading(false);
+            try {
+                setIsLoading(true);
+                const response = await GetTeammatesApi();
+                setTeammates(response.data.teammateData || []);
+            } catch (error) {
+                toast.error("Failed to fetch teammates", {
+                    description: error.message || "Oops! Something went wrong."
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (isSheetOpen) {
+            fetchTeammates();
         }
+    }, [isSheetOpen, teammates.length]);
+
+    useEffect(() => {
+        const handleUrlFilterChange = async () => {
+            const searchParams = new URLSearchParams(location.search);
+            const encodedFilters = searchParams.get('filter');
+
+            if (encodedFilters) {
+                try {
+                    const decodedFilters = decodeFiltersFromUrl(encodedFilters);
+
+                    if (decodedFilters && typeof decodedFilters === 'object') {
+                        const statusArray = Array.isArray(decodedFilters.status) ? decodedFilters.status : [];
+                        const visibilityArray = Array.isArray(decodedFilters.visibility) ? decodedFilters.visibility : [];
+                        const createdByArray = Array.isArray(decodedFilters.createdBy) ? decodedFilters.createdBy : [];
+                        const dateCreated = decodedFilters.dateCreated || "anytime";
+                        const lastUpdated = decodedFilters.lastUpdated || "anytime";
+
+                        setStatusFilter(statusArray);
+                        setVisibilityFilter(visibilityArray);
+                        setCreatedByFilter(createdByArray);
+                        setDateCreatedFilter(dateCreated);
+                        setLastUpdatedFilter(lastUpdated);
+                        setFilterCount(calculateFilterCount(decodedFilters));
+
+                        // Apply filters to API
+                        setIsLoading(true);
+                        const payload = buildApiPayloadFromFilterData(decodedFilters);
+                        await fetchFlipbooks(payload);
+                    }
+                } catch (error) {
+                    console.error("Error processing filters from URL:", error);
+                    // Clear invalid filter from URL
+                    const newSearchParams = new URLSearchParams(location.search);
+                    newSearchParams.delete('filter');
+                    navigate(`/myflipbooks/flipbooks${newSearchParams.toString() ? '?' + newSearchParams.toString() : ''}`, { replace: true });
+                } finally {
+                    setIsLoading(false);
+                }
+            } else {
+                setCreatedByFilter([]);
+                setVisibilityFilter([]);
+                setStatusFilter([]);
+                setDateCreatedFilter("anytime");
+                setLastUpdatedFilter("anytime");
+                setFilterCount(0);
+
+                setIsLoading(true);
+                try {
+                    await fetchFlipbooks();
+                } catch (error) {
+                    toast.error("Failed to load data");
+                } finally {
+                    setIsLoading(false);
+                }
+            }
+        };
+
+        handleUrlFilterChange();
+    }, [location.search]);
+
+    const applyFilters = () => {
+        const filterData = getCurrentFilterState();
+        const hasActiveFilters =
+            filterData.status.length > 0 ||
+            filterData.visibility.length > 0 ||
+            filterData.createdBy.length > 0 ||
+            (filterData.dateCreated && filterData.dateCreated !== "anytime") ||
+            (filterData.lastUpdated && filterData.lastUpdated !== "anytime");
+
+        const searchParams = new URLSearchParams();
+
+        if (hasActiveFilters) {
+            const encodedFilters = encodeFiltersToUrl(filterData);
+            if (encodedFilters) {
+                searchParams.set('filter', encodedFilters);
+            }
+        }
+
+        const basePath = '/myflipbooks/flipbooks';
+        const newUrl = `${basePath}${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
+        navigate(newUrl, { replace: true });
+    };
+
+    const clearAllFilters = () => {
+        navigate('/myflipbooks/flipbooks', { replace: true });
     };
 
     const getCreatedByOptions = () => {
@@ -532,7 +473,7 @@ export default function FilterCom() {
                 <SheetFooter className="mt-4">
                     <SheetClose asChild>
                         <Button onClick={applyFilters} disabled={isLoading}>
-                            {isLoading ? "Applying..." : "Apply filters"}
+                            {isLoading ? <LoadingButton /> : "Apply filters"}
                         </Button>
                     </SheetClose>
                     <SheetClose asChild>
