@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import TextPreview from '../../components/AppLayoutComponents/Sidebar/Branding/TextEditor/TextPreview'
 import FontControls from '../../components/AppLayoutComponents/Sidebar/Branding/TextEditor/FontControls'
@@ -8,92 +8,21 @@ import ColorControl from '../../components/AppLayoutComponents/Sidebar/Branding/
 import AlignmentControl from '../../components/AppLayoutComponents/Sidebar/Branding/TextEditor/AlignmentControl'
 import TextWrapControl from '../../components/AppLayoutComponents/Sidebar/Branding/TextEditor/TextWrapControl'
 import SpacingControl from '../../components/AppLayoutComponents/Sidebar/Branding/TextEditor/SpacingControl'
-import { useWorkspaces } from '@/context/WorkspaceContext';
-import { GetWorkspaceFontsApi } from '@/service/font.service';
+import { GetWorkspaceFontsApi, UpdateWorkspaceFontsApi } from '@/service/font.service';
+import { toast } from 'sonner';
+import { FontCardSkeleton } from '@/utils/Skeleton';
 
 export default function BrandingTypography() {
-    const [editors, setEditors] = useState([
-        {
-            id: 1,
-            name: 'Heading',
-            description: 'George enjoys a healthy diet of fruits and grain.',
-            fontFamily: 'font-sans',
-            fontWeight: 'bold',
-            fontSize: 60,
-            textColor: '#1f2937',
-            styles: ['bold'],
-            textCase: 'none',
-            alignment: 'left',
-            textWrap: 'wrap',
-            letterSpacing: 0,
-            lineHeight: 1.2,
-            isBoldDisabled: false,
-            isItalicDisabled: true,
-        },
-        {
-            id: 2,
-            name: 'Sub heading',
-            description:"There are three cats looking at me from the tree. I’m not sure what they want, but they look shady.",
-            fontFamily: 'font-serif',
-            fontWeight: 'regular',
-            fontSize: 24,
-            textColor: '#1f2937',
-            styles: [''],
-            textCase: 'none',
-            alignment: 'left',
-            textWrap: 'wrap',
-            letterSpacing: 0,
-            lineHeight: 1.2,
-            isBoldDisabled: true,
-            isItalicDisabled: true,
-        },
-        {
-            id: 3,
-            name: 'Body text',
-            description:"Winter in New York is a very cold place, but it’s equally as beautiful. My best suggestion would be to find a nice pizza shop, order a nice warm slice of your favorite pizza, and watch the snow fall. You can also try hitting one of the amazing coffee shops in Times Square.",
-            fontFamily: 'font-sans',
-            fontWeight: 'regular',
-            fontSize: 16,
-            textColor: '#1f2937',
-            styles: [''],
-            textCase: 'none',
-            alignment: 'left',
-            textWrap: 'wrap',
-            letterSpacing: 0,
-            lineHeight: 1.2,
-            isBoldDisabled: false,
-            isItalicDisabled: true,
-        },
-        {
-            id: 4,
-            name: 'Pagination',
-            description:"1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11",
-            fontFamily: 'font-mono',
-            fontWeight: 'bold',
-            fontSize: 14,
-            textColor: '#1f2937',
-            styles: ['bold'],
-            textCase: 'none',
-            alignment: 'center',
-            textWrap: 'wrap',
-            letterSpacing: 0,
-            lineHeight: 1.2,
-            isBoldDisabled: false,
-            isItalicDisabled: true,
-        }
-    ]);
+    const [editors, setEditors] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const {currentWorkspace} = useWorkspaces();
+    const debounceTimers = useRef({});
 
-    console.log("currentWorkspace ",currentWorkspace)
-
-
-    useEffect(()=>{
+    useEffect(() => {
         const getWorkspaceFonts = async () => {
             try {
                 setIsLoading(true);
                 const response = await GetWorkspaceFontsApi();
-                console.log("response.data ",response.data);
+                setEditors(response.data);
             } catch (error) {
                 toast.error("Failed to fetch workspace fonts", {
                     description: error.message || "Oops! Something went wrong.",
@@ -103,18 +32,51 @@ export default function BrandingTypography() {
             }
         }
         getWorkspaceFonts();
-    },[])
+    }, []);
+
+    const shouldDebounce = (updates) => {
+        const debouncedFields = ['fontSize', 'spacing', 'letterSpacing', 'lineHeight', 'textColor'];
+        return Object.keys(updates).some(key => debouncedFields.includes(key));
+    };
+
+    const makeApiCall = useCallback(async (editorId, updates) => {
+        const { previousState, ...payload } = updates;
+
+        try {
+            const fontId = editorId;
+            await UpdateWorkspaceFontsApi(fontId, payload);
+        } catch (error) {
+            toast.error("Failed to update font", {
+                description: error.message || "Oops! Something went wrong.",
+            });
+        }
+    }, []);
 
     const updateEditorConfig = (editorId, updates) => {
+        const currentEditor = editors.find(editor => editor.id === editorId || editor._id === editorId);
+        if (!currentEditor) return;
+
         setEditors(prevEditors =>
             prevEditors.map(editor => {
-                if (editor.id === editorId) {
-                    const updatedEditor = { ...editor, ...updates };
-                    return updatedEditor;
+                const id = editor._id || editor.id;
+                if (id === editorId) {
+                    return { ...editor, ...updates };
                 }
                 return editor;
             })
         );
+
+        if (debounceTimers.current[editorId]) {
+            clearTimeout(debounceTimers.current[editorId]);
+        }
+
+        const isDebounced = shouldDebounce(updates);
+        const delay = isDebounced ? 500 : 0;
+
+        debounceTimers.current[editorId] = setTimeout(() => {
+            const finalUpdates = updates;
+            makeApiCall(editorId, finalUpdates);
+        }, delay);
     };
 
     return (
@@ -124,52 +86,66 @@ export default function BrandingTypography() {
                 <p className="text-gray-500">Set custom default text styles for easy access when you design publications</p>
             </div>
 
-            {editors.map((editor) => (
-                <Card key={editor.id} className="p-4 overflow-hidden mb-4 shadow-sm rounded-lg">
-                    <div className="text-sm text-gray-500 mb-2">{editor.name}</div>
+            {isLoading ? (
+                <>
+                    <FontCardSkeleton />
+                    <FontCardSkeleton />
+                    <FontCardSkeleton />
+                    <FontCardSkeleton />
+                </>
+            ) : (
+                editors.map((editor) => {
+                    const editorId = editor._id || editor.id;
 
-                    <CardContent className="p-0 mb-2">
-                        <TextPreview config={editor} />
-                    </CardContent>
+                    return (
+                        <Card key={editorId} className="p-4 overflow-hidden mb-4 shadow-sm rounded-lg relative">
 
-                    <div className="flex flex-wrap items-center gap-2 border-t pt-4">
-                        <FontControls
-                            config={editor}
-                            updateConfig={(updates) => updateEditorConfig(editor.id, updates)}
-                        />
+                            <div className="text-sm text-gray-500 mb-2">{editor.name}</div>
 
-                        <StyleControls
-                            config={editor}
-                            updateConfig={(updates) => updateEditorConfig(editor.id, updates)}
-                        />
+                            <CardContent className="p-0 mb-2">
+                                <TextPreview config={editor} />
+                            </CardContent>
 
-                        <TextCaseControl
-                            config={editor}
-                            updateConfig={(updates) => updateEditorConfig(editor.id, updates)}
-                        />
+                            <div className="flex flex-wrap items-center gap-2 border-t pt-4">
+                                <FontControls
+                                    config={editor}
+                                    updateConfig={(updates) => updateEditorConfig(editorId, updates)}
+                                />
 
-                        <ColorControl
-                            config={editor}
-                            updateConfig={(updates) => updateEditorConfig(editor.id, updates)}
-                        />
+                                <StyleControls
+                                    config={editor}
+                                    updateConfig={(updates) => updateEditorConfig(editorId, updates)}
+                                />
 
-                        <AlignmentControl
-                            config={editor}
-                            updateConfig={(updates) => updateEditorConfig(editor.id, updates)}
-                        />
+                                <TextCaseControl
+                                    config={editor}
+                                    updateConfig={(updates) => updateEditorConfig(editorId, updates)}
+                                />
 
-                        <TextWrapControl
-                            config={editor}
-                            updateConfig={(updates) => updateEditorConfig(editor.id, updates)}
-                        />
+                                <ColorControl
+                                    config={editor}
+                                    updateConfig={(updates) => updateEditorConfig(editorId, updates)}
+                                />
 
-                        <SpacingControl
-                            config={editor}
-                            updateConfig={(updates) => updateEditorConfig(editor.id, updates)}
-                        />
-                    </div>
-                </Card>
-            ))}
+                                <AlignmentControl
+                                    config={editor}
+                                    updateConfig={(updates) => updateEditorConfig(editorId, updates)}
+                                />
+
+                                <TextWrapControl
+                                    config={editor}
+                                    updateConfig={(updates) => updateEditorConfig(editorId, updates)}
+                                />
+
+                                <SpacingControl
+                                    config={editor}
+                                    updateConfig={(updates) => updateEditorConfig(editorId, updates)}
+                                />
+                            </div>
+                        </Card>
+                    );
+                })
+            )}
         </div>
     );
 }

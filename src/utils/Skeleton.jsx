@@ -77,3 +77,23 @@ export function LoadingOverlay() {
     </div>
   )
 }
+
+export function FontCardSkeleton() {
+  return (
+    <div className="p-4 overflow-hidden mb-4 shadow-sm rounded-lg">
+      <div className="h-4 bg-gray-200 rounded mb-2 w-24 animate-pulse"></div>
+      <div className="p-0 mb-2">
+        <div className="h-16 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+      <div className="flex flex-wrap items-center gap-2 border-t pt-4">
+        <div className="h-8 bg-gray-200 rounded w-32 animate-pulse"></div>
+        <div className="h-8 bg-gray-200 rounded w-24 animate-pulse"></div>
+        <div className="h-8 bg-gray-200 rounded w-20 animate-pulse"></div>
+        <div className="h-8 bg-gray-200 rounded w-16 animate-pulse"></div>
+        <div className="h-8 bg-gray-200 rounded w-28 animate-pulse"></div>
+        <div className="h-8 bg-gray-200 rounded w-24 animate-pulse"></div>
+        <div className="h-8 bg-gray-200 rounded w-32 animate-pulse"></div>
+      </div>
+    </div>
+  );
+}
