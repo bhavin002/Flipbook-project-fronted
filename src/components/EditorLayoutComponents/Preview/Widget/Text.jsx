@@ -23,7 +23,7 @@ export default function Text({ shape }) {
                 fontSize: `${shape.fontSize}px`,
                 textDecoration: shape.textDecoration,
                 letterSpacing: `${shape.letterSpacing}px`,
-                lineHeight: shape.lineHeight,
+                lineHeight: shape.lineHeight || 1,
                 textAlign: shape.align,
                 fontWeight: shape.fontStyle?.split(" ").includes("bold")
                     ? "bold"
