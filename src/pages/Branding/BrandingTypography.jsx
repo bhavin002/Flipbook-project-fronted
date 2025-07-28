@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import TextPreview from '../../components/AppLayoutComponents/Sidebar/Branding/TextEditor/TextPreview'
 import FontControls from '../../components/AppLayoutComponents/Sidebar/Branding/TextEditor/FontControls'
@@ -8,6 +8,8 @@ import ColorControl from '../../components/AppLayoutComponents/Sidebar/Branding/
 import AlignmentControl from '../../components/AppLayoutComponents/Sidebar/Branding/TextEditor/AlignmentControl'
 import TextWrapControl from '../../components/AppLayoutComponents/Sidebar/Branding/TextEditor/TextWrapControl'
 import SpacingControl from '../../components/AppLayoutComponents/Sidebar/Branding/TextEditor/SpacingControl'
+import { useWorkspaces } from '@/context/WorkspaceContext';
+import { GetWorkspaceFontsApi } from '@/service/font.service';
 
 export default function BrandingTypography() {
     const [editors, setEditors] = useState([
@@ -80,6 +82,28 @@ export default function BrandingTypography() {
             isItalicDisabled: true,
         }
     ]);
+    const [isLoading, setIsLoading] = useState(false);
+    const {currentWorkspace} = useWorkspaces();
+
+    console.log("currentWorkspace ",currentWorkspace)
+
+
+    useEffect(()=>{
+        const getWorkspaceFonts = async () => {
+            try {
+                setIsLoading(true);
+                const response = await GetWorkspaceFontsApi();
+                console.log("response.data ",response.data);
+            } catch (error) {
+                toast.error("Failed to fetch workspace fonts", {
+                    description: error.message || "Oops! Something went wrong.",
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        getWorkspaceFonts();
+    },[])
 
     const updateEditorConfig = (editorId, updates) => {
         setEditors(prevEditors =>
