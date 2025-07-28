@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { flipbookVisibility, flipbookStatus } from "@/utils/enum";
 import { useFlipbook } from "@/context/FlipbookContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Label } from "@/components/ui/label";
 
 export default function FilterCom() {
     const [createdByFilter, setCreatedByFilter] = useState([]);
@@ -21,6 +23,7 @@ export default function FilterCom() {
     const [isLoading, setIsLoading] = useState(false);
     const [teammates, setTeammates] = useState([]);
     const [filterCount, setFilterCount] = useState(0);
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
     const { fetchFlipbooks } = useFlipbook();
     const location = useLocation();
     const navigate = useNavigate();
@@ -118,23 +121,6 @@ export default function FilterCom() {
     };
 
     useEffect(() => {
-        const GetTeammates = async () => {
-            try {
-                setIsLoading(true);
-                const response = await GetTeammatesApi();
-                setTeammates(response.data.teammateData || []);
-            } catch (error) {
-                toast.error("Failed to fetch teammates", {
-                    description: error.message || "Oops! Something went wrong."
-                });
-            } finally {
-                setIsLoading(false);
-            }
-        }
-        GetTeammates();
-    }, []);
-
-    useEffect(() => {
         const applyFiltersFromUrl = async () => {
             try {
                 setIsLoading(true);
@@ -163,11 +149,38 @@ export default function FilterCom() {
                 setIsLoading(false);
             }
         };
-
-        if (teammates.length > 0 || !location.search.includes('filter=')) {
+        if (location.search.includes('filter=')) {
             applyFiltersFromUrl();
         }
-    }, [teammates]);
+    }, [teammates, location.search]);
+
+    useEffect(() => {
+        const fetchTeammates = async () => {
+            try {
+                setIsLoading(true);
+                const response = await GetTeammatesApi();
+                setTeammates(response.data.teammateData || []);
+            } catch (error) {
+                toast.error("Failed to fetch teammates", {
+                    description: error.message || "Oops! Something went wrong."
+                });
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if ((isSheetOpen || location.search.includes('filter=')) && teammates.length === 0) {
+            fetchTeammates();
+        }
+    }, [isSheetOpen, location.search]);
+
+    useEffect(() => {
+        if (location.search.includes('filter=')) {
+            setFilterCount(calculateFilterCount());
+        } else {
+            setFilterCount(0);
+        }
+    }, [createdByFilter, visibilityFilter, statusFilter, dateCreatedFilter, lastUpdatedFilter, location.search]);
 
     const calculateFilterCount = () => {
         let count = 0;
@@ -178,14 +191,6 @@ export default function FilterCom() {
         if (lastUpdatedFilter !== "anytime") count++;
         return count;
     };
-
-    useEffect(() => {
-        if (location.search.includes('filter=')) {
-            setFilterCount(calculateFilterCount());
-        } else {
-            setFilterCount(0);
-        }
-    }, [createdByFilter, visibilityFilter, statusFilter, dateCreatedFilter, lastUpdatedFilter]);
 
     const getDateRange = (filterValue) => {
         const today = new Date();
@@ -472,7 +477,7 @@ export default function FilterCom() {
     ];
 
     return (
-        <Sheet>
+        <Sheet onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
                 <Button variant="outline" disabled={isLoading} className="relative">
                     <ListFilter />
@@ -488,12 +493,19 @@ export default function FilterCom() {
                     <SheetTitle>Filter options</SheetTitle>
                 </SheetHeader>
                 <div className="space-y-4">
-                    <CreatedByFilter
-                        label="Created by"
-                        options={getCreatedByOptions()}
-                        selectedValues={createdByFilter}
-                        onChange={setCreatedByFilter}
-                    />
+                    {isLoading ? (
+                        <div>
+                            <Label className="text-right">Created by</Label>
+                            <Skeleton className="h-10 w-full mt-3" />
+                        </div>
+                    ) : (
+                        <CreatedByFilter
+                            label="Created by"
+                            options={getCreatedByOptions()}
+                            selectedValues={createdByFilter}
+                            onChange={setCreatedByFilter}
+                        />
+                    )}
 
                     {filters.map((filter) => (
                         <FilterDropdownCom

@@ -47,7 +47,7 @@ export function FlipbookProvider({ children }) {
         
         const shouldFetchFlipbooks = location.pathname === '/myflipbooks/flipbooks' || location.pathname === '/myflipbooks/template';
         
-        if (shouldFetchFlipbooks) {
+        if (shouldFetchFlipbooks && !location.search.includes('filter=')) {
             fetchFlipbooks();
         }
     }, [location.pathname, isAuthenticated]);

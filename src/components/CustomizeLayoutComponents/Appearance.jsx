@@ -117,7 +117,7 @@ export default function Appearance() {
 
     return (
         <>
-            <div className="flex flex-col gap-2 text-white">
+            {/* <div className="flex flex-col gap-2 text-white">
                 <Label>Player skin</Label>
                 <Tabs value={playerSkin} onValueChange={handlePlayerSkinChange}>
                     <TabsList className={`w-full ${!isFieldEnabled("playerSkin") ? 'opacity-50 pointer-events-none' : ''}`}>
@@ -125,14 +125,14 @@ export default function Appearance() {
                         <TabsTrigger className="items-center gap-2 w-full" value="modern">Modern</TabsTrigger>
                     </TabsList>
                 </Tabs>
-            </div>
+            </div> */}
             <div className="flex flex-col gap-2 text-white">
                 <Label>Page transition</Label>
                 <Tabs value={pageTransition} onValueChange={handlePageTransitionChange}>
                     <TabsList className={`w-full ${!isFieldEnabled("pageTransition") ? 'opacity-50 pointer-events-none' : ''}`}>
                         <TabsTrigger className="items-center gap-2 w-full" value="flip">Flip</TabsTrigger>
                         <TabsTrigger className="items-center gap-2 w-full" value="slide">Slide</TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="scroll">Scroll</TabsTrigger>
+                        {/* <TabsTrigger className="items-center gap-2 w-full" value="scroll">Scroll</TabsTrigger> */}
                     </TabsList>
                 </Tabs>
             </div>
