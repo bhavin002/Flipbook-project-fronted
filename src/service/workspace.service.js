@@ -21,8 +21,6 @@ export const GetWorkspaceInfoApi = async () => {
 }
 
 export const getWorkspaceProfileApi = async () => {
-    const response = await ApiClient().get(`/workspace-profile/get`, {
-        showLoader: true
-    });
+    const response = await ApiClient().get(`/workspace-profile/get`);
     return response.data;
 }
