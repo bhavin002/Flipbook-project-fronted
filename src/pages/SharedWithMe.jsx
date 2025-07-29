@@ -62,7 +62,7 @@ export default function SharedWithMe({ isSidebarOpen }) {
                             </div>
 
                             <p className="text-sm text-violet-600">
-                                Shared by : Utsav Parmar
+                                Created by : {flipbook.createdBy}
                             </p>
 
                             <div className="flex gap-2 justify-center py-3 flex-wrap">

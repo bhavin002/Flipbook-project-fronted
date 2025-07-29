@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ChevronRight, Plus } from 'lucide-react';
+import { ChevronRight, Plus, X, Upload as UploadIcon } from 'lucide-react';
 import { Upload } from 'lucide-react';
 import { Brush } from 'lucide-react';
 import { ShoppingCart } from 'lucide-react';
@@ -15,11 +15,13 @@ import { useFileUpload } from "@/context/FileUploadContext";
 import { FlipbookUploadMode } from "@/utils/enum";
 import LoadingButton from "@/utils/LoadingButton";
 import { useFlipbook } from "@/context/FlipbookContext";
+import ProductCatalog from "./ProductCatalogComponent";
 
 export default function CreateDropDownCom() {
     const { fetchFlipbooks } = useFlipbook();
     const navigate = useNavigate();
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+    const [productCatalogOpen, setProductCatalogOpen] = useState(false);
     const fileInputRef = useRef(null);
     const { setFiles } = useFileUpload();
     const [multiFileDialogOpen, setMultiFileDialogOpen] = useState(false);
@@ -31,6 +33,8 @@ export default function CreateDropDownCom() {
             navigate("/create")
         } else if (action === "template") {
             navigate("/create?ct=template");
+        } else if (action === "product-catalog") {
+            setProductCatalogOpen(true);
         }
     };
 
@@ -72,7 +76,6 @@ export default function CreateDropDownCom() {
                 const formData = new FormData();
                 formData.append("files", file);
                 const response = await UploadPdfApi(formData);
-                console.log("response ?>??", response)
                 const bookId = response.data.bookId;
                 setTimeout(() => {
                     navigate(`/customize/${bookId}`);
@@ -146,13 +149,14 @@ export default function CreateDropDownCom() {
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleItemClick("product-catalog")}>
                     <ShoppingCart /> Product catalog
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate("/shelf/select")}>
                     <LibraryBig /> Bookshelf
                 </DropdownMenuItem>
             </DropdownMenuContent>
+
             <input
                 type="file"
                 accept=".pdf,.pptx,.odp,.jpg,.jpeg,.png"
@@ -161,13 +165,16 @@ export default function CreateDropDownCom() {
                 onChange={handleFileChange}
                 multiple
             />
+
             <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
                 <DialogContent hideClose>
                     <div className="flex flex-col items-center justify-center p-4">
                         <img
                             src="/src/assets/Uploading_cloud.gif"
                         />
-                        <div className="text-lg font-semibold mb-5">Uploading your PDF...</div>
+                        <div className="text-lg font-semibold mb-5">
+                            Uploading your PDF...
+                        </div>
                         <div className="w-full mt-2 h-2 bg-gray-200 rounded overflow-hidden relative">
                             <div className="absolute inset-0">
                                 <div className="infinite-progress-bar h-full" />
@@ -176,6 +183,7 @@ export default function CreateDropDownCom() {
                     </div>
                 </DialogContent>
             </Dialog>
+
             <Dialog open={multiFileDialogOpen} onOpenChange={setMultiFileDialogOpen}>
                 <DialogContent hideClose>
                     <div className="flex flex-col items-center justify-center space-y-4">
@@ -204,6 +212,11 @@ export default function CreateDropDownCom() {
                     </div>
                 </DialogContent>
             </Dialog>
+
+            <ProductCatalog 
+                open={productCatalogOpen} 
+                onOpenChange={setProductCatalogOpen} 
+            />
         </DropdownMenu>
     )
 }
