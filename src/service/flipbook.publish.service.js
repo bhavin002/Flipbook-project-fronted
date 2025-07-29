@@ -85,3 +85,8 @@ export const GetPublicFlipbookApi = async (workspaceId) => {
     const response = await ApiClient().get(`/flipbook-publish/get-public-flipbook/${workspaceId}`);
     return response.data;
 }
+
+export const GetSharedFlipbooksApi = async () => {
+    const response = await ApiClient().get(`/flipbook-publish/shared-with-me`);
+    return response.data;
+}

@@ -7,7 +7,7 @@ import { ShoppingCart } from 'lucide-react';
 import { LayoutPanelLeft } from 'lucide-react';
 import { LibraryBig } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { UploadPdfApi } from "@/service/flipbook.service";
 import { toast } from "sonner";

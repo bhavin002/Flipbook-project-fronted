@@ -4,17 +4,31 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Trash2, Lock, Unlock, BringToFront, SendToBack } from "lucide-react";
 import { deleteShape, duplicateShapes } from "@/utils/Helper";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { FieldMappingApi } from '@/service/productCatalog.service';
+import { toast } from 'sonner';
 
 export default function RightSideElements({ selectedShape, setMainStage, mainStage, selectedIndex, setSelectedSubMenu }) {
     const [opacity, setOpacity] = useState(30);
     const selectedShapes = mainStage[selectedIndex]?.selectedShapes.map(e => e.attrs).map(e => e.id);
     const [isLoading, setIsLoading] = useState(false);
+    const [isFetching, setIsFetching] = useState(false);
+    const [fieldMappingData, setFieldMappingData] = useState([]);
+    
     useEffect(() => {
         if (selectedShape && selectedShape.length) {
             const shape = mainStage[selectedIndex].shapes.find(e => e.id === selectedShape[0].attrs.id);
@@ -26,7 +40,8 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
         }
     }, [mainStage, selectedShape]);
 
-
+    const location = useLocation();
+    const pathname = location.pathname.split("/")[1];
 
     const toggleLock = (shape = null, idDraggable = true) => {
         if (shape) {
@@ -96,8 +111,64 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
         updatedStage[selectedIndex].shapes = shapes;
         setMainStage(updatedStage);
     };
+
+    const setFieldName = (fieldId) => {
+        if (selectedShape?.length) {
+            const updatedShapes = mainStage[selectedIndex]?.shapes.map((shape) => {
+                if (selectedShape.some((s) => s.attrs.id === shape.id)) {
+                    return { ...shape, fieldName: fieldId };
+                }
+                return shape;
+            });
+            const updatedStage = [...mainStage];
+            updatedStage[selectedIndex].shapes = updatedShapes;
+            setMainStage(updatedStage);
+        }
+    };
+
+    useEffect(() => {
+        const GetFieldMapping = async () => {
+            try {
+                setIsFetching(true);
+                const response = await FieldMappingApi();
+                console.log("response ??", response.data);
+                setFieldMappingData(response.data || []);
+            } catch (error) {
+                toast.error("Failed to get field mapping", {
+                    description: error.message || "Oops! Something went wrong."
+                })
+            } finally {
+                setIsFetching(false);
+            }
+        }
+        if(pathname == "admin-editor") {
+            GetFieldMapping();
+        }
+    }, []);
+
     return (
         <div className="flex items-center">
+            {pathname == "admin-editor" && (
+                isFetching ? (
+                    <Skeleton className="h-10 w-[200px]" />
+                ) : (
+                    <Select 
+                        value={selectedShape?.[0]?.attrs?.fieldName || ""} 
+                        onValueChange={setFieldName}
+                    >
+                        <SelectTrigger className="w-[200px]">
+                            <SelectValue placeholder="Select Field Name" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {fieldMappingData.map((field) => (
+                                <SelectItem key={field._id} value={field._id}>
+                                    {field.fieldName}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                )
+            )}
             {selectedShape && selectedShape.length == 1 && ["shape-widget", "stock-photo"].includes(selectedShape[0].attrs.title) && <Button variant="ghost" size="sm" onClick={() => setSelectedSubMenu(selectedShape[0].attrs.sidebar)}>
                 Action
             </Button>}

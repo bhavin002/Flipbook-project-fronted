@@ -103,7 +103,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
             if (id && mainStage.length > 0 && !publishing) {
                 updatePageData();
             }
-        }, 10000);
+        }, 30000);
 
         return () => clearInterval(interval);
     }, [mainStage, publishing]);
