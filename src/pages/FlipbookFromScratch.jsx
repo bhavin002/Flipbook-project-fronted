@@ -70,81 +70,81 @@ export default function FlipbookFromScratch() {
         setHeight(parseInt(e.target.value) || 0);
     };
 
-    // const create = async () => {
-    //     try {
-    //         setIsFlipbookCreating(true);
-    //         let response;
-    //         if (isTemplate) {
-    //             response = await CreateTemplateApi({
-    //                 width: width,
-    //                 height: height,
-    //                 pages: [{
-    //                     "pageData": JSON.stringify({
-    //                         stageref: null,
-    //                         CANVAS_WIDTH: width,
-    //                         CANVAS_HEIGHT: height,
-    //                         shapes: [],
-    //                         selectedShapes: [],
-    //                         background: "#fff"
-    //                     })
-    //                 }]
-    //             });
-    //             const templateId = response.data.bookId;
-    //             navigate(`/editor/${templateId}`);
-    //         } else {
-    //             response = await CreateFlipbookApi({
-    //                 width: width,
-    //                 height: height,
-    //                 pages: [{
-    //                     "pageData": JSON.stringify({
-    //                         stageref: null,
-    //                         CANVAS_WIDTH: width,
-    //                         CANVAS_HEIGHT: height,
-    //                         shapes: [],
-    //                         selectedShapes: [],
-    //                         background: "#fff"
-    //                     })
-    //                 }]
-    //             });
-    //             const flipBookId = response.data.bookId;
-    //             navigate(`/editor/${flipBookId}`);
-    //         }
-    //     } catch (error) {
-    //         toast.error(isTemplate ? "Template creation failed" : "Flipbook creation failed", {
-    //             description: error.message || "Oops! Something went wrong.",
-    //         });
-    //     } finally {
-    //         setIsFlipbookCreating(false);
-    //     }
-    // }
-
     const create = async () => {
         try {
             setIsFlipbookCreating(true);
-            const response = await CreateAdminTemplateApi({
-                width: width,
-                height: height,
-                pages: [{
-                    "pageData": JSON.stringify({
-                        stageref: null,
-                        CANVAS_WIDTH: width,
-                        CANVAS_HEIGHT: height,
-                        shapes: [],
-                        selectedShapes: [],
-                        background: "#fff"
-                    })
-                }]
-            })
-            const templateId = response.data.bookId;
-            navigate(`/admin-editor/${templateId}`);
+            let response;
+            if (isTemplate) {
+                response = await CreateTemplateApi({
+                    width: width,
+                    height: height,
+                    pages: [{
+                        "pageData": JSON.stringify({
+                            stageref: null,
+                            CANVAS_WIDTH: width,
+                            CANVAS_HEIGHT: height,
+                            shapes: [],
+                            selectedShapes: [],
+                            background: "#fff"
+                        })
+                    }]
+                });
+                const templateId = response.data.bookId;
+                navigate(`/editor/${templateId}`);
+            } else {
+                response = await CreateFlipbookApi({
+                    width: width,
+                    height: height,
+                    pages: [{
+                        "pageData": JSON.stringify({
+                            stageref: null,
+                            CANVAS_WIDTH: width,
+                            CANVAS_HEIGHT: height,
+                            shapes: [],
+                            selectedShapes: [],
+                            background: "#fff"
+                        })
+                    }]
+                });
+                const flipBookId = response.data.bookId;
+                navigate(`/editor/${flipBookId}`);
+            }
         } catch (error) {
-            toast.error("Template creation failed", {
+            toast.error(isTemplate ? "Template creation failed" : "Flipbook creation failed", {
                 description: error.message || "Oops! Something went wrong.",
             });
         } finally {
             setIsFlipbookCreating(false);
         }
     }
+
+    // const create = async () => {
+    //     try {
+    //         setIsFlipbookCreating(true);
+    //         const response = await CreateAdminTemplateApi({
+    //             width: width,
+    //             height: height,
+    //             pages: [{
+    //                 "pageData": JSON.stringify({
+    //                     stageref: null,
+    //                     CANVAS_WIDTH: width,
+    //                     CANVAS_HEIGHT: height,
+    //                     shapes: [],
+    //                     selectedShapes: [],
+    //                     background: "#fff"
+    //                 })
+    //             }]
+    //         })
+    //         const templateId = response.data.bookId;
+    //         navigate(`/admin-editor/${templateId}`);
+    //     } catch (error) {
+    //         toast.error("Template creation failed", {
+    //             description: error.message || "Oops! Something went wrong.",
+    //         });
+    //     } finally {
+    //         setIsFlipbookCreating(false);
+    //     }
+    // }
 
     return (
         <>
