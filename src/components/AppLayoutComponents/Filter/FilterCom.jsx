@@ -259,38 +259,55 @@ export default function FilterCom() {
         const handleUrlFilterChange = async () => {
             const searchParams = new URLSearchParams(location.search);
             const encodedFilters = searchParams.get('filter');
+            const isInFolderView = location.pathname.includes('/folder/');
 
-            if (encodedFilters) {
-                try {
-                    const decodedFilters = decodeFiltersFromUrl(encodedFilters);
+            if (encodedFilters || !isInFolderView) {
+                if (encodedFilters) {
+                    try {
+                        const decodedFilters = decodeFiltersFromUrl(encodedFilters);
 
-                    if (decodedFilters && typeof decodedFilters === 'object') {
-                        const statusArray = Array.isArray(decodedFilters.status) ? decodedFilters.status : [];
-                        const visibilityArray = Array.isArray(decodedFilters.visibility) ? decodedFilters.visibility : [];
-                        const createdByArray = Array.isArray(decodedFilters.createdBy) ? decodedFilters.createdBy : [];
-                        const dateCreated = decodedFilters.dateCreated || "anytime";
-                        const lastUpdated = decodedFilters.lastUpdated || "anytime";
+                        if (decodedFilters && typeof decodedFilters === 'object') {
+                            const statusArray = Array.isArray(decodedFilters.status) ? decodedFilters.status : [];
+                            const visibilityArray = Array.isArray(decodedFilters.visibility) ? decodedFilters.visibility : [];
+                            const createdByArray = Array.isArray(decodedFilters.createdBy) ? decodedFilters.createdBy : [];
+                            const dateCreated = decodedFilters.dateCreated || "anytime";
+                            const lastUpdated = decodedFilters.lastUpdated || "anytime";
 
-                        setStatusFilter(statusArray);
-                        setVisibilityFilter(visibilityArray);
-                        setCreatedByFilter(createdByArray);
-                        setDateCreatedFilter(dateCreated);
-                        setLastUpdatedFilter(lastUpdated);
-                        setFilterCount(calculateFilterCount(decodedFilters));
+                            setStatusFilter(statusArray);
+                            setVisibilityFilter(visibilityArray);
+                            setCreatedByFilter(createdByArray);
+                            setDateCreatedFilter(dateCreated);
+                            setLastUpdatedFilter(lastUpdated);
+                            setFilterCount(calculateFilterCount(decodedFilters));
 
-                        // Apply filters to API
-                        setIsLoading(true);
-                        const payload = buildApiPayloadFromFilterData(decodedFilters);
-                        await fetchFlipbooks(payload);
+                            setIsLoading(true);
+                            const payload = buildApiPayloadFromFilterData(decodedFilters);
+                            await fetchFlipbooks(payload);
+                        }
+                    } catch (error) {
+                        console.error("Error processing filters from URL:", error);
+                        const newSearchParams = new URLSearchParams(location.search);
+                        newSearchParams.delete('filter');
+                        navigate(`${location.pathname}${newSearchParams.toString() ? '?' + newSearchParams.toString() : ''}`, { replace: true });
+                    } finally {
+                        setIsLoading(false);
                     }
-                } catch (error) {
-                    console.error("Error processing filters from URL:", error);
-                    // Clear invalid filter from URL
-                    const newSearchParams = new URLSearchParams(location.search);
-                    newSearchParams.delete('filter');
-                    navigate(`/myflipbooks/flipbooks${newSearchParams.toString() ? '?' + newSearchParams.toString() : ''}`, { replace: true });
-                } finally {
-                    setIsLoading(false);
+                } else if (!isInFolderView) {
+                    setCreatedByFilter([]);
+                    setVisibilityFilter([]);
+                    setStatusFilter([]);
+                    setDateCreatedFilter("anytime");
+                    setLastUpdatedFilter("anytime");
+                    setFilterCount(0);
+
+                    setIsLoading(true);
+                    try {
+                        await fetchFlipbooks();
+                    } catch (error) {
+                        toast.error("Failed to load data");
+                    } finally {
+                        setIsLoading(false);
+                    }
                 }
             } else {
                 setCreatedByFilter([]);
@@ -299,20 +316,11 @@ export default function FilterCom() {
                 setDateCreatedFilter("anytime");
                 setLastUpdatedFilter("anytime");
                 setFilterCount(0);
-
-                setIsLoading(true);
-                try {
-                    await fetchFlipbooks();
-                } catch (error) {
-                    toast.error("Failed to load data");
-                } finally {
-                    setIsLoading(false);
-                }
             }
         };
 
         handleUrlFilterChange();
-    }, [location.search]);
+    }, [location.search, location.pathname]);
 
     const applyFilters = () => {
         const filterData = getCurrentFilterState();

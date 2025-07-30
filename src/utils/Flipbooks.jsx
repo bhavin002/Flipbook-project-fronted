@@ -5,7 +5,7 @@ import { getData } from '@/utils/datas';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Checkbox } from "@/components/ui/checkbox";
-import { X, Trash2, Clock, Globe, Users, EyeOff, LockKeyhole } from 'lucide-react';
+import { X, Trash2, Clock, Globe, Users, EyeOff, LockKeyhole, SquareMinus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MoveToFolderDropdown from '@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/MoveToFolderDropdown';
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
@@ -21,6 +21,8 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     const router = useNavigate();
     const location = useLocation();
     const [flipbookId, setFlipbookId] = useState(null);
+
+    const isAllSelected = selectedFlipbooks.length === flipbooks.length && flipbooks.length > 0;
 
     useEffect(() => {
         setSelectedFlipbooks([]);
@@ -163,6 +165,14 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
 
     const clearSelection = () => {
         setSelectedFlipbooks([]);
+    };
+
+    const handleSelectAll = () => {
+        if (isAllSelected) {
+            setSelectedFlipbooks([]);
+        } else {
+            setSelectedFlipbooks(flipbooks.map(flipbook => flipbook._id));
+        }
     };
 
     // Handle multiple flipbooks move to trash
@@ -377,15 +387,19 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
             {selectedFlipbooks.length > 0 && (
                 <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white text-gray-900 px-4 py-2 rounded-lg shadow-lg flex items-center justify-between w-96 z-50 border border-violet-200">
                     <div className="flex items-center gap-3">
-                        <Checkbox
-                            checked={selectedFlipbooks.length > 0}
-                            className="h-5 w-5 border-2 border-violet-400 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                            onCheckedChange={(checked) => {
-                                if (!checked) {
-                                    setSelectedFlipbooks([]);
-                                }
-                            }}
-                        />
+                        {isAllSelected ? (
+                            <Checkbox
+                                checked={true}
+                                className="h-5 w-5 border-2 border-violet-400 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                onCheckedChange={handleSelectAll}
+                            />
+                        ) : (
+                            <SquareMinus
+                                onClick={handleSelectAll}
+                                color="#7b39ed"
+                                className="h-6 w-6 cursor-pointer"
+                            />
+                        )}
                     </div>
                     <span className="font-medium text-violet-900">({selectedFlipbooks.length}) selected</span>
 
