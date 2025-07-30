@@ -11,6 +11,8 @@ export default function ProductCatalog({ open, onOpenChange }) {
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const [isDragOver, setIsDragOver] = useState(false);
     const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
+    const [catalogId, setCatalogId] = useState(null);
+    console.log("catalogId ??>?>",catalogId)
 
     const handleUploadCsvClick = () => {
         if (csvInputRef.current) {
@@ -35,7 +37,9 @@ export default function ProductCatalog({ open, onOpenChange }) {
         try {
             const formData = new FormData();
             formData.append('file', file);
-            await UploadCsvApi(formData);
+            const response = await UploadCsvApi(formData);
+            console.log("Upload response:", response);
+            setCatalogId(response.data.id);
             setOpenTemplateDialog(true);
         } catch (error) {
             toast.error("Upload failed", {
@@ -100,17 +104,21 @@ export default function ProductCatalog({ open, onOpenChange }) {
         setUploadDialogOpen(true);
         
         try {
-            const response = await fetch('/catalog.csv');
-            if (!response.ok) {
+            const csvRes = await fetch('/catalog.csv');
+            if (!csvRes.ok) {
                 throw new Error('Failed to fetch demo CSV file');
             }
             
-            const blob = await response.blob();
+            const blob = await csvRes.blob();
             const file = new File([blob], 'catalog.csv', { type: 'text/csv' });
             
             const formData = new FormData();
             formData.append('file', file);
-            await UploadCsvApi(formData);
+            const response = await UploadCsvApi(formData);
+            console.log("Demo upload response:", response);
+            setCatalogId(response.data.id);
+            setOpenTemplateDialog(true);
+            
         } catch (error) {
             console.error("Demo CSV upload error:", error);
             toast.error("Demo upload failed", {

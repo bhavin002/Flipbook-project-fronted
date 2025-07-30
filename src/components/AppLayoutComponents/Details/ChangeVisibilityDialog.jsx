@@ -132,7 +132,7 @@ export default function ChangeVisibilityDialog({ open, setOpen, flipbookId, setF
             value: group._id,
             label: group.name
         }));
-        const transformedReaders = readers.filter(reader => reader.isAccepted).map(reader => ({
+        const transformedReaders = readers.filter(reader => reader.status).map(reader => ({
             value: reader._id,
             label: reader.name || reader.email
         }));
@@ -146,7 +146,7 @@ export default function ChangeVisibilityDialog({ open, setOpen, flipbookId, setF
 
     const getSelectedIds = () => {
         if (isAllSelected()) {
-            const allReaderIds = readers.filter(reader => reader.isAccepted).map(reader => reader._id);
+            const allReaderIds = readers.filter(reader => reader.status).map(reader => reader._id);
             const allGroupIds = groups.map(group => group._id);
             return { readerIds: allReaderIds, groupIds: allGroupIds };
         }

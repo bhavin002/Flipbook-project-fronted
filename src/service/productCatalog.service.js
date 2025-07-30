@@ -18,3 +18,8 @@ export const GetTemplateFieldsApi = async (formData) => {
     const response = await ApiClient().post("/product-catalog/upload", formData);
     return response.data;
 }
+
+export const CheckFileApi = async (data) => {
+    const response = await ApiClient().post("/product-catalog/check-file", data);
+    return response.data;
+}

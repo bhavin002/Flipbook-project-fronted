@@ -18,7 +18,7 @@ import TablePagination from "@/utils/TablePagination";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
-import { DeleteTeammatesApi, GetWorkspaceReadersApi } from "@/service/teammate.service";
+import { DeleteTeammatesApi, GetWorkspaceReadersApi, ResendTeammaterTokenApi } from "@/service/teammate.service";
 
 export default function SettingReaders() {
     const [selectedReaders, setSelectedReaders] = useState([]);
@@ -52,7 +52,7 @@ export default function SettingReaders() {
     const handleResendInvitation = async (readerId) => {
         try {
             setResendingId(readerId);
-            const response = await ResendReaderTokenApi(readerId);
+            const response = await ResendTeammaterTokenApi(readerId);
             toast.success("Invitation resent", {
                 description: response.message
             });
@@ -69,7 +69,7 @@ export default function SettingReaders() {
 
     const filteredReaders = readers?.filter(reader =>
         reader.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (reader.isAccepted ? "active" : "pending").toLowerCase().includes(searchQuery.toLowerCase())
+        (reader.status ? "active" : "pending").toLowerCase().includes(searchQuery.toLowerCase())
     );
 
     const indexOfLastRecord = currentPage * recordsPerPage;
@@ -205,7 +205,7 @@ export default function SettingReaders() {
                             currentReaders={currentReaders.map(reader => ({
                                 id: reader._id,
                                 email: reader.email,
-                                status: reader.isAccepted ? "Active" : "Pending"
+                                status: reader.status ? "Active" : "Pending"
                             }))}
                             selectedReaders={selectedReaders}
                             onToggleSelect={toggleSelect}

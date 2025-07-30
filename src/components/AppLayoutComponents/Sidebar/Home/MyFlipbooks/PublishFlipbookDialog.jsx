@@ -187,7 +187,7 @@ export default function PublishFlipbookDialog({
 
         // Filter only accepted readers
         const transformedReaders = readers
-            .filter(reader => reader.isAccepted)
+            .filter(reader => reader.status)
             .map(reader => ({
                 value: reader._id,
                 label: reader.name || reader.email
@@ -215,7 +215,7 @@ export default function PublishFlipbookDialog({
         // If "All readers and groups" is selected, return all IDs
         if (isAllSelected()) {
             const allReaderIds = readers
-                .filter(reader => reader.isAccepted)
+                .filter(reader => reader.status)
                 .map(reader => reader._id);
             const allGroupIds = groups.map(group => group._id);
 
