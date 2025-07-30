@@ -23,3 +23,8 @@ export const CheckFileApi = async (data) => {
     const response = await ApiClient().post("/product-catalog/check-file", data);
     return response.data;
 }
+
+export const GeneratePagesApi = async (data) => {
+    const response = await ApiClient().post("/product-catalog/generate-pages", data);
+    return response.data;
+}

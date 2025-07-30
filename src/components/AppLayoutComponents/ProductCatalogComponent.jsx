@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Upload as UploadIcon } from 'lucide-react';
 import { useRef, useState } from "react";
-import { UploadCsvApi } from "@/service/productCatalog.service";
+import { UploadCsvApi, CheckFileApi } from "@/service/productCatalog.service";
 import { toast } from "sonner";
 import SelectTemplateDialog from "./SelectTemplateDailog";
 
@@ -12,7 +12,12 @@ export default function ProductCatalog({ open, onOpenChange }) {
     const [isDragOver, setIsDragOver] = useState(false);
     const [openTemplateDialog, setOpenTemplateDialog] = useState(false);
     const [catalogId, setCatalogId] = useState(null);
-    console.log("catalogId ??>?>",catalogId)
+    const [fileExistsDialog, setFileExistsDialog] = useState({
+        open: false,
+        fileName: '',
+        existingId: null,
+        file: null
+    });
 
     const handleUploadCsvClick = () => {
         if (csvInputRef.current) {
@@ -33,21 +38,55 @@ export default function ProductCatalog({ open, onOpenChange }) {
 
         onOpenChange(false);
         setUploadDialogOpen(true);
-        
+
         try {
-            const formData = new FormData();
-            formData.append('file', file);
-            const response = await UploadCsvApi(formData);
-            console.log("Upload response:", response);
-            setCatalogId(response.data.id);
-            setOpenTemplateDialog(true);
+            const checkData = {
+                fileName: file.name
+            };
+            const checkResponse = await CheckFileApi(checkData);
+
+            if (checkResponse.data.exists) {
+                setUploadDialogOpen(false);
+                setFileExistsDialog({
+                    open: true,
+                    fileName: file.name,
+                    existingId: checkResponse.data.id,
+                    file: file
+                });
+            } else {
+                const formData = new FormData();
+                formData.append('file', file);
+                const uploadResponse = await UploadCsvApi(formData);
+                setCatalogId(uploadResponse.data.id);
+                setOpenTemplateDialog(true);
+                setUploadDialogOpen(false);
+            }
         } catch (error) {
-            toast.error("Upload failed", {
-                description: error.message || "Failed to upload CSV file. Please try again."
+            toast.error("Operation failed", {
+                description: error.message || "Failed to process CSV file. Please try again."
             });
-        } finally {
             setUploadDialogOpen(false);
         }
+    };
+
+    const handleUseExistingFeed = () => {
+        setCatalogId(fileExistsDialog.existingId);
+        setOpenTemplateDialog(true);
+        setFileExistsDialog({
+            open: false,
+            fileName: '',
+            existingId: null,
+            file: null
+        });
+    };
+
+    const handleCancelFileExists = () => {
+        setFileExistsDialog({
+            open: false,
+            fileName: '',
+            existingId: null,
+            file: null
+        });
     };
 
     const handleCsvFileChange = async (event) => {
@@ -102,29 +141,39 @@ export default function ProductCatalog({ open, onOpenChange }) {
     const handleTryDemo = async () => {
         onOpenChange(false);
         setUploadDialogOpen(true);
-        
+
         try {
-            const csvRes = await fetch('/catalog.csv');
-            if (!csvRes.ok) {
-                throw new Error('Failed to fetch demo CSV file');
+            const checkData = {
+                fileName: 'catalog.csv'
+            };
+            const checkResponse = await CheckFileApi(checkData);
+
+            if (checkResponse.data.exists) {
+                setCatalogId(checkResponse.data.id);
+                setOpenTemplateDialog(true);
+                setUploadDialogOpen(false);
+            } else {
+                const csvRes = await fetch('/catalog.csv');
+                if (!csvRes.ok) {
+                    throw new Error('Failed to fetch demo CSV file');
+                }
+
+                const blob = await csvRes.blob();
+                const file = new File([blob], 'catalog.csv', { type: 'text/csv' });
+
+                const formData = new FormData();
+                formData.append('file', file);
+                const response = await UploadCsvApi(formData);
+                setCatalogId(response.data.id);
+                setOpenTemplateDialog(true);
+                setUploadDialogOpen(false);
             }
-            
-            const blob = await csvRes.blob();
-            const file = new File([blob], 'catalog.csv', { type: 'text/csv' });
-            
-            const formData = new FormData();
-            formData.append('file', file);
-            const response = await UploadCsvApi(formData);
-            console.log("Demo upload response:", response);
-            setCatalogId(response.data.id);
-            setOpenTemplateDialog(true);
-            
+
         } catch (error) {
-            console.error("Demo CSV upload error:", error);
-            toast.error("Demo upload failed", {
-                description: error.message || "Failed to upload demo CSV file. Please try again."
+            console.error("Demo CSV operation error:", error);
+            toast.error("Demo operation failed", {
+                description: error.message || "Failed to process demo CSV file. Please try again."
             });
-        } finally {
             setUploadDialogOpen(false);
         }
     };
@@ -165,11 +214,10 @@ export default function ProductCatalog({ open, onOpenChange }) {
 
                     <div className="space-y-6">
                         <div
-                            className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${
-                                isDragOver 
-                                    ? 'border-primary bg-primary/10' 
+                            className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${isDragOver
+                                    ? 'border-primary bg-primary/10'
                                     : 'border-gray-200 hover:border-primary bg-gray-50'
-                            }`}
+                                }`}
                             onClick={handleUploadCsvClick}
                             onDragEnter={handleDragEnter}
                             onDragLeave={handleDragLeave}
@@ -205,8 +253,34 @@ export default function ProductCatalog({ open, onOpenChange }) {
                     </div>
                 </DialogContent>
             </Dialog>
-            <SelectTemplateDialog open={openTemplateDialog} onOpenChange={setOpenTemplateDialog} />
-        </>
 
+            <Dialog open={fileExistsDialog.open} onOpenChange={handleCancelFileExists}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="text-xl font-semibold">Feed already used</DialogTitle>
+                    </DialogHeader>
+
+                    <p className="text-gray-700">
+                        <span className="font-medium">{fileExistsDialog.fileName}</span> is already in your feed. Do you want to use existing feed instead?
+                    </p>
+
+                    <div className="flex justify-end gap-3">
+                        <Button
+                            variant="outline"
+                            onClick={handleCancelFileExists}
+                        >
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleUseExistingFeed}
+                        >
+                            Use existing feed
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            <SelectTemplateDialog open={openTemplateDialog} onOpenChange={setOpenTemplateDialog} catalogId={catalogId} />
+        </>
     )
 }
