@@ -27,6 +27,6 @@ export const DeleteTeammatesApi = async (data) => {
 }
 
 export const GetWorkspaceReadersApi = async () => {
-    const response = await ApiClient().get("/workspace-reader/get");
+    const response = await ApiClient().get("/teammate/readers/get");
     return response.data;
 }
