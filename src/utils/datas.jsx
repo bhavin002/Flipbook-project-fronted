@@ -46,12 +46,12 @@ const settingMenuItems = [
         path: '/settings/workspace',
         subItems: []
     },
-    {
-        id: 'general',
-        label: 'General',
-        path: '/settings/general',
-        subItems: []
-    },
+    // {
+    //     id: 'general',
+    //     label: 'General',
+    //     path: '/settings/general',
+    //     subItems: []
+    // },
     {
         id: 'billing',
         label: 'Billing',
@@ -79,24 +79,24 @@ const settingMenuItems = [
         path: '/settings/groups',
         subItems: []
     },
-    {
-        id: 'sso',
-        label: 'Single Sign-On',
-        path: '/settings/sso',
-        subItems: []
-    },
-    {
-        id: 'integrations',
-        label: 'Integrations',
-        path: '/settings/integrations',
-        subItems: []
-    },
-    {
-        id: 'access',
-        label: 'Workspace Access',
-        path: '/settings/access',
-        subItems: []
-    },
+    // {
+    //     id: 'sso',
+    //     label: 'Single Sign-On',
+    //     path: '/settings/sso',
+    //     subItems: []
+    // },
+    // {
+    //     id: 'integrations',
+    //     label: 'Integrations',
+    //     path: '/settings/integrations',
+    //     subItems: []
+    // },
+    // {
+    //     id: 'access',
+    //     label: 'Workspace Access',
+    //     path: '/settings/access',
+    //     subItems: []
+    // },
     {
         id: 'logs',
         label: 'Teammate Activity',
@@ -109,12 +109,12 @@ const settingMenuItems = [
         path: '/settings/permission-settings',
         subItems: []
     },
-    {
-        id: 'email-provider',
-        label: 'Email Providers',
-        path: '/settings/email-provider',
-        subItems: []
-    }
+    // {
+    //     id: 'email-provider',
+    //     label: 'Email Providers',
+    //     path: '/settings/email-provider',
+    //     subItems: []
+    // }
 ];
 
 const flipbooks = [
@@ -230,12 +230,12 @@ const brandingMenuItems = [
             { id: 'personalization', label: 'Personalization', path: '/branding/profile/personalization' }
         ]
     },
-    {
-        id: 'fonts',
-        label: 'Fonts',
-        path: '/branding/fonts',
-        subItems: []
-    },
+    // {
+    //     id: 'fonts',
+    //     label: 'Fonts',
+    //     path: '/branding/fonts',
+    //     subItems: []
+    // },
     {
         id: 'colors',
         label: 'Colors',

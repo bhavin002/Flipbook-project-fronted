@@ -77,7 +77,7 @@ import PublicBookShelf from "./public/PublicBookShelf";
 const brandingRoutes = [
   { path: "profile/settings", element: <BrandingSettings /> },
   { path: "profile/personalization", element: <BrandingPersonalization /> },
-  { path: "fonts", element: <BrandingFonts /> },
+  // { path: "fonts", element: <BrandingFonts /> },
   { path: "colors", element: <BrandingColors /> },
   { path: "logos", element: <BrandingLogos /> },
   { path: "text-styles", element: <BrandingTypography /> },
@@ -85,18 +85,18 @@ const brandingRoutes = [
 
 const settingsRoutes = [
   { path: "workspace", element: <SettingWorkspace /> },
-  { path: "general", element: <SettingGeneral /> },
+  // { path: "general", element: <SettingGeneral /> },
   { path: "billing/subscription", element: <SettingBillingSubscription /> },
   { path: "billing/invoice", element: <SettingBillingInvoices /> },
   { path: "teammates", element: <SettingTeammates /> },
   { path: "readers", element: <SettingReaders /> },
   { path: "groups", element: <SettingGroups /> },
-  { path: "sso", element: <SettingSingleSignOn /> },
-  { path: "integrations", element: <SettingIntegrations /> },
-  { path: "access", element: <SettingWorkspaceAccess /> },
+  // { path: "sso", element: <SettingSingleSignOn /> },
+  // { path: "integrations", element: <SettingIntegrations /> },
+  // { path: "access", element: <SettingWorkspaceAccess /> },
   { path: "logs", element: <SettingTeammateActivity /> },
   { path: "permission-settings", element: <SettingPermission /> },
-  { path: "email-provider", element: <SettingEmailProvider /> },
+  // { path: "email-provider", element: <SettingEmailProvider /> },
 ];
 
 export default function App() {

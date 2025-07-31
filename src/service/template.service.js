@@ -27,6 +27,11 @@ export const GetTemplatesByLayoutApi = async (width, height) => {
     return response.data;
 }
 
+export const GetAllTemplates = async () => {
+    const response = await ApiClient().get(`/template/get-all`);
+    return response.data;
+}
+
 export const GetThumbnailApi = async (templateId) => {
     const response = await ApiClient().get(`/template/get-thumbnail/${templateId}`);
     return response.data;
