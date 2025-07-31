@@ -15,10 +15,10 @@ const breadcrumbNameConfig = {
     'text-styles': 'Typography Styles',
     'invoice': 'Invoices',
     'sso': "Single Sign-On",
-    'access': "Workspace Access",
+    // 'access': "Workspace Access",
     'logs': "Teammate Activity",
     'permission-settings': "Permission Settings",
-    'email-provider': "Email Providers",
+    // 'email-provider': "Email Providers",
 };
 
 export default function DynamicBreadcrumb() {

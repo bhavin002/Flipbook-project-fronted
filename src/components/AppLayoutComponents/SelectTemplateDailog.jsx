@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft } from "lucide-react";
-import { GetTemplatesByLayoutApi } from "@/service/template.service";
+import { GetAllTemplates } from "@/service/template.service";
 import { GetTemplateFieldsApi, GeneratePagesApi } from "@/service/productCatalog.service";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -28,7 +28,7 @@ export default function SelectTemplateDialog({ open, onOpenChange, catalogId }) 
             const GetTemplates = async () => {
                 try {
                     setIsLoading(true);
-                    const response = await GetTemplatesByLayoutApi(816, 1056);
+                    const response = await GetAllTemplates();
 
                     const templatesWithThumbnails = response.data.filter(template => template.thumbnail);
                     setTemplates(templatesWithThumbnails);
@@ -229,7 +229,7 @@ export default function SelectTemplateDialog({ open, onOpenChange, catalogId }) 
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[1040px] w-[90vw] min-h-[406px]">
+            <DialogContent className="sm:max-w-[1040px] max-h-[90vh] w-[90vw] min-h-[406px]">
                 <DialogHeader>
                     <DialogTitle>Select Template</DialogTitle>
                 </DialogHeader>
