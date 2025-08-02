@@ -18,6 +18,7 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const permissions = getData("permission")
 
   const getFolders = async () => {
     setIsLoading(true);
@@ -42,11 +43,11 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
   // Detect current section and folder based on URL path
   const detectCurrentSelection = () => {
     const path = location.pathname;
-    
+
     // Extract folder ID if present in the path
     const folderIdMatch = path.match(/\/folder\/([^/]+)/);
     const folderId = folderIdMatch ? folderIdMatch[1] : null;
-    
+
     if (path.includes('/myflipbooks/template/folder/')) {
       return { sectionId: "template-team", folderId };
     } else if (path.includes('/myflipbooks/flipbooks/folder/')) {
@@ -60,7 +61,7 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
     } else if (path.includes('/myflipbooks')) {
       return { sectionId: "flipbooks-team", folderId: null };
     }
-    
+
     return { sectionId: "flipbooks-team", folderId: null }; // Default
   };
 
@@ -111,7 +112,7 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
         ...selectedItem,
         folderId: null
       });
-      
+
       // Navigate back to root based on current section
       if (selectedItem.sectionId === "template-team") {
         navigate("/myflipbooks/template");
@@ -156,7 +157,12 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
             sectionType: 'template',
             folderData: templateFolders
           }
-        ].map(({ sectionIcon: SectionIcon, sectionLabel, sectionType, folderData }) => (
+        ].filter(section => {
+          if (section.sectionType === 'template' && !permissions?.teamplates) {
+            return false;
+          }
+          return true;
+        }).map(({ sectionIcon: SectionIcon, sectionLabel, sectionType, folderData }) => (
           <div key={sectionLabel} className="mb-4">
             <div className="px-3 py-2 text-sm font-medium flex items-center">
               <SectionIcon className="mr-1 h-4 w-4" /> {sectionLabel}
@@ -179,7 +185,7 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
                           <section.icon className="h-4 w-4 mr-1" />
                           <div className="flex items-center justify-between w-full">
                             {section.label}
-                            <div
+                            {permissions.createFolder && <div
                               className="w-6 h-6 hover:bg-[#8e65ff] flex items-center justify-center rounded-sm"
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -187,7 +193,7 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
                               }}
                             >
                               <FolderPlus className="w-4 h-4" />
-                            </div>
+                            </div>}
                           </div>
                         </MenuButton>
                       </CollapsibleTrigger>
@@ -245,7 +251,7 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
       <div className="mt-auto">
         <Separator className="my-2" />
         <div className="p-2">
-          <div className="space-y-1">
+          {permissions.trash && <div className="space-y-1">
             <MenuButton
               isActive={selectedItem.sectionId === 'trash'}
               onClick={() => { handleItemSelect('trash'); if (onCloseDrawer) onCloseDrawer(); }}
@@ -253,15 +259,15 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
               <Trash className="h-4 w-4 mr-2" />
               Trash
             </MenuButton>
-          </div>
+          </div>}
           <div className="space-y-2 mt-2">
-            <Button
+            {permissions.invite_teammate && <Button
               className="w-full bg-violet-700"
               onClick={() => { navigate('/settings/teammates'); if (onCloseDrawer) onCloseDrawer(); }}
             >
               <Users className="h-4 w-4 mr-2" />
               Invite teammates
-            </Button>
+            </Button>}
             <Button
               className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-600 hover:to-indigo-700"
               onClick={() => { navigate('/settings/billing/subscription'); if (onCloseDrawer) onCloseDrawer(); }}

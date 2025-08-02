@@ -5,7 +5,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { parseISO, format, addDays, isAfter, differenceInDays } from "date-fns";
 
 export default function FlipbookStatistics({ statsData = [], dates, loading }) {
-    // Helper: Generate all dates between from and to (inclusive)
     function getDateRange(from, to) {
         const result = [];
         let current = parseISO(from);
@@ -17,7 +16,6 @@ export default function FlipbookStatistics({ statsData = [], dates, loading }) {
         return result;
     }
 
-    // Helper to robustly convert input to yyyy-MM-dd string
     function toDateString(val) {
         if (!val) return format(new Date(), "yyyy-MM-dd");
         if (typeof val === "string") return val.slice(0, 10);
@@ -40,14 +38,20 @@ export default function FlipbookStatistics({ statsData = [], dates, loading }) {
         downloads: statsMap[date]?.downloads ?? 0,
     }));
 
-    // Calculate interval for X-axis ticks
     const totalDays = differenceInDays(parseISO(to), parseISO(from)) + 1;
     let tickInterval = 1;
-    if (totalDays > 365) tickInterval = 30; // yearly: show monthly
-    else if (totalDays > 180) tickInterval = 14; // half-year: biweekly
-    else if (totalDays > 60) tickInterval = 7; // 2+ months: weekly
-    else if (totalDays > 14) tickInterval = 2; // 2+ weeks: every 2 days
-    // else: daily
+    
+    if (totalDays > 365) {
+        tickInterval = 30; 
+    } else if (totalDays > 180) {
+        tickInterval = 14; 
+    } else if (totalDays > 90) {
+        tickInterval = 7; 
+    } else if (totalDays > 30) {
+        tickInterval = 3; 
+    } else if (totalDays > 14) {
+        tickInterval = 2; 
+    }
 
     const statsTabs = [
         {
@@ -70,7 +74,7 @@ export default function FlipbookStatistics({ statsData = [], dates, loading }) {
             const formattedValue = valueFormatter ? valueFormatter(value) : value;
             return (
                 <div className="bg-white p-3 shadow-md rounded-md border border-gray-100">
-                    <p className="font-medium">{label}</p>
+                    <p className="font-medium">{format(parseISO(label), "dd MMM yyyy")}</p>
                     <p className="text-sm text-gray-600">
                         {`${payload[0].name}: ${formattedValue}`}
                     </p>
@@ -79,6 +83,7 @@ export default function FlipbookStatistics({ statsData = [], dates, loading }) {
         }
         return null;
     };
+
     return (
         <Card>
             <CardHeader>
@@ -125,6 +130,7 @@ export default function FlipbookStatistics({ statsData = [], dates, loading }) {
                                                 tick={{ fontSize: 12 }}
                                                 tickLine={false}
                                                 axisLine={{ stroke: '#E5E7EB' }}
+                                                interval={tickInterval - 1}
                                                 tickFormatter={(value) => {
                                                     if (totalDays > 365) {
                                                         return format(parseISO(value), "MMM yyyy");

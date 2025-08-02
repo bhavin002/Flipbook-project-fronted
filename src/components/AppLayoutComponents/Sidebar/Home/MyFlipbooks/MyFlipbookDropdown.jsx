@@ -204,7 +204,7 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 setFlipbooks(prev =>
                     prev.map(item =>
                         item._id === flipbook._id
-                            ? { ...item, status: "Published" }
+                            ? { ...item, flipbookState: "Published" }
                             : item
                     )
                 );

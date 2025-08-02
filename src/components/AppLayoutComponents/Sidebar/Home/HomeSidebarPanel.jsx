@@ -45,6 +45,7 @@ export default function HomeSidebarPanel() {
     const location = useLocation();
 
     const { folders, isLoading, refreshFolders, updateFolder, removeFolder, addFolder } = useFolders();
+    const permissions = getData("permission");
 
     useEffect(() => {
         refreshFolders();
@@ -173,7 +174,12 @@ export default function HomeSidebarPanel() {
                         sectionId: 'template-team',
                         folderData: templateFolders
                     }
-                ].map(({ sectionIcon: SectionIcon, sectionLabel, sectionType, sectionId, folderData }) => (
+                ].filter(section => {
+                    if (section.sectionType === 'template' && !permissions?.teamplates) {
+                        return false;
+                    }
+                    return true;
+                }).map(({ sectionIcon: SectionIcon, sectionLabel, sectionType, sectionId, folderData }) => (
                     <SidebarGroup key={sectionLabel}>
                         <SidebarGroupLabel className="items-center">
                             <SectionIcon className="mr-1" /> <p className="text-[14px]">{sectionLabel}</p>
@@ -197,12 +203,12 @@ export default function HomeSidebarPanel() {
                                                         <section.icon />
                                                         <div className="flex items-center justify-between w-full">
                                                             {section.label}
-                                                            <div
+                                                            {permissions.createFolder && <div
                                                                 className="w-6 h-6 hover:bg-[#8e65ff] flex items-center justify-center rounded-sm"
                                                                 onClick={(e) => handleCreateFolder(e, sectionType)}
                                                             >
                                                                 <FolderPlus className="w-4 h-4" />
-                                                            </div>
+                                                            </div>}
                                                         </div>
                                                     </SidebarMenuButton>
                                                 </CollapsibleTrigger>
@@ -260,34 +266,34 @@ export default function HomeSidebarPanel() {
                 ))}
             </SidebarContent>
             <SidebarContent>
-                <Separator />
+                {(permissions.trash || permissions.invite_teammate || permissions.upgradePlan) && <Separator />}
                 <SidebarGroup>
                     <SidebarGroupContent className="space-y-2">
                         <SidebarMenu>
                             <SidebarMenuItem>
-                                <SidebarMenuButton
+                                {permissions.trash && <SidebarMenuButton
                                     onClick={() => handleItemSelect('trash')}
                                     isActive={selectedItem.sectionId === 'trash'}
                                 >
                                     <Trash />
                                     Trash
-                                </SidebarMenuButton>
+                                </SidebarMenuButton>}
                             </SidebarMenuItem>
                         </SidebarMenu>
                         <div className="space-y-2">
-                            <Button
+                            {permissions.invite_teammate && <Button
                                 className="w-full bg-violet-700"
                                 onClick={() => navigate('/settings/teammates')}
                             >
                                 <Users />
                                 Invite teammates
-                            </Button>
-                            <Button
+                            </Button>}
+                            {permissions.upgradePlan && <Button
                                 className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-600 hover:to-indigo-700"
                                 onClick={() => navigate('/settings/billing/subscription')}
                             >
                                 <Crown />Upgrade
-                            </Button>
+                            </Button>}
                         </div>
                     </SidebarGroupContent>
                 </SidebarGroup>

@@ -36,14 +36,14 @@ export default function RolesInfo() {
                         Has access to their own flipbooks. Does not have access to Billing and Settings.
                     </p>
                 </div>
-                <div>
+                {/* <div>
                     <p className='text-sm font-semibold'>
                         Contributor
                     </p>
                     <p className='text-xs'>
                         Can create, edit and view their own flipbooks, but they can only be published by the Owner, Administrators or Editors.
                     </p>
-                </div>
+                </div> */}
             </CardContent>
         </Card>
     )

@@ -12,12 +12,20 @@ import { getData } from "@/utils/datas";
 export default function BrandingDrawerPanel({ onCloseDrawer }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const permissions = getData("permission")
   
   const brandingMenuItems = getData('brandingMenuItems');
 
   const [selectedMainItem, setSelectedMainItem] = useState('brand-profile');
   const [selectedSubItem, setSelectedSubItem] = useState('settings');
   const [isProfileOpen, setIsProfileOpen] = useState(true);
+
+  const filteredBrandingMenuItems = brandingMenuItems.filter(item => {
+    if (item.id === 'brand-profile') {
+      return permissions?.branding_profile;
+    }
+    return permissions?.branding;
+  });
 
   useEffect(() => {
     const currentPath = location.pathname;
@@ -26,16 +34,18 @@ export default function BrandingDrawerPanel({ onCloseDrawer }) {
       setIsProfileOpen(true);
       setSelectedMainItem('brand-profile');
       
-      const profileItem = brandingMenuItems.find(item => item.id === 'brand-profile');
-      const matchedSubItem = profileItem.subItems.find(subItem => 
-        currentPath === subItem.path
-      );
-      
-      if (matchedSubItem) {
-        setSelectedSubItem(matchedSubItem.id);
+      const profileItem = filteredBrandingMenuItems.find(item => item.id === 'brand-profile');
+      if (profileItem) {
+        const matchedSubItem = profileItem.subItems.find(subItem => 
+          currentPath === subItem.path
+        );
+        
+        if (matchedSubItem) {
+          setSelectedSubItem(matchedSubItem.id);
+        }
       }
     } else {
-      const matchedItem = brandingMenuItems.find(item => 
+      const matchedItem = filteredBrandingMenuItems.find(item => 
         currentPath === item.path || 
         (item.path !== '/branding/profile' && currentPath.startsWith(item.path))
       );
@@ -49,13 +59,14 @@ export default function BrandingDrawerPanel({ onCloseDrawer }) {
         }
       }
     }
-  }, [location.pathname]);
+  }, [location.pathname, filteredBrandingMenuItems]);
 
   const handleMainItemSelect = (itemId) => {
-    const selectedItem = brandingMenuItems.find(item => item.id === itemId);
+    const selectedItem = filteredBrandingMenuItems.find(item => item.id === itemId);
     
     if (itemId === 'brand-profile') {
       if (!isProfileOpen) {
+        // Open the collapsible and navigate to first sub-item
         setIsProfileOpen(true);
         setSelectedMainItem('brand-profile');
         
@@ -64,7 +75,19 @@ export default function BrandingDrawerPanel({ onCloseDrawer }) {
         navigate(firstSubItem.path);
         if (onCloseDrawer) onCloseDrawer();
       } else {
+        // Close the collapsible and navigate away from profile
         setIsProfileOpen(false);
+        setSelectedSubItem(null);
+        
+        // Navigate to a non-profile page to avoid useEffect reopening it
+        const nonProfileItem = filteredBrandingMenuItems.find(item => item.id !== 'brand-profile');
+        if (nonProfileItem) {
+          setSelectedMainItem(nonProfileItem.id);
+          navigate(nonProfileItem.path);
+          if (onCloseDrawer) onCloseDrawer();
+        } else {
+          setSelectedMainItem(null);
+        }
       }
     } else {
       setSelectedMainItem(itemId);
@@ -83,7 +106,7 @@ export default function BrandingDrawerPanel({ onCloseDrawer }) {
     setSelectedSubItem(subItemId);
     setSelectedMainItem('brand-profile');
     
-    const profileItem = brandingMenuItems.find(item => item.id === 'brand-profile');
+    const profileItem = filteredBrandingMenuItems.find(item => item.id === 'brand-profile');
     const selectedSubItem = profileItem.subItems.find(subItem => subItem.id === subItemId);
     
     if (selectedSubItem) {
@@ -105,6 +128,10 @@ export default function BrandingDrawerPanel({ onCloseDrawer }) {
     );
   };
 
+  if (!permissions?.branding && !permissions?.branding_profile) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col h-full max-h-[calc(85vh-24px)]">
       <div className="flex items-center text-xl p-4 font-medium border-b">
@@ -113,7 +140,7 @@ export default function BrandingDrawerPanel({ onCloseDrawer }) {
       
       <ScrollArea className="flex-1 px-2 py-2">
         <div className="space-y-1">
-          {brandingMenuItems.map((item) => (
+          {filteredBrandingMenuItems.map((item) => (
             <div key={item.id}>
               {item.id === 'brand-profile' ? (
                 <Collapsible

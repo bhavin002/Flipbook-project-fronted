@@ -11,6 +11,7 @@ import { GetTeammatesApi, ResendTeammaterTokenApi, DeleteTeammatesApi } from '@/
 import { GetUserRolesApi } from "@/service/user.role.service";
 import { toast } from 'sonner';
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
+import { useWorkspaces } from '@/context/WorkspaceContext';
 
 export default function SettingTeammates() {
     const [selectedTeammates, setSelectedTeammates] = useState([]);
@@ -24,6 +25,7 @@ export default function SettingTeammates() {
     const [isTeammateOwner, setIsTeammateOwner] = useState(false);
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
     const [isDeletingTeammates, setIsDeletingTeammates] = useState(false);
+    const {currentWorkspace} = useWorkspaces();
     const recordsPerPage = 5;
 
     useEffect(() => {
@@ -38,6 +40,7 @@ export default function SettingTeammates() {
                 // Fetch roles
                 setIsLoadingRoles(true);
                 const rolesResponse = await GetUserRolesApi();
+                console.log("role ??>?",rolesResponse.data)
                 setRoles(rolesResponse.data || []);
             } catch (error) {
                 toast.error("Failed to fetch data", {
@@ -173,7 +176,7 @@ export default function SettingTeammates() {
                 <CardContent>
                     {isTeammateOwner && <InviteTeammateDialog setTeammates={setTeammates} />}
                     <div className="flex justify-center flex-wrap mt-8 mb-6 border shadow-sm rounded-lg p-4 gap-1">
-                        The owner of this workspace is : <p className="font-semibold">Bhavin Vasavada</p>
+                        The owner of this workspace is : <p className="font-semibold">{currentWorkspace.ownerName}</p>
                     </div>
 
                     <div className="mt-8">
@@ -227,7 +230,7 @@ export default function SettingTeammates() {
                 </CardContent>
             </Card>
             <RolesInfo />
-            <TFA />
+            {/* <TFA /> */}
 
             <ConfirmationDialog
                 isConfirmModalOpen={isDeleteConfirmOpen}
