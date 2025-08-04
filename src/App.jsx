@@ -96,7 +96,7 @@ const settingsRoutes = [
   // { path: "integrations", element: <SettingIntegrations /> },
   // { path: "access", element: <SettingWorkspaceAccess /> },
   { path: "logs", element: <SettingTeammateActivity />, permission: "setting" },
-  { path: "permission-settings", element: <SettingPermission />, permission: "setting" },
+  // { path: "permission-settings", element: <SettingPermission />, permission: "setting" },
   // { path: "email-provider", element: <SettingEmailProvider /> },
 ];
 

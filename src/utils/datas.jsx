@@ -103,12 +103,12 @@ const settingMenuItems = [
         path: '/settings/logs',
         subItems: []
     },
-    {
-        id: 'permission-settings',
-        label: 'Permission Settings',
-        path: '/settings/permission-settings',
-        subItems: []
-    },
+    // {
+    //     id: 'permission-settings',
+    //     label: 'Permission Settings',
+    //     path: '/settings/permission-settings',
+    //     subItems: []
+    // },
     // {
     //     id: 'email-provider',
     //     label: 'Email Providers',

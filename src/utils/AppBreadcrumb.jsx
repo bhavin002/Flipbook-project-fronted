@@ -17,7 +17,7 @@ const breadcrumbNameConfig = {
     'sso': "Single Sign-On",
     // 'access': "Workspace Access",
     'logs': "Teammate Activity",
-    'permission-settings': "Permission Settings",
+    // 'permission-settings': "Permission Settings",
     // 'email-provider': "Email Providers",
 };
 

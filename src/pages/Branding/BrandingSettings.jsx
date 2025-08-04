@@ -110,10 +110,8 @@ export default function BrandingSettings() {
             </Card>
           </>
         }
-        <CustomDomainSettings />
+        {/* <CustomDomainSettings /> */}
       </div>
-
     </div>
-
   );
 }
