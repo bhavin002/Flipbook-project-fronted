@@ -87,7 +87,7 @@ export default function TableOfContentsDrawer({ open, onClose, visibilitySetting
 
     return (
         <div
-            className={`h-full flex flex-col bg-background border-r border-border text-foreground transition-all duration-150 ease-in-out shadow-2xl
+            className={`h-full flex flex-col bg-background border-border text-foreground transition-all duration-150 ease-in-out shadow-2xl
                 ${shouldDisablePointerEvents ? "pointer-events-none" : "pointer-events-auto"}
                 ${open ? "w-96" : "w-0 overflow-hidden"}
             `}

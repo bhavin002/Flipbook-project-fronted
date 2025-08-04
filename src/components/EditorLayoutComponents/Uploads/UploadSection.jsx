@@ -234,7 +234,7 @@ export default function UploadSection({
 
   const handleImageSelect = async (media, isDragStart = false) => {
     const mediaSrc = media.mediaType === "video/mp4" ? `${media.thumbnailUrl}` : `${media.url}`
-    const imgSrc = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(mediaSrc)}`
+    const imgSrc = `${import.meta.env.VITE_API_URL}/file/image?src=${encodeURIComponent(mediaSrc)}`
 
 
     const dimensions = await new Promise((resolve, reject) => {

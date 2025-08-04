@@ -294,7 +294,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                     return (
                         <div
                             key={flipbook._id}
-                            className="bg-white opacity-0 animate-fade-in rounded-xl overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-violet-100 relative group"
+                            className="bg-white opacity-0 animate-fade-in rounded-xl overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-violet-100 relative group flex flex-col"
                         >
                             <div
                                 className={`absolute inset-0 bg-black/40 opacity-0 ${isSelected ? 'opacity-100' : 'group-hover:opacity-100'} transition-opacity z-10 flex items-center justify-center`}
@@ -312,7 +312,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                 </div>
                             </div>
 
-                            <div className="relative bg-[#ede9f5] backdrop-blur-sm p-3">
+                            <div className="relative bg-[#ede9f5] backdrop-blur-sm p-3 flex-grow">
                                 <img
                                     src={`${flipbook.thumbnail ? flipbook.thumbnail : "/src/assets/book_thumbnail.jpg"}`}
                                     alt="Flipbook Cover"
@@ -320,7 +320,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                 />
                             </div>
 
-                            <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white h-full">
+                            <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white">
                                 <div className="flex items-center gap-2">
                                     <span className={`text-xs font-medium px-2 py-0.5 rounded-sm inline-flex items-center ${getStatusBadgeStyle(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}`}>
                                         <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-70"></span>
