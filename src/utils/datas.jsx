@@ -10,16 +10,16 @@ const defaultRoutes = {
     home: '/myflipbooks',
     automation: '/automation',
     statistics: '/statistics',
-    branding: '/branding/profile/settings',
+    branding: '/branding/colors',
     settings: '/settings/workspace'
 };
 
 const navItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/myflipbooks' },
-    { id: 'automation', icon: Bot, label: 'Automation', path: '/automation' },
-    { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics' },
-    { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings' },
-    { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace' },
+    { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', permission: 'automation' },
+    { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics', permission: 'statistics' },
+    { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings', permission: 'branding' },
+    { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', permission: 'setting' },
 ];
 
 const editorNavItems = [
@@ -33,10 +33,10 @@ const editorNavItems = [
 
 const bottomNavItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/myflipbooks', hasDrawer: true },
-    { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', hasDrawer: false },
-    { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics', hasDrawer: false },
-    { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings', hasDrawer: true },
-    { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', hasDrawer: true }
+    { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', hasDrawer: false, permission: 'automation' },
+    { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics', hasDrawer: false, permission: 'statistics' },
+    { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings', hasDrawer: true, permission: 'branding' },
+    { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', hasDrawer: true, permission: 'setting' }
 ];
 
 const settingMenuItems = [
@@ -3271,6 +3271,25 @@ const pageLayoutData = {
     }
 };
 
+const permission = {
+    "setting": true,
+    "branding_profile": true,
+    "teamplates": true,
+    "invite_teammate": true,
+    "trash": true,
+    "branding": true,
+    "statistics": true,
+    "automation": true,
+    "flipbookDetails": true,
+    "flipbookEdit": true,
+    "flipbookCustomize": true,
+    "upgradePlan": true,
+    "flipbooksFilter": true,
+    "createDropdown": true,
+    "createFolder": true,
+    "moveToTrashFolder": true,
+    "uploadFiles": true,
+}
 
 export function getData(dataType) {
     switch (dataType) {
@@ -3370,6 +3389,8 @@ export function getData(dataType) {
             return pageOption;
         case 'pageLayoutData':
             return pageLayoutData;
+        case 'permission':
+            return permission
         default:
             return [];
     }

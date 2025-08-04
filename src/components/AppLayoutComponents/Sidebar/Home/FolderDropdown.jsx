@@ -14,6 +14,7 @@ import GetShareLink from './GetShareLink';
 import ConfirmationDialog from '../../../../utils/ConfirmationDialog';
 import { MoveToTrashWorkspaceFolderApi } from '@/service/folder.service';
 import { toast } from 'sonner';
+import { getData } from '@/utils/datas';
 
 export default function FolderDropdown({ folder, onFolderRenamed, onFolderDeleted }) {
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
@@ -21,6 +22,7 @@ export default function FolderDropdown({ folder, onFolderRenamed, onFolderDelete
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const permissions = getData("permission");
 
     const handleItemClick = (action, e) => {
         e.stopPropagation();
@@ -86,7 +88,7 @@ export default function FolderDropdown({ folder, onFolderRenamed, onFolderDelete
                             <Share2 className="mr-2 h-4 w-4" /> Get share link
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={(e) => handleItemClick('trash', e)}>
+                        <DropdownMenuItem onClick={(e) => handleItemClick('trash', e)} disabled={!permissions.moveToTrashFolder}>
                             <Trash className="mr-2 h-4 w-4" /> Move to trash
                         </DropdownMenuItem>
                     </DropdownMenuGroup>
@@ -100,7 +102,11 @@ export default function FolderDropdown({ folder, onFolderRenamed, onFolderDelete
                 onFolderRenamed={onFolderRenamed}
             />
 
-            <GetShareLink isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} />
+            <GetShareLink 
+                isShareModalOpen={isShareModalOpen}  
+                setIsShareModalOpen={setIsShareModalOpen} 
+                folderId={folder._id}
+            />
             <ConfirmationDialog
                 isConfirmModalOpen={isTrashModalOpen}
                 setIsConfirmModalOpen={setIsTrashModalOpen}

@@ -11,20 +11,22 @@ import AppBreadcrumbs from "@/utils/AppBreadcrumb";
 import CreateDropDownCom from "@/components/AppLayoutComponents/CreateDropDownCom";
 import { AppSidebar } from "@/utils/AppSidebar";
 import BottomSidebarNavigation from "@/components/AppLayoutComponents/BottomSidebarNavigation";
+import { getData } from "@/utils/datas";
 
 export default function AppLayout({ setIsSidebarOpen }) {
     const [searchValue, setSearchValue] = useState("");
     const [selectedItem, setSelectedItem] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
+    const permissions = getData("permission")
 
     // Check if current path should show search and filter components
     const shouldShowSearchAndFilter = () => {
         const pathname = location.pathname;
         return pathname === '/myflipbooks/flipbooks' ||
-               pathname.startsWith('/myflipbooks/flipbooks/folder/') ||
-               pathname === '/myflipbooks/template' ||
-               pathname.startsWith('/myflipbooks/template/folder/');
+            pathname.startsWith('/myflipbooks/flipbooks/folder/') ||
+            pathname === '/myflipbooks/template' ||
+            pathname.startsWith('/myflipbooks/template/folder/');
     };
 
     return (
@@ -43,11 +45,11 @@ export default function AppLayout({ setIsSidebarOpen }) {
                                     searchValue={searchValue}
                                     setSearchValue={setSearchValue}
                                 />
-                                <FilterCom />
+                                {permissions.flipbooksFilter && <FilterCom />}
                             </div>
                         )}
                         <div className="flex md:gap-6 gap-2 items-center">
-                            <CreateDropDownCom />
+                            {permissions.createDropdown && <CreateDropDownCom />}
                             <ProfileDropDownCom />
                         </div>
                     </div>
@@ -57,7 +59,7 @@ export default function AppLayout({ setIsSidebarOpen }) {
                                 searchValue={searchValue}
                                 setSearchValue={setSearchValue}
                             />
-                            <FilterCom />
+                            {permissions.flipbooksFilter && <FilterCom />}
                         </div>
                     )}
                     <div className="md:hidden px-4 py-3 sticky top-0 bg-white z-10">

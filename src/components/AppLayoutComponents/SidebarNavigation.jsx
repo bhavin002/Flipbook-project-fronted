@@ -28,12 +28,18 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
     const defaultRoutes = getData('defaultRoutes');
     const navItems = getData('navItems');
+    const permissions = getData('permission');
+
+    const filteredNavItems = navItems.filter(item => {
+        if (!item.permission) return true;
+        return permissions[item.permission] === true;
+    });
 
     const [lastVisitedPaths, setLastVisitedPaths] = useState({ ...defaultRoutes });
     const [activeSection, setActiveSection] = useState(null);
 
     const getPathSection = (path) => {
-        const sections = navItems.map(item => ({
+        const sections = filteredNavItems.map(item => ({
             id: item.id,
             basePath: item.path.split('/').slice(0, 2).join('/')
         }));
@@ -108,7 +114,7 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
     return (
         <div className="flex h-[calc(100vh-64px)] w-[75px] flex-col items-center justify-between bg-primary py-4 z-[11]">
             <div className="items-center flex flex-col">
-                {navItems.slice(0, 1).map(item => (
+                {filteredNavItems.slice(0, 1).map(item => (
                     <NavItem
                         key={item.id}
                         item={item}
@@ -118,7 +124,7 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
                 ))}
             </div>
             <div className="space-y-3 w-full">
-                {navItems.slice(1).map(item => (
+                {filteredNavItems.slice(1).map(item => (
                     <NavItem
                         key={item.id}
                         item={item}

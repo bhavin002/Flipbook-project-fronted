@@ -41,11 +41,16 @@ export default function BottomSidebarNavigation() {
     const [activeSection, setActiveSection] = useState(null);
     const defaultRoutes = getData('defaultRoutes');
     const bottomNavItems = getData('bottomNavItems');
+    const permissions = getData('permission');
     const [lastVisitedPaths, setLastVisitedPaths] = useState({ ...defaultRoutes });
 
+    const filteredBottomNavItems = bottomNavItems.filter(item => {
+        if (!item.permission) return true;
+        return permissions[item.permission] === true;
+    });
 
     const getPathSection = (path) => {
-        const sections = bottomNavItems.map(item => ({
+        const sections = filteredBottomNavItems.map(item => ({
             id: item.id,
             basePath: item.path.split('/').slice(0, 2).join('/')
         }));
@@ -69,7 +74,7 @@ export default function BottomSidebarNavigation() {
     }, [location.pathname]);
 
     const handleItemClick = (itemId) => {
-        const currentNavItem = bottomNavItems.find(item => item.id === itemId);
+        const currentNavItem = filteredBottomNavItems.find(item => item.id === itemId);
         if (!currentNavItem) return;
 
         const currentPath = location.pathname;
@@ -114,7 +119,7 @@ export default function BottomSidebarNavigation() {
         <>
             <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                 <nav className="fixed bottom-0 left-0 right-0 md:hidden flex py-3 items-center justify-around bg-primary md:h-16 z-10">
-                    {bottomNavItems.map(item => (
+                    {filteredBottomNavItems.map(item => (
                         <NavItem
                             key={item.id}
                             item={item}

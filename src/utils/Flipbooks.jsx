@@ -32,6 +32,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     const publishedButtons = getData('publishedButtons');
     const templateButtons = getData('templateButtons');
     const bookshelfButtons = getData('bookshelfButtons');
+    const permissions = getData("permission");
 
     const handleItemClick = (action, flipbookId, flipbookState) => {
         if (action === 'share') {
@@ -81,23 +82,36 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     };
 
     const getButtonsForStatus = (status) => {
-        console.log("status ><>>", status)
         if (isTrash) {
             return [];
         }
 
+        let buttons = [];
         switch (status) {
             case 'Draft':
-                return publishedButtons;
+                buttons = publishedButtons;
+                break;
             case 'Published':
-                return publishedButtons;
+                buttons = publishedButtons;
+                break;
             case 'Not Published':
-                return unpublishedButtons;
+                buttons = unpublishedButtons;
+                break;
             case 'Template':
-                return templateButtons;
+                buttons = templateButtons;
+                break;
             case "Bookshelf":
-                return bookshelfButtons;
+                buttons = bookshelfButtons;
+                break;
+            default:
+                buttons = [];
         }
+
+        if (!permissions?.flipbookDetails) {
+            buttons = buttons.filter(btn => btn.value === 'view');
+        }
+
+        return buttons;
     };
 
     const getStatusBadgeStyle = (status) => {
@@ -146,8 +160,10 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 return <EyeOff className='w-4 h-4' />;
             case 'Password Protected':
                 return <LockKeyhole className='w-4 h-4' />;
-            case 'Private' || 'Readers Only':
+            case 'Private':
                 return <Users className='w-4 h-4' />;
+            case 'Readers Only':
+                return <img src="/src/assets/reader.svg" className="w-5 h-5" />
         }
     };
 
@@ -320,19 +336,19 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                 />
                             </div>
 
-                            <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white">
-                                <div className="flex items-center gap-2">
+                            <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white h-full">
+                                {permissions.flipbookDetails && <div className="flex items-center gap-2">
                                     <span className={`text-xs font-medium px-2 py-0.5 rounded-sm inline-flex items-center ${getStatusBadgeStyle(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}`}>
                                         <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-70"></span>
                                         {getStatusDisplayText(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}
                                     </span>
                                     {getVisibilityIcon(flipbook.visibilityStatus)}
-                                </div>
+                                </div>}
                                 <div className="flex items-center justify-between">
                                     <h3 className="font-semibold text-violet-900 transition-colors duration-200 hover:text-violet-600">
                                         {flipbook.name}
                                     </h3>
-                                    <MyFlipbookDropdown status={flipbook.tag ? flipbook.tag : flipbook.flipbookState} flipbook={flipbook} setFlipbooks={setFlipbooks} isTrash={isTrash} />
+                                    {permissions.flipbookDetails && <MyFlipbookDropdown status={flipbook.tag ? flipbook.tag : flipbook.flipbookState} flipbook={flipbook} setFlipbooks={setFlipbooks} isTrash={isTrash} />}
                                 </div>
 
                                 <p className="text-sm text-violet-600">
