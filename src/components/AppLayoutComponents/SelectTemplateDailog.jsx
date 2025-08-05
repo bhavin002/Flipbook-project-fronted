@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { LoadingOverlay } from "@/utils/Skeleton";
 import LoadingButton from "@/utils/LoadingButton";
 import { useFlipbook } from "@/context/FlipbookContext";
+import { TemplateType } from "@/utils/enum";
 
 export default function SelectTemplateDialog({ open, onOpenChange, catalogId }) {
     const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +29,7 @@ export default function SelectTemplateDialog({ open, onOpenChange, catalogId }) 
             const GetTemplates = async () => {
                 try {
                     setIsLoading(true);
-                    const response = await GetAllTemplates();
+                    const response = await GetAllTemplates(TemplateType.PRODUCT);
 
                     const templatesWithThumbnails = response.data.filter(template => template.thumbnail);
                     setTemplates(templatesWithThumbnails);

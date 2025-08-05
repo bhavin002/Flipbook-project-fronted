@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ChevronRight, Plus, X, Upload as UploadIcon } from 'lucide-react';
+import { ChevronRight, Plus, X, Upload as LayoutGrid } from 'lucide-react';
 import { Upload } from 'lucide-react';
 import { Brush } from 'lucide-react';
 import { ShoppingCart } from 'lucide-react';
@@ -35,6 +35,8 @@ export default function CreateDropDownCom() {
             navigate("/create?ct=template");
         } else if (action === "product-catalog") {
             setProductCatalogOpen(true);
+        } else if (action === "admin-template") {
+            navigate("/create?ct=admin-template");
         }
     };
 
@@ -149,6 +151,10 @@ export default function CreateDropDownCom() {
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleItemClick("admin-template")}>
+                    <LayoutGrid /> Admin Template
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleItemClick("product-catalog")}>
                     <ShoppingCart /> Product catalog
                 </DropdownMenuItem>
@@ -213,9 +219,9 @@ export default function CreateDropDownCom() {
                 </DialogContent>
             </Dialog>
 
-            <ProductCatalog 
-                open={productCatalogOpen} 
-                onOpenChange={setProductCatalogOpen} 
+            <ProductCatalog
+                open={productCatalogOpen}
+                onOpenChange={setProductCatalogOpen}
             />
         </DropdownMenu>
     )

@@ -127,7 +127,13 @@ export const tokenStatus = {
     ERROR: 3
 }
 
-export const FlipbookUploadMode =  {
+export const FlipbookUploadMode = {
     COMBINE: 1,
     SEPARATELY: 2,
+}
+
+export const TemplateType = {
+    PRODUCT: 1,
+    NORMAL: 2,
+    TEXT: 3
 }

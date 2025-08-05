@@ -7,6 +7,7 @@ import TemplateDetailView from "./TemplateDetailView";
 import { GetTemplatesByLayoutApi, GetThumbnailApi } from "@/service/template.service";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TemplateType } from "@/utils/enum";
 
 export default function TemplateSidebarPanel({ mainStage, stageWidth, stageHeight, selectedIndex, setMainStage }) {
     const [searchQuery, setSearchQuery] = useState("");
@@ -21,7 +22,12 @@ export default function TemplateSidebarPanel({ mainStage, stageWidth, stageHeigh
         const fetchTemplates = async () => {
             try {
                 setLoading(true);
-                const response = await GetTemplatesByLayoutApi(stageWidth, stageHeight);
+                const data = {
+                    width: stageWidth,
+                    height: stageHeight,
+                    type: TemplateType.NORMAL
+                }
+                const response = await GetTemplatesByLayoutApi(data);
                 const templatesWithThumbnails = response.data.filter(template => template.thumbnail);
                 setTemplates(templatesWithThumbnails);
             } catch (error) {

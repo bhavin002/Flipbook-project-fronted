@@ -14,6 +14,13 @@ import useWindowWidth from "@/hooks/use-window-width";
 import PreviewDialog from "@/components/EditorLayoutComponents/Preview/PreviewDialog";
 import { EditTemplateApi, GetTemplateApi } from "@/service/template.service";
 import LoadingButton from "@/utils/LoadingButton";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -28,6 +35,7 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
     const { id } = useParams();
     const [mainStage, setMainStage] = useState([]);
     const navigate = useNavigate();
+    const [templateType, setTemplateType] = useState("2");
 
     useEffect(() => {
         const getFlipbook = async () => {
@@ -35,6 +43,7 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
                 const response = await GetTemplateApi(id);
                 setStageWidth(response.data.width);
                 setStageHeight(response.data.height);
+                setTemplateType(response.data.type);
                 const validPageData = response.data.pages;
                 setMainStage(validPageData.map(e => JSON.parse(e.pageData)));
             } catch (error) {
@@ -107,6 +116,7 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
 
             formData.append('width', stageWidth);
             formData.append('height', stageHeight);
+            formData.append('type', templateType);
 
             const response = await EditTemplateApi(id, formData);
             toast.success("Template saved successfully", {
@@ -300,12 +310,21 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
                         }}>
                             <img src="/src/assets/logo.png" width={200} alt="Logo" />
                         </div>
+                        <div className="flex-1 flex justify-center">
+                            <Select value={templateType} onValueChange={setTemplateType}>                                <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select template type" />
+                            </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="1">Product Template</SelectItem>
+                                    <SelectItem value="2">Normal Template</SelectItem>
+                                    <SelectItem value="3">Text Template</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
                         <div className="flex gap-2 items-center">
                             <div className="flex gap-2">
-                                <Button className="max-lg:hidden" onClick={() => saveTemplate()}>
-                                    {
-                                        isLoading ? <LoadingButton /> : "Save Template"
-                                    }
+                                <Button className="max-lg:hidden" disabled={isLoading} onClick={() => saveTemplate()}>
+                                    {isLoading ? <LoadingButton /> : "Save Template"}
                                 </Button>
                             </div>
                             <ProfileDropDownCom />

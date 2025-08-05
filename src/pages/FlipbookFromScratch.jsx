@@ -15,6 +15,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import LoadingButton from "@/utils/LoadingButton";
 import { CreateTemplateApi } from "@/service/flipbook.service";
 import { CreateAdminTemplateApi } from "@/service/template.service";
+import { TemplateType } from "@/utils/enum";
 
 
 export default function FlipbookFromScratch() {
@@ -25,6 +26,7 @@ export default function FlipbookFromScratch() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const isTemplate = queryParams.get("ct") === "template";
+    const isAdminTemplate = queryParams.get("ct") === "admin-template";
 
     useEffect(() => {
         const getPageLayout = async () => {
@@ -74,7 +76,25 @@ export default function FlipbookFromScratch() {
         try {
             setIsFlipbookCreating(true);
             let response;
-            if (isTemplate) {
+            if (isAdminTemplate) {
+                response = await CreateAdminTemplateApi({
+                    width: width,
+                    height: height,
+                    type: TemplateType.NORMAL,
+                    pages: [{
+                        "pageData": JSON.stringify({
+                            stageref: null,
+                            CANVAS_WIDTH: width,
+                            CANVAS_HEIGHT: height,
+                            shapes: [],
+                            selectedShapes: [],
+                            background: "#fff"
+                        })
+                    }]
+                });
+                const templateId = response.data.bookId;
+                navigate(`/admin-editor/${templateId}`);
+            } else if (isTemplate) {
                 response = await CreateTemplateApi({
                     width: width,
                     height: height,
@@ -110,41 +130,14 @@ export default function FlipbookFromScratch() {
                 navigate(`/editor/${flipBookId}`);
             }
         } catch (error) {
-            toast.error(isTemplate ? "Template creation failed" : "Flipbook creation failed", {
+            const errorMessage = isAdminTemplate ? "Admin Template creation failed" : isTemplate ? "Template creation failed" : "Flipbook creation failed";
+            toast.error(errorMessage, {
                 description: error.message || "Oops! Something went wrong.",
             });
         } finally {
             setIsFlipbookCreating(false);
         }
     }
-
-    // const create = async () => {
-    //     try {
-    //         setIsFlipbookCreating(true);
-    //         const response = await CreateAdminTemplateApi({
-    //             width: width,
-    //             height: height,
-    //             pages: [{
-    //                 "pageData": JSON.stringify({
-    //                     stageref: null,
-    //                     CANVAS_WIDTH: width,
-    //                     CANVAS_HEIGHT: height,
-    //                     shapes: [],
-    //                     selectedShapes: [],
-    //                     background: "#fff"
-    //                 })
-    //             }]
-    //         })
-    //         const templateId = response.data.bookId;
-    //         navigate(`/admin-editor/${templateId}`);
-    //     } catch (error) {
-    //         toast.error("Template creation failed", {
-    //             description: error.message || "Oops! Something went wrong.",
-    //         });
-    //     } finally {
-    //         setIsFlipbookCreating(false);
-    //     }
-    // }
 
     return (
         <>
