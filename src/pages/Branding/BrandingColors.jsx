@@ -54,7 +54,6 @@ export default function BrandingColors() {
             clearTimeout(debounceTimerRef.current);
         }
 
-
         debounceTimerRef.current = setTimeout(async () => {
             try {
                 await updateBrandColorApi(colorId, { name: newColor });
@@ -149,7 +148,6 @@ export default function BrandingColors() {
             const updatedColors = [...colors];
             updatedColors[index] = { ...colorObj, name: value };
             setColors(updatedColors);
-
     
             debouncedUpdateColor(colorObj.id, value, index);
         }

@@ -44,9 +44,9 @@ export default function SharedWithMe({ isSidebarOpen }) {
                 return (
                     <div
                         key={flipbook._id}
-                        className="bg-white opacity-0 animate-fade-in rounded-xl overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-violet-100 relative group"
+                        className="bg-white opacity-0 animate-fade-in rounded-xl overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-violet-100 relative group flex flex-col"
                     >
-                        <div className="relative bg-[#ede9f5] backdrop-blur-sm p-3">
+                        <div className="relative bg-[#ede9f5] backdrop-blur-sm p-3 flex-grow">
                             <img
                                 src={`${flipbook.thumbnail ? flipbook.thumbnail : "/src/assets/book_thumbnail.jpg"}`}
                                 alt="Flipbook Cover"
@@ -54,7 +54,7 @@ export default function SharedWithMe({ isSidebarOpen }) {
                             />
                         </div>
 
-                        <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white h-full">
+                        <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white">
                             <div className="flex items-center justify-between">
                                 <h3 className="font-semibold text-violet-900 transition-colors duration-200 hover:text-violet-600">
                                     {flipbook.name}

@@ -101,7 +101,7 @@ export default function Color({ setIsShapeDrawerOpen, setSelectedSubMenu, select
                         />
                     ))}
                 </div>
-                <a href="http://localhost:5173/branding/colors" target="_blank" className="text-xs font-medium text-white cursor-pointer hover:underline">Manage brand colors</a>
+                <a href={`${import.meta.env.VITE_APP_URL}/branding/colors`} target="_blank" className="text-xs font-medium text-white cursor-pointer hover:underline">Manage brand colors</a>
             </div>
             <div className="space-y-2">
                 <Label className="text-xs">Default Palette</Label>

@@ -7,7 +7,7 @@ export default function AutomationSidebarPanel() {
                 <p className="font-semibold">Speed up your work!</p>
                 <p className="text-sm">Simplify your catalog creation by connecting different types of data sources.</p>
                 <Button variant="outline" className="text-black hover:text-primary">
-                    <a href="http://localhost:5173/automation" target="_blank">Create connections</a>
+                    <a href={`${import.meta.env.VITE_APP_URL}/automation`} target="_blank">Create connections</a>
                 </Button>
             </div>
         </div>

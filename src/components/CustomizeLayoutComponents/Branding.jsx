@@ -36,6 +36,7 @@ function debounce(func, wait) {
 }
 export default function Branding() {
     const { settings, updateSettings, latestSettings } = useFlipbookSettings();
+    console.log("settings ??>?>", settings)
     const { isFieldEnabled } = useFlipbookPreviewSettings();
     const [isFirstLoad, setIsFirstLoad] = useState(true);
     const [selectedBackground, setSelectedBackground] = useState("transparent");
@@ -162,11 +163,11 @@ export default function Branding() {
             setIsImageUploading(true);
             const formData = new FormData();
             formData.append('backgroundImage', file);
-            
+
             const imageUrl = URL.createObjectURL(file);
             setBackgroundImage(imageUrl);
-            
-            updateSettings({ backgroundImage: file , backgroundImageURL: imageUrl });
+
+            updateSettings({ backgroundImage: file, backgroundImageURL: imageUrl });
         } catch (error) {
             toast.error("Failed to upload background image", { description: error.message || "Oops! Something went wrong." });
         } finally {
@@ -275,13 +276,14 @@ export default function Branding() {
         switch (selectedBackground) {
             case "solidcolor":
                 return <ColorPaletteSelector
+                    backgroundColor={settings?.backgroundColorHash}
                     disabled={!isFieldEnabled("backgroundColor")}
                     onChange={(color) => updateSettings({ backgroundColorHash: color })}
                 />
             case "uploadimage":
                 return (
                     <div className="space-y-4">
-                        {!backgroundImage && !isImageUploading  ? (
+                        {!backgroundImage && !isImageUploading ? (
                             <div>
                                 <input
                                     type="file"

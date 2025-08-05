@@ -12,6 +12,7 @@ import SelectLogoDialog from "@/components/AppLayoutComponents/Sidebar/Setting/W
 import { useBookshelf } from "@/context/BookshelfContext";
 import { z } from "zod";
 import LoadingButton from "@/utils/LoadingButton";
+import BrandColors from "@/utils/BrandColors";
 
 const urlSchema = z.string().regex(/^$|^(?!https?\.)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$|^https?:\/\/[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)?$/).or(z.literal(''));
 
@@ -122,36 +123,7 @@ export default function Customize({ flipbookId }) {
             case 'solidcolor':
                 return (
                     <div className="space-y-4 mt-4">
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                                <Label>Brand Colors</Label>
-                                <TooltipProvider>
-                                    <Tooltip>
-                                        <TooltipTrigger>
-                                            <Info className="h-4 w-4 text-gray-400" />
-                                        </TooltipTrigger>
-                                        <TooltipContent
-                                            side="right"
-                                            align="center"
-                                            className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                        >
-                                            <p className="text-sm">Select from brand colors</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </div>
-                            <div className="flex gap-2">
-                                {['#808080', '#A9A9A9'].map((color, index) => (
-                                    <div
-                                        key={index}
-                                        className={`w-8 h-8 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 ${backgroundColorHash === color ? 'ring-2 ring-blue-500' : 'border'
-                                            }`}
-                                        style={{ backgroundColor: color }}
-                                        onClick={() => handlePaletteColorSelect(color)}
-                                    />
-                                ))}
-                            </div>
-                        </div>
+                        <BrandColors handlePaletteColorSelect={handlePaletteColorSelect} selectedColor={backgroundColorHash} />
                         <div className="space-y-2">
                             <Label>Default Palette</Label>
                             <div className="flex flex-wrap gap-2">
@@ -175,7 +147,7 @@ export default function Customize({ flipbookId }) {
                                 ].map((color, index) => (
                                     <div
                                         key={index}
-                                        className={`w-8 h-8 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 ${backgroundColorHash === color ? 'ring-2 ring-blue-500' : 'border'
+                                        className={`w-8 h-8 rounded cursor-pointer hover:ring-2 hover:ring-blue-500 ${backgroundColorHash === color ? 'ring-2 ring-blue-500' : ''
                                             }`}
                                         style={{ backgroundColor: color }}
                                         onClick={() => handlePaletteColorSelect(color)}

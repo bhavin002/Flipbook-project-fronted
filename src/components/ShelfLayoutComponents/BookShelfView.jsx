@@ -50,7 +50,6 @@ export default function BookShelfView({ id, isPublicView = false }) {
             setLoading(true);
             try {
                 const response = await GetShelfPreview(id);
-                console.log(response.data)
                 setData(response.data);
                 setFilteredData(response.data); // Initialize filteredData with all books
             } catch (error) {

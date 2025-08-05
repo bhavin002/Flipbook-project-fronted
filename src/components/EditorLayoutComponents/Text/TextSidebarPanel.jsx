@@ -78,7 +78,7 @@ export default function TextSidebarPanel({
                         })
                     }
                 </div>
-                <a href="http://localhost:5173/branding/text-styles" target="_blank" className="text-sm flex justify-end font-medium text-white cursor-pointer hover:underline">Edit or add font styles</a>
+                <a href={`${import.meta.env.VITE_APP_URL}/text-styles`} target="_blank" className="text-sm flex justify-end font-medium text-white cursor-pointer hover:underline">Edit or add font styles</a>
             </div>
             <div className="text-sm font-semibold">Text templates</div>
             <div className="h-0 overflow-y-auto flex-grow">
