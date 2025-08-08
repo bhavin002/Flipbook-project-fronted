@@ -63,7 +63,9 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                 letterSpacing: selectedShape[0].attrs.letterSpacing || 0,
                 lineHeight: selectedShape[0].attrs.lineHeight || 1
             });
-            toggleStyle('textTransform', selectedShape[0].attrs.textTransform);
+            if (selectedShape.length === 1) {
+                toggleStyle('textTransform', selectedShape[0].attrs.textTransform);
+            }
         }
     }, [selectedShape]);
 

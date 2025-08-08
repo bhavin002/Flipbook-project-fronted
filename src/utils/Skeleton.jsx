@@ -97,3 +97,23 @@ export function FontCardSkeleton() {
     </div>
   );
 }
+
+export const TextTemplateSkeleton = () => (
+  <div className="cursor-pointer rounded-lg border border-gray-200 overflow-hidden animate-pulse">
+      <div className="w-full h-24 bg-gray-200"></div>
+  </div>
+);
+
+const TextElementSkeleton = () => (
+    <div className="rounded-lg bg-gray-200 animate-pulse p-2 w-full">
+        <div className="h-6 bg-gray-300 rounded pl-4"></div>
+    </div>
+);
+
+export const TextElementsListSkeleton = () => (
+    <div className="space-y-2">
+        {Array.from({ length: 4 }).map((_, index) => (
+            <TextElementSkeleton key={`text-element-skeleton-${index}`} />
+        ))}
+    </div>
+);

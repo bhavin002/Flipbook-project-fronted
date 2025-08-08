@@ -137,3 +137,10 @@ export const TemplateType = {
     NORMAL: 2,
     TEXT: 3
 }
+
+export const TextDragValue = {
+    0: "Heading",
+    1:"Sub heading",
+    2: "Body text",
+    3: "1",
+}
