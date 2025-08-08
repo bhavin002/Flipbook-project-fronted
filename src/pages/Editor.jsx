@@ -12,6 +12,8 @@ import { Label } from "@/components/ui/label";
 import Konva from 'konva';
 import { EffectEvent } from "@/utils/EffectEvent";
 import { deleteShape } from "@/utils/Helper";
+import { Loader } from "@/components/ui/loader";
+import { Progress } from "@/components/ui/progress";
 
 (function (Konva) {
     'use strict';
@@ -345,7 +347,7 @@ import { deleteShape } from "@/utils/Helper";
 })(Konva);
 
 export default function Editor() {
-    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu } = useOutletContext();
+    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad } = useOutletContext();
     const autoScroll = useRef([]);
     useEffect(() => {
         autoScroll.current[selectedIndex].scrollIntoView({
@@ -368,7 +370,7 @@ export default function Editor() {
     const [isRedoAction, setIsRedoAction] = useState(false); // Stack for redo
     const [zoomper, setZoomper] = useState(50);
     const [isPageShow, setIsPageShow] = useState(null);
-
+    const [pageCounter, setPageCounter] = useState(1);
     const scrollRef = useRef(null);
 
     const [undoStack, setUndoStack] = useState([{ stages: mainStage, selectedIndex }]);
@@ -376,7 +378,7 @@ export default function Editor() {
     const generateMainStageString = (stages) => {
         return stages
             .map(stage =>
-                stage.stageref.current?.children[0]?.children[1]?.children
+                stage.stageref?.current?.children[0]?.children[1]?.children
                     ?.map(child => JSON.stringify(child.attrs))
                     .join("") || ""
             )
@@ -420,12 +422,12 @@ export default function Editor() {
     const updateMainStage = () => {
         const temp = JSON.parse(JSON.stringify(mainStage));
         temp.forEach(stage => {
-            let newObj = typeof (stage.stageref.current) === 'string' ? JSON.parse(stage.stageref.current) : stage.stageref.current;
-            stage.shapes = newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || []
+            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
+            stage.shapes = newObj?.children[0]?.children[1]?.children.map(e => JSON.parse(JSON.stringify(e.attrs))) || []
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
             });
-            stage.stageref.current = newObj;
+            stage.stageref && (stage.stageref.current = newObj);
             stage.selectedShapes = [];
         })
         if (!(temp.some(e => e.shapes && e.shapes.length))) return;
@@ -453,7 +455,7 @@ export default function Editor() {
         if (undoStack.length === 1) return; // No states to undo
         const temp = JSON.parse(JSON.stringify(mainStage));
         temp.forEach(stage => {
-            let newObj = typeof (stage.stageref.current) === 'string' ? JSON.parse(stage.stageref.current) : stage.stageref.current;
+            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
             stage.shapes = newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
@@ -674,6 +676,15 @@ export default function Editor() {
         <div className="flex w-full flex-col h-full">
             <TopToolbar setIsShapeDrawerOpen={setIsShapeDrawerOpen} isCropping={isCropping} handleCrop={handleCrop} handleCropEnd={handleCropEnd} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
             <div className="flex w-full flex-grow relative">
+                {((mainStage.length !== pageCounter - 1) && !isInitialLoad) && <>
+                    <div className="absolute inset-0 bg-gray-200 bg-opacity-50 animate-pulse z-40 pointer-events-auto" />
+                    <div className="absolute top-0 left-0 w-full z-50">
+                        <Progress
+                            value={(pageCounter / (mainStage.length + 1)) * 100}
+                            className="w-full rounded-none"
+                        />
+                    </div>
+                </>}
                 <div style={{ userSelect: 'none' }} className="flex flex-col overflow-y-auto relative flex-grow w-full overflow-auto" >
                     <div style={{
                         position: 'absolute',
@@ -684,14 +695,17 @@ export default function Editor() {
                         width: "100%",
                         height: "100%",
                     }} ref={parentRef}>
+                        {mainStage.length !== pageCounter - 1 && <div className="h-full w-full fixed"><Loader /></div>}
                         <div style={{ width: "100%", height: "100%" }} className="relative" >
                             {
                                 mainStage.map((stage, index) => {
-                                    return (
-                                        <div key={index} ref={(el) => (autoScroll.current[index] = el)} style={{}}>
-                                            <StageComponent zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} />
-                                        </div>
-                                    )
+                                    if (index < pageCounter) {
+                                        return (
+                                            <div key={index} ref={(el) => (autoScroll.current[index] = el)} style={{ height: "100%", width: "100%" }} className="relative">
+                                                <StageComponent pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} />
+                                            </div>
+                                        )
+                                    }
                                 })
                             }
                         </div>
@@ -733,7 +747,7 @@ export default function Editor() {
                     </div>
                 }
                 {isRightLateralCollapse && currentRightPanel == 'Pages' &&
-                    <LateralPanelRightPages isSidebarOpen={isSidebarOpen} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} isExpanded={isExpanded} index={selectedIndex} setIsExpanded={setIsExpanded} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} setIsRightLateralCollapse={setIsRightLateralCollapse} setMainStage={setMainStage} />
+                    <LateralPanelRightPages isSidebarOpen={isSidebarOpen} setIsPageShow={setIsPageShow} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} isExpanded={isExpanded} index={selectedIndex} setIsExpanded={setIsExpanded} selectedIndex={selectedIndex} setSelectedIndex={setSelectedIndex} setIsRightLateralCollapse={setIsRightLateralCollapse} setMainStage={setMainStage} />
                 }
                 {isRightLateralCollapse && currentRightPanel == 'Layers' &&
                     <LateralPanelRightLayer selectedShape={selectedShape} setIsPageShow={setIsPageShow} setCurrentRightPanel={setCurrentRightPanel} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} setSelectedAlignType={setSelectedAlignType} isExpanded={isExpanded} setIsExpanded={setIsExpanded} setIsRightLateralCollapse={setIsRightLateralCollapse} />

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/tooltip";
 import { v4 as uuid } from "uuid";
 
-export default function StagePageMenu({ rectProps, setSelectedIndex, selectedIndex, mainStage, setMainStage, index }) {
+export default function StagePageMenu({ rectProps, setSelectedIndex, selectedIndex, mainStage, setMainStage, index, setPageCounter, pageCounter }) {
     const onUpStage = () => {
         if (index !== 0) {
 
@@ -133,7 +133,7 @@ export default function StagePageMenu({ rectProps, setSelectedIndex, selectedInd
                             <TooltipTrigger asChild>
                                 <Trash2
                                     className="w-5 h-5 cursor-pointer hover:text-primary transition-colors duration-200"
-                                    onClick={() => deleteStage(mainStage, setMainStage, index, selectedIndex, setSelectedIndex)}
+                                    onClick={() => deleteStage(mainStage, setMainStage, index, selectedIndex, setSelectedIndex, setPageCounter, pageCounter)}
                                 />
                             </TooltipTrigger>
                             <TooltipContent align="center" className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs px-2 py-1 rounded-md">

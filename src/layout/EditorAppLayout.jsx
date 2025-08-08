@@ -43,6 +43,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const state = location.state;
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
     const [flipbookObj, setFlipbookObj] = useState(null);
+    const [isInitialLoad, setIsInitialLoad] = useState(false);
 
     useEffect(() => {
         const getFlipbook = async () => {
@@ -100,10 +101,10 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (id && mainStage.length > 0 && !publishing) {
+            if (id && mainStage.length > 0 && !publishing && !isInitialLoad) {
                 updatePageData();
             }
-        }, 30000);
+        }, 10000);
 
         return () => clearInterval(interval);
     }, [mainStage, publishing]);
@@ -325,19 +326,19 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         </div>
                         <div className="relative lg:flex hidden">
                             <div className="flex items-center gap-2">
-                                <EditFlipbookName isLoading={isLoading} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} updatePageData={updatePageData} isTemplate={isTemplate} />
+                                <EditFlipbookName isLoading={isLoading} isInitialLoad={isInitialLoad} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} updatePageData={updatePageData} isTemplate={isTemplate} />
                             </div>
                         </div>
                         <div className="flex gap-2 items-center">
                             <div className="flex gap-2">
                                 <div className="flex gap-2 max-md:hidden">
-                                    <Button variant="outline" onClick={handleCustomizeClick} disabled={isCustomizeLoading}>
+                                    <Button variant="outline" onClick={handleCustomizeClick} disabled={isCustomizeLoading || !isInitialLoad}>
                                         <SlidersHorizontal />
                                     </Button>
-                                    <Button variant="outline">
+                                    <Button variant="outline" disabled={!isInitialLoad}>
                                         <Download />
                                     </Button>
-                                    <Button variant="outline" onClick={handlePreviewClick} disabled={isPreviewLoading}>
+                                    <Button variant="outline" onClick={handlePreviewClick} disabled={isPreviewLoading || !isInitialLoad}>
                                         <Eye /> Preview
                                     </Button>
                                 </div>
@@ -349,15 +350,15 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                             </Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="start">
-                                            <DropdownMenuItem onClick={handleCustomizeClick} disabled={isCustomizeLoading}>
+                                            <DropdownMenuItem onClick={handleCustomizeClick} disabled={isCustomizeLoading || !isInitialLoad}>
                                                 <SlidersHorizontal className="mr-2 h-4 w-4" />
                                                 <span>Customize</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem>
+                                            <DropdownMenuItem disabled={!isInitialLoad}>
                                                 <Download className="mr-2 h-4 w-4" />
                                                 <span>Download</span>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={handlePreviewClick} disabled={isPreviewLoading}>
+                                            <DropdownMenuItem onClick={handlePreviewClick} disabled={isPreviewLoading || !isInitialLoad}>
                                                 <Eye className="mr-2 h-4 w-4" />
                                                 <span>Preview</span>
                                             </DropdownMenuItem>
@@ -370,7 +371,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                         Save template
                                     </Button>
                                 ) : (
-                                    <Button className="hidden max-md:block" onClick={() => setIsPublishModalOpen(true)}>
+                                    <Button disabled={!isInitialLoad} className="hidden max-md:block" onClick={() => setIsPublishModalOpen(true)}>
                                         <Share2 />
                                     </Button>
                                 )}
@@ -379,7 +380,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                         Save template
                                     </Button>
                                 ) : (
-                                    <Button className="max-md:hidden" onClick={() => setIsPublishModalOpen(true)}>
+                                    <Button disabled={!isInitialLoad} className="max-md:hidden" onClick={() => setIsPublishModalOpen(true)}>
                                         Share now
                                     </Button>
                                 )}
@@ -389,7 +390,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                     </div>
                     <div className="relative lg:flex px-4">
                         <div className="hidden items-center gap-2 max-lg:flex">
-                            <EditFlipbookName isLoading={isLoading} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} updatePageData={updatePageData} />
+                            <EditFlipbookName isLoading={isLoading} isInitialLoad={isInitialLoad} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} updatePageData={updatePageData} />
                         </div>
                     </div>
                 </header>
@@ -406,7 +407,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu }} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad }} />
                             </div>
                         </div>
                     </div>
