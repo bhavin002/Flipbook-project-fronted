@@ -55,7 +55,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
         stage.dragRect = dragRect;
         stage.dragImg = dragImg;
     }, [stage]);
-
     // Width and Height Detection Effect
     useEffect(() => {
         const updateWidth = () => {
@@ -970,6 +969,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
 
             <div onClick={() => setSelectedIndex(index)}>
                 {width && height && <Stage
+
                     width={width}
                     height={height}
                     style={{ width: "100%", height: "100%" }}

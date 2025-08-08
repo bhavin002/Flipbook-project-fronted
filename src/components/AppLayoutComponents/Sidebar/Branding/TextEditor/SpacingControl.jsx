@@ -34,8 +34,8 @@ export default function SpacingControl({ config, updateConfig }){
                         </div>
                         <Slider
                             value={[config.letterSpacing]}
-                            min={0}
-                            max={100}
+                            min={-10}
+                            max={30}
                             step={1}
                             onValueChange={handleLetterSpacingChange}
                         />

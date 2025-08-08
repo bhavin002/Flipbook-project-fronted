@@ -68,6 +68,11 @@ export default function StockPhoto({ shape }) {
         effectStyles.filter = filters.join(' ');
     }
 
+    // opacity
+    if (shape.opacity !== undefined) {
+        effectStyles.opacity = shape.opacity ;
+    }
+
     // Common transform for both container and image
     const transform = `rotate(${shape.rotation || 0}deg)
         scaleX(${shape.scaleX || 1})
@@ -99,6 +104,10 @@ export default function StockPhoto({ shape }) {
                 overflow: "hidden",
                 boxShadow: effectStyles.boxShadow || 'none',
                 borderRadius: effectStyles.borderRadius || '0px',
+                borderTopLeftRadius: effectStyles.borderTopLeftRadius || '0px',
+                borderTopRightRadius: effectStyles.borderTopRightRadius || '0px',
+                borderBottomRightRadius: effectStyles.borderBottomRightRadius || '0px',
+                borderBottomLeftRadius: effectStyles.borderBottomLeftRadius || '0px',
             }}>
                 <img
                     className="stock-photo"

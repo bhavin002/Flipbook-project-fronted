@@ -3155,6 +3155,7 @@ const textElements = [
         text: 'Text',
         title: "Add heading",
         isUpgrade: false,
+        type: 0,
         size: 42,
         attrs: {
             fill: "#000",
@@ -3173,6 +3174,7 @@ const textElements = [
         text: 'Text',
         title: "Add sub heading",
         isUpgrade: false,
+        type: 1,
         size: 24,
         attrs: {
             fill: "#000",
@@ -3191,6 +3193,7 @@ const textElements = [
         text: 'Text',
         title: "Add body text",
         isUpgrade: false,
+        type: 2,
         size: 16,
         attrs: {
             fill: "#000",
@@ -3209,6 +3212,7 @@ const textElements = [
         text: 'Text',
         title: "# Pagination",
         isUpgrade: false,
+        type: 3,
         size: 16,
         attrs: {
             fill: "#000",

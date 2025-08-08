@@ -40,9 +40,16 @@ export default function FontControls({ config, updateConfig }) {
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="font-sans">Font Sans</SelectItem>
-                        <SelectItem value="font-serif">Font Serif</SelectItem>
-                        <SelectItem value="font-mono">Font Mono</SelectItem>
+                        <SelectItem value="Arial">Arial</SelectItem>
+                        <SelectItem value="Helvetica">Helvetica</SelectItem>
+                        <SelectItem value="Times New Roman">Times New Roman</SelectItem>
+                        <SelectItem value="Courier New">Courier New</SelectItem>
+                        <SelectItem value="Verdana">Verdana</SelectItem>
+                        <SelectItem value="Georgia">Georgia</SelectItem>
+                        <SelectItem value="Palatino">Palatino</SelectItem>
+                        <SelectItem value="Garamond">Garamond</SelectItem>
+                        <SelectItem value="Bookman">Bookman</SelectItem>
+                        <SelectItem value="Comic Sans MS">Comic Sans MS</SelectItem>
                     </SelectContent>
                 </Select>
 
@@ -51,7 +58,7 @@ export default function FontControls({ config, updateConfig }) {
                         <SelectValue placeholder="Weight" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="regular">Regular</SelectItem>
+                        <SelectItem value="normal">Regular</SelectItem>
                         {config.isBoldDisabled ? null : <SelectItem value="bold">Bold</SelectItem>}
                     </SelectContent>
                 </Select>

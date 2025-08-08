@@ -8,7 +8,7 @@ export default function StyleControls({ config, updateConfig }) {
         if (isBold) {
             updateConfig({
                 styles: config.styles.filter(s => s !== 'bold'),
-                fontWeight: 'regular'
+                fontWeight: 'normal'
             });
         } else {
             updateConfig({

@@ -6,7 +6,7 @@ export default function TextPreview({ config }) {
             classes += " font-bold";
         }
 
-        classes += ` ${config.fontFamily}`;
+        // classes += ` font-${config.fontFamily.split(' ').join('-').toLowerCase()}`;
 
         if (config.alignment === 'center') classes += ' text-center';
         else if (config.alignment === 'right') classes += ' text-right';
@@ -17,6 +17,7 @@ export default function TextPreview({ config }) {
 
     const getHeadingStyles = () => {
         const styles = {
+            fontFamily: config.fontFamily,
             color: config.textColor,
             fontSize: `${config.fontSize}px`,
             letterSpacing: `${config.letterSpacing / 100}em`,

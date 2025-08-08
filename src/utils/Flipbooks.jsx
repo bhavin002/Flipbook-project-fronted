@@ -336,7 +336,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                 />
                             </div>
 
-                            <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white h-full">
+                            <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white">
                                 {permissions.flipbookDetails && <div className="flex items-center gap-2">
                                     <span className={`text-xs font-medium px-2 py-0.5 rounded-sm inline-flex items-center ${getStatusBadgeStyle(flipbook.tag ? flipbook.tag : flipbook.flipbookState)}`}>
                                         <span className="inline-block w-1.5 h-1.5 rounded-full mr-1.5 bg-current opacity-70"></span>

@@ -63,6 +63,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                 letterSpacing: selectedShape[0].attrs.letterSpacing || 0,
                 lineHeight: selectedShape[0].attrs.lineHeight || 1
             });
+            toggleStyle('textTransform', selectedShape[0].attrs.textTransform);
         }
     }, [selectedShape]);
 
@@ -355,7 +356,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                     <FilterSlider
                         id="letterSpacing"
                         min={-10}
-                        max={80}
+                        max={30}
                         step={1}
                         value={[textStyle.letterSpacing]}
                         onValueChange={handleLetterSpacingChange}
