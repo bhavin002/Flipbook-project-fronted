@@ -58,11 +58,15 @@ const COMPONENT_MAP = {
     'stock-sticker': StockSticker,
     'shape-widget': ShapeWidget,
     'masked-image': MaskedImageWidget,
+    'masked-gif': MaskedImageWidget,
+    'masked-sticker': MaskedImageWidget,
 };
 
 const PageContentRenderer = ({ data, index, visibilitySettings, flipbookRef, flipbookId }) => {
     const htmlType = data?.shape?.htmlType;
     const Component = COMPONENT_MAP[htmlType];
+    console.log("Rendering component for htmlType:", htmlType, "with data:", data);
+    
 
     if (Component) {
         const props = {

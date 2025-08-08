@@ -50,12 +50,17 @@ export default function StockPhoto({ shape }) {
         effectStyles.borderBottomLeftRadius = `${effect.bottomLeftRadius || 0}px`;
     } else {
         effectStyles.borderRadius = `${effect.cornerRadius || 0}px`;
+        effectStyles.borderTopLeftRadius = `none`;
+        effectStyles.borderTopRightRadius = `none`;
+        effectStyles.borderBottomRightRadius = `none`;
+        effectStyles.borderBottomLeftRadius = `none`;
     }
     // Shadow (applied to image)
     if (effect.isShadowEnabled) {
         const shadowOpacity = (effect.shadowOpacity || 0) / 100;
         const shadowColor = effect.shadowColor || '#000000';
         effectStyles.boxShadow = `${effect.shadowOffsetX || 0}px ${effect.shadowOffsetY || 0}px ${effect.shadowBlur || 0}px rgba(${parseHexToRgb(shadowColor)}, ${shadowOpacity})`;
+        effectStyles.backgroundColor = `rgba(${parseHexToRgb(shadowColor)}, ${shadowOpacity})`;
     }
     // Filters (applied to image)
     const filters = [];
@@ -70,7 +75,7 @@ export default function StockPhoto({ shape }) {
 
     // opacity
     if (shape.opacity !== undefined) {
-        effectStyles.opacity = shape.opacity ;
+        effectStyles.opacity = shape.opacity;
     }
 
     // Common transform for both container and image
@@ -80,6 +85,7 @@ export default function StockPhoto({ shape }) {
         skewX(${shape.skewX || 0}deg)
         skewY(${shape.skewY || 0}deg)
         translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`;
+    console.log(effectStyles);
 
     return (
         <div
@@ -100,7 +106,7 @@ export default function StockPhoto({ shape }) {
                 left: `${crop.x * -1 || 0}px`,
                 top: `${crop.y * -1 || 0}px`,
                 position: "absolute",
-                backgroundColor: "white",
+                backgroundColor: effectStyles.backgroundColor || 'white',
                 overflow: "hidden",
                 boxShadow: effectStyles.boxShadow || 'none',
                 borderRadius: effectStyles.borderRadius || '0px',

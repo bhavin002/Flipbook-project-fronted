@@ -17,6 +17,8 @@ export default function StockPhoto({
     const clipGroupRef = useRef();
 
     useEffect(() => {
+        console.log("StockPhoto shape:", shape.src);
+        
         if (shape && shape.src) {
             const img = new window.Image();
             img.src = shape.src;
