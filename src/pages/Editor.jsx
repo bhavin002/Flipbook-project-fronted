@@ -677,11 +677,11 @@ export default function Editor() {
             <TopToolbar setIsShapeDrawerOpen={setIsShapeDrawerOpen} isCropping={isCropping} handleCrop={handleCrop} handleCropEnd={handleCropEnd} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
             <div className="flex w-full flex-grow relative">
                 {((mainStage.length !== pageCounter - 1) && !isInitialLoad) && <>
-                    <div className="absolute inset-0 bg-gray-200 bg-opacity-50 animate-pulse z-40 pointer-events-auto" />
+                    <div className="absolute inset-0 bg-white/40 backdrop-blur-sm z-40 pointer-events-auto" />
                     <div className="absolute top-0 left-0 w-full z-50">
                         <Progress
                             value={(pageCounter / (mainStage.length + 1)) * 100}
-                            className="w-full rounded-none"
+                            className="w-full rounded-none h-1 transition-all duration-500 ease-out"
                         />
                     </div>
                 </>}
