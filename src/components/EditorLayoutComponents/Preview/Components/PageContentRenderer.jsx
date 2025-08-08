@@ -72,7 +72,7 @@ const PageContentRenderer = ({ data, index, visibilitySettings, flipbookRef, fli
             ...(data.shape?.id && { key: data.shape.id }),
             ...(flipbookId && { flipbookId })
         };
-        return <Component {...props} />;
+        return <div style={{ 'cursor': 'pointer' }}> <Component {...props} /> </div>;
     }
 
     // Default case for HTML content

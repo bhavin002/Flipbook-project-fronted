@@ -11,6 +11,7 @@ export default function GoToPage({ shape, visibilitySettings, flipbookRef }) {
     return (
         <>
             <div
+                onClick={handleClick}
                 className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
                 style={{
                     width: `${shape.width}px`,
@@ -32,7 +33,6 @@ export default function GoToPage({ shape, visibilitySettings, flipbookRef }) {
                 }}
             />
             <img    
-                onClick={handleClick}
                 title={shape.htmlData?.tooltip || "Go to page"}
                 src={shape.src}
                 alt={shape.title}
