@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/tooltip";
 
 export default function EditFlipbookName({
-    flipbookName, setFlipbookName, flipbookId, isLoading, updatePageData, isTemplate
+    flipbookName, setFlipbookName, flipbookId, isLoading, updatePageData, isTemplate, isInitialLoad
 }) {
     const [isEditing, setIsEditing] = useState(false);
     const [tempName, setTempName] = useState(flipbookName);
@@ -107,6 +107,7 @@ export default function EditFlipbookName({
                     ) : (
                         isHovering && (
                             <Button
+                                disabled={!isInitialLoad}
                                 variant="ghost"
                                 onClick={() => {
                                     setIsEditing(true);
@@ -122,7 +123,7 @@ export default function EditFlipbookName({
             </div>
             <Button
                 variant="outline"
-                disabled={isLoading}
+                disabled={isLoading || !isInitialLoad}
                 onClick={updatePageData}
                 className="transition-all duration-200"
             >

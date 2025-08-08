@@ -21,7 +21,7 @@ import { GetPageByIndexApi, GetTemplateApi } from "@/service/template.service";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { toast } from "sonner";
 
-export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen }) {
+export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad }) {
     // Consistent Refs Initialization
     const stageRef = useRef(null);
     const demo = useRef(null);
@@ -593,6 +593,20 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
         }
     };
 
+    useEffect(() => {
+        const stage = stageRef.current;
+        if (stage) {
+            const layers = stage.getLayers();
+            if (layers.length > 0) {
+                console.log('Stage has layers, fully loaded.');
+                setPageCounter(pageCounter + 1);
+                if (pageCounter === mainStage.length) {
+                    setIsInitialLoad(true)
+                }
+            }
+        }
+    }, [stageRef.current]);
+
     const handleClick = (e) => {
         if (isCropping) return;
         if (selectionRect.visible) return;
@@ -902,7 +916,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
             onDragOver={(e) => e.preventDefault()}
         >
             <div ref={demo}></div>
-            <StagePageMenu setSelectedIndex={setSelectedIndex} selectedIndex={selectedIndex} rectProps={rectProps} mainStage={mainStage} setMainStage={setMainStage} index={index} />
+            <StagePageMenu setSelectedIndex={setSelectedIndex} selectedIndex={selectedIndex} rectProps={rectProps} mainStage={mainStage} setMainStage={setMainStage} index={index} setPageCounter={setPageCounter} pageCounter={pageCounter} />
             <ConfirmationDialog
                 isConfirmModalOpen={isTemplateModalOpen}
                 setIsConfirmModalOpen={setIsTemplateModalOpen}
@@ -967,7 +981,6 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                     setIsPageModalOpen(false);
                 }}
             />
-
             <div onClick={() => setSelectedIndex(index)}>
                 {width && height && <Stage
                     width={width}

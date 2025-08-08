@@ -38,7 +38,7 @@ export const duplicateStage = (mainStage, setMainStage, index, setSelectedIndex)
 
 }
 
-export const deleteStage = (mainStage, setMainStage, index, selectedIndex, setSelectedIndex) => {
+export const deleteStage = (mainStage, setMainStage, index, selectedIndex, setSelectedIndex, setPageCounter, pageCounter) => {
     if (mainStage.length == 1) return;
     mainStage.length - 1 == index && setSelectedIndex(index - 1);
     mainStage.length - 1 == selectedIndex && setSelectedIndex(selectedIndex - 1);
@@ -54,6 +54,7 @@ export const deleteStage = (mainStage, setMainStage, index, selectedIndex, setSe
         mainStage.splice(index, 1)
         setMainStage([...mainStage])
     }
+    setPageCounter(pageCounter-1);
 }
 
 export function serializationStage(mainStage) {
