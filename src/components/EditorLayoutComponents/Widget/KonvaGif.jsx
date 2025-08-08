@@ -140,7 +140,7 @@ export default function KonvaGif({
                     bottomRightRadius,
                     bottomLeftRadius,
                 ]}
-                fill="#000000"
+                fill={shape?.effect?.shadowColor || '#000000'}
             />
 
             {/* Nested Group with clipping */}
@@ -150,7 +150,7 @@ export default function KonvaGif({
                 width={shapeWidth}
                 height={shapeHeight}
                 ref={clipGroupRef}
-                fill={'#ffffff'}
+                // fill={"#00000000"}
                 clipFunc={(ctx) => {
                     ctx.beginPath();
                     ctx.moveTo(topLeftRadius, 0);
@@ -173,7 +173,7 @@ export default function KonvaGif({
                 <Rect
                     width={shapeWidth}
                     height={shapeHeight}
-                    fill={shape.fill || 'white'}
+                    // fill={shape.fill || "#00000000"}
                     zIndex={0}
                     x={shape.flipX ? shapeWidth : 0}
                     y={shape.flipY ? shapeHeight : 0}
