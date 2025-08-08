@@ -9,6 +9,7 @@ export default function GoToPreviousPage({ shape, visibilitySettings, flipbookRe
     return (
         <>
             <div
+                onClick={handleClick}
                 className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
                 style={{
                     width: `${shape.width}px`,
@@ -30,7 +31,6 @@ export default function GoToPreviousPage({ shape, visibilitySettings, flipbookRe
                 }}
             />
             <img
-                onClick={handleClick}
                 title={shape.htmlData?.tooltip || "Go to previous page"}
                 src={shape.src}
                 alt={shape.title}

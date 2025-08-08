@@ -15,6 +15,7 @@ export default function BrandingSettings() {
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
+
   useEffect(() => {
     const fetchWorkspaceInfo = async () => {
       try {
@@ -70,7 +71,15 @@ export default function BrandingSettings() {
               <CardHeader>
                 <div className="flex items-center justify-between w-full">
                   <CardTitle>Settings</CardTitle>
-                  <Button variant="outline">See my profile</Button>
+                  <a
+                    href={import.meta.env.VITE_APP_URL + `/profile/${myWorkspaceId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button variant="outline">
+                      See my profile
+                    </Button>
+                  </a>
                 </div>
               </CardHeader>
 
