@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import MaskInput from "@/utils/MaskInput";
 import { Button } from "@/components/ui/button";
 import {
     Trash2,
@@ -15,6 +14,7 @@ import {
     TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Switch } from "@/components/ui/switch";
+import MaskEmailInput from "@/utils/MaskEmailInput";
 
 export default function CustomizeEmail() {
     return (
@@ -27,7 +27,7 @@ export default function CustomizeEmail() {
                     <Label>
                         Enter email addresses here
                     </Label>
-                    <MaskInput />
+                    <MaskEmailInput />
                 </div>
                 <div className="space-y-2">
                     <Label htmlFor="subject">
@@ -97,13 +97,6 @@ export default function CustomizeEmail() {
                 <div className="flex justify-between items-center">
                     <p className="text-sm text-gray-500">Email will be sent to 10 people</p>
                     <Button>Send email</Button>
-                </div>
-                <p className="text-sm text-gray-500"> <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Upgrade </a>to send email via Flipnova or <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">click here </a>to use your email client</p>
-                <div className="flex items-center">
-                    <Switch id="save-emails" />
-                    <Label htmlFor="save-emails" className="ml-3 text-gray-700">
-                    Save these settings for future emails
-                    </Label>
                 </div>
             </CardContent>
         </Card>

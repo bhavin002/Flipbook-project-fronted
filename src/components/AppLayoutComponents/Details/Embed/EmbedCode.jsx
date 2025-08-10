@@ -21,6 +21,15 @@ export default function EmbedCode() {
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-1">
+                    <Label>Set embed size</Label>
+                    <Input
+                        className="w-24"
+                        id="height"
+                        type="number"
+                        defaultValue="480"
+                    />
+                </div>
+                <div className="space-y-1">
                     <Label>Start from Page</Label>
                     <Select defaultValue="1">
                         <SelectTrigger id="teammates" className="w-full sm:w-[180px] md:w-[200px]">

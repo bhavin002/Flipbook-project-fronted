@@ -17,7 +17,7 @@ import FlipbookStatistics from "@/utils/FlipbookStatistics";
 import CountryViewsTable from "./Statistics/CountryViewsTable";
 import DevicePieChart from "./Statistics/DevicePieChart";
 
-export default function Statistics({ flipbookId }) {
+export default function Statistics({ flipbookId, flipbookDetails }) {
     const today = new Date();
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(today.getMonth() - 1);
@@ -59,7 +59,7 @@ export default function Statistics({ flipbookId }) {
     return (
         <div className="py-6 max-w-[100vw] overflow-auto space-y-4">
             <div className="p-4 md:p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
-                <h1 className="text-xl md:text-2xl font-bold mb-2">Statistics New flipbook</h1>
+                <h1 className="text-xl md:text-2xl font-bold mb-2">Statistics <span className="text-primary">{flipbookDetails?.flipbookData?.name || "New Flipbook"}</span></h1>
                 <p className="text-sm md:text-base text-gray-500">Key performance indicators for your flipbook, for a selected date range</p>
             </div>
             <div className="flex gap-2 flex-wrap">
@@ -128,10 +128,10 @@ export default function Statistics({ flipbookId }) {
                             </TabsTrigger>
                         </TabsList>
                         <TabsContent value="quiz" className="h-full mt-4">
-                            <Quiz flipbookId={flipbookId}/>
+                            <Quiz flipbookId={flipbookId} />
                         </TabsContent>
                         <TabsContent value="question" className="h-full mt-4">
-                            <Question flipbookId={flipbookId}/>
+                            <Question flipbookId={flipbookId} />
                         </TabsContent>
                         <TabsContent value="contact-form" className="h-full mt-4">
                             <ContactForm flipbookId={flipbookId} />
