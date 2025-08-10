@@ -75,7 +75,14 @@ export default function BrandingLogos() {
 
         try {
             setIsDeleting(true);
-            await DeleteBrandLogoApi(logoToDelete.id);
+            const response = await DeleteBrandLogoApi(logoToDelete.id);
+            if (response.data === 401) {
+                toast.error("Brandlogo deletion failed", {
+                    description: response.message,
+                });
+                return;
+            }
+
             setLogos(logos.filter(logo => logo.id !== logoToDelete.id));
             setLogoToDelete(null);
         } catch (error) {
