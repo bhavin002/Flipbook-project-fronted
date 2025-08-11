@@ -11,17 +11,11 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Globe, Lock, ListX, LockKeyhole, X, ChevronDown, Loader2 } from 'lucide-react'
+import { Globe, Lock, ListX, LockKeyhole, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import GenericSelection from "@/utils/GenericSelection";
 import { GetWorkspaceGroupsApi } from "@/service/workspace.group.service";
 import { GetFlipbookPublishInfoApi, UpdatePublishFlipbookApi } from "@/service/flipbook.publish.service"; // Import the new API

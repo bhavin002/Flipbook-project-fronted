@@ -1,7 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useEmailCustomization } from "@/context/EmailCustomizationContext";
 
 export default function EmailPreview() {
+    const { emailData } = useEmailCustomization();
+
     return (
         <Card className="w-full max-w-4xl mx-auto">
             <CardContent className="p-0">
@@ -13,35 +16,47 @@ export default function EmailPreview() {
                     </div>
                 </div>
                 <div className="py-2 px-4 bg-gray-100 border-b">
-                    <p className="text-md">hopoleh620 hopoleh620 shared a flipbook with you!</p>
+                    <p className="text-md">{emailData.subject}</p>
                 </div>
 
-                <div className="bg-gray-200 p-4">
+                <div className="bg-gray-200 p-4" style={{ backgroundColor: emailData.backgroundColor }}>
                     <div className="flex justify-center mb-4">
-                        <img src="/src/assets/logo.png" width={200} alt="Cover" />
+                        <img src={emailData.logo} width={200} alt="Logo" />
                     </div>
 
                     <div className="bg-white rounded-md overflow-hidden mx-auto max-w-md">
-                        <div className="py-8 bg-primary flex justify-center">
+                        <div className="py-8 flex justify-center" style={{ backgroundColor: emailData.accentColor }}>
                             <img
                                 width="40%"
                                 className="max-w-full mx-auto"
-                                src="/src/assets/page_1.jpg"
+                                src={`https://d1dhn91mufybwl.cloudfront.net/collections/items/8813ceda32a1967c82f4f3i147291099/covers/Zleh497pxCEcI_xV/medium?t=1742320704000`}
                                 alt="page_1"
                             />
                         </div>
 
                         <div className="p-8 text-center">
-                            <h2 className="text-4xl text-primary mb-4">This is my masterpiece</h2>
+                            <h2 
+                                className="text-4xl mb-4" 
+                                style={{ color: emailData.accentColor }}
+                            >
+                                {emailData.title}
+                            </h2>
                             <p className="text-lg text-gray-500 mb-6">
-                                Take a look at this publication to see my recent work. I made this flipbook using Flipnova.
+                                {emailData.description}
                             </p>
-                            <Button>READ BOOK</Button>
+                            <Button 
+                                style={{ 
+                                    backgroundColor: emailData.accentColor, 
+                                    color: emailData.backgroundColor 
+                                }}
+                            >
+                                {emailData.label}
+                            </Button>
                         </div>
                     </div>
 
                     <div className="text-gray-600 text-xs text-center mt-6">
-                        Flipnova LLC - 535 Mission St. FL 14, San Francisco, CA 94105, USA
+                        {emailData.footerDescription}
                     </div>
                 </div>
             </CardContent>

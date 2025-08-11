@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Check, Copy, Info, Crown, Mail, Pencil } from 'lucide-react';
+import { Check, Copy, Info, Crown, Mail, Pencil, Eye, Edit, SlidersHorizontal } from 'lucide-react';
 import {
     Tooltip,
     TooltipContent,
@@ -27,10 +27,8 @@ import {
     LinkedinShareButton,
 } from "react-share";
 
-export default function DetailsTab({ flipbookId }) {
+export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, setFlipbookDetails }) {
     const [copied, setCopied] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [flipbookDetails, setFlipbookDetails] = useState(null);
     const [isVisibilityDialogOpen, setVisibilityDialogOpen] = useState(false);
     const [checkedIsVisible, setCheckedIsVisible] = useState(false);
     const [checkedIsPublishDtVisible, setCheckedIsPublishDtVisible] = useState(false);
@@ -48,26 +46,6 @@ export default function DetailsTab({ flipbookId }) {
                 toast.error("Failed to copy link");
             });
     }
-
-    useEffect(() => {
-        const getFlipbookData = async () => {
-            try {
-                setIsLoading(true);
-                const response = await GetFlipbookDetailsApi(flipbookId);
-                if (!response.data.isPublished) {
-                    navigate("/myflipbooks")
-                }
-                setFlipbookDetails(response.data);
-            } catch (error) {
-                toast.error("Error fetching flipbook details", {
-                    description: error.message || "Oops! Something went wrong."
-                })
-            } finally {
-                setIsLoading(false)
-            }
-        }
-        getFlipbookData();
-    }, [flipbookId]);
 
     // Always define these after flipbookDetails is available
     const publishData = flipbookDetails?.publishFlipbookData || {};
@@ -143,23 +121,6 @@ export default function DetailsTab({ flipbookId }) {
                                 </>
                             )}
                         </Button>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <a className="text-sm font-medium text-purple-600 cursor-pointer hover:underline">Create trackable links</a>
-                        <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Info className="h-4 w-4 text-gray-500 cursor-pointer" />
-                                </TooltipTrigger>
-                                <TooltipContent
-                                    side="right"
-                                    align="center"
-                                    className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                >
-                                    <p className="text-sm">Create unique link for each lead to track their interactions in your flipbook</p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
                     </div>
                 </CardContent>
             </Card>
@@ -290,8 +251,40 @@ export default function DetailsTab({ flipbookId }) {
                         </CardContent>
                     </Card>
                 </div>
-                <Card className="shadow-sm flex-grow rounded-lg">
+                <Card className="shadow-sm flex-grow rounded-lg flex flex-col gap-4 p-4">
                     <FlipBookPreview flipbookId={flipbookId} component={"detailsPage"} />
+                    <div className="flex gap-5 items-center">
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                window.open(`/public-flipbook/${flipbookId}`, "_blank");
+                            }}
+                            className="text-primary cursor-pointer font-medium"
+                        >
+                            <Eye className="h-4 w-4 mr-2" />
+                            View live
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                navigate(`/editor/${flipbookId}`);
+                            }}
+                            className="text-primary cursor-pointer font-medium"
+                        >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Edit
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                navigate(`/customize/${flipbookId}`);
+                            }}
+                            className="text-primary cursor-pointer font-medium"
+                        >
+                            <SlidersHorizontal className="h-4 w-4 mr-2" />
+                            Customize
+                        </Button>
+                    </div>
                 </Card>
             </div>
             <Card>

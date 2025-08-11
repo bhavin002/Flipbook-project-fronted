@@ -6,11 +6,36 @@ import Embed from "../components/AppLayoutComponents/Details/Embed"
 import SendEmail from "../components/AppLayoutComponents/Details/SendEmail"
 import DownloadQR from "../components/AppLayoutComponents/Details/DownloadQR"
 import Statistics from "../components/AppLayoutComponents/Details/Statistics"
+import { useEffect, useState } from "react";
+import { GetFlipbookDetailsApi } from "@/service/flipbook.publish.service";
+import { toast } from "sonner";
 
 export default function Details() {
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
+    const [flipbookDetails, setFlipbookDetails] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        const getFlipbookData = async () => {
+            try {
+                setIsLoading(true);
+                const response = await GetFlipbookDetailsApi(id);
+                if (!response.data.isPublished) {
+                    navigate("/myflipbooks")
+                }
+                setFlipbookDetails(response.data);
+            } catch (error) {
+                toast.error("Error fetching flipbook details", {
+                    description: error.message || "Oops! Something went wrong."
+                })
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        getFlipbookData();
+    }, [id]);
 
     const pathParts = location.pathname.split('/');
     const defaultTab = pathParts[1] || 'details';
@@ -44,29 +69,30 @@ export default function Details() {
                         <Mail className="w-5 h-5" />
                         <span className="text-xs mt-1 lg:mt-0">Send email</span>
                     </TabsTrigger>
-                    <TabsTrigger className="py-2 flex flex-col lg:flex-row lg:items-center lg:gap-2" value="download-gif" disabled>
-                        <Image className="w-5 h-5" />
-                        <span className="text-xs mt-1 lg:mt-0">Download GIF</span>
-                    </TabsTrigger>
                     <TabsTrigger className="py-2 flex flex-col lg:flex-row lg:items-center lg:gap-2" value="download-qr">
                         <QrCode className="w-5 h-5" />
                         <span className="text-xs mt-1 lg:mt-0">Download QR</span>
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="details" className="h-full overflow-y-auto">
-                    <DetailsTab flipbookId={id} />
+                    <DetailsTab
+                        flipbookId={id}
+                        isLoading={isLoading}
+                        setFlipbookDetails={setFlipbookDetails}
+                        flipbookDetails={flipbookDetails}
+                    />
                 </TabsContent>
                 <TabsContent value="embed" className="h-full overflow-y-auto">
-                    <Embed />
+                    <Embed flipbookId={id} flipbookDetails={flipbookDetails} />
                 </TabsContent>
                 <TabsContent value="send-email" className="h-full overflow-y-auto">
-                    <SendEmail />
+                    <SendEmail flipbookId={id} flipbookDetails={flipbookDetails} />
                 </TabsContent>
                 <TabsContent value="download-qr" className="h-full overflow-y-auto">
                     <DownloadQR flipbookId={id} />
                 </TabsContent>
                 <TabsContent value="stats" className="h-full overflow-y-auto">
-                    <Statistics flipbookId={id} />
+                    <Statistics flipbookId={id} flipbookDetails={flipbookDetails} />
                 </TabsContent>
             </Tabs>
         </div>
