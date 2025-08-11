@@ -65,10 +65,10 @@ export default function BrandColors({ handlePaletteColorSelect, selectedColor })
             
             {hasMoreColors && (
                 <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
                     onClick={() => setShowAll(!showAll)}
-                    className="mt-2 h-8 px-2 text-xs text-gray-600 hover:text-gray-800"
+                    className="mt-2 h-8 px-2 text-xs text-black"
                 >
                     {showAll ? (
                         <>

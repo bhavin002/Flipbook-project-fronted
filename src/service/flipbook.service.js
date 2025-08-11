@@ -84,3 +84,8 @@ export const UploadPdfApi = async (data) => {
     });
     return response.data;
 }
+
+export const GetThumbnailApi = async (flipbookId) => {
+    const response = await ApiClient().get(`/flipbook/thumbnail/${flipbookId}`);
+    return response.data;
+}

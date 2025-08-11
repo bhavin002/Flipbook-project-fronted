@@ -9,10 +9,12 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useNavigate } from "react-router-dom";
 
-export default function Customize() {
+export default function Customize({ flipbookId }) {
+    const navigate = useNavigate();
     return (
-         <Card>
+        <Card>
             <CardHeader>
                 <CardTitle>Customize the look of your embed</CardTitle>
                 <CardDescription>You can edit the following settings in Customize:</CardDescription>
@@ -39,7 +41,7 @@ export default function Customize() {
                 <p>‧ Display one page at a time (Layout style).</p>
                 <p>‧ Add your brand logo.</p>
                 <div className="flex justify-end">
-                <Button >Customize appearances</Button>
+                    <Button onClick={() => navigate(`/shelf/customize/${flipbookId}`)}>Customize appearances</Button>
                 </div>
             </CardContent>
         </Card>

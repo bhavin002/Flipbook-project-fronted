@@ -16,7 +16,7 @@ export default function Embed({ flipbookId }) {
             </div>
             <div className="flex max-lg:flex-wrap gap-4">
                 <div className="lg:w-[40%] w-full lg:block space-y-4 lg:h-full">
-                    <Customize />
+                    <Customize flipbookId={flipbookId}/>
                     <Size />
                     <EmbedCode />
                     <DomainRestriction />

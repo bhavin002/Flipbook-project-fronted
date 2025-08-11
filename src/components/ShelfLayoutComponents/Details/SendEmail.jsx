@@ -4,7 +4,7 @@ import EmailClient from "./SendEmail/EmailClient";
 import EmailPreview from "./SendEmail/EmailPreview";
 import { EmailCustomizationProvider } from "@/context/EmailCustomizationContext";
 
-export default function SendEmail() {
+export default function SendEmail({flipbookId}) {
     const { bookshelfSettings } = useBookshelf();
 
     return (
@@ -17,10 +17,10 @@ export default function SendEmail() {
                 <div className="flex max-lg:flex-wrap gap-4">
                     <div className="lg:w-[40%] w-full lg:block space-y-4 lg:h-full">
                         <CustomizeEmail />
-                        <EmailClient />
+                        <EmailClient flipbookId={flipbookId} />
                     </div>
                     <div className="lg:w-[60%] w-full sticky top-[-22px] h-fit">
-                        <EmailPreview />
+                        <EmailPreview flipbookId={flipbookId}/>
                     </div>
                 </div>
             </div>

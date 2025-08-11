@@ -382,7 +382,7 @@ export default function Branding() {
                                 {isFieldEnabled("brandLogoId") ? (
                                     <SelectLogoDialog onLogoSelect={handleLogoSelect} mode="replace" />
                                 ) : (
-                                    <Button variant="outline" className="text-primary" disabled={true}>Replace logo</Button>
+                                    <Button variant="outline" className="text-black" disabled={true}>Replace logo</Button>
                                 )}
                                 <Button
                                     variant="outline"

@@ -66,7 +66,7 @@ export default function BookShelfDetails() {
                     <Embed flipbookId={id}/>
                 </TabsContent>
                 <TabsContent value="send-email" className="h-full overflow-y-auto">
-                    <SendEmail />
+                    <SendEmail flipbookId={id}/>
                 </TabsContent>
                 <TabsContent value="download-qr" className="h-full overflow-y-auto">
                     <DownloadQR flipbookId={id} />

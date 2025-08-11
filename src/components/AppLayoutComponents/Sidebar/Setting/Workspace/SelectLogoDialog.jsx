@@ -129,7 +129,7 @@ export default function SelectLogoDialog({ onLogoSelect, mode = "select", disabl
         <>
             <Dialog open={isDialogOpen} onOpenChange={handleDialogOpen}>
                 <DialogTrigger asChild>
-                    <Button variant="outline" className="text-primary" disabled={disabled}>
+                    <Button variant="outline" className="text-black" disabled={disabled}>
                         {isLoading ? <LoadingButton /> : (mode === "replace" ? "Replace logo" : "Select logo")}
                     </Button>
                 </DialogTrigger>

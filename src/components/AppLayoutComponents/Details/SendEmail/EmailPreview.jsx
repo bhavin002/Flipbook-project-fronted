@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useEmailCustomization } from "@/context/EmailCustomizationContext";
 
-export default function EmailPreview() {
+export default function EmailPreview({ flipbookId, isLoading, thumbnail }) {
     const { emailData } = useEmailCustomization();
 
     return (
@@ -21,22 +21,28 @@ export default function EmailPreview() {
 
                 <div className="bg-gray-200 p-4" style={{ backgroundColor: emailData.backgroundColor }}>
                     <div className="flex justify-center mb-4">
-                        <img src={emailData.logo} width={200} alt="Logo" />
+                        <img src={emailData.logo} className="max-w-[200px] max-h-[100px]" alt="Logo" />
                     </div>
 
                     <div className="bg-white rounded-md overflow-hidden mx-auto max-w-md">
-                        <div className="py-8 flex justify-center" style={{ backgroundColor: emailData.accentColor }}>
-                            <img
-                                width="40%"
-                                className="max-w-full mx-auto"
-                                src={`https://d1dhn91mufybwl.cloudfront.net/collections/items/8813ceda32a1967c82f4f3i147291099/covers/Zleh497pxCEcI_xV/medium?t=1742320704000`}
-                                alt="page_1"
-                            />
-                        </div>
+                        {isLoading ? (
+                            <div className="py-8 flex justify-center" style={{ backgroundColor: emailData.accentColor }}>
+                                <div className="w-[40%] h-48 bg-gray-300/50 rounded animate-pulse"></div>
+                            </div>
+                        ) : (
+                            <a className="py-8 flex justify-center cursor-pointer" target="_blank" rel="noopener noreferrer" href={`${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`} style={{ backgroundColor: emailData.accentColor }}>
+                                <img
+                                    width="40%"
+                                    className="max-w-full mx-auto"
+                                    src={thumbnail}
+                                    alt="page_1"
+                                />
+                            </a>
+                        )}
 
                         <div className="p-8 text-center">
-                            <h2 
-                                className="text-4xl mb-4" 
+                            <h2
+                                className="text-4xl mb-4"
                                 style={{ color: emailData.accentColor }}
                             >
                                 {emailData.title}
@@ -44,14 +50,16 @@ export default function EmailPreview() {
                             <p className="text-lg text-gray-500 mb-6">
                                 {emailData.description}
                             </p>
-                            <Button 
-                                style={{ 
-                                    backgroundColor: emailData.accentColor, 
-                                    color: emailData.backgroundColor 
-                                }}
-                            >
-                                {emailData.label}
-                            </Button>
+                            <a href={`${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`} target="_blank" rel="noopener noreferrer">
+                                <Button
+                                    style={{
+                                        backgroundColor: emailData.accentColor,
+                                        color: emailData.backgroundColor
+                                    }}
+                                >
+                                    {emailData.label}
+                                </Button>
+                            </a>
                         </div>
                     </div>
 

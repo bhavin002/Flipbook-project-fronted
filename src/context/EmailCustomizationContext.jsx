@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 const EmailCustomizationContext = createContext();
 
@@ -19,7 +20,7 @@ export const EmailCustomizationProvider = ({ children }) => {
         footerDescription: "Flipnova LLC - 535 Mission St. FL 14, San Francisco, CA 94105, USA",
         backgroundColor: "#e6e7e8",
         accentColor: "#7b39ed",
-        logo: "https://flipbook-subway-workspace-logo.s3.ap-south-1.amazonaws.com/5e909bd2-5ac1-4dd8-a886-2df3327e86cb.png"
+        logo: "https://flipbook-subway-workspace-logo.s3.ap-south-1.amazonaws.com/5e909bd2-5ac1-4dd8-a886-2df3327e86cb.png",
     });
 
     const updateEmailData = (field, value) => {
