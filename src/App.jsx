@@ -73,6 +73,8 @@ import OrganizeShelf from "./pages/OrganizeShelf";
 import BookShelfDetails from "./pages/BookShelfDetails";
 import PublicBookShelf from "./public/PublicBookShelf";
 import { PermissionRoute } from "./Middleware/PermissionRoute";
+import EmbedFlipbook from "./embed/EmbedFlipbook";
+import EmbedBookShelf from "./embed/EmbedBookShelf";
 
 // Route configurations
 const brandingRoutes = [
@@ -115,7 +117,9 @@ export default function App() {
         <Route path="/account/confirm-account" element={<PublicRoute><ConfirmAccount /></PublicRoute>} />
         <Route path="/accept-invitation/:token" element={<VerifyReader />} />
         <Route path="/public-flipbook/:id" element={<PublicFlipbook />} />
+        <Route path="/embed-flipbook/:id" element={<EmbedFlipbook />} />
         <Route path="/public-bookshelf/:id" element={<PublicBookShelf />} />
+        <Route path="/embed-bookshelf/:id" element={<EmbedBookShelf />} />
         <Route path="/profile/:id" element={<MyProfile />} />
 
         {/* Private/protected routes (wrapped in providers) */}

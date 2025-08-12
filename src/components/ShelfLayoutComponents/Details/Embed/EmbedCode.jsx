@@ -1,10 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { getData } from "@/utils/datas";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label";
 
 export default function EmbedCode() {
@@ -13,7 +11,6 @@ export default function EmbedCode() {
         setCopied(true)
         setTimeout(() => setCopied(false), 2000)
     }
-    const pageOptions = getData("pageOptions")
     return (
         <Card>
             <CardHeader>

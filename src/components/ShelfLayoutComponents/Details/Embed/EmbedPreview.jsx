@@ -17,8 +17,8 @@ export default function EmbedPreview({ flipbookId }) {
                     <Skeleton className="w-1/4 h-6 rounded-md" />
                 </div>
                 <div className="px-6 py-4">
-                    <div className="h-48 md:h-96 w-full">
-                        <BookShelfView id={flipbookId}/>
+                    <div className="h-[480px] w-full">
+                        <BookShelfView id={flipbookId} />
                     </div>
                 </div>
                 <div className="w-full px-6 py-4 flex flex-col md:flex-row gap-6">
