@@ -32,13 +32,13 @@ export default function Customize({ flipbookId }) {
                                 align="center"
                                 className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
                             >
-                                <p className="text-sm">Sharing options, Language, Download PDF</p>
+                                <p className="text-sm">Flipbook name, redirect to flipbook, etc...</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
                 </div>
                 <p>‧ Transparent background (no color), or choose color.</p>
-                <p>‧ Display one page at a time (Layout style).</p>
+                <p>‧ Set thumbnails size</p>
                 <p>‧ Add your brand logo.</p>
                 <div className="flex justify-end">
                     <Button onClick={() => navigate(`/shelf/customize/${flipbookId}`)}>Customize appearances</Button>

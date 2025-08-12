@@ -1,5 +1,4 @@
 import Customize from "./Embed/Customize";
-import Size from "./Embed/Size";
 import EmbedCode from "./Embed/EmbedCode";
 import DomainRestriction from "./Embed/DomainRestriction";
 import EmbedPreview from "./Embed/EmbedPreview";
@@ -17,7 +16,6 @@ export default function Embed({ flipbookId }) {
             <div className="flex max-lg:flex-wrap gap-4">
                 <div className="lg:w-[40%] w-full lg:block space-y-4 lg:h-full">
                     <Customize flipbookId={flipbookId}/>
-                    <Size />
                     <EmbedCode />
                     <DomainRestriction />
                 </div>

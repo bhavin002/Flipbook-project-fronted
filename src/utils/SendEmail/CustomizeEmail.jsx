@@ -30,6 +30,7 @@ export default function CustomizeEmail({ flipbookId, thumbnail, component }) {
         errors,
         clearErrors,
         isLoading,
+        resetForm,
         setIsLoading,
         updateEmails,
         validateEmailData
@@ -67,8 +68,11 @@ export default function CustomizeEmail({ flipbookId, thumbnail, component }) {
                 htmlBody: emailHtml
             };
 
-            await SendEmailApi(payload);
-
+            const response = await SendEmailApi(payload);
+            toast.success("Email sent successfully", {
+                description: response.message
+            });
+            resetForm();
         } catch (error) {
             toast.error("Failed to send email", {
                 description: error.message
@@ -215,7 +219,7 @@ export default function CustomizeEmail({ flipbookId, thumbnail, component }) {
                     </div>
                     <Button
                         onClick={handleSendEmail}
-                        disabled={hasErrors || isLoading}
+                        disabled={!emailData.emails.length > 0 || hasErrors || isLoading}
                         className="min-w-[120px]"
                     >
                         {isLoading ? <LoadingButton /> : 'Send email'}

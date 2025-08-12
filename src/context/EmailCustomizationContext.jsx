@@ -34,12 +34,12 @@ export const EmailCustomizationProvider = ({ children }) => {
             return true;
         } catch (error) {
             const validationErrors = {};
-            
+
             error.errors.forEach((err) => {
                 const path = err.path[0];
                 validationErrors[path] = err.message;
             });
-            
+
             setErrors(validationErrors);
             return false;
         }
@@ -50,7 +50,7 @@ export const EmailCustomizationProvider = ({ children }) => {
             ...prev,
             [field]: value
         }));
-        
+
         if (errors[field]) {
             setErrors(prev => ({
                 ...prev,
@@ -64,7 +64,7 @@ export const EmailCustomizationProvider = ({ children }) => {
             ...prev,
             emails
         }));
-        
+
         if (errors.emails) {
             setErrors(prev => ({
                 ...prev,
@@ -112,12 +112,30 @@ export const EmailCustomizationProvider = ({ children }) => {
         setErrors({});
     };
 
+
+    const resetForm = () => {
+        setEmailData({
+            emails: [],
+            subject: "hopoleh620 hopoleh620 shared a flipbook with you!",
+            title: "This is my masterpiece",
+            description: "Take a look at this publication to see my recent work. I made this flipbook using Flipnova.",
+            label: "READ BOOK",
+            footerDescription: "Flipnova LLC - 535 Mission St. FL 14, San Francisco, CA 94105, USA",
+            backgroundColor: "#e6e7e8",
+            accentColor: "#7b39ed",
+            logo: "https://flipbook-subway-workspace-logo.s3.ap-south-1.amazonaws.com/5e909bd2-5ac1-4dd8-a886-2df3327e86cb.png",
+        });
+        clearErrors();
+    };
+
+
     const value = {
         emailData,
         updateEmailData,
         updateEmails,
         updateLogo,
         resetLogo,
+        resetForm,
         errors,
         setFieldError,
         clearErrors,
