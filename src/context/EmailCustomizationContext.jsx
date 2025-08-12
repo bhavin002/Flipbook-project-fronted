@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { emailSchema } from '@/schemas/email.schema';
+import { createContext, useContext, useState } from 'react';
 
 const EmailCustomizationContext = createContext();
 
@@ -13,6 +13,7 @@ export const useEmailCustomization = () => {
 
 export const EmailCustomizationProvider = ({ children }) => {
     const [emailData, setEmailData] = useState({
+        emails: [],
         subject: "hopoleh620 hopoleh620 shared a flipbook with you!",
         title: "This is my masterpiece",
         description: "Take a look at this publication to see my recent work. I made this flipbook using Flipnova.",
@@ -23,11 +24,53 @@ export const EmailCustomizationProvider = ({ children }) => {
         logo: "https://flipbook-subway-workspace-logo.s3.ap-south-1.amazonaws.com/5e909bd2-5ac1-4dd8-a886-2df3327e86cb.png",
     });
 
+    const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+
+    const validateEmailData = () => {
+        try {
+            emailSchema.parse(emailData);
+            clearErrors();
+            return true;
+        } catch (error) {
+            const validationErrors = {};
+            
+            error.errors.forEach((err) => {
+                const path = err.path[0];
+                validationErrors[path] = err.message;
+            });
+            
+            setErrors(validationErrors);
+            return false;
+        }
+    };
+
     const updateEmailData = (field, value) => {
         setEmailData(prev => ({
             ...prev,
             [field]: value
         }));
+        
+        if (errors[field]) {
+            setErrors(prev => ({
+                ...prev,
+                [field]: null
+            }));
+        }
+    };
+
+    const updateEmails = (emails) => {
+        setEmailData(prev => ({
+            ...prev,
+            emails
+        }));
+        
+        if (errors.emails) {
+            setErrors(prev => ({
+                ...prev,
+                emails: null
+            }));
+        }
     };
 
     const updateLogo = (logoUrl) => {
@@ -35,6 +78,13 @@ export const EmailCustomizationProvider = ({ children }) => {
             ...prev,
             logo: logoUrl
         }));
+
+        if (errors.logo) {
+            setErrors(prev => ({
+                ...prev,
+                logo: null
+            }));
+        }
     };
 
     const resetLogo = () => {
@@ -42,13 +92,38 @@ export const EmailCustomizationProvider = ({ children }) => {
             ...prev,
             logo: "https://flipbook-subway-workspace-logo.s3.ap-south-1.amazonaws.com/5e909bd2-5ac1-4dd8-a886-2df3327e86cb.png"
         }));
+
+        if (errors.logo) {
+            setErrors(prev => ({
+                ...prev,
+                logo: null
+            }));
+        }
+    };
+
+    const setFieldError = (field, error) => {
+        setErrors(prev => ({
+            ...prev,
+            [field]: error
+        }));
+    };
+
+    const clearErrors = () => {
+        setErrors({});
     };
 
     const value = {
         emailData,
         updateEmailData,
+        updateEmails,
         updateLogo,
-        resetLogo
+        resetLogo,
+        errors,
+        setFieldError,
+        clearErrors,
+        isLoading,
+        setIsLoading,
+        validateEmailData
     };
 
     return (
@@ -56,4 +131,4 @@ export const EmailCustomizationProvider = ({ children }) => {
             {children}
         </EmailCustomizationContext.Provider>
     );
-}; 
+};
