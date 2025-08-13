@@ -22,11 +22,11 @@ export default function EmbedCode({ flipbookId, numberOfPages }) {
         const value = e.target.value;
         const parsedValue = parseInt(value, 10);
 
-        if(parsedValue > 1080) {
+        if(parsedValue > 2080) {
             return;
         }
         
-        if (value === '' || isNaN(parsedValue) || parsedValue < 280 || parsedValue > 1080) {
+        if (value === '' || isNaN(parsedValue) || parsedValue < 280 || parsedValue > 2080) {
             setEmbedSizeError(true);
             setHeight(value);
         } else {
@@ -57,7 +57,7 @@ export default function EmbedCode({ flipbookId, numberOfPages }) {
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-1">
-                    <Label>Set embed size (280-1080)</Label>
+                    <Label>Set embed size (280-2080)</Label>
                     <Input
                         className={`w-24 ${embedSizeError ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
                         id="height"
@@ -65,7 +65,7 @@ export default function EmbedCode({ flipbookId, numberOfPages }) {
                         value={height}
                         onChange={handleHeightChange}
                         min={280}
-                        max={1080}
+                        max={2080}
                         required
                     />
                 </div>

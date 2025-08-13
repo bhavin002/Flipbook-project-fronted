@@ -5,7 +5,7 @@ import { useEmbedSettings } from "@/context/EmbedSettingsContext";
 
 export default function EmbedPreview({ flipbookId }) {
     const { height } = useEmbedSettings();
-    
+
     return (
         <Card className="pt-6">
             <CardContent className="border p-0 m-6 mt-0 rounded-sm">
@@ -20,10 +20,10 @@ export default function EmbedPreview({ flipbookId }) {
                     <Skeleton className="w-1/4 h-6 rounded-md" />
                 </div>
                 <div className="px-6 py-4">
-                    <div className="w-full"  style={{ height: `${height}px` }}>
-                        <FlipBookPreview 
-                            flipbookId={flipbookId} 
-                            component={"customize"} 
+                    <div className="w-full" style={{ height: `${height}px`, minHeight: "280px", maxHeight: "2080px" }}>
+                        <FlipBookPreview
+                            flipbookId={flipbookId}
+                            component={"customize"}
                         />
                     </div>
                 </div>

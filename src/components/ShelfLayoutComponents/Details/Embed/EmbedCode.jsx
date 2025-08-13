@@ -4,13 +4,40 @@ import { Input } from "@/components/ui/input";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import { Label } from "@/components/ui/label";
+import { useEmbedSettings } from "@/context/EmbedSettingsContext";
 
-export default function EmbedCode() {
+export default function EmbedCode({ flipbookId }) {
     const [copied, setCopied] = useState(false);
+    const [embedSizeError, setEmbedSizeError] = useState(false);
+    const { height, setHeight } = useEmbedSettings();
+
     const handleCopy = () => {
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
-    }
+        navigator.clipboard.writeText(generateEmbedCode());
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleHeightChange = (e) => {
+        const value = e.target.value;
+        const parsedValue = parseInt(value, 10);
+
+        if (parsedValue > 2080) {
+            return;
+        }
+
+        if (value === '' || isNaN(parsedValue) || parsedValue < 280 || parsedValue > 2080) {
+            setEmbedSizeError(true);
+            setHeight(value);
+        } else {
+            setEmbedSizeError(false);
+            setHeight(parsedValue);
+        }
+    };
+
+    const generateEmbedCode = () => {
+        return `<iframe src={${import.meta.env.VITE_APP_URL}/embed-bookshelf/${flipbookId}} width='100%' height='${height}' seamless='seamless' scrolling='no' frameBorder='0' allowFullScreen allow='autoplay; clipboard-read; clipboard-write'></iframe>`;
+    };
+
     return (
         <Card>
             <CardHeader>
@@ -18,22 +45,30 @@ export default function EmbedCode() {
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-1">
-                    <Label>Set embed size</Label>
+                    <Label>Set embed size (280-2080)</Label>
                     <Input
-                        className="w-24"
+                        className={`w-24 ${embedSizeError ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
                         id="height"
                         type="number"
-                        defaultValue="480"
+                        value={height}
+                        onChange={handleHeightChange}
+                        min={280}
+                        max={2080}
+                        required
                     />
                 </div>
                 <div className="space-y-1">
                     <Label>Embed code</Label>
                     <div className="flex items-center space-x-2">
                         <Input
-                            value="<iframe src='https://player.flipsnack.com?hash=RjlEN0FEOTlFOEMrNzFwZnVrdW83aw==' width='100%' height='480' seamless='seamless' scrolling='no' frameBorder='0' allowFullScreen allow='autoplay; clipboard-read; clipboard-write'></iframe>"
+                            value={generateEmbedCode()}
                             readOnly
                         />
-                        <Button variant="outline" onClick={handleCopy}>
+                        <Button
+                            variant="outline"
+                            onClick={handleCopy}
+                            disabled={embedSizeError}
+                        >
                             {copied ? (
                                 <>
                                     <Check className="h-4 w-4 mr-2" />
@@ -47,7 +82,6 @@ export default function EmbedCode() {
                             )}
                         </Button>
                     </div>
-
                 </div>
             </CardContent>
         </Card>
