@@ -1,19 +1,55 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { getData } from "@/utils/datas";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label";
+import { useEmbedSettings } from "@/context/EmbedSettingsContext";
 
-export default function EmbedCode() {
+export default function EmbedCode({ flipbookId, numberOfPages }) {
     const [copied, setCopied] = useState(false);
+    const [embedSizeError, setEmbedSizeError] = useState(false);
+    const { height, setHeight, startPage, setStartPage } = useEmbedSettings();
+    
     const handleCopy = () => {
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
+        navigator.clipboard.writeText(generateEmbedCode());
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const handleHeightChange = (e) => {
+        const value = e.target.value;
+        const parsedValue = parseInt(value, 10);
+
+        if(parsedValue > 1080) {
+            return;
+        }
+        
+        if (value === '' || isNaN(parsedValue) || parsedValue < 280 || parsedValue > 1080) {
+            setEmbedSizeError(true);
+            setHeight(value);
+        } else {
+            setEmbedSizeError(false);
+            setHeight(parsedValue);
+        }
+    };
+
+    const handlePageChange = (value) => {
+        setStartPage(value);
+    };
+    
+    const generateEmbedCode = () => {
+        const baseUrl = `${import.meta.env.VITE_APP_URL}/embed-flipbook/${flipbookId}`;
+        const url = startPage !== '1' ? `${baseUrl}?p=${startPage}` : baseUrl;
+        return `<iframe src='${url}' width='100%' height='${height}' seamless='seamless' scrolling='no' frameBorder='0' allowFullScreen allow='autoplay; clipboard-read; clipboard-write'></iframe>`;
+    };
+
+    const pageOptions = [];
+    for(let i = 1; i <= numberOfPages; i++) {
+        pageOptions.push({ value: i.toString(), label: `Page ${i}` });
     }
-    const pageOptions = getData("pageOptions")
+    
     return (
         <Card>
             <CardHeader>
@@ -21,19 +57,23 @@ export default function EmbedCode() {
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="space-y-1">
-                    <Label>Set embed size</Label>
+                    <Label>Set embed size (280-1080)</Label>
                     <Input
-                        className="w-24"
+                        className={`w-24 ${embedSizeError ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
                         id="height"
                         type="number"
-                        defaultValue="480"
+                        value={height}
+                        onChange={handleHeightChange}
+                        min={280}
+                        max={1080}
+                        required
                     />
                 </div>
                 <div className="space-y-1">
                     <Label>Start from Page</Label>
-                    <Select defaultValue="1">
+                    <Select value={startPage} onValueChange={handlePageChange}>
                         <SelectTrigger id="teammates" className="w-full sm:w-[180px] md:w-[200px]">
-                            <SelectValue placeholder="Select teammate" />
+                            <SelectValue placeholder="Select page" />
                         </SelectTrigger>
                         <SelectContent>
                             {pageOptions.map(option => (
@@ -48,10 +88,14 @@ export default function EmbedCode() {
                     <Label>Embed code</Label>
                     <div className="flex items-center space-x-2">
                         <Input
-                            value="<iframe src='https://player.flipsnack.com?hash=RjlEN0FEOTlFOEMrNzFwZnVrdW83aw==' width='100%' height='480' seamless='seamless' scrolling='no' frameBorder='0' allowFullScreen allow='autoplay; clipboard-read; clipboard-write'></iframe>"
+                            value={generateEmbedCode()}
                             readOnly
                         />
-                        <Button variant="outline" onClick={handleCopy}>
+                        <Button 
+                            variant="outline" 
+                            onClick={handleCopy}
+                            disabled={embedSizeError}
+                        >
                             {copied ? (
                                 <>
                                     <Check className="h-4 w-4 mr-2" />
@@ -65,7 +109,6 @@ export default function EmbedCode() {
                             )}
                         </Button>
                     </div>
-
                 </div>
             </CardContent>
         </Card>

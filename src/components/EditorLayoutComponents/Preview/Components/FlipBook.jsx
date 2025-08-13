@@ -25,7 +25,7 @@ const debounce = (func, delay) => {
     };
 };
 
-const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef, setZoomLevel }, ref) {
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, containerRefHeight, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef, setZoomLevel }, ref) {
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
     const [divWidth, setDivWidth] = useState(793);
@@ -80,15 +80,15 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
             setHeight(ratioDta.height);
             setWidth(ratioDta.width);
         };
-        const debouncedResize = debounce(handleResize, 150);
+        const debouncedResize = debounce(handleResize, 250);
         setTimeout(() => {
             handleResize();
-        }, 100);
+        }, 200);
         window.addEventListener("resize", debouncedResize);
         return () => {
             window.removeEventListener("resize", debouncedResize);
         };
-    }, [pageType, divWidth, divHeight, isDrawerOpen, isFullscreen, visibilitySettings.layoutStyle]);
+    }, [pageType, divWidth, divHeight, isDrawerOpen, isFullscreen, visibilitySettings.layoutStyle, containerRefHeight]);
 
     useEffect(() => {
         const getPageData = async () => {
@@ -426,7 +426,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, compon
                         {/* && currentPage < (totalPages % 2 === 0 ? totalPages - 1 : totalPages - 1) */}
                         {/* Fix: Only show Next arrow if not on last spread in double page mode */}
                         {((pageType !== "double" && currentPage < totalPages) ||
-                            (pageType === "double" && currentPage < (totalPages % 2 == 0 ? totalPages : totalPages-1))) && (
+                            (pageType === "double" && currentPage < (totalPages % 2 == 0 ? totalPages : totalPages - 1))) && (
                                 <button
                                     onClick={handleNextPage}
                                     className="absolute flex hover:bg-[#ffffff40] rounded-full p-2 items-center right-5 transition-all duration-300 ease-in-out"

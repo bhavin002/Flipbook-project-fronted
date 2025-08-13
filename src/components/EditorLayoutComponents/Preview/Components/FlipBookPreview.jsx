@@ -15,8 +15,8 @@ import { getProductCartInfoApi } from '@/service/product.service.js';
 import { toast } from "sonner";
 import { FilterSlider } from "@/components/ui/filterSlider.jsx";
 
-export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false, publicFlipbookData }) {
-    const [currentPage, setCurrentPage] = useState(1);
+export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false, publicFlipbookData, startPage }) {
+    const [currentPage, setCurrentPage] = useState(startPage || 1);
     const [totalPages, setTotalPages] = useState(1);
     const [isDragging, setIsDragging] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(1);
@@ -46,7 +46,16 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const progressBarRef = useRef(null);
     const flipBookRef = useRef(null);
     const containerRef = useRef(null);
-    const transformRef = useRef(null); // Reference for TransformWrapper
+    const transformRef = useRef(null);
+
+    useEffect(() => {
+        if (startPage && startPage > 0 && flipBookRef.current?.setPage) {
+            const timer = setTimeout(() => {
+                setPage(startPage);
+            }, 1000);
+            return () => clearTimeout(timer);
+        }
+    }, [startPage]);
 
     useEffect(() => {
         const syncCartPrices = async () => {
@@ -576,6 +585,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         isMobile={activeTab.toLowerCase() === "mobile"}
                                         component={component}
                                         previewId={id}
+                                        containerRefHeight={containerRef?.current?.clientHeight}
                                         isPageOverviewOpen={isPageOverviewOpen}
                                         setIsPageOverviewOpen={setIsPageOverviewOpen}
                                         isPublicView={isPublicView}

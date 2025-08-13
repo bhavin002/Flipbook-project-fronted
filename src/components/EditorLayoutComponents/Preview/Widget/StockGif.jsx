@@ -85,7 +85,6 @@ export default function StockGif({ shape }) {
         skewX(${shape.skewX || 0}deg)
         skewY(${shape.skewY || 0}deg)
         translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`;
-    console.log(effectStyles);
 
     return (
         <div

@@ -1,5 +1,5 @@
 import FlipBookPreview from "@/components/EditorLayoutComponents/Preview/Components/FlipBookPreview";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { FlipbookSettingsProvider } from "@/context/FlipbookSettingsProvider";
 import { ShopSettingsProvider } from "@/context/ShopSettingsContext";
@@ -17,6 +17,9 @@ import { Loader } from "@/components/ui/loader";
 
 export default function EmbedFlipbook() {
     const { id } = useParams();
+    const [searchParams] = useSearchParams();
+    const startPage = searchParams.get("p");
+
     const [publicData, setPublicData] = useState(null);
     const [showUnlockDialog, setShowUnlockDialog] = useState(false);
     const [unlockLoading, setUnlockLoading] = useState(false);
@@ -151,7 +154,7 @@ export default function EmbedFlipbook() {
                         <FlipbookSettingsProvider publicData={publicData}>
                             <ShopSettingsProvider publicData={publicData}>
                                 <div className="h-[100vh] w-[100vw]">
-                                    <FlipBookPreview flipbookId={id} component="publicFlipbook" isPublicView={true} publicFlipbookData={publicData.flipbook} />
+                                    <FlipBookPreview flipbookId={id} component="publicFlipbook" isPublicView={true} publicFlipbookData={publicData.flipbook} startPage={startPage} />
                                 </div>
                             </ShopSettingsProvider>
                         </FlipbookSettingsProvider>
