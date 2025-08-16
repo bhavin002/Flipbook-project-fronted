@@ -1,6 +1,6 @@
+import DomainRestriction from "@/utils/embed/DomainRestriction";
 import Customize from "./Embed/Customize";
 import EmbedCode from "./Embed/EmbedCode";
-import DomainRestriction from "./Embed/DomainRestriction";
 import EmbedPreview from "./Embed/EmbedPreview";
 import { EmbedSettingsProvider } from "@/context/EmbedSettingsContext";
 
@@ -16,7 +16,7 @@ export default function Embed({ flipbookId, flipbookDetails }) {
                     <div className="lg:w-[40%] w-full lg:block space-y-4 lg:h-full">
                         <Customize flipbookId={flipbookId} />
                         <EmbedCode flipbookId={flipbookId} numberOfPages={flipbookDetails?.flipbookData?.numberOfPages} />
-                        <DomainRestriction />
+                        <DomainRestriction flipbookId={flipbookId}/>
                     </div>
                     <div className="lg:w-[60%] w-full sticky top-[-22px] h-fit">
                         <EmbedPreview flipbookId={flipbookId} />

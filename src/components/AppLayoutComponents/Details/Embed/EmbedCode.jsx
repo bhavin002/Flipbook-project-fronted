@@ -42,7 +42,7 @@ export default function EmbedCode({ flipbookId, numberOfPages }) {
     const generateEmbedCode = () => {
         const baseUrl = `${import.meta.env.VITE_APP_URL}/embed-flipbook/${flipbookId}`;
         const url = startPage !== '1' ? `${baseUrl}?p=${startPage}` : baseUrl;
-        return `<iframe src='${url}' width='100%' height='${height}' seamless='seamless' scrolling='no' frameBorder='0' allowFullScreen allow='autoplay; clipboard-read; clipboard-write'></iframe>`;
+        return `<iframe src=${url} width='100%' height='${height}' seamless='seamless' scrolling='no' frameBorder='0' allowFullScreen allow='autoplay; clipboard-read; clipboard-write'></iframe>`;
     };
 
     const pageOptions = [];

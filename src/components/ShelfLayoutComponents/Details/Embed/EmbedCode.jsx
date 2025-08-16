@@ -35,7 +35,7 @@ export default function EmbedCode({ flipbookId }) {
     };
 
     const generateEmbedCode = () => {
-        return `<iframe src={${import.meta.env.VITE_APP_URL}/embed-bookshelf/${flipbookId}} width='100%' height='${height}' seamless='seamless' scrolling='no' frameBorder='0' allowFullScreen allow='autoplay; clipboard-read; clipboard-write'></iframe>`;
+        return `<iframe src=${import.meta.env.VITE_APP_URL}/embed-bookshelf/${flipbookId} width='100%' height='${height}' seamless='seamless' scrolling='no' frameBorder='0' allowFullScreen allow='autoplay; clipboard-read; clipboard-write'></iframe>`;
     };
 
     return (

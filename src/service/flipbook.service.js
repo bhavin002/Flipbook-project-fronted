@@ -89,3 +89,13 @@ export const GetThumbnailApi = async (flipbookId) => {
     const response = await ApiClient().get(`/flipbook/thumbnail/${flipbookId}`);
     return response.data;
 }
+
+export const DomainRestrictionApi = async (flipbookId, data) => {
+    const response = await ApiClient().post(`/flipbook/domain-restriction/${flipbookId}`, data);
+    return response.data;
+}
+
+export const GetDomainRestrictionApi = async (flipbookId) => {
+    const response = await ApiClient().get(`/flipbook/get-domain-restriction/${flipbookId}`);
+    return response.data;
+}
