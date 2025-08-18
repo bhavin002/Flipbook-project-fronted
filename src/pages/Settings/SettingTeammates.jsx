@@ -12,6 +12,7 @@ import { GetUserRolesApi } from "@/service/user.role.service";
 import { toast } from 'sonner';
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { useWorkspaces } from '@/context/WorkspaceContext';
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function SettingTeammates() {
     const [selectedTeammates, setSelectedTeammates] = useState([]);
@@ -22,10 +23,9 @@ export default function SettingTeammates() {
     const [roles, setRoles] = useState([]);
     const [isLoadingRoles, setIsLoadingRoles] = useState(false);
     const [resendingId, setResendingId] = useState(null);
-    const [isTeammateOwner, setIsTeammateOwner] = useState(false);
     const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
     const [isDeletingTeammates, setIsDeletingTeammates] = useState(false);
-    const {currentWorkspace} = useWorkspaces();
+    const { currentWorkspace, isLoading: workspaceLoading } = useWorkspaces();
     const recordsPerPage = 5;
 
     useEffect(() => {
@@ -35,12 +35,11 @@ export default function SettingTeammates() {
                 // Fetch teammates
                 const teammatesResponse = await GetTeammatesApi();
                 setTeammates(teammatesResponse.data.teammateData || []);
-                setIsTeammateOwner(teammatesResponse.data.isTeammateOwner || false);
 
                 // Fetch roles
                 setIsLoadingRoles(true);
                 const rolesResponse = await GetUserRolesApi();
-                console.log("role ??>?",rolesResponse.data)
+                console.log("role ??>?", rolesResponse.data)
                 setRoles(rolesResponse.data || []);
             } catch (error) {
                 toast.error("Failed to fetch data", {
@@ -155,9 +154,9 @@ export default function SettingTeammates() {
 
     const handleTeammateRoleUpdate = (teammateId, newRoleId) => {
         // Update the local state with the new role
-        setTeammates(teammates.map(teammate => 
-            teammate._id === teammateId 
-                ? { ...teammate, userRole: newRoleId } 
+        setTeammates(teammates.map(teammate =>
+            teammate._id === teammateId
+                ? { ...teammate, userRole: newRoleId }
                 : teammate
         ));
     };
@@ -174,9 +173,9 @@ export default function SettingTeammates() {
                 </CardHeader>
 
                 <CardContent>
-                    {isTeammateOwner && <InviteTeammateDialog setTeammates={setTeammates} />}
+                    <InviteTeammateDialog setTeammates={setTeammates} />
                     <div className="flex justify-center flex-wrap mt-8 mb-6 border shadow-sm rounded-lg p-4 gap-1">
-                        The owner of this workspace is : <p className="font-semibold">{currentWorkspace.ownerName}</p>
+                        The owner of this workspace is : {workspaceLoading ? <Skeleton className="h-5 w-32" /> : <p className="font-semibold">{currentWorkspace?.ownerName}</p>}
                     </div>
 
                     <div className="mt-8">
@@ -212,7 +211,7 @@ export default function SettingTeammates() {
                                 isLoadingRoles={isLoadingRoles}
                                 resendingId={resendingId}
                                 onResendInvitation={handleResendInvitation}
-                                isTeammateOwner={isTeammateOwner}
+                                isTeammateOwner={true} // handle this is dynamic based on permission
                                 onTeammateRoleUpdate={handleTeammateRoleUpdate}
                             />
 

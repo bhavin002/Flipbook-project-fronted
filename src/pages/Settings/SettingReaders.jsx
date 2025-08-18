@@ -147,7 +147,7 @@ export default function SettingReaders() {
                 <h1 className="text-2xl font-bold mb-2">Readers</h1>
                 <p className="text-gray-500">Here you can add or remove account readers.</p>
             </div>
-            <Card>
+            {/* <Card>
                 <CardHeader>
                     <CardTitle>Show folders to your readers</CardTitle>
                 </CardHeader>
@@ -173,7 +173,7 @@ export default function SettingReaders() {
                         </TooltipProvider>
                     </div>
                 </CardContent>
-            </Card>
+            </Card> */}
             <Card>
                 <CardHeader>
                     <CardTitle>Manage your readers</CardTitle>
