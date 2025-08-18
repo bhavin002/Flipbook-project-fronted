@@ -49,7 +49,6 @@ export default function SettingWorkspace() {
                 // Set previewBrandLogoId if exists
                 if (response.data.previewBrandLogoId) {
                     setSelectedLogo({
-                        id: response.data._id,
                         src: response.data.previewBrandLogoId,
                         alt: `${response.data.name} previewBrandLogoId`
                     });
@@ -89,6 +88,9 @@ export default function SettingWorkspace() {
 
     const handleLogoSave = async () => {
         try {
+            if (!selectedLogo?.id) {
+                return;
+            }
             setIsLogoLoading(true);
             const logoData = {
                 previewBrandLogoId: selectedLogo?.id || ""

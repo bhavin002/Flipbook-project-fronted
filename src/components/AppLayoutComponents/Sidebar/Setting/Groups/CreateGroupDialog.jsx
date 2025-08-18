@@ -60,7 +60,7 @@ export default function CreateGroupDialog({ setGroups }) {
             const response = await GetWorkspaceReadersApi();
             const allReaders = response.data;
 
-            const acceptedReaders = allReaders.filter(reader => reader.status === true);
+            const acceptedReaders = allReaders.filter(reader => reader.status === 1);
 
             // Set flag if there are no accepted readers
             setHasAcceptedReaders(acceptedReaders.length > 0);
