@@ -63,7 +63,7 @@ export const ZeroState = ({
                         className="relative mb-6"
                     >
                         <motion.img 
-                            src="/src/assets/book_logo.png" 
+                            src="/assets/book_logo.png" 
                             alt="Logo" 
                             className="w-auto h-12"
                             animate="animate"

@@ -90,7 +90,7 @@ export default function FlipbookSummary({ viewsCount = 0, impressionCount = 0, o
                                 <div className="flex flex-col space-y-2">
                                     <img
                                         className="max-w-full mx-auto"
-                                        src="/src/assets/page_1.jpg"
+                                        src="/assets/page_1.jpg"
                                         alt="page_1"
                                     />
                                 </div>

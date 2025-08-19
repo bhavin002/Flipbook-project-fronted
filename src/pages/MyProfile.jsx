@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
 import { Loader } from "@/components/ui/loader";
-import bookLogo from '@/assets/book_thumbnail.jpg';
+import bookLogo from '/assets/book_thumbnail.jpg';
 
 export default function MyProfile() {
     const [data, setData] = useState(null);

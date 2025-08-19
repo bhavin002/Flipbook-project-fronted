@@ -1,7 +1,7 @@
 import { GetShelfPreview } from "@/service/bookshelf.service"
 import { useEffect, useState, useRef } from "react"
 import { toast } from "sonner"
-import bookLogo from '@/assets/book_thumbnail.jpg';
+import bookLogo from '/assets/book_thumbnail.jpg';
 import { Input } from "../ui/input";
 import { Loader2, Search } from "lucide-react";
 import { useBookshelf } from "@/context/BookshelfContext";

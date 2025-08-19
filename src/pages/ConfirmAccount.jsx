@@ -76,7 +76,7 @@ export default function ConfirmAccount() {
               <CardHeader className="text-center space-y-4">
                 <div style={{ "transform": "scale(1)", "margin": "auto" }}>
                   <img
-                    src="/src/assets/logo.png"
+                    src="/assets/logo.png"
                     alt="Flipsnack logo"
                     width={200}
                     className="my-2"

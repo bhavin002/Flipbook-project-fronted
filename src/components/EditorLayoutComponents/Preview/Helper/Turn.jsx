@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import $ from "jquery";
-import pageTurnSound from "/src/assets/page-turn02-103822.mp3";
+import pageTurnSound from "/assets/page-turn02-103822.mp3";
 function Turn({
   style = {},
   className = "",

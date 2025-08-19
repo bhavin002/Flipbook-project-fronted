@@ -32,7 +32,7 @@ export default function SlideShow({ shape, onSelect, handleDragStart, handleDrag
             };
         }else{
             // shape.fill = "#ffffffa6";
-            shape.src = "/src/assets/icons/SlideShow.svg";
+            shape.src = "/assets/icons/SlideShow.svg";
         }
     }, [shape.src, shape?.htmlData?.images?.length]);
 

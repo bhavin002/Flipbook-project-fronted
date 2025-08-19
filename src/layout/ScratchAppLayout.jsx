@@ -11,7 +11,7 @@ export default function ScratchAppLayout() {
                 <div className="cursor-pointer" onClick={() => {
                         navigate("/myflipbooks")
                     }}>
-                        <img src="/src/assets/logo.png" width={200} alt="Logo" />
+                        <img src="/assets/logo.png" width={200} alt="Logo" />
                     </div>
                     <div className="flex md:gap-6 gap-2 items-center">
                         <ProfileDropDownCom />

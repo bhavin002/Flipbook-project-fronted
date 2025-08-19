@@ -240,7 +240,7 @@ export default function FileUploadReorder() {
               onDragOver={handleDragOverUpload}
               onDrop={handleDropUpload}
             >
-              <img src='/src/assets/upload_icon.svg' />
+              <img src='/assets/upload_icon.svg' />
               <div className='space-y-1 flex flex-col justify-center text-center'>
                 <h3 className="text-lg font-medium">Drag and drop or upload your files</h3>
                 <p className="text-sm text-gray-500">Supported formats: PDF, PPTX, ODP, JPG, PNG, GIF.</p>

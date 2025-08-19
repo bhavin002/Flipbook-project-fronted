@@ -37,7 +37,7 @@ export default function AppLayout({ setIsSidebarOpen }) {
                         <div className="cursor-pointer" onClick={() => {
                             navigate("/myflipbooks")
                         }}>
-                            <img src="/src/assets/logo.png" width={200} />
+                            <img src="/assets/logo.png" width={200} />
                         </div>
                         {shouldShowSearchAndFilter() && (
                             <div className="relative md:flex gap-6 hidden">

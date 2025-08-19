@@ -176,7 +176,7 @@ export default function CreateDropDownCom() {
                 <DialogContent hideClose>
                     <div className="flex flex-col items-center justify-center p-4">
                         <img
-                            src="/src/assets/Uploading_cloud.gif"
+                            src="/assets/Uploading_cloud.gif"
                         />
                         <div className="text-lg font-semibold mb-5">
                             Uploading your PDF...
@@ -193,7 +193,7 @@ export default function CreateDropDownCom() {
             <Dialog open={multiFileDialogOpen} onOpenChange={setMultiFileDialogOpen}>
                 <DialogContent hideClose>
                     <div className="flex flex-col items-center justify-center space-y-4">
-                        <img src="/src/assets/box_lines.svg" />
+                        <img src="/assets/box_lines.svg" />
                         <div className="space-y-2 text-center">
                             <div className="text-xl font-bold">You have selected {pendingFiles.length} files</div>
                             <div className="text-center text-gray-600">How would you like to upload them?</div>

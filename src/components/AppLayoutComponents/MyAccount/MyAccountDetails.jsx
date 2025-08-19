@@ -26,7 +26,7 @@ export default function MyAccountDetails() {
                         </Label>
                         <div className="flex items-center gap-4">
                             <span className="flex shrink-0 p-2 overflow-hidden justify-center items-center size-20 border-2 border-dotted border-gray-300 text-gray-400 rounded-full dark:border-neutral-700 dark:text-neutral-600">
-                                <img src="/src/assets/profile.jpg" className="w-auto h-auto max-w-[76px] max-h-[76px] object-cover" alt="Profile" />
+                                <img src="/assets/profile.jpg" className="w-auto h-auto max-w-[76px] max-h-[76px] object-cover" alt="Profile" />
                             </span>
                             <div className="space-y-2">
                                 <Button variant="outline" size="sm">

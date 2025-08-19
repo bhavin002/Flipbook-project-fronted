@@ -144,15 +144,15 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
             {/* Drag masks for Links and Tags */}
             <div
                 id="go-to-button-link"
-                className="drag-mask bg-[url(/src/assets/icons/Link.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/Link.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="square-caption"
-                className="drag-mask bg-[url(/src/assets/icons/Plus.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/Plus.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="embed-code"
-                className="drag-mask bg-[url(/src/assets/icons/Code.svg)] bg-[#ebf0fc] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/Code.svg)] bg-[#ebf0fc] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="link-area"
@@ -173,7 +173,7 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
             ></div>
             <div
                 id="slideshow"
-                className="drag-mask bg-[url(/src/assets/icons/SlideShow.svg)] bg-[#ebf0fc] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/SlideShow.svg)] bg-[#ebf0fc] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="photo-slideshow"
@@ -182,15 +182,15 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
             {/* Drag masks for Audio & Video */}
             <div
                 id="video-embed"
-                className="drag-mask bg-[url(/src/assets/icons/Play.svg)] bg-[#000000] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/Play.svg)] bg-[#000000] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="video-button"
-                className="drag-mask bg-[url(/src/assets/icons/VideoButton.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/VideoButton.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="audio-button"
-                className="drag-mask bg-[url(/src/assets/icons/AudioButton.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/AudioButton.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             {/* Drag masks for Shop */}
             <div
@@ -199,7 +199,7 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
             ></div>
             <div
                 id="shop-button"
-                className="drag-mask bg-[url(/src/assets/icons/ShopButton.svg)] bg-[#000000] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/ShopButton.svg)] bg-[#000000] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="product-tag"
@@ -221,85 +221,85 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
             {/* Drag masks for Navigation */}
             <div
                 id="go-to-previous-page"
-                className="drag-mask bg-[url(/src/assets/icons/PrevPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/PrevPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="go-to-next-page"
-                className="drag-mask bg-[url(/src/assets/icons/NextPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/NextPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="go-to-page"
-                className="drag-mask bg-[url(/src/assets/icons/GoToPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/GoToPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="go-to-first-page"
-                className="drag-mask bg-[url(/src/assets/icons/GoToFirstPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/GoToFirstPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="go-to-last-page"
-                className="drag-mask bg-[url(/src/assets/icons/GoToFirstPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/GoToFirstPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             {/* Drag masks for Social (reusing go-to-button-link for most, but adding specific ones for clarity) */}
             <div
                 id="tiktok-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/TikTok.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/TikTok.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="pinterest-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/Pinterest.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/Pinterest.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="reddit-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/Reddit.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/Reddit.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="spotify-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/Spotify.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/Spotify.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="youtube-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/Youtube.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/Youtube.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="instagram-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/Instagram.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/Instagram.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="messenger-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/Massenger.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/Massenger.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="facebook-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/Facebook.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/Facebook.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="linkedin-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/LinkedIn.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/LinkedIn.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="twitter-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/Twitter.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/Twitter.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="snapchat-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/Snapchat.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/Snapchat.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="whatsapp-social"
-                className="drag-mask bg-[url(/src/assets/icons/social/Whatsapp.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/social/Whatsapp.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             {/* Drag masks for Other */}
             <div
                 id="cart-other"
-                className="drag-mask bg-[url(/src/assets/icons/Cart.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/Cart.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="basket-other"
-                className="drag-mask bg-[url(/src/assets/icons/Basket.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/Basket.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
             <div
                 id="credit-card-other"
-                className="drag-mask bg-[url(/src/assets/icons/CreditCard.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+                className="drag-mask bg-[url(/assets/icons/CreditCard.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
             ></div>
 
             <div className="flex flex-col min-h-screen">
@@ -308,7 +308,7 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
                         <div className="cursor-pointer" onClick={() => {
                             navigate("/myflipbooks")
                         }}>
-                            <img src="/src/assets/logo.png" width={200} alt="Logo" />
+                            <img src="/assets/logo.png" width={200} alt="Logo" />
                         </div>
                         <div className="flex-1 flex justify-center">
                             <Select value={templateType} onValueChange={setTemplateType}>                                <SelectTrigger className="w-[180px]">

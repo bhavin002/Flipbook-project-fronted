@@ -79,7 +79,7 @@ export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emai
           <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-6">
               <div style={{ "transform": "scale(1)", "margin": "auto" }}>
-                <img src="/src/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
               </div>
               <Button variant="outline" className="w-full" type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 48 48" className="mr-2">
@@ -163,7 +163,7 @@ export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emai
             'background': 'linear-gradient(90deg, rgba(2, 0, 36, 0) 0%, rgb(124 58 237 / 55%) 100%)'
           }}>
             <img
-              src="/src/assets/sign-up-img.jpg"
+              src="/assets/sign-up-img.jpg"
               alt="Sign up illustration"
               className="absolute inset-0 h-full w-full object-contain dark:brightness-[0.2] dark:grayscale"
             />

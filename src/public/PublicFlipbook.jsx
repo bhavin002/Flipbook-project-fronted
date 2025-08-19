@@ -26,8 +26,10 @@ export default function PublicFlipbook() {
     const [privateState, setPrivateState] = useState({ status: null, loading: false });
     const [isInitialLoading, setIsInitialLoading] = useState(true);
     const passwordInputRef = useRef(null);
-    const navigate = useNavigate();
-
+    const navigate = useNavigate(); if (typeof window !== 'undefined') {
+        const document = window?.document;
+        console.log("Referrer:", document.referrer);
+    }
     useEffect(() => {
         async function fetchData() {
             setIsInitialLoading(true);

@@ -46,14 +46,14 @@ export default function ProfileDropDownCom() {
         <DropdownMenu>
             <DropdownMenuTrigger>
                 <Avatar>
-                    <AvatarImage src="/src/assets/profile.jpg" />
+                    <AvatarImage src="/assets/profile.jpg" />
                     <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-64">
                 <div className="flex items-center">
                     <Avatar>
-                        <AvatarImage src="/src/assets/profile.jpg" />
+                        <AvatarImage src="/assets/profile.jpg" />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                     <div>

@@ -48,7 +48,7 @@ export default function SharedWithMe({ isSidebarOpen }) {
                     >
                         <div className="relative bg-[#ede9f5] backdrop-blur-sm p-3 flex-grow">
                             <img
-                                src={`${flipbook.thumbnail ? flipbook.thumbnail : "/src/assets/book_thumbnail.jpg"}`}
+                                src={`${flipbook.thumbnail ? flipbook.thumbnail : "/assets/book_thumbnail.jpg"}`}
                                 alt="Flipbook Cover"
                                 className={`max-h-[200px] h-full m-auto transition-transform duration-500 rounded-t-md`}
                             />

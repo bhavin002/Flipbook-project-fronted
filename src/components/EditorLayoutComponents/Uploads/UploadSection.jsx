@@ -265,7 +265,7 @@ export default function UploadSection({
       src: media.mediaType === "video/mp4" ? media.url : imgSrc,
       visible: true,
       bgImage: media?.thumbnailUrl,
-      iconSrc: "/src/assets/icons/PlayVideo.svg",
+      iconSrc: "/assets/icons/PlayVideo.svg",
       title: media.mediaType === "video/mp4" ? "stock-video" : imageMediaTypes.includes(media.mediaType) ? "upload-photo" : "stock-gif",
       layer: media.mediaType === "video/mp4" ? "Video widget" : "Image",
       htmlType: media.mediaType === "video/mp4" ? "stock-video" : imageMediaTypes.includes(media.mediaType) ? "upload-photo" : "stock-gif",

@@ -63,7 +63,7 @@ export function ForgotPasswordForm({
                 <Card className="shadow rounded-xl">
                     <CardHeader className="text-center space-y-4">
                         <div style={{ "transform": "scale(1)", "margin": "auto" }}>
-                            <img src="/src/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                            <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
                         </div>
                         <CardTitle>Your reset link is on the way!</CardTitle>
                         <CardDescription>
@@ -95,7 +95,7 @@ export function ForgotPasswordForm({
             <Card className="shadow rounded-xl">
                 <CardHeader className="text-center space-y-4">
                     <div style={{ "transform": "scale(1)", "margin": "auto" }}>
-                        <img src="/src/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                        <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
                     </div>
                     <CardTitle>Forgot Password</CardTitle>
                     <CardDescription>
