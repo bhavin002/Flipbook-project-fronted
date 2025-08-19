@@ -491,3 +491,7 @@ div:hover::-webkit-scrollbar-thumb {
     margin-right: 0%;
   }
 }
+
+html , body, #root {
+  height: 100%;
+}
