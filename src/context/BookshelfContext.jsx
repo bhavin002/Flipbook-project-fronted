@@ -136,7 +136,7 @@ export const BookshelfProvider = ({ children, flipbookId }) => {
             formData.append('openInNewTab', openInNewTab);
             formData.append('allowSearch', allowSearch);
             formData.append('showFlipbookName', showFlipbookName);
-            formData.append('logoLink', logoLink);
+            logoLink && formData.append('logoLink', logoLink);
 
             if (selectedBackground === 'transparent') {
                 formData.append('backgroundColor', BackgroundColorType.TRANSPARENT);

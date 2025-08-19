@@ -59,7 +59,7 @@ export default function DomainRestriction({ flipbookId }) {
                 .map(domain => domain.value.trim());
 
             const payload = {
-                useDomainRestrictions: isRestrictionEnabled,
+                useDomainRestrictions: !isRestrictionEnabled,
                 allowedDomains: validDomains
             };
 

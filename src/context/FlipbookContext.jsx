@@ -27,7 +27,8 @@ export function FlipbookProvider({ children }) {
                 response = await GetFlipbooksApi(filters);
             } else {
                 const payload = {
-                    type: isTemplateView ? [1] : [0]
+                    type: isTemplateView ? [1] : [0],
+                    folderId: "workspace"
                 }
                 response = await GetFlipbooksApi(payload);
             }
