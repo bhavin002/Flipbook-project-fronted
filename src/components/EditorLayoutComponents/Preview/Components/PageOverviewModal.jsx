@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import bookLogo from '@/assets/book_thumbnail.jpg';
+import bookLogo from '/assets/book_thumbnail.jpg';
 import { PageNavigationActions } from '@/components/EditorLayoutComponents/Preview/Helper/PageNavigationActions.js';
 
 const PageOverviewModal = ({

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search, CheckCircle } from "lucide-react";
 import { Loader } from "@/components/ui/loader";
-import bookLogo from '@/assets/book_thumbnail.jpg';
+import bookLogo from '/assets/book_thumbnail.jpg';
 import { useShelfCreate } from "@/layout/ShelfCreateLayout";
 
 export default function CreateShelf() {
@@ -98,7 +98,7 @@ export default function CreateShelf() {
                                 >
                                     {fb.name}
                                 </p>
-                                <img src="/src/assets/globe.png" className="w-4 h-4" />
+                                <img src="/assets/globe.png" className="w-4 h-4" />
                             </div>
                         </div>
                     ))

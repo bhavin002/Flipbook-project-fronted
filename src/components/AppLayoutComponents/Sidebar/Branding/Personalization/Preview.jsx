@@ -108,7 +108,7 @@ export default function Preview() {
                     <div className="flex-1">
                         <div className="bg-white rounded-md p-1 text-xs flex items-center gap-1">
                             <img
-                                src={previewUrls.favicon || "/src/assets/book_logo.png"}
+                                src={previewUrls.favicon || "/assets/book_logo.png"}
                                 className="h-4 w-auto shrink-0"
                                 alt="Logo"
                             />

@@ -163,7 +163,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
             case 'Private':
                 return <Users className='w-4 h-4' />;
             case 'Readers Only':
-                return <img src="/src/assets/reader.svg" className="w-5 h-5" />
+                return <img src="/assets/reader.svg" className="w-5 h-5" />
         }
     };
 
@@ -330,7 +330,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
 
                             <div className="relative bg-[#ede9f5] backdrop-blur-sm p-3 flex-grow">
                                 <img
-                                    src={`${flipbook.thumbnail ? flipbook.thumbnail : "/src/assets/book_thumbnail.jpg"}`}
+                                    src={`${flipbook.thumbnail ? flipbook.thumbnail : "/assets/book_thumbnail.jpg"}`}
                                     alt="Flipbook Cover"
                                     className={`max-h-[200px] h-full m-auto transition-transform duration-500 rounded-t-md`}
                                 />

@@ -71,7 +71,7 @@ export default function VerifyReader() {
                     <Card className="shadow rounded-xl">
                         <CardHeader className="text-center space-y-4">
                             <div style={{ "transform": "scale(1)", "margin": "auto" }}>
-                                <img src="/src/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                                <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
                             </div>
                             <CardTitle>Verifying Invitation...</CardTitle>
                             <CardDescription>
@@ -91,7 +91,7 @@ export default function VerifyReader() {
                     <Card className="shadow rounded-xl">
                         <CardHeader className="text-center space-y-4">
                             <div style={{ "transform": "scale(1)", "margin": "auto" }}>
-                                <img src="/src/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                                <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
                             </div>
                             {isVerified ? (
                                 <CardTitle>Invitation Accepted Successfully!</CardTitle>

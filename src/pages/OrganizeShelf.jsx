@@ -3,7 +3,7 @@ import { useShelfCreate } from "@/layout/ShelfCreateLayout";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { arrayMove, SortableContext, useSortable, rectSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import bookLogo from '@/assets/book_thumbnail.jpg';
+import bookLogo from '/assets/book_thumbnail.jpg';
 import { restrictToParentElement } from '@dnd-kit/modifiers';
 import { Loader } from "@/components/ui/loader";
 
@@ -51,7 +51,7 @@ function SortableFlipbookCard({ flipbook }) {
         >
           {flipbook.name}
         </p>
-        <img src="/src/assets/globe.png" className="w-4 h-4"/>
+        <img src="/assets/globe.png" className="w-4 h-4"/>
       </div>
     </div>
   );

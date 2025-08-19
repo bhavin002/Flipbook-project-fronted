@@ -148,7 +148,7 @@ export default function ShelfCreateLayout() {
                         <div className="cursor-pointer" onClick={() => {
                             navigate("/myflipbooks")
                         }}>
-                            <img src="/src/assets/logo.png" width={200} alt="Logo" />
+                            <img src="/assets/logo.png" width={200} alt="Logo" />
                         </div>
                         <div className="relative lg:flex gap-6 hidden">
                             <div className="flex items-center space-x-2">

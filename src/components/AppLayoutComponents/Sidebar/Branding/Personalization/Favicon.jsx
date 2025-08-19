@@ -79,7 +79,7 @@ export default function Favicon() {
                 <div className="flex items-center gap-4">
                     <div className="flex justify-center items-center size-12">
                         <img
-                            src={previewUrls.favicon || "/src/assets/book_logo.png"}
+                            src={previewUrls.favicon || "/assets/book_logo.png"}
                             className="w-auto h-auto max-h-12 max-w-full"
                             alt="Favicon"
                         />

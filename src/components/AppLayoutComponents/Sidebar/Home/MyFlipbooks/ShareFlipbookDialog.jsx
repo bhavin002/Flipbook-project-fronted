@@ -57,22 +57,22 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                     <div className="flex items-center gap-2 flex-wrap">
                         <FacebookShareButton url={shareUrl} quote="Check out this flipbook!">
                             <Button variant="outline">
-                                <img className="w-7" src="/src/assets/social/facebook.png" alt="Facebook" />
+                                <img className="w-7" src="/assets/social/facebook.png" alt="Facebook" />
                             </Button>
                         </FacebookShareButton>
                         <TwitterShareButton url={shareUrl} title="Check out this flipbook!">
                             <Button variant="outline">
-                                <img className="w-7" src="/src/assets/social/twitter.png" alt="Twitter" />
+                                <img className="w-7" src="/assets/social/twitter.png" alt="Twitter" />
                             </Button>
                         </TwitterShareButton>
                         <WhatsappShareButton url={shareUrl} title="Check out this flipbook!">
                             <Button variant="outline">
-                                <img className="w-7" src="/src/assets/social/whatsapp.png" alt="WhatsApp" />
+                                <img className="w-7" src="/assets/social/whatsapp.png" alt="WhatsApp" />
                             </Button>
                         </WhatsappShareButton>
                         <LinkedinShareButton url={shareUrl} title="Check out this flipbook!">
                             <Button variant="outline">
-                                <img className="w-7" src="/src/assets/social/linkedin.png" alt="LinkedIn" />
+                                <img className="w-7" src="/assets/social/linkedin.png" alt="LinkedIn" />
                             </Button>
                         </LinkedinShareButton>
                         <Button variant="outline" onClick={sendEmail}>

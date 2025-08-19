@@ -84,7 +84,7 @@ export default function AudioButton({ shape, visibilitySettings }) {
       />
       
       <img
-        src="/src/assets/icons/AudioButton.svg"
+        src="/assets/icons/AudioButton.svg"
         alt={shape.title}
         className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
         style={{
@@ -94,7 +94,7 @@ export default function AudioButton({ shape, visibilitySettings }) {
       />
       
       <img
-        src="/src/assets/icons/PauseAudioButton.svg"
+        src="/assets/icons/PauseAudioButton.svg"
         alt={`${shape.title}-pause`}
         className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
         style={{
