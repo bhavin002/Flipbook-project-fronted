@@ -16,8 +16,8 @@ export default function MyAccount() {
     };
     
     return (
-        <div className="p-6 max-md:w-[100vw] h-full overflow-y-hidden">
-            <Tabs
+        <div className="p-6 pt-0 max-md:w-[100vw] h-full overflow-y-hidden">
+            {/* <Tabs
                 defaultValue={activeTab}
                 value={activeTab}
                 onValueChange={handleTabChange}
@@ -37,7 +37,8 @@ export default function MyAccount() {
                 <TabsContent value="email-preferences" className="h-full overflow-y-auto">
                     <EmailPreferences />
                 </TabsContent>
-            </Tabs>
+            </Tabs> */}
+            <MyAccountDetails />
         </div>
     );
 }
