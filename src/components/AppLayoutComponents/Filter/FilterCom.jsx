@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { ListFilter } from 'lucide-react';
 import * as React from "react"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import FilterDropdownCom from "./FilterDropdownCom";
 import FilterSelectCom from "./FilterSelectCom";
 import CreatedByFilter from "./CreatedByFilter";
@@ -14,6 +14,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Label } from "@/components/ui/label";
 import LoadingButton from "@/utils/LoadingButton";
+import { useRef } from "react";
 
 export default function FilterCom() {
     const [createdByFilter, setCreatedByFilter] = useState([]);
@@ -28,6 +29,9 @@ export default function FilterCom() {
     const { fetchFlipbooks } = useFlipbook();
     const location = useLocation();
     const navigate = useNavigate();
+
+    // Add a ref to track if we're currently processing URL changes
+    const isProcessingUrlChange = useRef(false);
 
     const encodeFiltersToUrl = (filterData) => {
         try {
@@ -119,8 +123,25 @@ export default function FilterCom() {
         return null;
     };
 
-    const buildApiPayloadFromFilterData = (filterData) => {
+    const buildApiPayloadFromFilterData = (filterData, searchText = '') => {
         const payload = {};
+
+        // Add search text if provided
+        if (searchText && searchText.trim()) {
+            payload.searchText = searchText.trim();
+        }
+
+        // Add folder ID if in folder view
+        const getFolderIdFromRoute = () => {
+            const path = location.pathname; 
+            const folderMatch = path.match(/\/myflipbooks\/flipbooks\/folder\/([^\/]+)/);
+            return folderMatch ? folderMatch[1] : null;
+        };
+
+        const folderId = getFolderIdFromRoute();
+        if (folderId) {
+            payload.folderId = folderId;
+        }
 
         if (filterData.visibility && filterData.visibility.length > 0) {
             const visibilityValues = [];
@@ -233,6 +254,26 @@ export default function FilterCom() {
         return count;
     };
 
+    // Memoized function to handle API calls
+    const handleApiCall = useCallback(async (payload) => {
+        if (isProcessingUrlChange.current) return;
+        
+        isProcessingUrlChange.current = true;
+        setIsLoading(true);
+        
+        try {
+            await fetchFlipbooks(payload);
+        } catch (error) {
+            toast.error("Failed to load data");
+        } finally {
+            setIsLoading(false);
+            // Reset the flag after a short delay to prevent race conditions
+            setTimeout(() => {
+                isProcessingUrlChange.current = false;
+            }, 100);
+        }
+    }, [fetchFlipbooks]);
+
     useEffect(() => {
         const fetchTeammates = async () => {
             if (teammates.length > 0) return;
@@ -259,9 +300,10 @@ export default function FilterCom() {
         const handleUrlFilterChange = async () => {
             const searchParams = new URLSearchParams(location.search);
             const encodedFilters = searchParams.get('filter');
+            const searchText = searchParams.get('search') || '';
             const isInFolderView = location.pathname.includes('/folder/');
 
-            if (encodedFilters || !isInFolderView) {
+            if (encodedFilters || !isInFolderView || searchText) {
                 if (encodedFilters) {
                     try {
                         const decodedFilters = decodeFiltersFromUrl(encodedFilters);
@@ -280,19 +322,17 @@ export default function FilterCom() {
                             setLastUpdatedFilter(lastUpdated);
                             setFilterCount(calculateFilterCount(decodedFilters));
 
-                            setIsLoading(true);
-                            const payload = buildApiPayloadFromFilterData(decodedFilters);
-                            await fetchFlipbooks(payload);
+                            const payload = buildApiPayloadFromFilterData(decodedFilters, searchText);
+                            await handleApiCall(payload);
                         }
                     } catch (error) {
                         console.error("Error processing filters from URL:", error);
                         const newSearchParams = new URLSearchParams(location.search);
                         newSearchParams.delete('filter');
                         navigate(`${location.pathname}${newSearchParams.toString() ? '?' + newSearchParams.toString() : ''}`, { replace: true });
-                    } finally {
-                        setIsLoading(false);
                     }
-                } else if (!isInFolderView) {
+                } else if (!isInFolderView || searchText) {
+                    // Reset filters but keep search
                     setCreatedByFilter([]);
                     setVisibilityFilter([]);
                     setStatusFilter([]);
@@ -300,14 +340,15 @@ export default function FilterCom() {
                     setLastUpdatedFilter("anytime");
                     setFilterCount(0);
 
-                    setIsLoading(true);
-                    try {
-                        await fetchFlipbooks();
-                    } catch (error) {
-                        toast.error("Failed to load data");
-                    } finally {
-                        setIsLoading(false);
-                    }
+                    const payload = buildApiPayloadFromFilterData({
+                        status: [],
+                        visibility: [],
+                        createdBy: [],
+                        dateCreated: "",
+                        lastUpdated: ""
+                    }, searchText);
+                    
+                    await handleApiCall(payload);
                 }
             } else {
                 setCreatedByFilter([]);
@@ -320,7 +361,7 @@ export default function FilterCom() {
         };
 
         handleUrlFilterChange();
-    }, [location.search, location.pathname]);
+    }, [location.search, handleApiCall, location.pathname, navigate]);
 
     const applyFilters = () => {
         const filterData = getCurrentFilterState();
@@ -331,13 +372,15 @@ export default function FilterCom() {
             (filterData.dateCreated && filterData.dateCreated !== "anytime") ||
             (filterData.lastUpdated && filterData.lastUpdated !== "anytime");
 
-        const searchParams = new URLSearchParams();
+        const searchParams = new URLSearchParams(location.search);
 
         if (hasActiveFilters) {
             const encodedFilters = encodeFiltersToUrl(filterData);
             if (encodedFilters) {
                 searchParams.set('filter', encodedFilters);
             }
+        } else {
+            searchParams.delete('filter');
         }
 
         const basePath = '/myflipbooks/flipbooks';
@@ -346,7 +389,14 @@ export default function FilterCom() {
     };
 
     const clearAllFilters = () => {
-        navigate('/myflipbooks/flipbooks', { replace: true });
+        const searchParams = new URLSearchParams(location.search);
+        const searchText = searchParams.get('search');
+        
+        const newUrl = searchText 
+            ? `/myflipbooks/flipbooks?search=${encodeURIComponent(searchText)}`
+            : '/myflipbooks/flipbooks';
+            
+        navigate(newUrl, { replace: true });
     };
 
     const getCreatedByOptions = () => {

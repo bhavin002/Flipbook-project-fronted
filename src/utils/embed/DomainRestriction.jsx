@@ -50,7 +50,7 @@ export default function DomainRestriction({ flipbookId }) {
         }
     }, [flipbookId]);
 
-    const saveDomainRestrictions = async (domainsToSave) => {
+    const saveDomainRestrictions = async (domainsToSave, restrictionEnabled = isRestrictionEnabled) => {
         try {
             setIsSaving(true);
 
@@ -59,7 +59,7 @@ export default function DomainRestriction({ flipbookId }) {
                 .map(domain => domain.value.trim());
 
             const payload = {
-                useDomainRestrictions: !isRestrictionEnabled,
+                useDomainRestrictions: restrictionEnabled,
                 allowedDomains: validDomains
             };
 
@@ -79,7 +79,7 @@ export default function DomainRestriction({ flipbookId }) {
 
         try {
             setIsSaving(true);
-            await saveDomainRestrictions(domains);
+            await saveDomainRestrictions(domains, newValue);
         } catch (error) {
             toast.error("Error toggling domain restrictions", {
                 description: error.message || "Oops! Something went wrong."
