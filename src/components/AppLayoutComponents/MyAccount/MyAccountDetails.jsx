@@ -10,7 +10,7 @@ import DeleteAccountDialog from "./DeleteAccountDialog";
 
 export default function MyAccountDetails() {
     return (
-        <div className="py-6 max-w-[100vw] overflow-auto space-y-4 h-full flex flex-col">
+        <div className="max-w-[100vw] overflow-auto space-y-4 h-full flex flex-col">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Account details</h1>
                 <p className="text-gray-500">View and update your account information.</p>
@@ -45,7 +45,7 @@ export default function MyAccountDetails() {
                     <Button>Save changes</Button>
                 </CardContent>
             </Card>
-            <Card>
+            {/* <Card>
                 <CardHeader>
                     <CardTitle>Edit your email address and password</CardTitle>
                 </CardHeader>
@@ -89,7 +89,7 @@ export default function MyAccountDetails() {
                 <CardContent>
                     <DeleteAccountDialog />
                 </CardContent>
-            </Card>
+            </Card> */}
         </div>
     )
 }
