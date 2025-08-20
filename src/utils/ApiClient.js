@@ -16,7 +16,8 @@ export default function ApiClient() {
         'Content-Type': 'application/json',
         Authorization: token ? `${token}` : '',
         workspaceid: workspaceid ? workspaceid : '',
-        timezone: timezone || ''
+        timezone: timezone || '',
+        "X-Custom-Referrer": document.referrer || window.location.origin
     };
 
     const instance = axios.create({
