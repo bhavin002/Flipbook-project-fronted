@@ -5,16 +5,15 @@ import { useAuth } from "@/context/AuthContext";
 import { CircleUser, BookUser, Settings, Wrench, LogOut, ChevronRight, Check, Loader2, SquareArrowOutUpRight } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { useWorkspaces } from "@/context/WorkspaceContext";
-import { getData } from "@/utils/datas";
 
 export default function ProfileDropDownCom() {
     const navigate = useNavigate();
     const { logout, userMeta } = useAuth();
     const { currentWorkspace, workspaces, isLoading, setIsNeededRefetch, myWorkspaceId } = useWorkspaces();
-    const permissions = getData("permission");
+    const { permissions } = useAuth();
 
     const handleItemClick = (action) => {
-        if (action === "setting") {
+        if (action === "settings") {
             navigate("/settings/workspace");
         } else if (action === "my-account") {
             navigate("/account/details");
@@ -144,7 +143,7 @@ export default function ProfileDropDownCom() {
                     <DropdownMenuItem onClick={() => handleItemClick("my-account")}>
                         <BookUser className="mr-2 h-4 w-4" /> My account
                     </DropdownMenuItem>
-                    {permissions.setting && <DropdownMenuItem onClick={() => handleItemClick("setting")}>
+                    {permissions.settings && <DropdownMenuItem onClick={() => handleItemClick("settings")}>
                         <Settings className="mr-2 h-4 w-4" /> Settings
                     </DropdownMenuItem>}
                 </DropdownMenuGroup>

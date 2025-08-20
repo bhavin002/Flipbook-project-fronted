@@ -43,15 +43,18 @@ export function FlipbookProvider({ children }) {
         }
     };
 
+    // Only fetch flipbooks on initial load when there are no URL parameters
     useEffect(() => {
         if (!isAuthenticated) return;
         
         const shouldFetchFlipbooks = location.pathname === '/myflipbooks/flipbooks' || location.pathname === '/myflipbooks/template';
+        const hasUrlParams = location.search.includes('filter=') || location.search.includes('search=');
         
-        if (shouldFetchFlipbooks && !location.search.includes('filter=')) {
+        // Only fetch if we're on the right path and there are no URL parameters to avoid conflicts
+        if (shouldFetchFlipbooks && !hasUrlParams) {
             fetchFlipbooks();
         }
-    }, [location.pathname, isAuthenticated]);
+    }, [location.pathname, isAuthenticated]); // Removed location.search from dependencies
 
     const value = {
         flipbooks,

@@ -11,6 +11,7 @@ import { GetWorkspaceFoldersApi } from "@/service/folder.service";
 import { FolderSkeleton } from "@/utils/Skeleton";
 import { FolderPlus } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 export default function HomeDrawerPanel({ onCloseDrawer }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +19,7 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const permissions = getData("permission")
+  const { permissions } = useAuth();
 
   const getFolders = async () => {
     setIsLoading(true);
@@ -158,7 +159,7 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
             folderData: templateFolders
           }
         ].filter(section => {
-          if (section.sectionType === 'template' && !permissions?.teamplates) {
+          if (section.sectionType === 'template' && !permissions?.templates) {
             return false;
           }
           return true;

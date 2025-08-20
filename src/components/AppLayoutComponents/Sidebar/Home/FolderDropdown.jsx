@@ -15,6 +15,7 @@ import ConfirmationDialog from '../../../../utils/ConfirmationDialog';
 import { MoveToTrashWorkspaceFolderApi } from '@/service/folder.service';
 import { toast } from 'sonner';
 import { getData } from '@/utils/datas';
+import { useAuth } from '@/context/AuthContext';
 
 export default function FolderDropdown({ folder, onFolderRenamed, onFolderDeleted }) {
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
@@ -22,7 +23,7 @@ export default function FolderDropdown({ folder, onFolderRenamed, onFolderDelete
     const [isTrashModalOpen, setIsTrashModalOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const permissions = getData("permission");
+    const { permissions } = useAuth();
 
     const handleItemClick = (action, e) => {
         e.stopPropagation();

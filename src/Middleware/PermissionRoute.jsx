@@ -1,12 +1,9 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { Loader } from '@/components/ui/loader';
-import { getData } from '@/utils/datas';
 
 export function PermissionRoute({ children, requiredPermission }) {
-    const { isAuthenticated, isLoading } = useAuth();
-
-    const permissions = getData("permission");
+    const { isAuthenticated, isLoading, permissions } = useAuth();
 
     const location = useLocation();
 

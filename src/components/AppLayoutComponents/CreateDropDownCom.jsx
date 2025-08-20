@@ -16,6 +16,7 @@ import { FlipbookUploadMode } from "@/utils/enum";
 import LoadingButton from "@/utils/LoadingButton";
 import { useFlipbook } from "@/context/FlipbookContext";
 import ProductCatalog from "./ProductCatalogComponent";
+import { useAuth } from "@/context/AuthContext";
 
 export default function CreateDropDownCom() {
     const { fetchFlipbooks } = useFlipbook();
@@ -27,6 +28,7 @@ export default function CreateDropDownCom() {
     const [multiFileDialogOpen, setMultiFileDialogOpen] = useState(false);
     const [pendingFiles, setPendingFiles] = useState([]);
     const [uploadingSeparately, setUploadingSeparately] = useState(false);
+    const { userMeta } = useAuth();
 
     const handleItemClick = (action) => {
         if (action === "from-scratch") {
@@ -151,10 +153,12 @@ export default function CreateDropDownCom() {
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => handleItemClick("admin-template")}>
-                    <LayoutGrid /> Admin Template
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                {userMeta?.role === 1 && <>
+                    <DropdownMenuItem onClick={() => handleItemClick("admin-template")}>
+                        <LayoutGrid /> Admin Template
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                </>}
                 <DropdownMenuItem onClick={() => handleItemClick("product-catalog")}>
                     <ShoppingCart /> Product catalog
                 </DropdownMenuItem>

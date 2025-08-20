@@ -19,7 +19,7 @@ const navItems = [
     { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', permission: 'automation' },
     { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics', permission: 'statistics' },
     { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings', permission: 'branding' },
-    { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', permission: 'setting' },
+    { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', permission: 'settings' },
 ];
 
 const editorNavItems = [
@@ -36,7 +36,7 @@ const bottomNavItems = [
     { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', hasDrawer: false, permission: 'automation' },
     { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics', hasDrawer: false, permission: 'statistics' },
     { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings', hasDrawer: true, permission: 'branding' },
-    { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', hasDrawer: true, permission: 'setting' }
+    { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', hasDrawer: true, permission: 'settings' }
 ];
 
 const settingMenuItems = [
@@ -3276,9 +3276,9 @@ const pageLayoutData = {
 };
 
 const permission = {
-    "setting": true,
+    "settings": true,
     "branding_profile": true,
-    "teamplates": true,
+    "templates": true,
     "invite_teammate": true,
     "trash": true,
     "branding": true,

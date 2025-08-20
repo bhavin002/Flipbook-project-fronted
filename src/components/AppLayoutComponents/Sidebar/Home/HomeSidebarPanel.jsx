@@ -30,6 +30,7 @@ import { getData } from "@/utils/datas";
 import { FolderSkeleton } from "@/utils/Skeleton";
 import { triggerTrashRefresh } from "@/pages/Trash"
 import { useFolders } from "@/context/FolderContext"
+import { useAuth } from "@/context/AuthContext"
 
 // New event for refreshing sidebar when folders are recovered
 export const refreshSidebarEvent = new CustomEvent('refreshSidebar');
@@ -45,7 +46,7 @@ export default function HomeSidebarPanel() {
     const location = useLocation();
 
     const { folders, isLoading, refreshFolders, updateFolder, removeFolder, addFolder } = useFolders();
-    const permissions = getData("permission");
+    const { permissions } = useAuth();
 
     useEffect(() => {
         refreshFolders();
@@ -175,7 +176,7 @@ export default function HomeSidebarPanel() {
                         folderData: templateFolders
                     }
                 ].filter(section => {
-                    if (section.sectionType === 'template' && !permissions?.teamplates) {
+                    if (section.sectionType === 'template' && !permissions?.templates) {
                         return false;
                     }
                     return true;
