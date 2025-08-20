@@ -10,6 +10,7 @@ const AuthContext = createContext({
     checkAuth: async () => false,
     userMeta: null,
     permissions: null,
+    updateUserMeta: () => { },
 });
 
 export function AuthProvider({ children }) {
@@ -93,8 +94,21 @@ export function AuthProvider({ children }) {
         navigate('/auth/sign-in');
     };
 
+    const updateUserMeta = (newUserMeta) => {
+        setUserMeta(newUserMeta);
+    };
+
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, checkAuth, userMeta, permissions }}>
+        <AuthContext.Provider value={{ 
+            isAuthenticated, 
+            isLoading, 
+            login, 
+            logout, 
+            checkAuth, 
+            userMeta, 
+            permissions, 
+            updateUserMeta 
+        }}>
             {children}
         </AuthContext.Provider>
     );

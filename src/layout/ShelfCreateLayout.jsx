@@ -7,7 +7,7 @@ import PublishShelfDailog from "../components/ShelfLayoutComponents/PublishShelf
 import { GetShelfFlipbookIdsApi } from "@/service/bookshelf.service";
 import { toast } from "sonner";
 import { useWorkspaces } from "@/context/WorkspaceContext";
-import { GetPublicFlipbookApi } from "@/service/flipbook.publish.service";
+import { GetPublicFlipbookForBookshelfApi } from "@/service/flipbook.publish.service";
 
 export const ShelfCreateContext = createContext();
 export const useShelfCreate = () => useContext(ShelfCreateContext);
@@ -60,7 +60,7 @@ export default function ShelfCreateLayout() {
         const fetchFlipbooks = async () => {
             setLoading(true);
             try {
-                const response = await GetPublicFlipbookApi(currentWorkspace._id);
+                const response = await GetPublicFlipbookForBookshelfApi(currentWorkspace._id);
                 setData(response.data);
                 if (isEditMode && shelfData && response.data.flipbooks) {
                     const flipbookIds = shelfData.flipbooks || [];

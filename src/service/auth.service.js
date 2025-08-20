@@ -50,3 +50,12 @@ export const GetPermissionInfoApi = async () => {
     });
     return response.data;
 }
+
+export const UpdateProfileApi = async (data) => {
+    const response = await ApiClient().post("/auth/update-profile", data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+    return response.data;
+}
