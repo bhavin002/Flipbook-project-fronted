@@ -11,14 +11,14 @@ import AppBreadcrumbs from "@/utils/AppBreadcrumb";
 import CreateDropDownCom from "@/components/AppLayoutComponents/CreateDropDownCom";
 import { AppSidebar } from "@/utils/AppSidebar";
 import BottomSidebarNavigation from "@/components/AppLayoutComponents/BottomSidebarNavigation";
-import { getData } from "@/utils/datas";
+import { useAuth } from "@/context/AuthContext";
 
 export default function AppLayout({ setIsSidebarOpen }) {
     const [searchValue, setSearchValue] = useState("");
     const [selectedItem, setSelectedItem] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const permissions = getData("permission")
+    const { permissions } = useAuth();
 
     // Check if current path should show search and filter components
     const shouldShowSearchAndFilter = () => {

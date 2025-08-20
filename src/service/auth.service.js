@@ -43,3 +43,10 @@ export const ResetPasswordApi = async (data) => {
     const response = await ApiClient().post(`/auth/forget-password/verify-token-password`, data);
     return response.data;
 }
+
+export const GetPermissionInfoApi = async () => {
+    const response = await ApiClient().get("/auth/get-permission-info", {
+        showLoader: true
+    });
+    return response.data;
+}

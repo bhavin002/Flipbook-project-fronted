@@ -17,11 +17,12 @@ import {
     SidebarMenuSub,
 } from "@/components/ui/sidebar";
 import { getData } from "@/utils/datas";
+import { useAuth } from "@/context/AuthContext";
 
 export default function BrandingSidebarPanel() {
     const navigate = useNavigate();
     const location = useLocation();
-    const permissions = getData("permission")
+    const { permissions } = useAuth();
     
     const brandingMenuItems = getData('brandingMenuItems');
 

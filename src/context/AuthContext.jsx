@@ -1,4 +1,4 @@
-import { GetUserInfoApi } from '@/service/auth.service';
+import { GetUserInfoApi, GetPermissionInfoApi } from '@/service/auth.service';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -7,13 +7,16 @@ const AuthContext = createContext({
     isLoading: true,
     login: async () => { },
     logout: () => { },
-    checkAuth: async () => false
+    checkAuth: async () => false,
+    userMeta: null,
+    permissions: null,
 });
 
 export function AuthProvider({ children }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [userMeta, setUserMeta] = useState(null);
+    const [permissions, setPermissions] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,14 +43,30 @@ export function AuthProvider({ children }) {
         }
     };
 
+    const fetchPermissions = async () => {
+        try {
+            const response = await GetPermissionInfoApi();
+            const apiPermissions = response.data.permission
+            setPermissions(apiPermissions);
+        } catch (error) {
+            setPermissions(null);
+        }
+    };
+
     const checkAuth = async () => {
         const token = localStorage.getItem('fn_access_token');
         if (!token) {
             setIsAuthenticated(false);
+            setPermissions(null);
             return false;
         }
         const isValidToken = await isTokenVerified(token);
         setIsAuthenticated(isValidToken);
+        if (isValidToken) {
+            await fetchPermissions();
+        } else {
+            setPermissions(null);
+        }
         return isValidToken;
     };
 
@@ -56,6 +75,7 @@ export function AuthProvider({ children }) {
         localStorage.removeItem('fn_confirm_token');
         const isValid = await isTokenVerified(data.token);
         if (isValid) {
+            await fetchPermissions();
             setIsAuthenticated(true);
             return true;
         } else {
@@ -68,11 +88,13 @@ export function AuthProvider({ children }) {
         localStorage.clear();
         sessionStorage.clear();
         setIsAuthenticated(false);
+        setUserMeta(null);
+        setPermissions(null);
         navigate('/auth/sign-in');
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, checkAuth, userMeta }}>
+        <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout, checkAuth, userMeta, permissions }}>
             {children}
         </AuthContext.Provider>
     );

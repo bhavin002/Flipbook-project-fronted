@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getData } from '@/utils/datas';
+import { useAuth } from '@/context/AuthContext';
 
 function NavItem({ item, isSelected, onClick, onMouseEnter, onMouseLeave }) {
     const { icon: Icon, label } = item;
@@ -28,7 +29,7 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
     const { setOpen, setSelectedItem: setGlobalSelectedItem, selectedItem, open } = useSidebar();
     const defaultRoutes = getData('defaultRoutes');
     const navItems = getData('navItems');
-    const permissions = getData('permission');
+    const { permissions } = useAuth();
 
     const filteredNavItems = navItems.filter(item => {
         if (!item.permission) return true;

@@ -8,11 +8,12 @@ import {
 } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getData } from "@/utils/datas";
+import { useAuth } from "@/context/AuthContext";
 
 export default function BrandingDrawerPanel({ onCloseDrawer }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const permissions = getData("permission")
+  const { permissions } = useAuth();
   
   const brandingMenuItems = getData('brandingMenuItems');
 

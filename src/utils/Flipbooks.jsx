@@ -11,6 +11,7 @@ import MoveToFolderDropdown from '@/components/AppLayoutComponents/Sidebar/Home/
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { MoveToTrashFlipbookApi, DeleteFlipbookApi, RecoverFlipbookApi } from "@/service/flipbook.service";
 import { toast } from "sonner";
+import { useAuth } from '@/context/AuthContext';
 
 export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlipbooks, isTrash = false, isFolder = false, view }) {
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -32,7 +33,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     const publishedButtons = getData('publishedButtons');
     const templateButtons = getData('templateButtons');
     const bookshelfButtons = getData('bookshelfButtons');
-    const permissions = getData("permission");
+    const { permissions } = useAuth();
 
     const handleItemClick = (action, flipbookId, flipbookState) => {
         if (action === 'share') {

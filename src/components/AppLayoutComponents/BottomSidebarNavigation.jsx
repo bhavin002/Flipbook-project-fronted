@@ -9,6 +9,7 @@ import HomeDrawerPanel from '../AppLayoutComponents/BottomSidebar/HomeDrawerPane
 import BrandingDrawerPanel from '../AppLayoutComponents/BottomSidebar/BrandingDrawerPanel';
 import SettingsDrawerPanel from '../AppLayoutComponents/BottomSidebar/SettingsDrawerPanel';
 import { getData } from '@/utils/datas';
+import { useAuth } from '@/context/AuthContext';
 
 function NavItem({ item, isSelected, onClick }) {
     const { icon: Icon, label } = item;
@@ -41,7 +42,7 @@ export default function BottomSidebarNavigation() {
     const [activeSection, setActiveSection] = useState(null);
     const defaultRoutes = getData('defaultRoutes');
     const bottomNavItems = getData('bottomNavItems');
-    const permissions = getData('permission');
+    const { permissions } = useAuth();
     const [lastVisitedPaths, setLastVisitedPaths] = useState({ ...defaultRoutes });
 
     const filteredBottomNavItems = bottomNavItems.filter(item => {

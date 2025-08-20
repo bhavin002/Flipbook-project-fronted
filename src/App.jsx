@@ -87,18 +87,18 @@ const brandingRoutes = [
 ];
 
 const settingsRoutes = [
-  { path: "workspace", element: <SettingWorkspace />, permission: "setting" },
+  { path: "workspace", element: <SettingWorkspace />, permission: "settings" },
   // { path: "general", element: <SettingGeneral /> },
-  { path: "billing/subscription", element: <SettingBillingSubscription />, permission: "setting" },
-  { path: "billing/invoice", element: <SettingBillingInvoices />, permission: "setting" },
+  { path: "billing/subscription", element: <SettingBillingSubscription />, permission: "settings" },
+  { path: "billing/invoice", element: <SettingBillingInvoices />, permission: "settings" },
   { path: "teammates", element: <SettingTeammates />, permission: "invite_teammate" },
-  { path: "readers", element: <SettingReaders />, permission: "setting" },
-  { path: "groups", element: <SettingGroups />, permission: "setting" },
+  { path: "readers", element: <SettingReaders />, permission: "settings" },
+  { path: "groups", element: <SettingGroups />, permission: "settings" },
   // { path: "sso", element: <SettingSingleSignOn /> },
   // { path: "integrations", element: <SettingIntegrations /> },
   // { path: "access", element: <SettingWorkspaceAccess /> },
-  { path: "logs", element: <SettingTeammateActivity />, permission: "setting" },
-  // { path: "permission-settings", element: <SettingPermission />, permission: "setting" },
+  { path: "logs", element: <SettingTeammateActivity />, permission: "settings" },
+  // { path: "permission-settings", element: <SettingPermission />, permission: "settings" },
   // { path: "email-provider", element: <SettingEmailProvider /> },
 ];
 
@@ -146,12 +146,12 @@ export default function App() {
                           <Route path="flipbooks" element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
                           <Route path="flipbooks/folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
                           <Route path="template" element={
-                            <PermissionRoute requiredPermission="teamplates">
+                            <PermissionRoute requiredPermission="templates">
                               <MyFlipbooks isSidebarOpen={isSidebarOpen} />
                             </PermissionRoute>
                           } />
                           <Route path="template/folder/:id" element={
-                            <PermissionRoute requiredPermission="teamplates">
+                            <PermissionRoute requiredPermission="templates">
                               <FolderFlipbooks isSidebarOpen={isSidebarOpen} />
                             </PermissionRoute>
                           } />
@@ -211,7 +211,7 @@ export default function App() {
 
                         {/* Settings routes */}
                         <Route path="/settings" element={
-                          <PermissionRoute requiredPermission="setting">
+                          <PermissionRoute requiredPermission="settings">
                             <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
                           </PermissionRoute>
                         }>
@@ -232,7 +232,7 @@ export default function App() {
                         {/* Legacy settings route - redirect to workspace */}
                         <Route path="/settings" element={<Navigate to="/settings/workspace" replace />} />
                         <Route path="/settings/workspace" element={
-                          <PermissionRoute requiredPermission="setting">
+                          <PermissionRoute requiredPermission="settings">
                             <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
                           </PermissionRoute>
                         }>
