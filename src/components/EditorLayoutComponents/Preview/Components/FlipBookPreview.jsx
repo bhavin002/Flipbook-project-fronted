@@ -266,7 +266,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                 visibilitySettings.showControlBar && (
                     // fixed bottom-0 left-0 right-0 md:hidden flex py-3 items-center justify-around bg-primary md:h-16 z-10
                     <div className="w-full flex flex-col items-center justify-center relative bottom-0 left-0 right-0">
-                        <div className="max-md:w-full bg-gradient-to-r from-primary/90 to-primary p-3 flex flex-col items-center justify-center shadow-lg space-y-3">
+                        <div className="max-md:w-full max-w-[400px] w-full bg-gradient-to-r from-primary/90 to-primary p-3 flex flex-col items-center justify-center shadow-lg space-y-3">
                             {visibilitySettings.showNavigationBar && (
                                 <div className="flex items-center text-primary-foreground text-sm w-full">
                                     <div
@@ -516,14 +516,14 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
 
     return (
         <>
-            <div className="w-full h-full flex items-center relative rounded bg-white overflow-hidden" ref={containerRef} >
+            <div className="w-full h-full flex items-center relative bg-white overflow-hidden" ref={containerRef} >
                 {visibilitySettings.showTableOfContent && <TableOfContentsDrawer
                     visibilitySettings={visibilitySettings}
                     open={isDrawerOpen}
                     onClose={() => setIsDrawerOpen(false)}
                     navigateToPage={setPage}
                 />}
-                <div className={`h-full flex flex-col items-center relative rounded bg-white overflow-hidden transition-all duration-150 ease-in-out ${isDrawerOpen && visibilitySettings.showTableOfContent ? "w-[calc(100%-24rem)]" : "w-full"}`}>
+                <div className={`h-full flex flex-col items-center relative bg-white overflow-hidden transition-all duration-150 ease-in-out ${isDrawerOpen && visibilitySettings.showTableOfContent ? "w-[calc(100%-24rem)]" : "w-full"}`}>
                     <Tabs
                         value={activeTab.toLowerCase()}
                         onValueChange={handleTabChange}
@@ -553,7 +553,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                         <div className="w-full h-full flex-grow flex items-center justify-center">
                             <TabsContent
                                 value="desktop"
-                                className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden"
+                                className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden m-0"
                             >
                                 <div
                                     className={`w-full h-full flex items-center justify-center flex-col`}
