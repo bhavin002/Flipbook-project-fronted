@@ -86,6 +86,10 @@ export default function MyUpload({ mainStage, selectedIndex, setMainStage,setIsE
                 });
             } finally {
                 setIsUploading(false);
+                // Reset the file input value to allow re-uploading the same file
+                if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                }
             }
         }
     };
