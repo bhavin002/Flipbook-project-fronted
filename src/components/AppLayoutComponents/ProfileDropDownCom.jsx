@@ -45,18 +45,18 @@ export default function ProfileDropDownCom() {
         <DropdownMenu>
             <DropdownMenuTrigger>
                 <Avatar>
-                    <AvatarImage src="/assets/profile.jpg" />
+                    <AvatarImage src={userMeta?.profileImage ? userMeta?.profileImage : "/assets/default_avatar.svg"} />
                     <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-64">
                 <div className="flex items-center">
                     <Avatar>
-                        <AvatarImage src="/assets/profile.jpg" />
+                        <AvatarImage src={userMeta?.profileImage ? userMeta?.profileImage : "/assets/default_avatar.svg"} />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
                     <div>
-                        <DropdownMenuLabel className="p-0 px-2 pb-1.5">{userMeta.firstName + userMeta.lastName}</DropdownMenuLabel>
+                        <DropdownMenuLabel className="p-0 px-2 pb-1.5">{userMeta.firstName + " " + userMeta.lastName}</DropdownMenuLabel>
                         <p className="text-xs ml-2 text-muted-foreground truncate max-w-40 -mt-2">{userMeta.email}</p>
                     </div>
                 </div>
