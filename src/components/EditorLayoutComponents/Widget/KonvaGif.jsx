@@ -26,7 +26,8 @@ export default function KonvaGif({
     useEffect(() => {
         let anim;
         try {
-            const imgSrc = `${import.meta.env.VITE_API_URL}/file/image?src=${encodeURIComponent(shape.src)}`
+            // const imgSrc = `${import.meta.env.VITE_API_URL}/file/image?src=${encodeURIComponent(shape.src)}`
+            const imgSrc = shape?.src;
 
             window.gifler(imgSrc).get((a) => {
                 anim = a;
