@@ -335,8 +335,7 @@ export default function PublishFlipbookDialog({
                 width: targetWidth,
                 crossOriginIsolated: false,
                 height: targetHeight,
-                pixelRatio: i == 0 ? 0.8 : 0.2,
-                scale: 5,
+                pixelRatio: 1,
                 mimeType: 'image/png',
             });
             const blob = await (await fetch(dataUrl)).blob();
