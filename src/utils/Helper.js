@@ -26,7 +26,7 @@ export const addStage = (mainStage, setMainStage, index, setSelectedIndex) => {
 
 export const duplicateStage = (mainStage, setMainStage, index, setSelectedIndex) => {
     const temp = JSON.parse(JSON.stringify(mainStage[index]));
-    temp.shapes = mainStage[index].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)))
+    temp.shapes = mainStage[index].stageref && mainStage[index].stageref.current ? mainStage[index].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) : (mainStage[index].shapes || []);
     temp.shapes.forEach(element => { element.id = uuid() })
     temp.stageref.current = JSON.parse(temp.stageref.current);
     temp.selectedShapes = [];
@@ -54,12 +54,12 @@ export const deleteStage = (mainStage, setMainStage, index, selectedIndex, setSe
         mainStage.splice(index, 1)
         setMainStage([...mainStage])
     }
-    setPageCounter(pageCounter-1);
+    setPageCounter(pageCounter - 1);
 }
 
 export function serializationStage(mainStage) {
     const temp = JSON.parse(JSON.stringify(mainStage));
-    temp.shapes = mainStage.stageref.current.children[0].children[1].children.map(e => e.attrs);
+    temp.shapes = mainStage.stageref && mainStage.stageref.current ? mainStage.stageref.current.children[0].children[1].children.map(e => e.attrs) : mainStage.shapes || [];
     temp.shapes = JSON.parse(JSON.stringify(temp.shapes))
     temp.shapes.forEach(element => { element.id = uuid() })
     temp.stageref.current = JSON.parse(temp.stageref.current);

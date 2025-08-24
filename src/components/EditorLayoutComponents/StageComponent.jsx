@@ -20,8 +20,9 @@ import UploadPhoto from "./Widget/UploadPhoto";
 import { GetPageByIndexApi, GetTemplateApi } from "@/service/template.service";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { toast } from "sonner";
+import { Loader } from "@/components/ui/loader";
 
-export default function StageComponent({ isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad }) {
+export default function StageComponent({ prevSelectedIndex, isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad }) {
     // Consistent Refs Initialization
     const stageRef = useRef(null);
     const demo = useRef(null);
@@ -37,6 +38,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
     const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
     const [isPageModalOpen, setIsPageModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isStageLoading, setStageIsLoading] = useState(true);
     const [selectionRect, setSelectionRect] = useState({
         x: 0,
         y: 0,
@@ -598,9 +600,10 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
             const layers = stage.getLayers();
             if (layers.length > 0) {
                 console.log('Stage has layers, fully loaded.');
+                setIsInitialLoad(true);
+                setStageIsLoading(false);
                 setPageCounter(pageCounter + 1);
                 if (pageCounter === mainStage.length) {
-                    setIsInitialLoad(true)
                 }
             }
         }
@@ -687,9 +690,10 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
         if (isCropping) return;
         return stages
             .map(stage =>
-                stage.stageref.current?.children[0]?.children[1]?.children
+                stage.stageref ? stage.stageref.current?.children[0]?.children[1]?.children
                     ?.map(child => JSON.stringify(child.attrs))
                     .join("") || ""
+                    : (stage.shapes || []).map(child => JSON.stringify(child)).join("")
             )
             .join("");
     };
@@ -915,6 +919,13 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
             onDragOver={(e) => e.preventDefault()}
         >
             <div ref={demo}></div>
+            {!((index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1) && width && height) &&
+                <>
+                    <Loader />
+                    <div className='absolute flex justify-between z-[111] border border-primary' style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y) }}></div>
+                </>
+            }
+
             <StagePageMenu setSelectedIndex={setSelectedIndex} selectedIndex={selectedIndex} rectProps={rectProps} mainStage={mainStage} setMainStage={setMainStage} index={index} setPageCounter={setPageCounter} pageCounter={pageCounter} />
             <ConfirmationDialog
                 isConfirmModalOpen={isTemplateModalOpen}
@@ -981,7 +992,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                 }}
             />
             <div onClick={() => setSelectedIndex(index)}>
-                {width && height && <Stage
+                {(index == prevSelectedIndex || index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1) && width && height && <Stage
 
                     width={width}
                     height={height}

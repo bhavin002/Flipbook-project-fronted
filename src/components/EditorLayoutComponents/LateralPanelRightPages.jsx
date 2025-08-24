@@ -14,7 +14,7 @@ export default function LateralPanelRightPages({ setIsPageShow, isSidebarOpen, s
         if (JSON.stringify(mainStage) !== JSON.stringify(newList)) {
             newList.forEach(ele => {
                 ele.selectedShapes = [];
-                ele.shapes = ele.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)))
+                ele.shapes = ele.stageref && ele.stageref.current ? ele.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) : ele.shapes;
             })
             setMainStage(newList);
         } else {

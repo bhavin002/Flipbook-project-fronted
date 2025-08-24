@@ -74,7 +74,8 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
         try {
             setIsLoading(true);
             mainStage.forEach(e => {
-                e.temp = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
+                e.temp = e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] :
+                    (e.shapes || []);
             });
             const temp = JSON.parse(JSON.stringify(mainStage))
             temp.forEach(e => {

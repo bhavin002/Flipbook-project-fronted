@@ -347,15 +347,18 @@ import { Progress } from "@/components/ui/progress";
 })(Konva);
 
 export default function Editor() {
+    const usePrevious = (value) => {
+        const ref = useRef();
+        useEffect(() => {
+            ref.current = value;
+        });
+        return ref.current;
+    }
+
     const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad } = useOutletContext();
     const autoScroll = useRef([]);
-    useEffect(() => {
-        autoScroll.current[selectedIndex].scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-        });
-    }, [selectedIndex])
     const parentRef = useRef(null);
+    const childRef = useRef(null);
     const [rectProps, setRectProps] = useState({ x: 0, y: 0, size: 0, tempWidth: 0, tempHeight: 0 });
     const [scale, setScale] = useState({ scaleX: 1, scaleY: 1 });
     const [mainStageString, setMainStageString] = useState("");
@@ -372,8 +375,11 @@ export default function Editor() {
     const [isPageShow, setIsPageShow] = useState(null);
     const [pageCounter, setPageCounter] = useState(1);
     const scrollRef = useRef(null);
-
+    const prevSelectedIndex = usePrevious(selectedIndex);
     const [undoStack, setUndoStack] = useState([{ stages: mainStage, selectedIndex }]);
+    const lastScrollTop = useRef(0);
+    const scrollTimeout = useRef(null);
+
 
     const generateMainStageString = (stages) => {
         return stages
@@ -415,7 +421,63 @@ export default function Editor() {
         setIsRedoAction(false);
 
         // Handel UNDO and REDo max 10 10 state  
-    }, [mainStageString])
+    }, [mainStageString]);
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!childRef.current) return;
+
+            if (scrollTimeout.current) {
+                clearTimeout(scrollTimeout.current);
+            }
+
+            // થોડું delay (e.g. 150ms) પછી actual logic run કરવું
+            scrollTimeout.current = setTimeout(() => {
+                const totalHeight = childRef.current.scrollHeight;
+                const scrollTop = childRef.current.scrollTop;
+                const stageHeight = totalHeight / mainStage.length;
+
+                // Direction check
+                const direction = scrollTop > lastScrollTop.current ? "down" : "up";
+                lastScrollTop.current = scrollTop;
+
+                let index;
+                if (direction === "down") {
+                    index = Math.floor((scrollTop + stageHeight / 3) / stageHeight);
+                } else {
+                    index = Math.floor((scrollTop + stageHeight * 0.6) / stageHeight);
+                }
+
+                if (index >= 0 && index < mainStage.length && index !== selectedIndex) {
+                    setSelectedIndex(index);
+                }
+            }, 300); // <- delay adjust કરી શકો (150-300ms)
+        };
+
+        const refEl = childRef.current;
+        if (refEl) {
+            refEl.addEventListener("scroll", handleScroll);
+        }
+
+        return () => {
+            if (refEl) {
+                refEl.removeEventListener("scroll", handleScroll);
+            }
+            if (scrollTimeout.current) {
+                clearTimeout(scrollTimeout.current);
+            }
+        };
+    }, [mainStage.length, selectedIndex]);
+
+
+    useEffect(() => {
+        if (selectedIndex) {
+            // mainStage[prevSelectedIndex].shapes = mainStage[prevSelectedIndex].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || []
+            autoScroll.current[selectedIndex].scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+            });
+        }
+    }, [selectedIndex])
     const MAX_HISTORY = 10; // Maximum states to store
 
     // Update mainStage and maintain history
@@ -447,8 +509,8 @@ export default function Editor() {
             .children[0]
             .children[1]
             .children.map(node => node);
-
         setMainStage(updatedStage);
+
     };
     // Undo functionality
     const handleUndo = () => {
@@ -553,12 +615,12 @@ export default function Editor() {
         };
     }, [handleUndo, handleRedo, selectedIndex, mainStage, setMainStage]);
 
-    useEffect(() => {
-        autoScroll.current[selectedIndex].scrollIntoView({
-            behavior: 'smooth',
-            block: 'center',
-        });
-    }, [selectedIndex])
+    // useEffect(() => {
+    //     autoScroll.current[selectedIndex].scrollIntoView({
+    //         behavior: 'smooth',
+    //         block: 'center',
+    //     });
+    // }, [selectedIndex])
 
     useEffect(() => {
         const handleDeleteShape = (event) => {
@@ -695,17 +757,17 @@ export default function Editor() {
                         width: "100%",
                         height: "100%",
                     }} ref={parentRef}>
-                        {mainStage.length !== pageCounter - 1 && <div className="h-full w-full fixed"><Loader /></div>}
-                        <div style={{ width: "100%", height: "100%" }} className="relative" >
+                        {/* {mainStage.length !== pageCounter - 1 && <div className="h-full w-full fixed"><Loader /></div>} */}
+                        <div style={{ width: "100%", height: "100%" }} className="relative overflow-auto" ref={childRef}>
                             {
                                 mainStage.map((stage, index) => {
-                                    if (index < pageCounter) {
-                                        return (
-                                            <div key={index} ref={(el) => (autoScroll.current[index] = el)} style={{ height: "100%", width: "100%" }} className="relative">
-                                                <StageComponent pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} />
-                                            </div>
-                                        )
-                                    }
+                                    // if (index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1 ) {
+                                    return (
+                                        <div key={index} ref={(el) => (autoScroll.current[index] = el)} style={{ height: "100%", width: "100%" }} className="relative">
+                                            <StageComponent prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} />
+                                        </div>
+                                    )
+                                    // }
                                 })
                             }
                         </div>

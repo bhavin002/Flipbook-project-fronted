@@ -68,7 +68,7 @@ export default function StagePageMenu({ rectProps, setSelectedIndex, selectedInd
         }
     }
     return (
-        <div className='absolute flex justify-between z-10' style={{ width: rectProps.tempWidth, left: rectProps.x, top: (rectProps.y - 30) }}>
+        <div className='absolute flex justify-between z-[111]' style={{ width: rectProps.tempWidth, left: rectProps.x, top: (rectProps.y - 30) }}>
             <div className="text-primary font-[500] text-[14px]"><span>Page {index + 1} / {mainStage.length}</span></div>
             <div className="flex gap-x-4 items-center">
                 <TooltipProvider>
