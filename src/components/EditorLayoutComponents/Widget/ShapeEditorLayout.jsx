@@ -142,7 +142,7 @@ function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, 
     }
     if (selectedSubMenu === "stock-video") {
         return (
-            <StockVideo />
+            <StockVideo selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if(selectedSubMenu === "text"){

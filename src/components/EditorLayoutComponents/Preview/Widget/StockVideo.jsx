@@ -1,14 +1,38 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 export default function StockVideo({ shape }) {
+    
+    const videoRef = useRef(null);
+
+    const {
+        showControls = true,
+        autoPlay = false,
+        mute = false,
+        loop = false
+    } = shape.htmlData || {};
+
+    const handleVideoClick = () => {
+        if (!showControls && videoRef.current) {
+            if (videoRef.current.paused) {
+                videoRef.current.play();
+            } else {
+                videoRef.current.pause();
+            }
+        }
+    };
+
     return (
         <video
+            ref={videoRef}
             src={shape.src}
             alt={shape.title}
-            controls="true"
-            playsInline="true"
-            muted="true"
-            volume="1"
+            controls={showControls}
+            autoPlay={autoPlay}
+            muted={mute}
+            loop={loop}
+            playsInline={true}
+            volume={mute ? 0 : 1}
+            onClick={handleVideoClick}
             style={{
                 height: `${shape.height}px`,
                 width: `${shape.width}px`,
@@ -25,6 +49,6 @@ export default function StockVideo({ shape }) {
                 display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                 cursor: 'pointer'
             }}
-        ></video>
+        />
     );
-} 
+}
