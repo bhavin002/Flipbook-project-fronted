@@ -42,7 +42,7 @@ function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, 
     }
     if (selectedSubMenu === 'shape-style') {
         return (
-            <ShapeStyle />
+            <ShapeStyle selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === 'shape-action') {

@@ -799,7 +799,16 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                 'stock-photo': 'masked-image',
                                 'stock-sticker': 'masked-sticker'
                             };
+
+                            const layerMapping = {
+                                'upload-photo': 'Masked Image',
+                                'stock-gif': 'Masked Gif',
+                                'stock-photo': 'Masked Image',
+                                'stock-sticker': 'Masked Sticker'
+                            };
+
                             const shapeType = typeMapping[htmlType] || 'masked-sticker'; // Default to 'masked-sticker' for unknown types
+                            const layerType = layerMapping[htmlType] || 'Masked Sticker';
                             setMainStage(prevState => {
                                 const updatedState = [...prevState];
                                 const updatedShapes = updatedState[index].shapes.map((shape, idx) => {
@@ -808,7 +817,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                     return {
                                         ...shape,
                                         title: shapeType,
-                                        layer: shapeType,
+                                        layer: layerType,
                                         htmlType: shapeType,
                                         x: shapeNode.x,
                                         y: shapeNode.y,
@@ -835,7 +844,17 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                 'stock-photo': 'masked-image',
                                 'stock-sticker': 'masked-sticker'
                             };
+
+                            const layerMapping = {
+                                'upload-photo': 'Masked Image',
+                                'stock-gif': 'Masked Gif',
+                                'stock-photo': 'Masked Image',
+                                'stock-sticker': 'Masked Sticker'
+                            };
+
                             const shapeType = typeMapping[htmlType] || 'masked-sticker'; // Default to 'masked-sticker' for unknown types
+                            const layerType = layerMapping[htmlType] || 'Masked Sticker';
+
                             newShape = {
                                 src: stage.dragRect.current.src,
                                 height: Number(targetShape.height),
@@ -847,7 +866,7 @@ export default function StageComponent({ isCropping, zoomper, stage, isRightLate
                                 skewX: targetShape.skewX,
                                 skewY: targetShape.skewY,
                                 title: shapeType,
-                                layer: shapeType,
+                                layer: layerType,
                                 htmlType: shapeType,
                                 type: 'img',
                                 isMasked: true,

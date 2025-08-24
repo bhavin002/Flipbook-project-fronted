@@ -1,8 +1,8 @@
 import { Checkbox } from "@/components/ui/checkbox";
-import { FilterSlider } from "@/components/ui/filterSlider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRef, useState, useEffect } from "react";
+import CornerRadiusControl from "@/utils/CornerRadiusControl";
 
 export default function ImageStyle({
   selectedShape,
@@ -10,22 +10,47 @@ export default function ImageStyle({
   mainStage,
   selectedIndex,
 }) {
+  const [useIndividualCorners, setUseIndividualCorners] = useState(
+    selectedShape[0].attrs?.effect?.individualCorners || false
+  );
+  
+  const defaultCornerRadius = selectedShape[0].attrs?.effect?.cornerRadius || 0;
+  const [cornerRadius, setCornerRadius] = useState(defaultCornerRadius);
+  
+  const [topLeftRadius, setTopLeftRadius] = useState(
+    useIndividualCorners ? 
+      selectedShape[0].attrs?.effect?.topLeftRadius || 0 : 
+      defaultCornerRadius
+  );
+  
+  const [topRightRadius, setTopRightRadius] = useState(
+    useIndividualCorners ? 
+      selectedShape[0].attrs?.effect?.topRightRadius || 0 : 
+      defaultCornerRadius
+  );
+  
+  const [bottomRightRadius, setBottomRightRadius] = useState(
+    useIndividualCorners ? 
+      selectedShape[0].attrs?.effect?.bottomRightRadius || 0 : 
+      defaultCornerRadius
+  );
+  
+  const [bottomLeftRadius, setBottomLeftRadius] = useState(
+    useIndividualCorners ? 
+      selectedShape[0].attrs?.effect?.bottomLeftRadius || 0 : 
+      defaultCornerRadius
+  );
+
   const [styles, setStyles] = useState({
-    individualCorners: selectedShape[0].attrs?.effect?.individualCorners || false,
-    topLeftRadius: selectedShape[0].attrs?.effect?.topLeftRadius || 0,
-    topRightRadius: selectedShape[0].attrs?.effect?.topRightRadius || 0,
-    bottomRightRadius: selectedShape[0].attrs?.effect?.bottomRightRadius || 0,
-    bottomLeftRadius: selectedShape[0].attrs?.effect?.bottomLeftRadius || 0,
-    cornerRadius: selectedShape[0].attrs?.effect?.cornerRadius || 0,
-    isShadowEnabled: selectedShape[0].attrs?.effect?.isShadowEnabled || true,
-    shadowColor: selectedShape[0].attrs.effect?.shadowColor || "#ffffff",
+    isShadowEnabled: selectedShape[0].attrs?.effect?.isShadowEnabled || false,
+    shadowColor: selectedShape[0].attrs.effect?.shadowColor || "#000000",
     shadowOpacity: selectedShape[0].attrs.effect?.shadowOpacity || 60,
     shadowOffsetX: selectedShape[0].attrs.effect?.shadowOffsetX || 0,
     shadowOffsetY: selectedShape[0].attrs.effect?.shadowOffsetY || 0,
     shadowBlur: selectedShape[0].attrs.effect?.shadowBlur || 10,
     isBorderEnabled: selectedShape[0].attrs?.effect?.isBorderEnabled || false,
-    borderColor: selectedShape[0].attrs.effect?.borderColor || "#ffffff",
-    borderWidth: selectedShape[0].attrs?.effect?.borderWidth || 10,
+    borderColor: selectedShape[0].attrs.effect?.borderColor || "#000000",
+    borderWidth: selectedShape[0].attrs.effect?.borderWidth || 10,
   });
 
   const shadowColorInputRef = useRef(null);
@@ -37,21 +62,32 @@ export default function ImageStyle({
   useEffect(() => {
     if (selectedShape.length && selectedShape[0]) {
       const effect = selectedShape[0].attrs.effect || {};
+      const hasIndividualCorners = effect.individualCorners;
+
+      setUseIndividualCorners(hasIndividualCorners);
+      setCornerRadius(effect.cornerRadius || 0);
+      if (hasIndividualCorners) {
+        setTopLeftRadius(effect.topLeftRadius || 0);
+        setTopRightRadius(effect.topRightRadius || 0);
+        setBottomRightRadius(effect.bottomRightRadius || 0);
+        setBottomLeftRadius(effect.bottomLeftRadius || 0);
+      } else {
+        const uniformRadius = effect.cornerRadius || 0;
+        setTopLeftRadius(uniformRadius);
+        setTopRightRadius(uniformRadius);
+        setBottomRightRadius(uniformRadius);
+        setBottomLeftRadius(uniformRadius);
+      }
+
       setStyles({
-        individualCorners: effect.individualCorners !== undefined ? effect.individualCorners : false,
-        topLeftRadius: effect.topLeftRadius !== undefined ? effect.topLeftRadius : 0,
-        topRightRadius: effect.topRightRadius !== undefined ? effect.topRightRadius : 0,
-        bottomRightRadius: effect.bottomRightRadius !== undefined ? effect.bottomRightRadius : 0,
-        bottomLeftRadius: effect.bottomLeftRadius !== undefined ? effect.bottomLeftRadius : 0,
-        cornerRadius: !effect.individualCorners ? effect.cornerRadius !== undefined ? effect.cornerRadius : 0 : 0,
-        isShadowEnabled: effect.isShadowEnabled !== undefined ? effect.isShadowEnabled : true,
-        shadowColor: effect.shadowColor || "#ffffff",
+        isShadowEnabled: effect.isShadowEnabled !== undefined ? effect.isShadowEnabled : false,
+        shadowColor: effect.shadowColor || "#000000",
         shadowOpacity: effect.shadowOpacity !== undefined ? effect.shadowOpacity : 60,
         shadowOffsetX: effect.shadowOffsetX !== undefined ? effect.shadowOffsetX : 0,
         shadowOffsetY: effect.shadowOffsetY !== undefined ? effect.shadowOffsetY : 0,
         shadowBlur: effect.shadowBlur !== undefined ? effect.shadowBlur : 10,
         isBorderEnabled: effect.isBorderEnabled !== undefined ? effect.isBorderEnabled : true,
-        borderColor: effect.borderColor || "#ffffff",
+        borderColor: effect.borderColor || "#000000",
         borderWidth: effect.borderWidth !== undefined ? effect.borderWidth : 10,
       });
     }
@@ -72,6 +108,12 @@ export default function ImageStyle({
             ...element,
             effect: {
               ...element.effect, // Preserve existing filter effects
+              cornerRadius: cornerRadius,
+              individualCorners: useIndividualCorners,
+              topLeftRadius: useIndividualCorners ? topLeftRadius : cornerRadius,
+              topRightRadius: useIndividualCorners ? topRightRadius : cornerRadius,
+              bottomRightRadius: useIndividualCorners ? bottomRightRadius : cornerRadius,
+              bottomLeftRadius: useIndividualCorners ? bottomLeftRadius : cornerRadius,
               ...styles,
             },
           };
@@ -81,7 +123,10 @@ export default function ImageStyle({
     );
 
     setMainStage(updatedMainStage);
-  }, [styles, selectedShape, selectedIndex]);
+  }, [
+    cornerRadius, useIndividualCorners, topLeftRadius, topRightRadius,
+    bottomRightRadius, bottomLeftRadius, styles, selectedShape, selectedIndex
+  ]);
 
   const handleStyleChange = (key, value) => {
     setStyles((prev) => ({
@@ -105,89 +150,21 @@ export default function ImageStyle({
   return (
     <div className="p-6 space-y-4 w-full overflow-y-auto">
       <Label className="text-lg">Image style</Label>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium leading-none">
-            Corner roundness
-          </Label>
-          <div className="flex items-center gap-1">
-            <Checkbox
-              id="individual-corners"
-              checked={styles.individualCorners}
-              onCheckedChange={(checked) => handleStyleChange("individualCorners", checked)}
-              className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
-            />
-            <Label htmlFor="individual-corners" className="text-sm font-medium leading-none">Individual Corners</Label>
-          </div>
-        </div>
-
-        {!styles.individualCorners && (
-          <FilterSlider
-            min={0}
-            max={100}
-            value={[styles.cornerRadius]}
-            onValueChange={(values) => handleStyleChange("cornerRadius", values[0])}
-            className="w-full"
-          />
-        )}
-
-        {
-          styles.individualCorners && (<div className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label className="text-xs">Top Left</Label>
-                <span className="text-xs">{styles.topLeftRadius}</span>
-              </div>
-              <FilterSlider
-                min={0}
-                max={100}
-                value={[styles.topLeftRadius]}
-                onValueChange={(values) => handleStyleChange("topLeftRadius", values[0])}
-                className="w-full"
-              />
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label className="text-xs">Top Right</Label>
-                <span className="text-xs">{styles.topRightRadius}</span>
-              </div>
-              <FilterSlider
-                min={0}
-                max={100}
-                value={[styles.topRightRadius]}
-                onValueChange={(values) => handleStyleChange("topRightRadius", values[0])}
-                className="w-full"
-              />
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label className="text-xs">Bottom Right</Label>
-                <span className="text-xs">{styles.bottomRightRadius}</span>
-              </div>
-              <FilterSlider
-                min={0}
-                max={100}
-                value={[styles.bottomRightRadius]}
-                onValueChange={(values) => handleStyleChange("bottomRightRadius", values[0])}
-                className="w-full"
-              />
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center">
-                <Label className="text-xs">Bottom Left</Label>
-                <span className="text-xs">{styles.bottomLeftRadius}</span>
-              </div>
-              <FilterSlider
-                min={0}
-                max={100}
-                value={[styles.bottomLeftRadius]}
-                onValueChange={(values) => handleStyleChange("bottomLeftRadius", values[0])}
-                className="w-full"
-              />
-            </div>
-          </div>)
-        }
-      </div>
+      
+      <CornerRadiusControl
+        useIndividualCorners={useIndividualCorners}
+        setUseIndividualCorners={setUseIndividualCorners}
+        cornerRadius={cornerRadius}
+        setCornerRadius={setCornerRadius}
+        topLeftRadius={topLeftRadius}
+        setTopLeftRadius={setTopLeftRadius}
+        topRightRadius={topRightRadius}
+        setTopRightRadius={setTopRightRadius}
+        bottomRightRadius={bottomRightRadius}
+        setBottomRightRadius={setBottomRightRadius}
+        bottomLeftRadius={bottomLeftRadius}
+        setBottomLeftRadius={setBottomLeftRadius}
+      />
 
       <div className="space-y-2">
         <div className="flex items-center gap-1">
