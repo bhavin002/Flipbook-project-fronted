@@ -42,7 +42,7 @@ function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, 
     }
     if (selectedSubMenu === 'shape-style') {
         return (
-            <ShapeStyle />
+            <ShapeStyle selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === 'shape-action') {
@@ -142,7 +142,7 @@ function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, 
     }
     if (selectedSubMenu === "stock-video") {
         return (
-            <StockVideo />
+            <StockVideo selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex}/>
         )
     }
     if(selectedSubMenu === "text"){

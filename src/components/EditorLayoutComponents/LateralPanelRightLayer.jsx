@@ -1,6 +1,6 @@
 
 import { deleteShape, duplicateShapes } from '@/utils/Helper';
-import { X, Lock, Unlock, Eye, EyeOff, Copy, Files, Trash2, AlignStartHorizontal, AlignCenterHorizontal, AlignEndHorizontal, AlignStartVertical, AlignEndVertical, ChevronsLeft, AlignVerticalJustifyCenter, SquareMousePointer, Shapes, Image, MousePointerClick, SquareDashedBottomCode, Youtube, SquarePlay, ShoppingBag, Mail, SquareDot, CircleHelp } from 'lucide-react';
+import { X, Lock, Unlock, Eye, EyeOff, Copy, Files, Trash2, AlignStartHorizontal, AlignCenterHorizontal, AlignEndHorizontal, AlignStartVertical, AlignEndVertical, ChevronsLeft, AlignVerticalJustifyCenter, SquareMousePointer, Shapes, Image, MousePointerClick, SquareDashedBottomCode, Youtube, SquarePlay, ShoppingBag, Mail, SquareDot, CircleHelp, ImageUp } from 'lucide-react';
 import { ReactSortable } from 'react-sortablejs';
 import { useEffect, useState } from 'react';
 import { v4 as uuid } from "uuid";
@@ -54,6 +54,9 @@ export default function LateralPanelRightLayer({ selectedShape, setIsPageShow, s
         "Cart": <MousePointerClick className='w-4 h-4' />,
         "Basket": <MousePointerClick className='w-4 h-4' />,
         "Credit card": <MousePointerClick className='w-4 h-4' />,
+        "Masked Image": <ImageUp className='w-4 h-4' />,
+        "Masked Gif": <ImageUp className='w-4 h-4' />,
+        "Masked Sticker": <ImageUp className='w-4 h-4' />,
     }
     const selectLayer = (shape) => {
         if (isToggle) {

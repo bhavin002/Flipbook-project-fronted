@@ -265,7 +265,14 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
                     'stock-photo': 'masked-image',
                     'stock-sticker': 'masked-sticker'
                 };
+                const layerMapping = {
+                    'upload-photo': 'Masked Image',
+                    'stock-gif': 'Masked Gif',
+                    'stock-photo': 'Masked Image',
+                    'stock-sticker': 'Masked Sticker'
+                };
                 const shapeType = typeMapping[htmlType] || 'masked-sticker'; // Default to 'masked-sticker' for unknown types
+                const layerType = layerMapping[htmlType] || 'Masked Sticker';
                 setMainStage(prevState => {
                     const updatedState = [...prevState];
                     const updatedShapes = updatedState[selectedIndex].shapes.map((shape, idx) => {
@@ -274,7 +281,7 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
                         return {
                             ...shape,
                             title: shapeType,
-                            layer: shapeType,
+                            layer: layerType,
                             htmlType: shapeType,
                             x: shapeNode.x,
                             y: shapeNode.y,
@@ -306,7 +313,7 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
                     skewX: shapeWidget.skewX,
                     skewY: shapeWidget.skewY,
                     title: 'masked-image',
-                    layer: 'masked-image',
+                    layer: 'Masked Image',
                     htmlType: 'masked-image',
                     type: 'img',
                     isMasked: true,

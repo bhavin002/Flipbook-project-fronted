@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Group, Image, Rect, Text } from "react-konva";
+import { Group, Image, Rect } from "react-konva";
 
 export default function VideoButton({ shape, onSelect, handleDragStart, handleDrag, ...props }) {
     const [image, setImage] = useState(null);
