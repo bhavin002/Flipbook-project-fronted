@@ -992,7 +992,7 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
                 }}
             />
             <div onClick={() => setSelectedIndex(index)}>
-                {(index == prevSelectedIndex || index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1) && width && height && <Stage
+                {width && height && <Stage
 
                     width={width}
                     height={height}

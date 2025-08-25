@@ -102,7 +102,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (id && mainStage.length > 0 && !publishing && !isInitialLoad) {
+            if (id && mainStage.length > 0 && !publishing && isInitialLoad) {
                 updatePageData();
             }
         }, 10000);

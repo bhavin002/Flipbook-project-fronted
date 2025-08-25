@@ -24,7 +24,6 @@ export default function StagePageMenu({ rectProps, setSelectedIndex, selectedInd
             mainStageNext.stageref.current = JSON.parse(mainStageNext.stageref.current);
             mainStageNext.selectedShapes = [];
 
-            setSelectedIndex(index - 1);
             setMainStage(prevState => {
                 const updatedState = [...prevState];
                 updatedState[index] = {
@@ -35,6 +34,9 @@ export default function StagePageMenu({ rectProps, setSelectedIndex, selectedInd
                 };
                 return updatedState;
             });
+            setTimeout(() => {
+                setSelectedIndex(index - 1)
+            }, 100);
 
         }
     }
@@ -54,7 +56,6 @@ export default function StagePageMenu({ rectProps, setSelectedIndex, selectedInd
             const current = mainStageCurr;
             mainStage[index] = mainStageNext;
             mainStage[index + 1] = current;
-            setSelectedIndex(index + 1)
             setMainStage(prevState => {
                 const updatedState = [...prevState];
                 updatedState[index] = {
@@ -65,6 +66,10 @@ export default function StagePageMenu({ rectProps, setSelectedIndex, selectedInd
                 };
                 return updatedState;
             });
+            setTimeout(() => {
+                setSelectedIndex(index + 1)
+            }, 100);
+
         }
     }
     return (
