@@ -1,100 +1,132 @@
 import { FilterSlider } from "@/components/ui/filterSlider";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { addIntercationDataToMainStage } from "@/utils/Helper";
 
-export default function OpenOverlay() {
-    const [selectedPopin, setSelectedPopin] = useState("on-click");
-    const [selectedPosition, setSelectedPosition] = useState("bottom");
+export default function OpenOverlay({
+    selectedShape,
+    setMainStage,
+    mainStage,
+    selectedIndex,
+}) {
     const [opacity, setOpacity] = useState(30);
-    const tabs = [
-        { value: "on-click", label: "On click" },
-        { value: "on-hover", label: "On hover" },
-    ];
-    const positions = [
-        { value: "top-left", label: "Top left" },
-        { value: "top", label: "Top" },
-        { value: "top-right", label: "Top right" },
-        { value: "right", label: "Right" },
-        { value: "bottom-right", label: "Bottom right" },
-        { value: "bottom", label: "Bottom" },
-        { value: "bottom-left", label: "Bottom left" },
-        { value: "left", label: "Left" },
-        { value: "auto", label: "Auto" },
-    ];
+    const [tooltip, setTooltip] = useState("");
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
     const [hoverColor, setHoverColor] = useState("#ffffff");
     const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
     const colorInputRef = useRef(null);
+
+    useEffect(() => {
+        const htmlData = selectedShape?.[0]?.attrs?.htmlData || {};
+        setOpacity(typeof htmlData.hoverOpacity === "number" ? htmlData.hoverOpacity : 30);
+        setTooltip(htmlData.tooltip || "On click");
+        setTitle(htmlData.title || "");
+        setDescription(htmlData.description || "");
+        setHoverColor(htmlData.hoverColor || "#ffffff");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedShape]);
+
+    const updateMainStage = (data) => {
+        const output = {
+            data: {
+                action: "open-overlay",
+                tooltip: data.tooltip,
+                title: data.title,
+                description: data.description,
+                hoverColor: data.hoverColor,
+                hoverOpacity: data.hoverOpacity,
+            }
+        };
+        addIntercationDataToMainStage(mainStage, setMainStage, selectedShape, selectedIndex, output);
+    };
 
     const handleColorClick = () => {
         setIsColorPickerOpen(true);
         setTimeout(() => colorInputRef.current?.click(), 10);
     };
+
     const handleOpacityChange = (value) => {
-        setOpacity(value);
+        const next = Array.isArray(value) ? value[0] : value;
+        setOpacity(next);
+        updateMainStage({
+            tooltip,
+            title,
+            description,
+            hoverColor,
+            hoverOpacity: next,
+        });
+    };
+
+    const handleTooltipChange = (e) => {
+        const val = e.target.value;
+        setTooltip(val);
+        updateMainStage({
+            tooltip: val,
+            title,
+            description,
+            hoverColor,
+            hoverOpacity: opacity,
+        });
+    };
+
+    const handleTitleChange = (e) => {
+        const val = e.target.value;
+        setTitle(val);
+        updateMainStage({
+            tooltip,
+            title: val,
+            description,
+            hoverColor,
+            hoverOpacity: opacity,
+        });
+    };
+
+    const handleDescriptionChange = (e) => {
+        const val = e.target.value;
+        setDescription(val);
+        updateMainStage({
+            tooltip,
+            title,
+            description: val,
+            hoverColor,
+            hoverOpacity: opacity,
+        });
+    };
+
+    const handleHoverColorChange = (val) => {
+        setHoverColor(val);
+        updateMainStage({
+            tooltip,
+            title,
+            description,
+            hoverColor: val,
+            hoverOpacity: opacity,
+        });
     };
 
     return (
         <>
             <div>
-                <Label className="text-xs">Open popin on</Label>
-                <Select
-                    defaultValue="on-click"
-                    value={selectedPopin}
-                    onValueChange={(value) => setSelectedPopin(value)}
-                >
-                    <SelectTrigger id="tab" className="w-full">
-                        <SelectValue placeholder="Select tab" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {tabs.map(option => (
-                            <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
-            <div>
-                <Label className="text-xs">Popin positioning</Label>
-                <Select
-                    defaultValue="on-click"
-                    value={selectedPosition}
-                    onValueChange={(value) => setSelectedPosition(value)}
-                >
-                    <SelectTrigger id="tab" className="w-full">
-                        <SelectValue placeholder="Select tab" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        {positions.map(option => (
-                            <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
-            <div>
                 <Label htmlFor="open-overlay-tooltip" className="text-xs">Tooltip</Label>
                 <Input
                     type="text"
                     id="open-overlay-tooltip"
-                    defaultValue="On click"
+                    value={tooltip}
+                    onChange={handleTooltipChange}
+                    placeholder="Enter tooltip text"
                     className="placeholder:text-gray-400" />
             </div>
             <div>
                 <Label htmlFor="open-overlay-title" className="text-xs">Title</Label>
                 <Input
                     type="text"
-                    id="open-overlay-title" />
+                    id="open-overlay-title"
+                    value={title}
+                    onChange={handleTitleChange}
+                />
             </div>
             <div>
                 <Label htmlFor="open-overlay-description" className="text-xs">Description</Label>
@@ -102,6 +134,8 @@ export default function OpenOverlay() {
                     type="text"
                     id="open-overlay-description"
                     rows={4}
+                    value={description}
+                    onChange={handleDescriptionChange}
                     className="resize-none" />
             </div>
             <div>
@@ -110,7 +144,7 @@ export default function OpenOverlay() {
                     <Input
                         type="text"
                         value={hoverColor}
-                        onChange={(e) => setHoverColor(e.target.value)}
+                        onChange={(e) => handleHoverColorChange(e.target.value)}
                         className="pr-12"
                     />
                     <div
@@ -123,7 +157,7 @@ export default function OpenOverlay() {
                             ref={colorInputRef}
                             type="color"
                             value={hoverColor}
-                            onChange={(e) => setHoverColor(e.target.value)}
+                            onChange={(e) => handleHoverColorChange(e.target.value)}
                             className="opacity-0 absolute w-1 h-1 right-3 top-1/2 -translate-y-1/2"
                         />
                     )}
@@ -136,7 +170,7 @@ export default function OpenOverlay() {
                         min={0}
                         max={100}
                         value={[opacity]}
-                        onValueChange={(values) => handleOpacityChange(values[0])}
+                        onValueChange={(values) => handleOpacityChange(values)}
                         className="w-full"
                     />
                     <div className="text-[12px]">{opacity}%</div>

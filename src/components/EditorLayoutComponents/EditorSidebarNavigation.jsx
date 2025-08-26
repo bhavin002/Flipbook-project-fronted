@@ -204,6 +204,14 @@ export default function EditorSidebarNavigation({ currentView, setCurrentView, m
         }
     };
 
+    useEffect(() => {
+        if (!isSidebarOpen) {
+            setSelectedItem("interactions")
+            setIsSidebarOpen(true);
+            setOpen(true);
+        }
+    }, [selectedSubMenu])
+
     return (
         <div className="flex h-[calc(100vh-64px)] w-[75px] flex-col items-center bg-primary py-4 z-[11] ">
             <div className="space-y-3 w-full">

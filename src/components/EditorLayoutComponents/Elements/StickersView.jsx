@@ -195,6 +195,7 @@ const Section = ({ setIsEditorDrawerOpen, setMainStage, title, stickers, lastSti
             title: "stock-sticker",
             layer: "Stock Sticker",
             htmlType: "stock-sticker",
+            sidebar: "image-action"
         };
     };
 
@@ -218,6 +219,7 @@ const Section = ({ setIsEditorDrawerOpen, setMainStage, title, stickers, lastSti
                 title: "stock-sticker",
                 layer: "Stock Sticker",
                 htmlType: "stock-sticker",
+                sidebar: "image-action"
             }
         };
 

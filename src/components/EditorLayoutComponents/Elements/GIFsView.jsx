@@ -190,6 +190,7 @@ const Section = ({ setIsEditorDrawerOpen, setMainStage, title, gifs, lastGifRef,
             title: "stock-gif",
             layer: "Stock Gif",
             htmlType: "stock-gif",
+            sidebar: "image-action"
         };
     };
 
@@ -212,6 +213,7 @@ const Section = ({ setIsEditorDrawerOpen, setMainStage, title, gifs, lastGifRef,
                 title: "stock-gif",
                 layer: "Stock Gif",
                 htmlType: "stock-gif",
+                sidebar: "image-action"
             }
         };
 

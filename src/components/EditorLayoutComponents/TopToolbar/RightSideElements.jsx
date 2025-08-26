@@ -28,7 +28,7 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
     const [isLoading, setIsLoading] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
     const [fieldMappingData, setFieldMappingData] = useState([]);
-    
+
     useEffect(() => {
         if (selectedShape && selectedShape.length) {
             const shape = mainStage[selectedIndex].shapes.find(e => e.id === selectedShape[0].attrs.id);
@@ -141,10 +141,12 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
                 setIsFetching(false);
             }
         }
-        if(pathname == "admin-editor") {
+        if (pathname == "admin-editor") {
             GetFieldMapping();
         }
     }, []);
+
+    
 
     return (
         <div className="flex items-center">
@@ -152,8 +154,8 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
                 isFetching ? (
                     <Skeleton className="h-10 w-[200px]" />
                 ) : (
-                    <Select 
-                        value={selectedShape?.[0]?.attrs?.fieldName || ""} 
+                    <Select
+                        value={selectedShape?.[0]?.attrs?.fieldName || ""}
                         onValueChange={setFieldName}
                     >
                         <SelectTrigger className="w-[200px]">
@@ -169,11 +171,13 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
                     </Select>
                 )
             )}
-            {selectedShape && selectedShape.length == 1 && ["shape-widget", "stock-photo"].includes(selectedShape[0].attrs.title) && <Button variant="ghost" size="sm" onClick={() => setSelectedSubMenu(selectedShape[0].attrs.sidebar)}>
+            
+
+            {selectedShape && selectedShape.length == 1 && ["shape-widget", "stock-photo", "stock-sticker", "stock-gif", "upload-photo"].includes(selectedShape[0].attrs.title) && <Button variant="ghost" size="sm" onClick={() => setSelectedSubMenu(selectedShape[0].attrs.sidebar)}>
                 Action
             </Button>}
             <Button variant="ghost" size="sm" disabled={isLoading} onClick={() => {
-                duplicateShapes(mainStage, selectedIndex, setMainStage, setIsLoading,selectedShape);
+                duplicateShapes(mainStage, selectedIndex, setMainStage, setIsLoading, selectedShape);
             }}>
                 Copy
             </Button>

@@ -9,28 +9,103 @@ import GoToPage from "./ImageAction/GoToPage";
 import OpenOverlay from "./ImageAction/OpenOverlay";
 import { Button } from "@/components/ui/button";
 
-export default function ImageAction({ action }) {
+export default function ImageAction({
+    selectedShape,
+    setMainStage,
+    mainStage,
+    selectedIndex,
+}) {
+
     const imageActions = getData("imageActions") || [];
-    const [selectedAction, setSelectedAction] = useState(action || "open-link");
+    const currentAction = selectedShape[0]?.attrs?.htmlData?.action;
+    const [selectedAction, setSelectedAction] = useState(currentAction || "open-link");
+    const [isRemovedInteraction, setIsRemovedInteraction] = useState(false);
+
+    const defaultConfig = {
+        "open-link": {
+            "action": "open-link",
+        },
+        "go-to-page": {
+            "action": "go-to-page",
+            "tooltip": "Go to page",
+            "pageNumber": 1,
+            "pageAction": "go-to-page"
+        },
+        "open-overlay": {
+            "action": "open-overlay",
+            "tooltip": "On click",
+            "hoverColor": " #ffffff",
+            "hoverOpacity": 30
+        },
+        "spotlight": {
+            "action": "spotlight",
+        },
+        "popup-frame": {
+            "action": "popup-frame",
+        },
+    };
 
     useEffect(() => {
-        if (action) {
-            setSelectedAction(action);
-        }
-    }, [action]);
+        const action = selectedShape[0]?.attrs?.htmlData?.action;
+        setSelectedAction(action || "open-link");
+    }, [selectedShape]);
+
+
+
+    const changeAction = (value) => {
+        setSelectedAction(value);
+        mainStage[selectedIndex].stageref.current.children[0].children[1].children.find(e => {
+            if (e.attrs.id === selectedShape[0].attrs.id) {
+                e.attrs.htmlData = defaultConfig[value]
+                return true;
+            }
+        });
+
+        mainStage[selectedIndex].shapes = mainStage[selectedIndex].stageref.current.children[0].children[1].children.map(e =>
+            JSON.parse(JSON.stringify(e.attrs))
+        ) || [];
+
+        const temp = JSON.parse(JSON.stringify(mainStage[selectedIndex]));
+        temp.selectedShapes = [];
+        temp.stageref = null;
+        setMainStage([...mainStage]);
+    };
+
+    const removeInteraction = () => {
+        setIsRemovedInteraction(true);
+        mainStage[selectedIndex].stageref.current.children[0].children[1].children.find(e => {
+            if (e.attrs.id === selectedShape[0].attrs.id) {
+                e.attrs.htmlData = {
+                    action: defaultConfig["open-link"],
+                }
+                return true;
+            }
+        });
+
+        mainStage[selectedIndex].shapes = mainStage[selectedIndex].stageref.current.children[0].children[1].children.map(e =>
+            JSON.parse(JSON.stringify(e.attrs))
+        ) || [];
+
+        const temp = JSON.parse(JSON.stringify(mainStage[selectedIndex]));
+        temp.selectedShapes = [];
+        temp.stageref = null;
+
+        setSelectedAction("open-link");
+        setMainStage([...mainStage]);
+    };
 
     const renderDynamicContent = () => {
         switch (selectedAction) {
             case "open-link":
-                return <OpenLink />;
+                return <OpenLink selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} isRemovedInteraction={isRemovedInteraction} />;
             case "go-to-page":
-                return <GoToPage />;
+                return <GoToPage selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />;
             case "open-overlay":
-                return <OpenOverlay />;
+                return <OpenOverlay selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />;
             case "spotlight":
-                return <Spotlight />;
+                return <Spotlight selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />;
             case "popup-frame":
-                return <PopupFrame />;
+                return <PopupFrame selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />;
             default:
                 return null;
         }
@@ -45,7 +120,7 @@ export default function ImageAction({ action }) {
                         <Select
                             defaultValue="open-link"
                             value={selectedAction}
-                            onValueChange={(value) => setSelectedAction(value)}
+                            onValueChange={(value) => changeAction(value)}
                         >
                             <SelectTrigger id="action" className="w-full">
                                 <SelectValue placeholder="Select action" />
@@ -62,7 +137,7 @@ export default function ImageAction({ action }) {
                     {renderDynamicContent()}
                 </div>
 
-                <Button variant="outline" className="w-full text-black">
+                <Button onClick={removeInteraction} variant="outline" className="w-full text-black">
                     Remove interaction
                 </Button>
             </div>
