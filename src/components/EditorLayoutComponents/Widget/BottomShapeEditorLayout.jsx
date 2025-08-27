@@ -48,7 +48,7 @@ function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mai
     }
     if (selectedSubMenu === 'shape-action') {
         return (
-            <ImageAction />
+            <ImageAction selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === 'image-filter') {
@@ -63,7 +63,7 @@ function renderComponent(selectedShape, selectedSubMenu, setSelectedSubMenu, mai
     }
     if (selectedSubMenu === 'image-action') {
         return (
-            <ImageAction />
+            <ImageAction selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex}/>
         )
     }
     if (selectedSubMenu === 'link') {
