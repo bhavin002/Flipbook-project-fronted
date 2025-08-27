@@ -1,8 +1,10 @@
 import { GetWorkspaceFontsApi } from "@/service/font.service";
-import { GetAllTemplates } from "@/service/template.service";
+// import { GetAllTemplates } from "@/service/template.service";
 import { getData } from "@/utils/datas";
-import { TemplateType, TextDragValue } from "@/utils/enum";
-import { TextElementsListSkeleton, TextTemplateSkeleton } from "@/utils/Skeleton";
+// import { TemplateType, TextDragValue } from "@/utils/enum";
+import { TextDragValue } from "@/utils/enum";
+// import { TextElementsListSkeleton, TextTemplateSkeleton } from "@/utils/Skeleton";
+import { TextElementsListSkeleton } from "@/utils/Skeleton";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
@@ -13,29 +15,29 @@ export default function TextSidebarPanel({
     selectedIndex,
     setIsEditorDrawerOpen
 }) {
-    const [templates, setTemplates] = useState([]);
+    // const [templates, setTemplates] = useState([]);
     const [workspaceFonts, setWorkspaceFonts] = useState([]);
-    const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
+    // const [isTemplatesLoading, setIsTemplatesLoading] = useState(false);
     const [isFontsLoading, setIsFontsLoading] = useState(false);
 
     let textElements = getData("textElements") || [];
 
-    useEffect(() => {
-        const getTextTemplates = async () => {
-            try {
-                setIsTemplatesLoading(true);
-                const response = await GetAllTemplates(TemplateType.TEXT);
-                setTemplates(response.data);
-            } catch (error) {
-                toast.error("Failed to fetch text templates", {
-                    description: error.message || "Oops! Something went wrong.",
-                });
-            } finally {
-                setIsTemplatesLoading(false);
-            }
-        }
-        getTextTemplates();
-    }, []);
+    // useEffect(() => {
+    //     const getTextTemplates = async () => {
+    //         try {
+    //             setIsTemplatesLoading(true);
+    //             const response = await GetAllTemplates(TemplateType.TEXT);
+    //             setTemplates(response.data);
+    //         } catch (error) {
+    //             toast.error("Failed to fetch text templates", {
+    //                 description: error.message || "Oops! Something went wrong.",
+    //             });
+    //         } finally {
+    //             setIsTemplatesLoading(false);
+    //         }
+    //     }
+    //     getTextTemplates();
+    // }, []);
 
     useEffect(() => {
         const getWorkspaceFonts = async () => {
@@ -96,10 +98,6 @@ export default function TextSidebarPanel({
             return "bold";
         }
         return "none";
-    };
-
-    const handleTemplateClick = (template) => {
-        console.log("Template clicked:", template);
     };
 
     const handleTextElementAction = (element) => {
@@ -183,7 +181,7 @@ export default function TextSidebarPanel({
                 </a>
             </div>
 
-            <div className="text-sm font-semibold">Text templates</div>
+            {/* <div className="text-sm font-semibold">Text templates</div>
             <div className="h-0 overflow-y-auto flex-grow">
                 <div className="grid grid-cols-2 gap-4">
                     {isTemplatesLoading ? (
@@ -210,7 +208,7 @@ export default function TextSidebarPanel({
                         ))
                     )}
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 }
