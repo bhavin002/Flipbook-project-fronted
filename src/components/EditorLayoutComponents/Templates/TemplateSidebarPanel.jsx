@@ -2,9 +2,8 @@ import { Input } from "@/components/ui/input"
 import { Search } from 'lucide-react';
 import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { getData } from "@/utils/datas";
 import TemplateDetailView from "./TemplateDetailView";
-import { GetTemplatesByLayoutApi, GetThumbnailApi } from "@/service/template.service";
+import { GetAllTemplateCategories, GetTemplatesByLayoutApi, GetThumbnailApi } from "@/service/template.service";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TemplateType } from "@/utils/enum";
@@ -14,19 +13,49 @@ export default function TemplateSidebarPanel({ mainStage, stageWidth, stageHeigh
     const [hoveredId, setHoveredId] = useState(null);
     const [selectedTemplate, setSelectedTemplate] = useState(null);
     const [templates, setTemplates] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [templateCategories, setTemplateCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState("all-templates");
+    const [loadingCategories, setLoadingCategories] = useState(false);
+    const [loadingTemplates, setLoadingTemplates] = useState(false);
     const [loadingThumbnail, setLoadingThumbnail] = useState(false);
-    const templatesData = getData("templatesData") || [];
 
+    useEffect(() => {
+        const fetchTemplateCategories = async () => {
+            try {
+                setLoadingCategories(true);
+                const response = await GetAllTemplateCategories();
+                const categoriesWithAll = [
+                    { _id: "all-templates", name: "All Templates" },
+                    ...response.data
+                ];
+                setTemplateCategories(categoriesWithAll);
+            } catch (error) {
+                toast.error("Error fetching template categories", {
+                    description: error.message || "Something went wrong"
+                });
+            } finally {
+                setLoadingCategories(false);
+            }
+        };
+        fetchTemplateCategories();
+    }, []);
+
+    // Fetch templates when component mounts or category changes
     useEffect(() => {
         const fetchTemplates = async () => {
             try {
-                setLoading(true);
+                setLoadingTemplates(true);
                 const data = {
                     width: stageWidth,
                     height: stageHeight,
                     type: TemplateType.NORMAL
+                };
+
+                // Add category filter if not "all-templates"
+                if (selectedCategory !== "all-templates") {
+                    data.category = selectedCategory;
                 }
+
                 const response = await GetTemplatesByLayoutApi(data);
                 const templatesWithThumbnails = response.data.filter(template => template.thumbnail);
                 setTemplates(templatesWithThumbnails);
@@ -35,11 +64,11 @@ export default function TemplateSidebarPanel({ mainStage, stageWidth, stageHeigh
                     description: error.message || "Something went wrong"
                 });
             } finally {
-                setLoading(false);
+                setLoadingTemplates(false);
             }
         };
         fetchTemplates();
-    }, []);
+    }, [selectedCategory]);
 
     const handleTemplateClick = async (template) => {
         try {
@@ -60,6 +89,10 @@ export default function TemplateSidebarPanel({ mainStage, stageWidth, stageHeigh
 
     const handleBackClick = () => {
         setSelectedTemplate(null);
+    };
+
+    const handleCategoryChange = (categoryId) => {
+        setSelectedCategory(categoryId);
     };
 
     if (selectedTemplate || loadingThumbnail) {
@@ -88,7 +121,7 @@ export default function TemplateSidebarPanel({ mainStage, stageWidth, stageHeigh
 
     return (
         <div className="px-6 pt-6 pb-2 space-y-4 flex flex-col h-[100vh]">
-            <div className="relative">
+            {/* <div className="relative">
                 <div className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground">
                     <Search className="h-4 w-4" />
                 </div>
@@ -103,29 +136,37 @@ export default function TemplateSidebarPanel({ mainStage, stageWidth, stageHeigh
                         setSearchQuery(e.target.value);
                     }}
                 />
-            </div>
-            <Select defaultValue="all-templates">
-                <SelectTrigger id="template" className="w-full">
-                    <SelectValue placeholder="Select template" />
-                </SelectTrigger>
-                <SelectContent>
-                    {templatesData.map(option => (
-                        <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+            </div> */}
+
+            {loadingCategories ? (
+                <Skeleton className="w-full h-10 rounded-md" />
+            ) : (
+                <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+                    <SelectTrigger id="template" className="w-full">
+                        <SelectValue placeholder="Select template category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {templateCategories.map(category => (
+                            <SelectItem key={category._id} value={category._id}>
+                                {category.name}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            )}
+
             <div className="h-0 overflow-y-auto flex-grow">
-                {loading ? (
+                {loadingTemplates ? (
                     <div className="grid grid-cols-2 gap-4">
                         {[...Array(6)].map((_, index) => (
                             <div key={index} className="relative rounded-lg overflow-hidden">
-                                <div className={`relative aspect-[${stageWidth}/${stageHeight}]`}>
-                                    <Skeleton className="w-full h-full" />
-                                </div>
+                                <Skeleton className="w-full h-32 rounded-lg" />
                             </div>
                         ))}
+                    </div>
+                ) : templates.length === 0 ? (
+                    <div className="flex items-center justify-center h-32 text-white    ">
+                        No templates found for this category
                     </div>
                 ) : (
                     <div className="grid grid-cols-2 gap-4">

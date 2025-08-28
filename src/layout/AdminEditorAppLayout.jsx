@@ -12,7 +12,7 @@ import BottomShapeEditorLayout from "@/components/EditorLayoutComponents/Widget/
 import { toast } from "sonner";
 import useWindowWidth from "@/hooks/use-window-width";
 import PreviewDialog from "@/components/EditorLayoutComponents/Preview/PreviewDialog";
-import { EditTemplateApi, GetTemplateApi } from "@/service/template.service";
+import { EditTemplateApi, GetAllTemplateCategories, GetTemplateApi } from "@/service/template.service";
 import LoadingButton from "@/utils/LoadingButton";
 import {
     Select,
@@ -36,11 +36,32 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
     const [mainStage, setMainStage] = useState([]);
     const navigate = useNavigate();
     const [templateType, setTemplateType] = useState("2");
+    const [templateCategories, setTemplateCategories] = useState([]);
+    const [templateCategory, setTemplateCategory] = useState("all-templates");
+
+    useEffect(() => {
+        const fetchTemplateCategories = async () => {
+            try {
+                const response = await GetAllTemplateCategories();
+                const categoriesWithAll = [
+                    { _id: "all-templates", name: "All Templates" },
+                    ...response.data
+                ];
+                setTemplateCategories(categoriesWithAll);
+            } catch (error) {
+                toast.error("Error fetching template categories", {
+                    description: error.message || "Something went wrong"
+                });
+            }
+        };
+        fetchTemplateCategories();
+    }, []);
 
     useEffect(() => {
         const getFlipbook = async () => {
             try {
                 const response = await GetTemplateApi(id);
+                setTemplateCategory(response.data?.categoryId || "all-templates");
                 setStageWidth(response.data.width);
                 setStageHeight(response.data.height);
                 setTemplateType(response.data.type);
@@ -117,6 +138,9 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
             formData.append('width', stageWidth);
             formData.append('height', stageHeight);
             formData.append('type', templateType);
+            if(templateCategory !== "all-templates"){
+                formData.append('categoryId', templateCategory);
+            }
 
             const response = await EditTemplateApi(id, formData);
             toast.success("Template saved successfully", {
@@ -310,14 +334,29 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
                         }}>
                             <img src="/assets/logo.png" width={200} alt="Logo" />
                         </div>
-                        <div className="flex-1 flex justify-center">
-                            <Select value={templateType} onValueChange={setTemplateType}>                                <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select template type" />
-                            </SelectTrigger>
+                        <div className="flex-1 gap-2 flex justify-center max-md:hidden">
+                            <Select value={templateType} onValueChange={setTemplateType}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select template type" />
+                                </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="1">Product Template</SelectItem>
                                     <SelectItem value="2">Normal Template</SelectItem>
                                     <SelectItem value="3">Text Template</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Select value={templateCategory} onValueChange={setTemplateCategory}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select template type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {
+                                        templateCategories.map(category => (
+                                            <SelectItem key={category._id} value={category._id}>
+                                                {category.name}
+                                            </SelectItem>
+                                        ))
+                                    }
                                 </SelectContent>
                             </Select>
                         </div>
@@ -328,6 +367,34 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
                                 </Button>
                             </div>
                             <ProfileDropDownCom />
+                        </div>
+                    </div>
+                    <div className="relative lg:flex px-4">
+                        <div className="hidden items-center gap-2 max-md:flex">
+                            <Select value={templateType} onValueChange={setTemplateType}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select template type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="1">Product Template</SelectItem>
+                                    <SelectItem value="2">Normal Template</SelectItem>
+                                    <SelectItem value="3">Text Template</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Select value={templateCategory} onValueChange={setTemplateCategory}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select template type" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {
+                                        templateCategories.map(category => (
+                                            <SelectItem key={category._id} value={category._id}>
+                                                {category.name}
+                                            </SelectItem>
+                                        ))
+                                    }
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
                 </header>
