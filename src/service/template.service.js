@@ -41,3 +41,8 @@ export const GetPageByIndexApi = async (templateId, index) => {
     const response = await ApiClient().get(`/template/get-page/${templateId}?page=${index}`);
     return response.data;
 }
+
+export const GetAllTemplateCategories = async () => {
+    const response = await ApiClient().get(`/template-category/get-all`);
+    return response.data;
+}

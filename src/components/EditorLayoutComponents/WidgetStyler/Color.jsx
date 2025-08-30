@@ -1,24 +1,27 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import useWindowWidth from "@/hooks/use-window-width";
+import BrandColors from "@/utils/BrandColors";
 import { Plus } from "lucide-react";
 import { useRef, useState } from "react";
 
 export default function Color({ setIsShapeDrawerOpen, setSelectedSubMenu, selectedShape, mainStage, selectedIndex, setMainStage }) {
     const [isNewColorAdded, setIsNewColorAdded] = useState(false);
+    const [currentColor, setCurrentColor] = useState(mainStage[selectedIndex]?.background || '#FFFFFF');
     const colorInputRef = useRef(null);
+    
     const handleAddColor = () => {
         setIsNewColorAdded(true);
         setTimeout(() => colorInputRef.current?.click(), 10);
     };
-    const windowInnerWidth = useWindowWidth();
-    const recentColors = [
-        '#000000', '#020301'
-    ];
 
-    const brandColors = [
-        '#c54e4f', '#cb2727', "#412a0a"
-    ];
+    const handleColorPickerChange = (e) => {
+        const selectedColor = e.target.value;
+        setCurrentColor(selectedColor);
+        updateShapeColor(selectedColor);
+    };
+
+    const windowInnerWidth = useWindowWidth();
 
     const grayShades = [
         '#1E2A35', '#2F4353', '#3C4A5F', '#4B5C6B', '#5A6C7A', '#ffffff'
@@ -58,11 +61,12 @@ export default function Color({ setIsShapeDrawerOpen, setSelectedSubMenu, select
         <div className="p-6 space-y-2 w-full overflow-y-auto">
             <Input
                 type="text"
+                value={mainStage[selectedIndex]?.background || ''}
                 onChange={handleHexInputChange}
                 placeholder="paste a hex color here"
                 className="placeholder:text-[#d8dce3]" />
             <div className="space-y-2">
-                <Label className="text-xs">Recent colors</Label>
+                <Label className="text-xs">Custom colors</Label>
                 <div className="flex flex-wrap gap-2">
                     <div className='relative w-fit'>
                         <div onClick={handleAddColor}
@@ -74,33 +78,16 @@ export default function Color({ setIsShapeDrawerOpen, setSelectedSubMenu, select
                             isNewColorAdded && <input
                                 ref={colorInputRef}
                                 type="color"
-                                value={'#FFFFFF'}
+                                value={currentColor}
+                                onChange={handleColorPickerChange}
                                 className="opacity-0 absolute w-1 h-1 left-0 right-0 m-auto bottom-0"
                             />
                         }
                     </div>
-                    {recentColors.map((color, index) => (
-                        <div
-                            key={index}
-                            className="w-8 h-8 rounded cursor-pointer hover:scale-110 transition-transform duration-200"
-                            style={{ backgroundColor: color }}
-                            onClick={() => updateShapeColor(color)}
-                        />
-                    ))}
                 </div>
             </div>
             <div className="space-y-2">
-                <Label className="text-xs">Brand colors</Label>
-                <div className="flex flex-wrap gap-2">
-                    {brandColors.map((color, index) => (
-                        <div
-                            key={index}
-                            className="w-8 h-8 rounded cursor-pointer hover:scale-110 transition-transform duration-200"
-                            style={{ backgroundColor: color }}
-                            onClick={() => updateShapeColor(color)}
-                        />
-                    ))}
-                </div>
+                <BrandColors handlePaletteColorSelect={updateShapeColor} selectedColor={mainStage[selectedIndex]?.background} />
                 <a href={`${import.meta.env.VITE_APP_URL}/branding/colors`} target="_blank" className="text-xs font-medium text-white cursor-pointer hover:underline">Manage brand colors</a>
             </div>
             <div className="space-y-2">

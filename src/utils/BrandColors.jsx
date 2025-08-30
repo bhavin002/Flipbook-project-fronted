@@ -90,20 +90,6 @@ export default function BrandColors({ handlePaletteColorSelect, selectedColor })
         <div className="space-y-2">
             <div className="flex items-center gap-2">
                 <Label>Brand Colors</Label>
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger>
-                            <Info className="h-4 w-4 text-gray-400" />
-                        </TooltipTrigger>
-                        <TooltipContent
-                            side="right"
-                            align="center"
-                            className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                        >
-                            <p className="text-sm">Select from brand colors</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
             </div>
             
             {isLoading ? renderColorSkeleton() : renderColors()}
