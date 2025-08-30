@@ -107,7 +107,8 @@ export function AuthProvider({ children }) {
             checkAuth, 
             userMeta, 
             permissions, 
-            updateUserMeta 
+            updateUserMeta,
+            setPermissions 
         }}>
             {children}
         </AuthContext.Provider>
