@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo } from "
 import { GetWorkspacesApi } from "@/service/workspace.service";
 import { toast } from "sonner";
 import { useAuth } from "./AuthContext";
+import { GetPermissionInfoApi } from "@/service/auth.service";
 
 const WorkspaceContext = createContext();
 
@@ -18,7 +19,7 @@ export const WorkspaceProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [lastFetched, setLastFetched] = useState(null);
   const [isNeededRefetch, setIsNeededRefetch] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, setPermissions } = useAuth();
 
   const updateWorkspaceName = (workspaceId, newName) => {
     setWorkspaces(prev =>
@@ -44,6 +45,8 @@ export const WorkspaceProvider = ({ children }) => {
       setIsLoading(true);
       try {
         const response = await GetWorkspacesApi();
+        const permissionResponse = await GetPermissionInfoApi();
+        setPermissions(permissionResponse.data.permission)
         setWorkspaces(response.data || []);
         setLastFetched(new Date());
       } catch (error) {
@@ -67,10 +70,10 @@ export const WorkspaceProvider = ({ children }) => {
   }, [isNeededRefetch, isAuthenticated]);
 
   return (
-    <WorkspaceContext.Provider value={{ 
-      workspaces, 
-      isLoading, 
-      fetchWorkspaces, 
+    <WorkspaceContext.Provider value={{
+      workspaces,
+      isLoading,
+      fetchWorkspaces,
       setIsNeededRefetch,
       myWorkspaceId,
       currentWorkspace,
