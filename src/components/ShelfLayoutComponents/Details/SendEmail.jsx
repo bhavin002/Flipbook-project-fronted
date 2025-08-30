@@ -5,6 +5,7 @@ import CustomizeEmail from "@/utils/SendEmail/CustomizeEmail";
 import EmailClient from "@/utils/SendEmail/EmailClient";
 import EmailPreview from "@/utils/SendEmail/EmailPreview";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function SendEmail({ flipbookId }) {
     const { bookshelfSettings } = useBookshelf();
