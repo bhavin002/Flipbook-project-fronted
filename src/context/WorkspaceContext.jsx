@@ -45,8 +45,6 @@ export const WorkspaceProvider = ({ children }) => {
       setIsLoading(true);
       try {
         const response = await GetWorkspacesApi();
-        const permissionResponse = await GetPermissionInfoApi();
-        setPermissions(permissionResponse.data.permission)
         setWorkspaces(response.data || []);
         setLastFetched(new Date());
       } catch (error) {
@@ -59,6 +57,16 @@ export const WorkspaceProvider = ({ children }) => {
     }
   };
 
+  const fetchPermissions = async () => {
+    try {
+      const response = await GetPermissionInfoApi();
+      const apiPermissions = response.data.permission
+      setPermissions(apiPermissions);
+    } catch (error) {
+      setPermissions(null);
+    }
+  };
+
   useEffect(() => {
     if (!isAuthenticated) return;
     if (isNeededRefetch) {
@@ -66,6 +74,7 @@ export const WorkspaceProvider = ({ children }) => {
       setIsNeededRefetch(false);
     } else {
       fetchWorkspaces();
+      fetchPermissions();
     }
   }, [isNeededRefetch, isAuthenticated]);
 
@@ -74,6 +83,7 @@ export const WorkspaceProvider = ({ children }) => {
       workspaces,
       isLoading,
       fetchWorkspaces,
+      isNeededRefetch,
       setIsNeededRefetch,
       myWorkspaceId,
       currentWorkspace,
