@@ -1,6 +1,7 @@
 import { GetUserInfoApi, GetPermissionInfoApi } from '@/service/auth.service';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4 } from 'uuid';
 
 const AuthContext = createContext({
     isAuthenticated: false,
@@ -37,6 +38,7 @@ export function AuthProvider({ children }) {
             const fn_workspace_id = sessionStorage.getItem('fn_workspace_id');
             if (!fn_workspace_id) {
                 sessionStorage.setItem('fn_workspace_id', response.data.user.workspaceId);
+                sessionStorage.setItem('session_id', uuidv4());
             }
             return true;
         } catch (error) {

@@ -1,5 +1,4 @@
 import ApiClient from "@/utils/ApiClient";
-import { flipbookType } from "@/utils/enum";
 
 export const GetPageLayoutsApi = async () => {
     const response = await ApiClient().get("/page-layout/get", {
