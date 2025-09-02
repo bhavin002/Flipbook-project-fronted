@@ -40,7 +40,7 @@ export default function EmbedFlipbook() {
                 if (flipbookVisibilityConfig.visibility === flipbookVisibility.PUBLIC) {
                     const response = await GetPublishFlipbookApi(id);
                     setPublicData(response.data);
-                    sessionStorage.setItem("fn_workspace_id", response.data.flipbook.workspaceId);
+                    localStorage.setItem("fn_workspace_id", response.data.flipbook.workspaceId);
                 } else if (flipbookVisibilityConfig.visibility === flipbookVisibility.PASSWORD) {
                     setShowUnlockDialog(true);
                 } else if (flipbookVisibilityConfig.visibility === flipbookVisibility.PRIVATE || flipbookVisibilityConfig.visibility === flipbookVisibility.READERS_ONLY) {
@@ -52,7 +52,7 @@ export default function EmbedFlipbook() {
                         try {
                             const response = await GetPublishFlipbookApi(id, fn_access_token);
                             setPublicData(response.data);
-                            sessionStorage.setItem("fn_workspace_id", response.data.flipbook.workspaceId);
+                            localStorage.setItem("fn_workspace_id", response.data.flipbook.workspaceId);
                             setPrivateState({ status: "access_granted", loading: false });
                         } catch (err) {
                             setPrivateState({ status: "wrong_account", loading: false });
@@ -84,7 +84,7 @@ export default function EmbedFlipbook() {
             if (res.data.isValid) {
                 const response = await GetPublishFlipbookApi(id, res.data.token);
                 setPublicData(response.data);
-                sessionStorage.setItem("fn_workspace_id", response.data.flipbook.workspaceId);
+                localStorage.setItem("fn_workspace_id", response.data.flipbook.workspaceId);
                 setShowUnlockDialog(false);
                 setPassword("");
                 setUnlockError("");

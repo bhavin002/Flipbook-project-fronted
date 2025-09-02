@@ -35,9 +35,12 @@ export function AuthProvider({ children }) {
             const response = await GetUserInfoApi(token);
             if (response.status !== 200) return false;
             setUserMeta(response.data.user);
-            const fn_workspace_id = sessionStorage.getItem('fn_workspace_id');
+            const fn_workspace_id = localStorage.getItem('fn_workspace_id');
             if (!fn_workspace_id) {
-                sessionStorage.setItem('fn_workspace_id', response.data.user.workspaceId);
+                localStorage.setItem('fn_workspace_id', response.data.user.workspaceId);
+            }
+            const session_id = sessionStorage.getItem('session_id');
+            if(!session_id){
                 sessionStorage.setItem('session_id', uuidv4());
             }
             return true;

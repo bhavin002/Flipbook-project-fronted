@@ -31,7 +31,7 @@ export default function ProfileDropDownCom() {
 
     const switchWorkspace = (workspaceId) => {
         // Store selected workspace ID in session storage
-        sessionStorage.setItem("fn_workspace_id", workspaceId);
+        localStorage.setItem("fn_workspace_id", workspaceId);
         setIsNeededRefetch(true)
         navigate("/auth/sign-in");
     };
