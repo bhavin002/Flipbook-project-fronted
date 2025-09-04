@@ -108,7 +108,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                     </div>
 
                     {/* White Label URL Section */}
-                    <div className="flex items-center mt-6 gap-2">
+                    {/* <div className="flex items-center mt-6 gap-2">
                         <span className="text-[12px] font-medium text-gray-700">White label URL -</span>
                         <a
                             href="https://help.flipsnack.com/en/articles/2139448-using-a-custom-domain-with-flipsnack"
@@ -116,10 +116,10 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                         >
                             Learn more
                         </a>
-                    </div>
+                    </div> */}
 
                     {/* White Label Input */}
-                    <div className="flex items-center mt-2">
+                    {/* <div className="flex items-center mt-2">
                         <div className="flex-grow mr-1 max-w-[50%] relative">
                             <Input
                                 value="flibook.yourdomain.com"
@@ -130,7 +130,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                         <div className="bg-gray-50 border border-gray-300 text-sm text-gray-600 py-2 px-3 rounded-r-md whitespace-nowrap flex items-center">
                             /campaigns.html
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </DialogContent>
         </Dialog>

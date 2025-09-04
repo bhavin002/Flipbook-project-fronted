@@ -15,6 +15,7 @@ import { getProductCartInfoApi } from '@/service/product.service.js';
 import { toast } from "sonner";
 import { FilterSlider } from "@/components/ui/filterSlider.jsx";
 import { useShopSettings } from "@/context/ShopSettingsContext.jsx";
+import ShareFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/ShareFlipbookDialog.jsx";
 
 export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false, publicFlipbookData, startPage }) {
     const [currentPage, setCurrentPage] = useState(startPage || 1);
@@ -25,6 +26,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
     const [isPageOverviewOpen, setIsPageOverviewOpen] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
     const { activeTab, setActiveTab } = useViewMode();
@@ -347,6 +349,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         variant="ghost"
                                         size="icon"
                                         className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                        disabled={!shopSettings?.isAllowToShare}
+                                        onClick={() => setIsShareModalOpen(true)}
                                     >
                                         <Share2 className="w-4 h-4" />
                                     </Button>
@@ -484,6 +488,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 variant="ghost"
                                 size="icon"
                                 className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                                disabled={!shopSettings?.isAllowToShare}
+                                onClick={() => setIsShareModalOpen(true)}
                             >
                                 <Share2 className="w-5 h-5" />
                             </Button>
@@ -660,6 +666,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             leadFormData={visibilitySettings.leadForm}
                         />
                     )}
+                    <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} flipbookId={flipbookId} />
                 </div>
 
             </div>
