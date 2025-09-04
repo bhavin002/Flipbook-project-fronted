@@ -261,8 +261,6 @@ export default function FilterCom() {
             const encodedFilters = searchParams.get('filter');
             const isInFolderView = location.pathname.includes('/folder/');
 
-            console.log("encodedFilters ???",encodedFilters,encodedFilters || !isInFolderView)
-
             if (encodedFilters && !isInFolderView) {
                 if (encodedFilters) {
                     try {
@@ -318,6 +316,16 @@ export default function FilterCom() {
                 setDateCreatedFilter("anytime");
                 setLastUpdatedFilter("anytime");
                 setFilterCount(0);
+                if (!isInFolderView) {
+                    setIsLoading(true);
+                    try {
+                        await fetchFlipbooks();
+                    } catch (error) {
+                        toast.error("Failed to load data");
+                    } finally {
+                        setIsLoading(false);
+                    }
+                }
             }
         };
 

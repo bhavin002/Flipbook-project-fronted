@@ -19,6 +19,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreVertical } from "lucide-react";
 import { flipbookType } from "@/utils/enum";
 import RenameFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/RenameFlipbookDialog";
+import { CreateFlipbookActiveEditor, ReplaceFlipbookActiveEditor, DeleteFlipbookActiveEditor } from "@/service/flipbookAciveEditors.service"; // Assuming the file path based on user input
+import SessionConflictDialog from "@/components/EditorLayoutComponents/SessionConflictDialog";
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
@@ -44,6 +46,9 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
     const [flipbookObj, setFlipbookObj] = useState(null);
     const [isInitialLoad, setIsInitialLoad] = useState(false);
+    const [showSessionDialog, setShowSessionDialog] = useState(false);
+    const [isSessionTakeOverLoading, setIsSessionTakeOverLoading] = useState(false);
+    const [currentEditor, setCurrentEditor] = useState("");
 
     useEffect(() => {
         const getFlipbook = async () => {
@@ -61,6 +66,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 });
                 const validPageData = response.data.pages;
                 setMainStage(validPageData.map(e => JSON.parse(e.pageData)));
+                await initSession(); // Initialize session after flipbook data is loaded
             } catch (error) {
                 toast.error(error?.message || "Error fetching page data");
             }
@@ -68,11 +74,48 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
         if (id) {
             getFlipbook();
         }
-    }, [id])
+    }, [id]);
+
+    const initSession = async () => {
+        try {
+            await CreateFlipbookActiveEditor({ flipbookId: id, sessionId: sessionStorage.getItem('session_id') });
+            setIsInitialLoad(true);
+            return true;
+        } catch (error) {
+            if (error.status === 409) {
+                setShowSessionDialog(true);
+                setCurrentEditor(error.data.data.currentEditor)
+                return false;
+            } else {
+                toast.error(error.message || "Error initializing editing session");
+                navigate("/myflipbooks");
+                return false;
+            }
+        }
+    };
+
+    const handleTakeOver = async () => {
+        try {
+            setIsSessionTakeOverLoading(true);
+            await ReplaceFlipbookActiveEditor({ flipbookId: id, sessionId: sessionStorage.getItem('session_id') });
+            setShowSessionDialog(false);
+            setIsInitialLoad(true);
+        } catch (error) {
+            toast.error(error.message || "Error taking over session");
+        } finally {
+            setIsSessionTakeOverLoading(false);
+        }
+    };
 
     const updatePageData = async () => {
         try {
             setIsLoading(true);
+            if (!showSessionDialog) {
+                if (!(await initSession())) {
+                    return false
+                }
+            }
+
             mainStage.forEach(e => {
                 e.temp = e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] :
                     (e.shapes || []);
@@ -84,7 +127,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 delete e.temp;
                 e.stageref = null;
             });
-            await UpdateFlipbookPageDataApi(id, {
+            return await UpdateFlipbookPageDataApi(id, {
                 width: stageWidth,
                 height: stageHeight,
                 pages: temp.map(e => ({
@@ -101,14 +144,24 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     };
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            if (id && mainStage.length > 0 && !publishing && isInitialLoad) {
+        const interval = setInterval(async () => {
+            if (id && mainStage.length > 0 && !publishing && isInitialLoad && !showSessionDialog) {
                 updatePageData();
             }
         }, 10000);
 
         return () => clearInterval(interval);
     }, [mainStage, publishing]);
+
+    useEffect(() => {
+        return async () => {
+            const data = {
+                flipbookId: id,
+                sessionId: sessionStorage.getItem("session_id")
+            }
+            await DeleteFlipbookActiveEditor(data)
+        };
+    }, []);
 
     const [selectedSubMenu, setSelectedSubMenu] = useState(null);
     const [isShapeDrawerOpen, setIsShapeDrawerOpen] = useState(false);
@@ -117,8 +170,9 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const handlePreviewClick = async () => {
         try {
             setIsPreviewLoading(true);
-            await updatePageData();
-            setIsPreviewOpen(true);
+            if (await updatePageData()) {
+                setIsPreviewOpen(true);
+            }
         } catch (error) {
             toast.error("Failed to update page data before preview", {
                 description: error.message || "Something went wrong"
@@ -131,8 +185,9 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const handleCustomizeClick = async () => {
         try {
             setIsCustomizeLoading(true);
-            await updatePageData();
-            navigate(`/customize/${id}`);
+            if (await updatePageData()) {
+                navigate(`/customize/${id}`);
+            }
         } catch (error) {
             toast.error("Failed to update page data before customize", {
                 description: error.message || "Something went wrong"
@@ -141,6 +196,18 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
             setIsCustomizeLoading(false);
         }
     };
+
+    const shareFlipbook = async () => {
+        try {
+            if (await initSession()) {
+                setIsPublishModalOpen(true)
+            }
+        } catch (error) {
+            toast.error("Failed to update page data before customize", {
+                description: error.message || "Something went wrong"
+            });
+        } 
+    }
 
     useEffect(() => {
         if (state?.publish) {
@@ -372,7 +439,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                         Save template
                                     </Button>
                                 ) : (
-                                    <Button disabled={!isInitialLoad} className="hidden max-md:block" onClick={() => setIsPublishModalOpen(true)}>
+                                    <Button disabled={!isInitialLoad} className="hidden max-md:block" onClick={shareFlipbook}>
                                         <Share2 />
                                     </Button>
                                 )}
@@ -381,7 +448,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                         Save template
                                     </Button>
                                 ) : (
-                                    <Button disabled={!isInitialLoad} className="max-md:hidden" onClick={() => setIsPublishModalOpen(true)}>
+                                    <Button disabled={!isInitialLoad} className="max-md:hidden" onClick={shareFlipbook}>
                                         Share now
                                     </Button>
                                 )}
@@ -437,6 +504,17 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 }
             </div>
             <RenameFlipbookDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} flipbook={flipbookObj} redirectToTemplate={true} />
+            <SessionConflictDialog
+                isOpen={showSessionDialog}
+                onOpenChange={setShowSessionDialog}
+                onBack={() => {
+                    setShowSessionDialog(false);
+                    navigate("/myflipbooks");
+                }}
+                currentEditor={currentEditor}
+                onTakeOver={handleTakeOver}
+                isLoading={isSessionTakeOverLoading}
+            />
         </>
     );
 }
