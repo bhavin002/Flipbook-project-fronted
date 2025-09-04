@@ -19,9 +19,9 @@ export const addStage = (mainStage, setMainStage, index, setSelectedIndex) => {
     }
     mainStage.splice(index + 1, 0, stage);
     setMainStage([...mainStage]);
-    setTimeout(() => {
-        setSelectedIndex(index + 1);
-    }, 0);
+    // setTimeout(() => {
+    setSelectedIndex(index + 1);
+    // }, 0);
 }
 
 export const duplicateStage = (mainStage, setMainStage, index, setSelectedIndex) => {
@@ -32,9 +32,9 @@ export const duplicateStage = (mainStage, setMainStage, index, setSelectedIndex)
     temp.selectedShapes = [];
     mainStage.splice(index + 1, 0, temp);
     setMainStage([...mainStage]);
-    setTimeout(() => {
+    // setTimeout(() => {
         setSelectedIndex(index + 1)
-    }, 0);
+    // }, 0);
 
 }
 

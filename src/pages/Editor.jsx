@@ -346,6 +346,13 @@ import { Progress } from "@/components/ui/progress";
     };
 })(Konva);
 
+const debounce = (func, delay) => {
+    let timeoutId;
+    return (...args) => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func(...args), delay);
+    };
+};
 export default function Editor() {
     const usePrevious = (value) => {
         const ref = useRef();
@@ -357,7 +364,6 @@ export default function Editor() {
 
     const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad } = useOutletContext();
     const autoScroll = useRef([]);
-    const MAX_HISTORY = 10; // Maximum states to store
 
     const parentRef = useRef(null);
     const childRef = useRef(null);
@@ -377,27 +383,42 @@ export default function Editor() {
     const scrollRef = useRef(null);
     const prevSelectedIndex = usePrevious(selectedIndex);
     const [undoStack, setUndoStack] = useState([]);
+    const [isUndoAction, setIsUndoAction] = useState(true); // Stack for redo
+    const [isRedoAction, setIsRedoAction] = useState(true); // Stack for redo
     const lastScrollTop = useRef(0);
     const scrollTimeout = useRef(null);
-    const pushToUndoStack = (shapes, selectedIndex) => {
-        const snapshot = {
-            shapes: JSON.parse(JSON.stringify(shapes)),
-            selectedIndex
-        };
-
-        const newUndoStack = [...undoStack, snapshot];
-        if (newUndoStack.length > MAX_HISTORY) newUndoStack.shift();
-
-        setUndoStack(newUndoStack);
-        setRedoStack([]); // clear redo on new action
+    const generateMainStageString = (stages) => {
+        // if (isCropping) return;
+        return stages
+            .map(stage => {
+                // stage.shapes = stage.stageref && stage.stageref.curren ? stage.stageref.current?.children[0]?.children[1]?.children
+                //     ?.map(child => JSON.stringify(child.attrs)) : []
+                //     .join("") || "" :
+                return (stage.shapes || []).map(child => JSON.stringify(child)).join("") || "[]"
+            })
+            .join("" + selectedIndex + "");
     };
+    const debouncedUpdate = useRef(
+        debounce((newMainStageString) => {
+            setMainStageString(newMainStageString);
+        }, 300)
+    ).current;
 
     useEffect(() => {
-        pushToUndoStack(mainStage.map(s => s.shapes), selectedIndex);
-        setMainStageString(generateMainStageString(mainStage));
+        setUndoStack([{ stages: JSON.parse(JSON.stringify(mainStage)), selectedIndex }]);
+        const newMainStageString = generateMainStageString(mainStage);
+        debouncedUpdate(newMainStageString);
     }, []);
 
-    const generateMainStageString = (stages) => { return stages.map(stage => stage.stageref && stage.stageref?.current ? (stage.stageref?.current?.children[0]?.children[1]?.children?.map(child => JSON.stringify(child.attrs)).join("") || "") : stage.shapes.map(shape => JSON.stringify(shape)).join("")).join(""); };
+    useEffect(() => {
+
+        // mainStage[selectedIndex].shapes = mainStage[selectedIndex].stageref && mainStage[selectedIndex].stageref.current &&  mainStage[selectedIndex].stageref.current.children[0].children[1].children.map(e => e.attrs)
+        const newMainStageString = generateMainStageString(mainStage);
+        if (newMainStageString !== mainStageString) {
+            debouncedUpdate(newMainStageString);
+            console.log('dragging===========================================111');
+        }
+    }, [mainStage]);
 
     useEffect(() => {
         setTimeout(() => {
@@ -412,6 +433,16 @@ export default function Editor() {
         }, 100);
     }, [zoomper]); // Trigger whenever zoomper changes
 
+    useEffect(() => {
+        if (mainStageString == "") return;
+        if (!isUndoAction && !isRedoAction) {
+            updateMainStage(mainStage);
+        }
+        setIsUndoAction(false);
+        setIsRedoAction(false);
+
+        // Handel UNDO and REDo max 10 10 state  
+    }, [mainStageString]);
     useEffect(() => {
         const handleScroll = () => {
             if (!childRef.current) return;
@@ -460,17 +491,37 @@ export default function Editor() {
 
 
     useEffect(() => {
-        console.log("selectedIndex", selectedIndex);
-        console.log("pre ===============", prevSelectedIndex);
-        if (prevSelectedIndex !== undefined && prevSelectedIndex !== selectedIndex && prevSelectedIndex < mainStage.length) {
-            mainStage[prevSelectedIndex].shapes = mainStage[prevSelectedIndex].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || []
-            autoScroll.current[selectedIndex].scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-            });
+        autoScroll.current[selectedIndex].scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+        });
+        if (selectedIndex) {
+            // mainStage[prevSelectedIndex].shapes = mainStage[prevSelectedIndex].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || []
         }
     }, [selectedIndex])
+    const MAX_HISTORY = 10; // Maximum states to store
 
+    // Update mainStage and maintain history
+    const updateMainStage = () => {
+        const temp = JSON.parse(JSON.stringify(mainStage));
+        temp.forEach(stage => {
+            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
+            stage.shapes =
+                newObj ? newObj?.children[0]?.children[1]?.children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes
+            stage.shapes.forEach(element => {
+                element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
+            });
+            // stage.stageref && (stage.stageref.current = newObj);
+            stage.selectedShapes = [];
+        })
+        // if (!(temp.some(e => e.shapes && e.shapes.length))) return;
+        undoStack.push({ stages: temp, selectedIndex });
+        if (undoStack.length > MAX_HISTORY) undoStack.shift(); // Keep max 10 states
+        setUndoStack(undoStack);
+
+        // Clear redo stack when a new action occurs
+        setRedoStack([]);
+    };
     const selectAllShapes = (currentStageIndex) => {
         const updatedStage = [...mainStage];
         const currentStage = updatedStage[currentStageIndex];
@@ -483,184 +534,84 @@ export default function Editor() {
         setMainStage(updatedStage);
 
     };
-
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         const newMainStageString = generateMainStageString(mainStage);
-    //         if (mainStageString !== newMainStageString) {
-    //             setMainStageString(newMainStageString);
-    //         }
-    //     }, 100);
-    // }, [mainStage]);
-
-    // useEffect(() => {
-    //     if (!isUndoAction && !isRedoAction) {
-    //         updateMainStage(mainStage);
-    //     }
-    //     setIsUndoAction(false);
-    //     setIsRedoAction(false);
-
-    //     // Handel UNDO and REDo max 10 10 state  
-    // }, [mainStageString]);
-    // // Update mainStage and maintain history
-    // const updateMainStage = () => {
-    //     const temp = JSON.parse(JSON.stringify(mainStage));
-    //     temp.forEach(stage => {
-    //         let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
-    //         stage.shapes = newObj?.children[0]?.children[1]?.children.map(e => JSON.parse(JSON.stringify(e.attrs))) || []
-    //         stage.shapes.forEach(element => {
-    //             element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
-    //         });
-    //         stage.stageref && (stage.stageref.current = newObj);
-    //         stage.selectedShapes = [];
-    //     })
-    //     if (!(temp.some(e => e.shapes && e.shapes.length))) return;
-    //     undoStack.push({ stages: temp, selectedIndex });
-    //     if (undoStack.length > MAX_HISTORY) undoStack.shift(); // Keep max 10 states
-    //     setUndoStack(undoStack);
-
-    //     // Clear redo stack when a new action occurs
-    //     setRedoStack([]);
-    // };
-
-    // // Undo functionality
-    // const handleUndo = () => {
-    //     if (undoStack.length === 1) return; // No states to undo
-    //     const temp = JSON.parse(JSON.stringify(mainStage));
-    //     temp.forEach(stage => {
-    //         if (stage.stageref && stage.stageref?.current) {
-    //             let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
-    //             stage.shapes = newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
-    //             stage.shapes.forEach(element => {
-    //                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
-    //             });
-    //             stage.stageref.current = newObj;
-    //             stage.selectedShapes = [];
-    //         }
-    //     })
-    //     undoStack.pop();
-
-    //     const previousState = undoStack[undoStack.length - 1].stages;
-    //     // setIsChangeStack(false);
-    //     const temp1 = JSON.parse(JSON.stringify(previousState));
-
-    //     temp1.forEach(stage => {
-    //         if (stage.stageref && stage.stageref?.current) {
-    //             let newObj = typeof (stage.stageref.current) === 'string' ? JSON.parse(stage.stageref.current) : stage.stageref.current
-    //             stage.shapes = newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
-    //             stage.shapes.forEach(element => {
-    //                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
-    //             });
-    //             stage.stageref.current = newObj;
-    //             stage.selectedShapes = [];
-    //         }
-    //     })
-    //     previousState.forEach(e => {
-    //         e.shapes.forEach(e => {
-    //             e.id = uuid();
-    //         })
-    //     })
-    //     redoStack.unshift({ stages: temp, selectedIndex });
-    //     setIsUndoAction(true);
-    //     setMainStage(previousState); // Set mainStage to the previous state
-    //     setUndoStack([...undoStack]); // Remove last state from undo stack
-    //     setRedoStack([...redoStack]); // Push current state to redo stack
-    //     setTimeout(() => {
-    //         setSelectedIndex(undoStack[undoStack.length - 1].selectedIndex)
-    //     }, 100);
-    // };
-
-    // // Redo functionality
-    // const handleRedo = () => {
-    //     setIsRedoAction(true);
-    //     if (redoStack.length === 0) return; // No states to redo
-    //     const temp = JSON.parse(JSON.stringify(mainStage));
-    //     temp.forEach(stage => {
-    //         if (!stage.stageref || !stage.stageref?.current) return;
-    //         let newObj = typeof (stage.stageref.current) === 'string' ? JSON.parse(stage.stageref.current) : stage.stageref.current;
-    //         stage.shapes = newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || []
-    //         stage.shapes.forEach(element => {
-    //             element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
-    //         });
-    //         stage.stageref.current = newObj;
-    //         stage.selectedShapes = [];
-    //     })
-    //     const temp2 = JSON.parse(JSON.stringify(redoStack[0].stages));
-    //     temp2.forEach(stage => {
-    //         if (!stage.stageref || !stage.stageref?.current) return;
-    //         let newObj = typeof (stage.stageref.current) === 'string' ? JSON.parse(stage.stageref.current) : stage.stageref.current;
-    //         stage.shapes = newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || []
-    //         stage.shapes.forEach(element => {
-    //             element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
-    //         });
-    //         stage.stageref.current = newObj;
-    //         stage.selectedShapes = [];
-    //     })
-    //     const nextState = redoStack[0].stages;
-    //     undoStack.push({ stages: temp2, selectedIndex });
-    //     setTimeout(() => {
-    //         setSelectedIndex(redoStack[0].selectedIndex)
-    //     }, 100);
-    //     redoStack.shift();
-
-    //     setRedoStack(redoStack); // Remove first state from redo stack
-    //     setUndoStack(undoStack); // Push current state to undo stack
-    //     setMainStage(temp2); // Set mainStage to the next state
-    // };
-
-
-
-    useEffect(() => {
-        const newString = generateMainStageString(mainStage);
-
-        if (mainStageString !== newString) {
-            setMainStageString(newString);
-
-            // push current state
-            setTimeout(() => {
-
-                // mainStage[selectedIndex].shapes = mainStage[selectedIndex].stageref?.current ? mainStage[selectedIndex].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : mainStage[selectedIndex].shapes;
-                pushToUndoStack(mainStage.map(s => s.shapes), selectedIndex);
-            }, 100);
-        }
-    }, [mainStage]);
-
+    // Undo functionality
     const handleUndo = () => {
-        if (undoStack.length <= 1) return;
+        if (undoStack.length === 1) return; // No states to undo
+        const temp = JSON.parse(JSON.stringify(mainStage));
+        temp.forEach(stage => {
+            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
+            stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
+            stage.shapes.forEach(element => {
+                element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
+            });
+            // stage.stageref = { current: newObj };
+            stage.selectedShapes = [];
+        })
 
-        const current = undoStack[undoStack.length - 1];
-        const prev = undoStack[undoStack.length - 2];
+        const data = undoStack.pop();
 
-        // Move current → redo
-        setRedoStack([{ ...current }, ...redoStack]);
-
-        // Remove last from undo
-        const newUndo = undoStack.slice(0, -1);
-        setUndoStack(newUndo);
-
-        // Restore prev
-        setMainStage(mainStage.map((s, i) => ({
-            ...s,
-            shapes: prev.shapes[i] || []
-        })));
-        setSelectedIndex(prev.selectedIndex);
+        const previousState = undoStack[undoStack.length - 1].stages;
+        // setIsChangeStack(false);
+        const temp1 = JSON.parse(JSON.stringify(previousState));
+        temp1.forEach(stage => {
+            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current
+            stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
+            stage.shapes.forEach(element => {
+                element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
+            });
+            // stage.stageref = { current: newObj };
+            stage.selectedShapes = [];
+        })
+        temp1.forEach(e => {
+            e.shapes.forEach(e => {
+                e.id = uuid();
+            })
+        })
+        redoStack.unshift({ stages: temp, selectedIndex: data.selectedIndex });
+        setSelectedIndex(undoStack[undoStack.length - 1].selectedIndex)
+        setIsUndoAction(true);
+        setMainStage(temp1); // Set mainStage to the previous state
+        setUndoStack([...undoStack]); // Remove last state from undo stack
+        setRedoStack([...redoStack]); // Push current state to redo stack
+        console.log('redoStack===========================================333', redoStack)
+        console.log('undoStack===========================================333', undoStack)
     };
 
+    // Redo functionality
     const handleRedo = () => {
-        if (redoStack.length === 0) return;
+        setIsRedoAction(true);
+        if (redoStack.length === 0) return; // No states to redo
+        const temp = JSON.parse(JSON.stringify(mainStage));
+        temp.forEach(stage => {
+            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
+            stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
+            stage.shapes.forEach(element => {
+                element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
+            });
+            // stage.stageref = { current: newObj };
+            stage.selectedShapes = [];
+        })
+        const temp2 = JSON.parse(JSON.stringify(redoStack[0].stages));
+        temp2.forEach(stage => {
+            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
+            stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
+            stage.shapes.forEach(element => {
+                element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
+            });
+            // stage.stageref = { current: newObj };
+            stage.selectedShapes = [];
+        })
+        const nextState = redoStack[0].stages;
+        undoStack.push(redoStack[0]);
+        setSelectedIndex(redoStack[0].selectedIndex);
+        redoStack.shift();
 
-        const next = redoStack[0];
+        setRedoStack(redoStack); // Remove first state from redo stack
+        setUndoStack(undoStack); // Push current state to undo stack
+        setMainStage(temp2); // Set mainStage to the next state
 
-        // Move redo → undo
-        setUndoStack([...undoStack, { ...next }]);
-        setRedoStack(redoStack.slice(1));
-
-        // Restore next
-        setMainStage(mainStage.map((s, i) => ({
-            ...s,
-            shapes: next.shapes[i] || []
-        })));
-        setSelectedIndex(next.selectedIndex);
+        console.log('redoStack===========================================222', redoStack)
+        console.log('undoStack===========================================222', undoStack)
     };
 
 
@@ -900,7 +851,7 @@ export default function Editor() {
                 }
                 <PanelRight isCropping={isCropping} currentRightPanel={currentRightPanel} setCurrentRightPanel={setCurrentRightPanel} isRightLateralCollapse={isRightLateralCollapse} setIsRightLateralCollapse={setIsRightLateralCollapse} />
                 {!isCropping && <div className="fixed flex items-center bottom-[10px] right-[80px] gap-2 max-lg:hidden">
-                    <div className="flex items-center bg-white rounded-sm border border-gray-200 ">
+                    <div className="flex items-center bg-white rounded-sm border border-gray-200 ">{undoStack.length}
                         <Button size="xs" variant="ghost" onClick={handleUndo} disabled={undoStack.length <= 1}>
                             <Undo className="w-4 h-4" />
                         </Button>

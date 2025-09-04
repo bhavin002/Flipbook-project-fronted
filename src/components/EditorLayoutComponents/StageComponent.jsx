@@ -690,18 +690,29 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
         if (isCropping) return;
         return stages
             .map(stage =>
-                stage.stageref ? stage.stageref.current?.children[0]?.children[1]?.children
-                    ?.map(child => JSON.stringify(child.attrs))
-                    .join("") || ""
-                    : (stage.shapes || []).map(child => JSON.stringify(child)).join("")
+                // stage.stageref && stage.stageref.current ? stage.stageref.current?.children[0]?.children[1]?.children
+                //     ?.map(child => JSON.stringify(child.attrs))
+                //     .join("") || "":
+                (stage.shapes || []).map(child => JSON.stringify(child)).join("")
             )
-            .join("");
+            .join("" + selectedIndex + "");
     };
 
     const handleDrag = (e) => {
         if (isCropping) return;
         const layer = e.target.getLayer();
         layer.find('.guid-line').forEach((l) => l.destroy());
+        console.log('dragging===========================================');
+
+        // setMainStage(prevState => {
+        //     const updatedState = [...prevState];
+        //     updatedState[index] = {
+        //         ...updatedState[index],
+        //         shapes: 
+        //     };
+        //     return updatedState;
+        // });
+        stage.shapes = stage.stageref.current.children[0].children[1].children.map(e => e.attrs)
         const newMainStageString = generateMainStageString(mainStage);
         setMainStageString(newMainStageString);
     };
@@ -711,19 +722,14 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
         const shape = e.target;
         if (stage.selectedShapes.length <= 1) {
 
-            setMainStage(prevState => {
-                const updatedState = [...prevState];
-                updatedState[index] = {
-                    ...updatedState[index],
-                    selectedShapes: [shape]
-                };
-                return updatedState;
-            })
             // Ensure the transformer is attached to the shape
+            // setMainS 
             if (transformerRef.current) {
                 transformerRef.current.nodes([shape]);
                 transformerRef.current.getLayer().batchDraw();
             };
+            stage.selectedShapes = [shape];
+            setStageIsLoading(true);
         }
 
     };
@@ -959,7 +965,7 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
                         const validPageData = response.data.pages;
                         const newStageData = validPageData.map(e => JSON.parse(e.pageData));
                         mainStage.forEach(e => {
-                            e.shapes = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)))
+                            e.shapes = e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) : e.shapes;
                         })
                         newStageData.forEach(e => {
                             e.shapes.forEach(shape => {

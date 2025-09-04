@@ -58,7 +58,7 @@ const TemplateDetailView = ({ templateId, template, onBackClick, loading, stageW
             const validPageData = response.data.pages;
             const newStageData = validPageData.map(e => JSON.parse(e.pageData));
             mainStage.forEach(e => {
-                e.shapes = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)))
+                e.shapes = e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) : e.shapes;
             })
             newStageData.forEach(e => {
                 e.shapes.forEach(shape => {
