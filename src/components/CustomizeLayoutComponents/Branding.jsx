@@ -36,13 +36,15 @@ function debounce(func, wait) {
 }
 export default function Branding() {
     const { settings, updateSettings, latestSettings } = useFlipbookSettings();
-    console.log("settings ??>?>", settings)
     const { isFieldEnabled } = useFlipbookPreviewSettings();
     const [isFirstLoad, setIsFirstLoad] = useState(true);
     const [selectedBackground, setSelectedBackground] = useState("transparent");
     const [playerAccentColor, setPlayerAccentColor] = useState('#C1080B');
     const [originalPlayerAccentColor, setOriginalPlayerAccentColor] = useState('#C1080B');
     const [hasColorChanged, setHasColorChanged] = useState(false);
+    const [playerPanelColor, setPlayerPanelColor] = useState('#C1080B');
+    const [originalPlayerPanelColor, setOriginalPlayerPanelColor] = useState('#C1080B');
+    const [hasPanelColorChanged, setHasPanelColorChanged] = useState(false);
     const [selectedLogo, setSelectedLogo] = useState(null);
     const [isLogoLoading, setIsLogoLoading] = useState(false);
     const [logoLink, setLogoLink] = useState("");
@@ -53,6 +55,7 @@ export default function Branding() {
     const [isImageUploading, setIsImageUploading] = useState(false);
 
     const colorPickerRef = useRef(null);
+    const panelColorPickerRef = useRef(null);
 
     const backgroundColorMapping = {
         [BackgroundColorType.TRANSPARENT]: "transparent",
@@ -109,15 +112,19 @@ export default function Branding() {
         const dataToUse = isFirstLoad ? latestSettings : settings;
 
         if (dataToUse) {
-            const accentColor = dataToUse.playerAccentColorHash?.toUpperCase() || '#C1080B';
+            const accentColor = dataToUse.playerAccentColorHash?.toUpperCase() || '#5b21b6';
+            const panelColor = dataToUse.playerPanelColorHash?.toUpperCase() || '#8345ef';
             setSelectedBackground(backgroundColorMapping[dataToUse.backgroundColor] || "transparent");
             setPlayerAccentColor(accentColor);
             setOriginalPlayerAccentColor(accentColor);
+            setPlayerPanelColor(panelColor);
+            setOriginalPlayerPanelColor(panelColor);
             setSelectedLogo(
                 dataToUse.brandLogoId ? { src: dataToUse.brandLogoLink, id: dataToUse.brandLogoId } : null
             );
             setLogoLink(dataToUse.logoLink || "");
             setHasColorChanged(false);
+            setHasPanelColorChanged(false);
 
             setBackgroundImage(dataToUse.backgroundImageURL || null);
             setBackgroundImageType(backgroundImageTypeMapping[dataToUse.backgroundImageType] || "scale-crop");
@@ -218,11 +225,42 @@ export default function Branding() {
             });
         }
     };
+
+    const handlePlayerPanelColorChange = (e) => {
+        let value = e.target.value.toUpperCase();
+        if (!value.startsWith('#')) {
+            value = '#' + value.replace(/[^0-9A-Fa-f]/g, '');
+        } else {
+            value = '#' + value.slice(1).replace(/[^0-9A-Fa-f]/g, '');
+        }
+        value = value.slice(0, 7);
+        setPlayerPanelColor(value);
+        setLocalChanges(prev => ({ ...prev, playerPanelColor: value }));
+    };
+
+    const handlePlayerPanelColorBlur = () => {
+        if (localChanges.playerPanelColor !== undefined) {
+            const value = localChanges.playerPanelColor;
+            if (isValidColor(value) && value !== originalPlayerPanelColor) {
+                setHasPanelColorChanged(true);
+                updateSettings({ playerPanelColorHash: value });
+            } else {
+                setHasPanelColorChanged(value !== originalPlayerPanelColor);
+            }
+            setLocalChanges(prev => {
+                const newChanges = { ...prev };
+                delete newChanges.playerPanelColor;
+                return newChanges;
+            });
+        }
+    };
+
     const debouncedUpdateSettings = useRef(
         debounce((newSettings) => {
             updateSettings(newSettings);
         }, 500) // 500ms debounce delay
     ).current;
+
     const handleColorPickerChange = (e) => {
         const value = e.target.value.toUpperCase();
         setPlayerAccentColor(value);
@@ -238,9 +276,30 @@ export default function Branding() {
         }
     };
 
+    const handlePanelColorPickerChange = (e) => {
+        const value = e.target.value.toUpperCase();
+        setPlayerPanelColor(value);
+        setLocalChanges(prev => ({ ...prev, playerPanelColor: value }));
+
+        if (value !== originalPlayerPanelColor) {
+            setHasPanelColorChanged(true);
+            // Call the debounced function instead of directly calling updateSettings
+            debouncedUpdateSettings({ playerPanelColorHash: value });
+        } else {
+            setHasPanelColorChanged(false);
+            debouncedUpdateSettings({ playerPanelColorHash: value });
+        }
+    };
+
     const handleColorSwatchClick = () => {
         if (isFieldEnabled("playerAccentColorHash")) {
             colorPickerRef.current?.click();
+        }
+    };
+
+    const handlePanelColorSwatchClick = () => {
+        if (isFieldEnabled("playerPanelColorHash")) {
+            panelColorPickerRef.current?.click();
         }
     };
 
@@ -248,6 +307,12 @@ export default function Branding() {
         setPlayerAccentColor(originalPlayerAccentColor);
         setHasColorChanged(false);
         updateSettings({ playerAccentColorHash: originalPlayerAccentColor });
+    };
+
+    const handleRevertPanelColor = () => {
+        setPlayerPanelColor(originalPlayerPanelColor);
+        setHasPanelColorChanged(false);
+        updateSettings({ playerPanelColorHash: originalPlayerPanelColor });
     };
 
     const handleLogoLinkChange = (e) => {
@@ -491,6 +556,59 @@ export default function Branding() {
                         variant="ghost"
                         disabled={!isFieldEnabled("playerAccentColorHash") || !hasColorChanged}
                         onClick={handleRevertColor}
+                    >
+                        Revert
+                    </Button>
+                </div>
+            </div>
+            <div className='flex gap-2 items-center text-white'>
+                <Label>Player panel color</Label>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Info className="h-4 w-4 cursor-pointer" />
+                        </TooltipTrigger>
+                        <TooltipContent
+                            side="right"
+                            align="center"
+                            className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                        >
+                            <p className="text-sm">Once set the panel color will be visible on the player panel background and controls.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
+            <div className='flex justify-between gap-4 text-white'>
+                <Input
+                    type="text"
+                    value={playerPanelColor}
+                    onChange={handlePlayerPanelColorChange}
+                    onBlur={handlePlayerPanelColorBlur}
+                    className={`${playerPanelColor && !isValidColor(playerPanelColor) ? 'border-red-500 focus:outline-none focus-visible:ring-0' : ''}`}
+                    disabled={!isFieldEnabled("playerPanelColorHash")}
+                    placeholder="#C1080B"
+                />
+                <div className='flex gap-4 items-center'>
+                    <div className='relative'>
+                        <div
+                            className={`w-8 h-8 rounded cursor-pointer ${!isFieldEnabled("playerPanelColorHash") ? 'cursor-not-allowed opacity-50' : ''
+                                }`}
+                            style={{ backgroundColor: playerPanelColor }}
+                            onClick={handlePanelColorSwatchClick}
+                        />
+                        <input
+                            ref={panelColorPickerRef}
+                            type="color"
+                            value={playerPanelColor}
+                            onChange={handlePanelColorPickerChange}
+                            className="opacity-0 absolute w-1 h-1 left-0 right-0 m-auto bottom-0"
+                            disabled={!isFieldEnabled("playerPanelColorHash")}
+                        />
+                    </div>
+                    <Button
+                        variant="ghost"
+                        disabled={!isFieldEnabled("playerPanelColorHash") || !hasPanelColorChanged}
+                        onClick={handleRevertPanelColor}
                     >
                         Revert
                     </Button>

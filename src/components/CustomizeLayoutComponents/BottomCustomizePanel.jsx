@@ -89,9 +89,9 @@ export default function BottomCustomizePanel() {
                         id="mobile-preserve-settings"
                         className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
                     />
-                    <Label htmlFor="mobile-preserve-settings" className="text-sm font-medium">
+                    {/* <Label htmlFor="mobile-preserve-settings" className="text-sm font-medium">
                         Preserve settings
-                    </Label>
+                    </Label> */}
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>

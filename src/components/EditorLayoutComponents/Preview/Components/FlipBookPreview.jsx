@@ -14,6 +14,7 @@ import cartService from '@/service/IndexedDBCart.service';
 import { getProductCartInfoApi } from '@/service/product.service.js';
 import { toast } from "sonner";
 import { FilterSlider } from "@/components/ui/filterSlider.jsx";
+import { useShopSettings } from "@/context/ShopSettingsContext.jsx";
 
 export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false, publicFlipbookData, startPage }) {
     const [currentPage, setCurrentPage] = useState(startPage || 1);
@@ -27,7 +28,9 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
     const { activeTab, setActiveTab } = useViewMode();
-    
+    const { shopSettings } = useShopSettings();
+    console.log("shopSettings FlipBookPreview????", shopSettings)
+
     // Automatically switch tab based on window size
     useEffect(() => {
         const handleResize = () => {
@@ -389,19 +392,27 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         return (
             visibilitySettings.showControlBar && (
                 <div
-                    className={`w-full bg-gradient-to-r from-primary/90 to-primary p-4 flex flex-wrap items-center justify-between relative shadow-lg ${isMobile ? "rounded-b-lg" : ""
+                    className={`w-full bg-primary p-4 flex flex-wrap items-center justify-between relative shadow-lg ${isMobile ? "rounded-b-lg" : ""
                         }`}
+                    style={{
+                        backgroundColor: visibilitySettings.playerPanelColorHash || "#8345EF",
+                    }}
                 >
                     <div className="flex items-center text-primary-foreground text-sm flex-1">
-                        <span className="mr-6 font-medium bg-primary-foreground/10 px-4 py-1 rounded-full">
+                        <span className="mr-6 font-medium bg-white/20 px-4 py-1 rounded-full">
                             {pageDisplay} / {displayTotalPages}
                         </span>
                         <BackgroundAudioPlayer visibilitySettings={visibilitySettings} />
                         {visibilitySettings.showNavigationBar && (
                             <div
                                 ref={progressBarRef}
-                                className={`flex-1 h-2.5 absolute left-3 right-3 top-[-5px] bg-[#ae83f4] rounded-full cursor-pointer select-none hover:bg-[#cfb1ff] transition-colors duration-300 ease-in-out ${visibilitySettings.rightToLeftOrientation ? "rotate-180" : ""
+                                className={`flex-1 h-2.5 absolute left-3 right-3 top-[-5px] rounded-full cursor-pointer select-none transition-colors duration-300 ease-in-out ${visibilitySettings.rightToLeftOrientation ? "rotate-180" : ""
                                     }`}
+                                style={{
+                                    backgroundColor: visibilitySettings.playerPanelColorHash
+                                        ? `${visibilitySettings.playerPanelColorHash}66` // 66 hex = 40% opacity
+                                        : "#ae83f4",
+                                }}
                                 onMouseDown={handleMouseDown}
                                 onTouchStart={handleTouchStart}
                             >
@@ -650,7 +661,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                         />
                     )}
                 </div>
-                
+
             </div>
         </>
     );
