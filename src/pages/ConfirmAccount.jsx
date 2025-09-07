@@ -17,6 +17,7 @@ import { Loader } from "@/components/ui/loader";
 import { toast } from "sonner";
 import { ValidateEmailApi, VerifyAccountApi } from "@/service/auth.service";
 import LoadingButton from "@/utils/LoadingButton";
+import { useAuth } from "@/context/AuthContext";
 
 export default function ConfirmAccount() {
   const [otp, setOtp] = useState("");
@@ -24,6 +25,7 @@ export default function ConfirmAccount() {
   const [isVerifyLoading, setIsVerifyLoading] = useState(false);
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   useEffect(() => {
     const confirmAccount = async () => {
@@ -54,8 +56,9 @@ export default function ConfirmAccount() {
     try {
       setIsVerifyLoading(true);
       const confirmToken = localStorage.getItem("fn_confirm_token");
-      await VerifyAccountApi({ token: confirmToken, otp });
-      navigate("/myflipbooks");
+      const response = await VerifyAccountApi({ token: confirmToken, otp });
+      localStorage.removeItem("fn_confirm_token");
+      await login(response.data);
     } catch (error) {
       toast.error("Account Confirmation failed", {
         description: error.message || "Oops! Something went wrong.",
@@ -64,7 +67,6 @@ export default function ConfirmAccount() {
       setIsVerifyLoading(false);
     }
   };
-
 
   return (
     <>
