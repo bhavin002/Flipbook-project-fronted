@@ -52,13 +52,22 @@ const settingMenuItems = [
     //     path: '/settings/general',
     //     subItems: []
     // },
+    // {
+    //     id: 'billing',
+    //     label: 'Billing',
+    //     path: '/settings/billing',
+    //     subItems: [
+    //         { id: 'subscription', label: 'Subscription', path: '/settings/billing/subscription' },
+    //         { id: 'invoice', label: 'Invoices', path: '/settings/billing/invoice' }
+    //     ]
+    // },
     {
         id: 'billing',
         label: 'Billing',
         path: '/settings/billing',
         subItems: [
             { id: 'subscription', label: 'Subscription', path: '/settings/billing/subscription' },
-            { id: 'invoice', label: 'Invoices', path: '/settings/billing/invoice' }
+            // { id: 'invoice', label: 'Invoices', path: '/settings/billing/invoice' }
         ]
     },
     {
@@ -309,7 +318,7 @@ const mainPlans = {
             id: "starter",
             title: "Starter Yearly",
             price: "$16",
-            billedAs: "Billed Yearly 192",
+            billedAs: "Billed Yearly",
             features: [
                 "5 flipbooks",
                 "Add links / detect links",
@@ -321,7 +330,7 @@ const mainPlans = {
             id: "professional",
             title: "Professional Yearly",
             price: "$38",
-            billedAs: "Billed Yearly 456",
+            billedAs: "Billed Yearly",
             features: [
                 "50 flipbooks",
                 "YouTube & Vimeo videos, lead forms, charts & more",
@@ -336,7 +345,7 @@ const mainPlans = {
             id: "business",
             title: "Business Yearly",
             price: "$85",
-            billedAs: "Billed Yearly 1020",
+            billedAs: "Billed Yearly",
             features: [
                 "100 flipbooks",
                 "Custom domain",
@@ -350,6 +359,30 @@ const mainPlans = {
             ],
             showContactSales: true
         }
+    ]
+};
+
+const planFeatures = {
+    trial: [
+        "1 project",
+        "Basic analytics (limited)",
+        "Email support",
+        "Standard templates",
+        "14-day full access",
+        "No credit card required"
+    ],
+    starter: [
+        "Up to 5 projects",
+        "Basic analytics",
+        "Email support",
+        "Standard templates"
+    ],
+    professional: [
+        "Unlimited projects",
+        "Advanced analytics",
+        "Priority support",
+        "Premium templates",
+        "Team collaboration"
     ]
 };
 
@@ -3395,6 +3428,8 @@ export function getData(dataType) {
             return pageLayoutData;
         case 'permission':
             return permission
+        case 'planFeatures':
+            return planFeatures;
         default:
             return [];
     }

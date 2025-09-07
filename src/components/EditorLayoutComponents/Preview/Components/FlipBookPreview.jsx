@@ -14,6 +14,8 @@ import cartService from '@/service/IndexedDBCart.service';
 import { getProductCartInfoApi } from '@/service/product.service.js';
 import { toast } from "sonner";
 import { FilterSlider } from "@/components/ui/filterSlider.jsx";
+import { useShopSettings } from "@/context/ShopSettingsContext.jsx";
+import ShareFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/ShareFlipbookDialog.jsx";
 
 export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false, publicFlipbookData, startPage }) {
     const [currentPage, setCurrentPage] = useState(startPage || 1);
@@ -24,10 +26,13 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
     const [isPageOverviewOpen, setIsPageOverviewOpen] = useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
     const { activeTab, setActiveTab } = useViewMode();
-    
+    const { shopSettings } = useShopSettings();
+    console.log("shopSettings FlipBookPreview????", shopSettings)
+
     // Automatically switch tab based on window size
     useEffect(() => {
         const handleResize = () => {
@@ -344,6 +349,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         variant="ghost"
                                         size="icon"
                                         className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors w-8 h-8"
+                                        disabled={!shopSettings?.isAllowToShare}
+                                        onClick={() => setIsShareModalOpen(true)}
                                     >
                                         <Share2 className="w-4 h-4" />
                                     </Button>
@@ -389,19 +396,27 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         return (
             visibilitySettings.showControlBar && (
                 <div
-                    className={`w-full bg-gradient-to-r from-primary/90 to-primary p-4 flex flex-wrap items-center justify-between relative shadow-lg ${isMobile ? "rounded-b-lg" : ""
+                    className={`w-full bg-primary p-4 flex flex-wrap items-center justify-between relative shadow-lg ${isMobile ? "rounded-b-lg" : ""
                         }`}
+                    style={{
+                        backgroundColor: visibilitySettings.playerPanelColorHash || "#8345EF",
+                    }}
                 >
                     <div className="flex items-center text-primary-foreground text-sm flex-1">
-                        <span className="mr-6 font-medium bg-primary-foreground/10 px-4 py-1 rounded-full">
+                        <span className="mr-6 font-medium bg-white/20 px-4 py-1 rounded-full">
                             {pageDisplay} / {displayTotalPages}
                         </span>
                         <BackgroundAudioPlayer visibilitySettings={visibilitySettings} />
                         {visibilitySettings.showNavigationBar && (
                             <div
                                 ref={progressBarRef}
-                                className={`flex-1 h-2.5 absolute left-3 right-3 top-[-5px] bg-[#ae83f4] rounded-full cursor-pointer select-none hover:bg-[#cfb1ff] transition-colors duration-300 ease-in-out ${visibilitySettings.rightToLeftOrientation ? "rotate-180" : ""
+                                className={`flex-1 h-2.5 absolute left-3 right-3 top-[-5px] rounded-full cursor-pointer select-none transition-colors duration-300 ease-in-out ${visibilitySettings.rightToLeftOrientation ? "rotate-180" : ""
                                     }`}
+                                style={{
+                                    backgroundColor: visibilitySettings.playerPanelColorHash
+                                        ? `${visibilitySettings.playerPanelColorHash}66` // 66 hex = 40% opacity
+                                        : "#ae83f4",
+                                }}
                                 onMouseDown={handleMouseDown}
                                 onTouchStart={handleTouchStart}
                             >
@@ -473,6 +488,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 variant="ghost"
                                 size="icon"
                                 className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
+                                disabled={!shopSettings?.isAllowToShare}
+                                onClick={() => setIsShareModalOpen(true)}
                             >
                                 <Share2 className="w-5 h-5" />
                             </Button>
@@ -649,8 +666,9 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             leadFormData={visibilitySettings.leadForm}
                         />
                     )}
+                    <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} flipbookId={flipbookId} />
                 </div>
-                
+
             </div>
         </>
     );

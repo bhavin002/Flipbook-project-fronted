@@ -75,6 +75,8 @@ import PublicBookShelf from "./public/PublicBookShelf";
 import { PermissionRoute } from "./Middleware/PermissionRoute";
 import EmbedFlipbook from "./embed/EmbedFlipbook";
 import EmbedBookShelf from "./embed/EmbedBookShelf";
+import { Success } from "./pages/Settings/payment/success";
+import { Cancel } from "./pages/Settings/payment/cancel";
 
 // Route configurations
 const brandingRoutes = [
@@ -135,6 +137,10 @@ export default function App() {
                       <Routes>
                         {/* Default redirect */}
                         <Route path="/" element={<Navigate to="/myflipbooks" replace />} />
+
+                        <Route path="/success" element={<PrivateRoute><Success/></PrivateRoute>} />
+                        <Route path="/cancel" element={<PrivateRoute><Cancel/></PrivateRoute>} />
+
 
                         {/* Main content routes */}
                         <Route path="/myflipbooks" element={

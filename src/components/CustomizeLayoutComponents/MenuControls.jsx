@@ -21,10 +21,10 @@ export default function MenuControls() {
         { id: "share-options", label: "Share options", isShowTooltip: false, fieldKey: "shareOptions" },
         { id: "pages-overview", label: "Pages overview", isShowTooltip: false, fieldKey: "pageOverview" },
         { id: "allow-fullscreen", label: "Allow fullscreen", isShowTooltip: false, fieldKey: "allowFullScreen" },
-        { id: "download-pdf", label: "Download PDF", isShowTooltip: true, tooltip: "Allow your readers to download your flipbook in PDF format.", fieldKey: "downloadPDF" },
-        { id: "print-pdf", label: "Print PDF", isShowTooltip: true, tooltip: "Allow your readers to print your flipbook.", fieldKey: "printPDF" },
+        // { id: "download-pdf", label: "Download PDF", isShowTooltip: true, tooltip: "Allow your readers to download your flipbook in PDF format.", fieldKey: "downloadPDF" },
+        // { id: "print-pdf", label: "Print PDF", isShowTooltip: true, tooltip: "Allow your readers to print your flipbook.", fieldKey: "printPDF" },
         { id: "show-shopping-list", label: "Show shopping list", isShowTooltip: true, tooltip: "Allow readers to add products to their list and download it", fieldKey: "showShoppingList" },
-        { id: "search", label: "Search", isShowTooltip: true, tooltip: "Your readers can search for text in your flipbook", fieldKey: "search" },
+        // { id: "search", label: "Search", isShowTooltip: true, tooltip: "Your readers can search for text in your flipbook", fieldKey: "search" },
         { id: "background-audio", label: "Background audio", isShowTooltip: true, tooltip: "Add mp3 audio that plays across pages in the background.", fieldKey: "backgroundAudio" },
     ];
 

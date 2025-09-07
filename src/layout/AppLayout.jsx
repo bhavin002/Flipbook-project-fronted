@@ -12,6 +12,7 @@ import CreateDropDownCom from "@/components/AppLayoutComponents/CreateDropDownCo
 import { AppSidebar } from "@/utils/AppSidebar";
 import BottomSidebarNavigation from "@/components/AppLayoutComponents/BottomSidebarNavigation";
 import { useAuth } from "@/context/AuthContext";
+// import CreateFirstFlipbook from "@/components/AppLayoutComponents/CreateFirstFlipbook";
 
 export default function AppLayout({ setIsSidebarOpen }) {
     const [searchValue, setSearchValue] = useState("");
@@ -31,6 +32,7 @@ export default function AppLayout({ setIsSidebarOpen }) {
 
     return (
         <>
+            {/* <CreateFirstFlipbook /> */}
             <div className="flex flex-col min-h-screen">
                 <header className="fixed top-0 left-0 right-0 z-10 bg-white">
                     <div className="flex h-16 w-full justify-between shrink-0 items-center px-4 md:px-6">

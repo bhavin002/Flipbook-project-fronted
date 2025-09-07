@@ -127,11 +127,11 @@ export default function MyProfile() {
         <div>
             <dv>
                 {data.showHeader && (
-                    <div className="py-3 pl-5 h-[62px]" style={{ backgroundColor: data.headerColor }}>
+                    <div className="py-3 pl-5" style={{ backgroundColor: data.headerColor }}>
                         {data.logo && <img
                             src={data.logo}
                             alt="Logo"
-                            className="max-h-[45px]"
+                            className="max-h-[45px]  max-w-[200px]"
                         />}
                     </div>
                 )}

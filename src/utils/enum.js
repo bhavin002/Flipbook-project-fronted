@@ -63,6 +63,7 @@ export const flipbookPreviewFieldKey = {
     backgroundImageName: 43,
     backgroundAudioFileName: 44,
     showShoppingList: 45,
+    playerPanelColorHash: 46,
 }
 
 export const BackgroundColorType = {

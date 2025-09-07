@@ -117,3 +117,42 @@ export const TextElementsListSkeleton = () => (
         ))}
     </div>
 );
+
+
+export const PlanCardSkeleton = () => (
+  <div className="border rounded-lg p-6 flex flex-col h-full animate-pulse">
+      <div className="h-6 bg-gray-200 rounded mb-1 w-3/4"></div>
+      <div className="mb-6">
+          <div className="h-8 bg-gray-200 rounded mb-1 w-1/2"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+      </div>
+      <div className="h-10 bg-gray-200 rounded mb-6"></div>
+      <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-start gap-2">
+                  <div className="h-5 w-5 bg-gray-200 rounded mt-0.5 flex-shrink-0"></div>
+                  <div className="h-4 bg-gray-200 rounded flex-1"></div>
+              </div>
+          ))}
+      </div>
+  </div>
+);
+
+export const TabContentSkeleton = () => (
+  <div className="border rounded-lg p-6 animate-pulse">
+      <div className="h-6 bg-gray-200 rounded mb-1 w-3/4"></div>
+      <div className="mb-6">
+          <div className="h-8 bg-gray-200 rounded mb-1 w-1/2"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+      </div>
+      <div className="h-10 bg-gray-200 rounded w-full mb-6"></div>
+      <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-start gap-2">
+                  <div className="h-5 w-5 bg-gray-200 rounded mt-0.5 flex-shrink-0"></div>
+                  <div className="h-4 bg-gray-200 rounded flex-1"></div>
+              </div>
+          ))}
+      </div>
+  </div>
+);

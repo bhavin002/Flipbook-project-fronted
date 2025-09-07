@@ -70,7 +70,7 @@ export default function Customize() {
                         </AccordionItem>
                     ))}
                 </Accordion>
-                <div className="flex items-center gap-2 text-white pt-3">
+                {/* <div className="flex items-center gap-2 text-white pt-3">
                     <Checkbox
                         id="preserve-settings"
                         className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
@@ -92,7 +92,7 @@ export default function Customize() {
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
-                </div>
+                </div> */}
             </div>
 
             {isLargeScreen && (

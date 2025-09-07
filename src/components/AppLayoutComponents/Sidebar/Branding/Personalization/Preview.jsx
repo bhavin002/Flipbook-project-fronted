@@ -123,7 +123,7 @@ export default function Preview() {
                         {previewUrls.logo && (
                             <img
                                 src={previewUrls.logo}
-                                width={200}
+                                className="max-h-[45px]  max-w-[200px]"
                                 alt="Cover"
                             />
                         )}
