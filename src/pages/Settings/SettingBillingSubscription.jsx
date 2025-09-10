@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Check, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Check, Loader2, Crown } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { createCheckoutSession, getAllPlans } from '@/service/subscription.service';
+import { cancelSubscription, createCheckoutSession, getAllPlans, renewSubscription } from '@/service/subscription.service';
 import { toast } from 'sonner';
 import { PlanCardSkeleton, TabContentSkeleton } from '@/utils/Skeleton';
 import { getData } from '@/utils/datas';
@@ -42,7 +43,10 @@ export default function SettingBillingSubscription() {
         const planGroups = {};
         let trialPlan = null;
 
-        plans.forEach(plan => {
+        // Sort plans by sequence first
+        const sortedPlans = [...plans].sort((a, b) => a.sequence - b.sequence);
+
+        sortedPlans.forEach(plan => {
             if (plan.isTrialPlan) {
                 trialPlan = plan;
                 return;
@@ -51,7 +55,7 @@ export default function SettingBillingSubscription() {
             const planType = plan.name.split(' ')[0].toLowerCase();
 
             if (!planGroups[planType]) {
-                planGroups[planType] = { monthly: null, yearly: null };
+                planGroups[planType] = { monthly: null, yearly: null, sequence: plan.sequence };
             }
 
             if (plan.interval === 0) {
@@ -61,7 +65,7 @@ export default function SettingBillingSubscription() {
             }
         });
 
-        // Add trial plan first if it exists
+        // Add trial plan first if it exists (it should have sequence 0)
         if (trialPlan) {
             const trialFeatures = getFeaturesByPlanType('trial');
             const trialPlanData = {
@@ -71,13 +75,17 @@ export default function SettingBillingSubscription() {
                 billedAs: '14 day free trial',
                 features: trialFeatures,
                 planId: trialPlan._id,
-                buttonLabel: trialPlan.buttonLabel
+                buttonLabel: trialPlan.buttonLabel,
+                action: trialPlan.action,
+                isCurrentPlan: trialPlan.isCurrentPlan,
+                sequence: trialPlan.sequence
             };
-            monthly.unshift(trialPlanData); // Add to beginning of monthly
-            yearly.unshift(trialPlanData);  // Add to beginning of yearly
+            monthly.push(trialPlanData);
+            yearly.push(trialPlanData);
         }
 
-        Object.entries(planGroups).forEach(([type, planData]) => {
+        const sortedPlanGroups = Object.entries(planGroups).sort(([, a], [, b]) => a.sequence - b.sequence);
+        sortedPlanGroups.forEach(([type, planData]) => {
             const baseFeatures = getFeaturesByPlanType(type);
 
             if (planData.monthly) {
@@ -88,7 +96,10 @@ export default function SettingBillingSubscription() {
                     billedAs: 'Billed monthly',
                     features: baseFeatures,
                     planId: planData.monthly._id,
-                    buttonLabel: planData.monthly.buttonLabel
+                    buttonLabel: planData.monthly.buttonLabel,
+                    action: planData.monthly.action,
+                    isCurrentPlan: planData.monthly.isCurrentPlan,
+                    sequence: planData.monthly.sequence
                 });
             }
 
@@ -101,10 +112,16 @@ export default function SettingBillingSubscription() {
                     billedAs: `₹${planData.yearly.rate} billed annually`,
                     features: baseFeatures,
                     planId: planData.yearly._id,
-                    buttonLabel: planData.yearly.buttonLabel
+                    buttonLabel: planData.yearly.buttonLabel,
+                    action: planData.yearly.action,
+                    isCurrentPlan: planData.yearly.isCurrentPlan,
+                    sequence: planData.yearly.sequence
                 });
             }
         });
+
+        monthly.sort((a, b) => a.sequence - b.sequence);
+        yearly.sort((a, b) => a.sequence - b.sequence);
 
         return { monthly, yearly };
     };
@@ -117,6 +134,10 @@ export default function SettingBillingSubscription() {
     const processedPlans = processPlans();
     const activePlans = isYearly ? processedPlans.yearly : processedPlans.monthly;
 
+    // Get enterprise plan data from static data
+    const enterprisePlans = getData('enterprisePlans');
+    const activeEnterprisePlan = isYearly ? enterprisePlans.yearly : enterprisePlans.monthly;
+
     useEffect(() => {
         if (activePlans.length > 0 && !activePlans.find(p => p.id === activeTab)) {
             setActiveTab(activePlans[0].id);
@@ -127,22 +148,69 @@ export default function SettingBillingSubscription() {
         console.log("action ???", action);
         try {
             setUpgradeLoading(planId);
-            const response = await createCheckoutSession(planId);
-            if (response.data.checkoutUrl) {
-                console.log
-                window.open(response.data.checkoutUrl, '_blank');
-            } else {
-                toast.error("Invalid checkout response", {
-                    description: "No checkout URL received"
+            if (action === "checkout") {
+                const response = await createCheckoutSession(planId);
+                if (response.data.checkoutUrl) {
+                    console.log
+                    window.open(response.data.checkoutUrl, '_blank');
+                } else {
+                    toast.error("Invalid checkout response", {
+                        description: "No checkout URL received"
+                    });
+                }
+            }
+            if (action === "upgrade" || action === "downgrade") {
+                if (window.$crisp) {
+                    window.$crisp.push(["do", "chat:open"]);
+                } else {
+                    toast.error("Chat support not available", {
+                        description: "Please contact support directly"
+                    });
+                }
+            }
+            if (action === "cancel") {
+                const response = await cancelSubscription();
+                toast.success("Subscription cancelled", {
+                    description: response.data.message || "Your subscription has been cancelled."
                 });
+                const plansData = await getAllPlans();
+                setPlans(plansData.data || []);
+            }
+            if (action === "renew") {
+                const response = await renewSubscription();
+                toast.success("Subscription renewed", {
+                    description: response.data.message || "Your subscription has been renewed."
+                });
+                const plansData = await getAllPlans();
+                setPlans(plansData.data || []);
             }
         } catch (error) {
-            toast.error("Failed to create checkout", {
+            toast.error("Failed to upgrade", {
                 description: error.message
             });
         } finally {
             setUpgradeLoading(null);
         }
+    };
+
+    const handleContactSales = () => {
+        if (window.$crisp) {
+            window.$crisp.push(["do", "chat:open"]);
+        } else {
+            toast.error("Chat support not available", {
+                description: "Please contact support directly"
+            });
+        }
+    };
+
+    const getButtonStyles = (action) => {
+        if (action === "cancel") {
+            return "bg-red-600 hover:bg-red-700 text-white border-red-600";
+        }
+        if (action === "renew") {
+            return "bg-green-600 hover:bg-green-700 text-white border-green-600";
+        }
+        return "";
     };
 
     return (
@@ -151,15 +219,6 @@ export default function SettingBillingSubscription() {
                 <h1 className="text-2xl font-bold mb-2">Subscription</h1>
                 <p className="text-gray-500">Update your payment option and see all the features in your current plan.</p>
             </div>
-
-            <Card>
-                <CardHeader>
-                    <CardTitle>Current plan: Free trial</CardTitle>
-                    <CardDescription>
-                        You are currently on a free plan. At any time, you can upgrade your account to one of the plans below.
-                    </CardDescription>
-                </CardHeader>
-            </Card>
 
             <Card>
                 <CardHeader>
@@ -184,18 +243,34 @@ export default function SettingBillingSubscription() {
                             ))
                         ) : (
                             activePlans.map((plan, index) => (
-                                <div key={index} className="border rounded-lg p-6 flex flex-col h-full">
+                                <div
+                                    key={index}
+                                    className={`border rounded-lg p-6 flex flex-col h-full relative ${plan.isCurrentPlan
+                                        ? 'border-violet-500 bg-violet-50/30 shadow-md'
+                                        : 'border-gray-200'
+                                        }`}
+                                >
+                                    {/* Current Plan Badge */}
+                                    {plan.isCurrentPlan && (
+                                        <Badge
+                                            className="absolute -top-3 right-4 bg-violet-600 text-white px-3 py-1 text-xs font-semibold shadow-sm"
+                                        >
+                                            <Crown className="w-3 h-3 mr-1" />
+                                            Current Plan
+                                        </Badge>
+                                    )}
+
                                     <h3 className="text-xl font-bold mb-1">{plan.title}</h3>
                                     <div className="mb-6">
                                         <span className="text-3xl font-bold">{plan.price}</span>
-                                        <span className="text-gray-500">/mo</span>
+                                        {plan.id !== 'trial' && <span className="text-gray-500">/mo</span>}
                                         <p className="text-sm text-gray-500 mt-1">{plan.billedAs}</p>
                                     </div>
 
-                                    <Button 
-                                        className="mb-6" 
+                                    <Button
+                                        className={`mb-6 ${getButtonStyles(plan.action)}`}
                                         onClick={() => handleUpgrade(plan.planId, plan.action)}
-                                        disabled={upgradeLoading === plan.planId}
+                                        disabled={upgradeLoading === plan.planId || plan.action === "none"}
                                     >
                                         {upgradeLoading === plan.planId ? (
                                             <>
@@ -230,14 +305,40 @@ export default function SettingBillingSubscription() {
                             <Tabs defaultValue={activePlans[0]?.id} value={activeTab} onValueChange={setActiveTab} className="w-full">
                                 <TabsList className="grid gap-2 mb-6" style={{ gridTemplateColumns: `repeat(${activePlans.length}, 1fr)` }}>
                                     {activePlans.map((plan) => (
-                                        <TabsTrigger key={plan.id} value={plan.id} className="capitalize">
+                                        <TabsTrigger
+                                            key={plan.id}
+                                            value={plan.id}
+                                            className={`capitalize relative ${plan.isCurrentPlan ? 'data-[state=active]:bg-violet-600 data-[state=active]:text-white' : ''
+                                                }`}
+                                        >
                                             {plan.title}
+                                            {plan.isCurrentPlan && (
+                                                <Crown className="w-3 h-3 ml-1" />
+                                            )}
                                         </TabsTrigger>
                                     ))}
                                 </TabsList>
 
                                 {activePlans.map((plan) => (
-                                    <TabsContent key={plan.id} value={plan.id} className="border rounded-lg p-6">
+                                    <TabsContent
+                                        key={plan.id}
+                                        value={plan.id}
+                                        className={`border rounded-lg p-6 relative ${plan.isCurrentPlan
+                                            ? 'border-violet-500 bg-violet-50/30'
+                                            : 'border-gray-200'
+                                            }`}
+                                    >
+                                        {/* Current Plan Badge for Mobile */}
+                                        {plan.isCurrentPlan && (
+                                            <Badge
+                                                variant="secondary"
+                                                className="absolute -top-3 right-4 bg-violet-600 text-white px-3 py-1 text-xs font-semibold shadow-sm"
+                                            >
+                                                <Crown className="w-3 h-3 mr-1" />
+                                                Current Plan
+                                            </Badge>
+                                        )}
+
                                         <h3 className="text-xl font-bold mb-1">{plan.title}</h3>
                                         <div className="mb-6">
                                             <span className="text-3xl font-bold">{plan.price}</span>
@@ -246,9 +347,9 @@ export default function SettingBillingSubscription() {
                                         </div>
 
                                         <Button
-                                            className="w-full mb-6"
+                                            className={`w-full mb-6 ${getButtonStyles(plan.action)}`}
                                             onClick={() => handleUpgrade(plan.planId, plan.action)}
-                                            disabled={upgradeLoading === plan.planId}
+                                            disabled={upgradeLoading === plan.planId || plan.action === "none"}
                                         >
                                             {upgradeLoading === plan.planId ? (
                                                 <>
@@ -276,6 +377,30 @@ export default function SettingBillingSubscription() {
                                 No plans available
                             </div>
                         )}
+                    </div>
+
+                    {/* Enterprise Plan Section */}
+                    <div className="border rounded-lg p-6">
+                        <h3 className="text-2xl font-bold mb-6">{activeEnterprisePlan.title}</h3>
+                        
+                        <div className="space-y-4">
+                            {activeEnterprisePlan.features.map((feature, idx) => (
+                                <div key={idx} className="flex items-start gap-2">
+                                    <Check className="text-primary h-5 w-5 mt-0.5 flex-shrink-0" />
+                                    <span>{feature}</span>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-6">
+                            <Button onClick={handleContactSales}>
+                                Contact sales
+                            </Button>
+                            
+                            <span className="text-primary cursor-pointer hover:underline">
+                                See all the features
+                            </span>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
