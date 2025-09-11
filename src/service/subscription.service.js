@@ -20,7 +20,7 @@ export const cancelSubscription = async () => {
     return response.data;
 }
 
-export const renewSubscription = async () => {
-    const response = await ApiClient().get(`/stripe/renew-plan`);
+export const reactiveSubscription = async () => {
+    const response = await ApiClient().get(`/stripe/reactive-plan`);
     return response.data;
 }

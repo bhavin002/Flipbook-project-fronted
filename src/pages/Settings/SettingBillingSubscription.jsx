@@ -3,26 +3,36 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Loader2, Crown } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Check, Loader2, Crown, AlertCircle, RefreshCw } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { cancelSubscription, createCheckoutSession, getAllPlans, renewSubscription } from '@/service/subscription.service';
+import { cancelSubscription, createCheckoutSession, getAllPlans, reactiveSubscription } from '@/service/subscription.service';
 import { toast } from 'sonner';
 import { PlanCardSkeleton, TabContentSkeleton } from '@/utils/Skeleton';
 import { getData } from '@/utils/datas';
+import ConfirmationDialog from '@/utils/ConfirmationDialog';
 
 export default function SettingBillingSubscription() {
     const [isLoading, setIsLoading] = useState(false);
     const [plans, setPlans] = useState([]);
+    const [currentSubscription, setCurrentSubscription] = useState(null);
     const [isYearly, setIsYearly] = useState(false);
     const [activeTab, setActiveTab] = useState("starter");
     const [upgradeLoading, setUpgradeLoading] = useState(null);
+    const [reactivatingPlan, setReactivatingPlan] = useState(false);
+    const [confirmDialog, setConfirmDialog] = useState({
+        open: false,
+        planId: null,
+        action: null
+    });
 
     useEffect(() => {
         const getPlans = async () => {
             try {
                 setIsLoading(true);
                 const plansData = await getAllPlans();
-                setPlans(plansData.data || []);
+                setPlans(plansData.data.plans || []);
+                setCurrentSubscription(plansData.data.currentSubscription || null);
             } catch (error) {
                 toast.error("Failed to get plans", {
                     description: error.message
@@ -131,6 +141,50 @@ export default function SettingBillingSubscription() {
         return featuresMap[planType] || [];
     };
 
+    const getCurrentPlanName = () => {
+        const currentPlan = plans.find(plan => plan.isCurrentPlan);
+        return currentPlan ? currentPlan.name : 'Professional Monthly';
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+
+    const handleReactivePlan = async () => {
+        try {
+            setReactivatingPlan(true);
+            const response = await reactiveSubscription();
+            if (!response.data.isRequiredToCheckout) {
+                toast.success("Subscription reactivated", {
+                    description: response.data.message || "Your subscription has been reactivated."
+                });
+                const plansData = await getAllPlans();
+                setPlans(plansData.data.plans || []);
+                setCurrentSubscription(plansData.data.currentSubscription || null);
+            } else {
+                const checkoutResponse = await createCheckoutSession(response.data.planId);
+                if (checkoutResponse.data.checkoutUrl) {
+                    window.open(checkoutResponse.data.checkoutUrl, '_blank');
+                } else {
+                    toast.error("Invalid checkout response", {
+                        description: "No checkout URL received"
+                    });
+                }
+            }
+        } catch (error) {
+            toast.error("Failed to reactivate plan", {
+                description: error.message
+            });
+        } finally {
+            setReactivatingPlan(false);
+        }
+    };
+
     const processedPlans = processPlans();
     const activePlans = isYearly ? processedPlans.yearly : processedPlans.monthly;
 
@@ -146,6 +200,20 @@ export default function SettingBillingSubscription() {
 
     const handleUpgrade = async (planId, action) => {
         console.log("action ???", action);
+
+        if (action === "cancel") {
+            setConfirmDialog({
+                open: true,
+                planId,
+                action
+            });
+            return;
+        }
+
+        await executeAction(planId, action);
+    };
+
+    const executeAction = async (planId, action) => {
         try {
             setUpgradeLoading(planId);
             if (action === "checkout") {
@@ -174,15 +242,29 @@ export default function SettingBillingSubscription() {
                     description: response.data.message || "Your subscription has been cancelled."
                 });
                 const plansData = await getAllPlans();
-                setPlans(plansData.data || []);
+                setPlans(plansData.data.plans || []);
+                setCurrentSubscription(plansData.data.currentSubscription || null);
             }
-            if (action === "renew") {
-                const response = await renewSubscription();
-                toast.success("Subscription renewed", {
-                    description: response.data.message || "Your subscription has been renewed."
-                });
-                const plansData = await getAllPlans();
-                setPlans(plansData.data || []);
+            if (action === "reactive") {
+                const response = await reactiveSubscription();
+                if (!response.data.isRequiredToCheckout) {
+                    toast.success("Subscription reactivated", {
+                        description: response.data.message || "Your subscription has been reactivated."
+                    });
+                    const plansData = await getAllPlans();
+                    setPlans(plansData.data.plans || []);
+                    setCurrentSubscription(plansData.data.currentSubscription || null);
+                } else {
+                    const checkoutResponse = await createCheckoutSession(response.data.planId);
+                    if (checkoutResponse.data.checkoutUrl) {
+                        console.log
+                        window.open(checkoutResponse.data.checkoutUrl, '_blank');
+                    } else {
+                        toast.error("Invalid checkout response", {
+                            description: "No checkout URL received"
+                        });
+                    }
+                }
             }
         } catch (error) {
             toast.error("Failed to upgrade", {
@@ -191,6 +273,15 @@ export default function SettingBillingSubscription() {
         } finally {
             setUpgradeLoading(null);
         }
+    };
+
+    const handleConfirmCancel = async () => {
+        await executeAction(confirmDialog.planId, confirmDialog.action);
+        setConfirmDialog({ open: false, planId: null, action: null });
+    };
+
+    const handleCancelDialog = () => {
+        setConfirmDialog({ open: false, planId: null, action: null });
     };
 
     const handleContactSales = () => {
@@ -203,22 +294,52 @@ export default function SettingBillingSubscription() {
         }
     };
 
-    const getButtonStyles = (action) => {
-        if (action === "cancel") {
-            return "bg-red-600 hover:bg-red-700 text-white border-red-600";
-        }
-        if (action === "renew") {
-            return "bg-green-600 hover:bg-green-700 text-white border-green-600";
-        }
-        return "";
-    };
-
     return (
         <div className="p-6 max-w-[100vw] overflow-auto space-y-4 pt-0">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Subscription</h1>
                 <p className="text-gray-500">Update your payment option and see all the features in your current plan.</p>
             </div>
+
+            {currentSubscription?.isCancelled && currentSubscription?.isActive && (new Date(currentSubscription?.endDate) > new Date()) && (
+                <div className="border-violet-500 bg-violet-50/30 shadow-md border rounded-lg px-6 py-4">
+                    <div className="flex items-start gap-3">
+                        <div className="flex-1">
+                            <p className="font-semibold text-violet-800">
+                                Your {getCurrentPlanName()} plan is scheduled for cancellation.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <p className="text-sm text-gray-600">
+                                You still have access to all premium features until{' '}
+                                <span className="font-medium text-violet-700">{formatDate(currentSubscription?.endDate)}</span>.
+                                Want to continue enjoying these benefits?
+                            </p>
+                        </div>
+                        <Button
+                            onClick={handleReactivePlan}
+                            disabled={reactivatingPlan}
+                            size="sm"
+                            className="bg-violet-600 hover:bg-violet-700 text-white flex-shrink-0"
+                        >
+                            {reactivatingPlan ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Reactivating...
+                                </>
+                            ) : (
+                                <>
+                                    <RefreshCw className="w-4 h-4 mr-2" />
+                                    Reactivate Plan
+                                </>
+                            )}
+                        </Button>
+                    </div>
+                </div>
+            )}
 
             <Card>
                 <CardHeader>
@@ -268,7 +389,7 @@ export default function SettingBillingSubscription() {
                                     </div>
 
                                     <Button
-                                        className={`mb-6 ${getButtonStyles(plan.action)}`}
+                                        className={`mb-6`}
                                         onClick={() => handleUpgrade(plan.planId, plan.action)}
                                         disabled={upgradeLoading === plan.planId || plan.action === "none"}
                                     >
@@ -347,7 +468,7 @@ export default function SettingBillingSubscription() {
                                         </div>
 
                                         <Button
-                                            className={`w-full mb-6 ${getButtonStyles(plan.action)}`}
+                                            className={`w-full mb-6`}
                                             onClick={() => handleUpgrade(plan.planId, plan.action)}
                                             disabled={upgradeLoading === plan.planId || plan.action === "none"}
                                         >
@@ -404,6 +525,16 @@ export default function SettingBillingSubscription() {
                     </div>
                 </CardContent>
             </Card>
+
+            <ConfirmationDialog
+                isConfirmModalOpen={confirmDialog.open}
+                setIsConfirmModalOpen={(open) => setConfirmDialog(prev => ({ ...prev, open }))}
+                title="Cancel Subscription"
+                description="Are you sure you want to cancel your subscription?"
+                onConfirm={handleConfirmCancel}
+                onCancel={handleCancelDialog}
+                isLoading={upgradeLoading === confirmDialog.planId}
+            />
         </div>
     );
 }
