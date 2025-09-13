@@ -39,6 +39,7 @@
     "axios": "^1.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "crisp-sdk-web": "^1.0.25",
     "date-fns": "^3.6.0",
     "framer-motion": "^12.10.5",
     "gifler": "^0.1.0",

@@ -35,7 +35,7 @@ import SettingWorkspaceAccess from "./pages/Settings/SettingWorkspaceAccess";
 import SettingTeammateActivity from "./pages/Settings/SettingTeammateActivity";
 import SettingPermission from "./pages/Settings/SettingPermission";
 import SettingEmailProvider from "./pages/Settings/SettingEmailProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Details from "./pages/Details";
 import MyAccount from "./pages/MyAccount";
 import CustomizeAppLayout from "./layout/CustomizeAppLayout";
@@ -77,6 +77,8 @@ import EmbedFlipbook from "./embed/EmbedFlipbook";
 import EmbedBookShelf from "./embed/EmbedBookShelf";
 import { Success } from "./pages/Settings/payment/success";
 import { Cancel } from "./pages/Settings/payment/cancel";
+import { initCrisp } from "./crisp";
+
 
 // Route configurations
 const brandingRoutes = [
@@ -108,6 +110,10 @@ export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const apiCounter = useApiCounterStore((state) => state.counter);
 
+  useEffect(() => {
+    initCrisp();
+  }, []);
+
   return (
     <AuthProvider>
       <Routes>
@@ -138,8 +144,8 @@ export default function App() {
                         {/* Default redirect */}
                         <Route path="/" element={<Navigate to="/myflipbooks" replace />} />
 
-                        <Route path="/success" element={<PrivateRoute><Success/></PrivateRoute>} />
-                        <Route path="/cancel" element={<PrivateRoute><Cancel/></PrivateRoute>} />
+                        <Route path="/success" element={<PrivateRoute><Success /></PrivateRoute>} />
+                        <Route path="/cancel" element={<PrivateRoute><Cancel /></PrivateRoute>} />
 
 
                         {/* Main content routes */}

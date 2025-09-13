@@ -2,26 +2,37 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Check, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Check, Loader2, Crown, AlertCircle, RefreshCw } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { createCheckoutSession, getAllPlans } from '@/service/subscription.service';
+import { cancelSubscription, createCheckoutSession, getAllPlans, reactiveSubscription } from '@/service/subscription.service';
 import { toast } from 'sonner';
 import { PlanCardSkeleton, TabContentSkeleton } from '@/utils/Skeleton';
 import { getData } from '@/utils/datas';
+import ConfirmationDialog from '@/utils/ConfirmationDialog';
 
 export default function SettingBillingSubscription() {
     const [isLoading, setIsLoading] = useState(false);
     const [plans, setPlans] = useState([]);
+    const [currentSubscription, setCurrentSubscription] = useState(null);
     const [isYearly, setIsYearly] = useState(false);
     const [activeTab, setActiveTab] = useState("starter");
     const [upgradeLoading, setUpgradeLoading] = useState(null);
+    const [reactivatingPlan, setReactivatingPlan] = useState(false);
+    const [confirmDialog, setConfirmDialog] = useState({
+        open: false,
+        planId: null,
+        action: null
+    });
 
     useEffect(() => {
         const getPlans = async () => {
             try {
                 setIsLoading(true);
                 const plansData = await getAllPlans();
-                setPlans(plansData.data || []);
+                setPlans(plansData.data.plans || []);
+                setCurrentSubscription(plansData.data.currentSubscription || null);
             } catch (error) {
                 toast.error("Failed to get plans", {
                     description: error.message
@@ -42,7 +53,10 @@ export default function SettingBillingSubscription() {
         const planGroups = {};
         let trialPlan = null;
 
-        plans.forEach(plan => {
+        // Sort plans by sequence first
+        const sortedPlans = [...plans].sort((a, b) => a.sequence - b.sequence);
+
+        sortedPlans.forEach(plan => {
             if (plan.isTrialPlan) {
                 trialPlan = plan;
                 return;
@@ -51,7 +65,7 @@ export default function SettingBillingSubscription() {
             const planType = plan.name.split(' ')[0].toLowerCase();
 
             if (!planGroups[planType]) {
-                planGroups[planType] = { monthly: null, yearly: null };
+                planGroups[planType] = { monthly: null, yearly: null, sequence: plan.sequence };
             }
 
             if (plan.interval === 0) {
@@ -61,7 +75,7 @@ export default function SettingBillingSubscription() {
             }
         });
 
-        // Add trial plan first if it exists
+        // Add trial plan first if it exists (it should have sequence 0)
         if (trialPlan) {
             const trialFeatures = getFeaturesByPlanType('trial');
             const trialPlanData = {
@@ -71,13 +85,17 @@ export default function SettingBillingSubscription() {
                 billedAs: '14 day free trial',
                 features: trialFeatures,
                 planId: trialPlan._id,
-                buttonLabel: trialPlan.buttonLabel
+                buttonLabel: trialPlan.buttonLabel,
+                action: trialPlan.action,
+                isCurrentPlan: trialPlan.isCurrentPlan,
+                sequence: trialPlan.sequence
             };
-            monthly.unshift(trialPlanData); // Add to beginning of monthly
-            yearly.unshift(trialPlanData);  // Add to beginning of yearly
+            monthly.push(trialPlanData);
+            yearly.push(trialPlanData);
         }
 
-        Object.entries(planGroups).forEach(([type, planData]) => {
+        const sortedPlanGroups = Object.entries(planGroups).sort(([, a], [, b]) => a.sequence - b.sequence);
+        sortedPlanGroups.forEach(([type, planData]) => {
             const baseFeatures = getFeaturesByPlanType(type);
 
             if (planData.monthly) {
@@ -88,7 +106,10 @@ export default function SettingBillingSubscription() {
                     billedAs: 'Billed monthly',
                     features: baseFeatures,
                     planId: planData.monthly._id,
-                    buttonLabel: planData.monthly.buttonLabel
+                    buttonLabel: planData.monthly.buttonLabel,
+                    action: planData.monthly.action,
+                    isCurrentPlan: planData.monthly.isCurrentPlan,
+                    sequence: planData.monthly.sequence
                 });
             }
 
@@ -101,10 +122,16 @@ export default function SettingBillingSubscription() {
                     billedAs: `₹${planData.yearly.rate} billed annually`,
                     features: baseFeatures,
                     planId: planData.yearly._id,
-                    buttonLabel: planData.yearly.buttonLabel
+                    buttonLabel: planData.yearly.buttonLabel,
+                    action: planData.yearly.action,
+                    isCurrentPlan: planData.yearly.isCurrentPlan,
+                    sequence: planData.yearly.sequence
                 });
             }
         });
+
+        monthly.sort((a, b) => a.sequence - b.sequence);
+        yearly.sort((a, b) => a.sequence - b.sequence);
 
         return { monthly, yearly };
     };
@@ -114,8 +141,56 @@ export default function SettingBillingSubscription() {
         return featuresMap[planType] || [];
     };
 
+    const getCurrentPlanName = () => {
+        const currentPlan = plans.find(plan => plan.isCurrentPlan);
+        return currentPlan ? currentPlan.name : 'Professional Monthly';
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+    };
+
+    const handleReactivePlan = async () => {
+        try {
+            setReactivatingPlan(true);
+            const response = await reactiveSubscription();
+            if (!response.data.isRequiredToCheckout) {
+                toast.success("Subscription reactivated", {
+                    description: response.data.message || "Your subscription has been reactivated."
+                });
+                const plansData = await getAllPlans();
+                setPlans(plansData.data.plans || []);
+                setCurrentSubscription(plansData.data.currentSubscription || null);
+            } else {
+                const checkoutResponse = await createCheckoutSession(response.data.planId);
+                if (checkoutResponse.data.checkoutUrl) {
+                    window.open(checkoutResponse.data.checkoutUrl, '_blank');
+                } else {
+                    toast.error("Invalid checkout response", {
+                        description: "No checkout URL received"
+                    });
+                }
+            }
+        } catch (error) {
+            toast.error("Failed to reactivate plan", {
+                description: error.message
+            });
+        } finally {
+            setReactivatingPlan(false);
+        }
+    };
+
     const processedPlans = processPlans();
     const activePlans = isYearly ? processedPlans.yearly : processedPlans.monthly;
+
+    // Get enterprise plan data from static data
+    const enterprisePlans = getData('enterprisePlans');
+    const activeEnterprisePlan = isYearly ? enterprisePlans.yearly : enterprisePlans.monthly;
 
     useEffect(() => {
         if (activePlans.length > 0 && !activePlans.find(p => p.id === activeTab)) {
@@ -125,23 +200,97 @@ export default function SettingBillingSubscription() {
 
     const handleUpgrade = async (planId, action) => {
         console.log("action ???", action);
+
+        if (action === "cancel") {
+            setConfirmDialog({
+                open: true,
+                planId,
+                action
+            });
+            return;
+        }
+
+        await executeAction(planId, action);
+    };
+
+    const executeAction = async (planId, action) => {
         try {
             setUpgradeLoading(planId);
-            const response = await createCheckoutSession(planId);
-            if (response.data.checkoutUrl) {
-                console.log
-                window.open(response.data.checkoutUrl, '_blank');
-            } else {
-                toast.error("Invalid checkout response", {
-                    description: "No checkout URL received"
+            if (action === "checkout") {
+                const response = await createCheckoutSession(planId);
+                if (response.data.checkoutUrl) {
+                    console.log
+                    window.open(response.data.checkoutUrl, '_blank');
+                } else {
+                    toast.error("Invalid checkout response", {
+                        description: "No checkout URL received"
+                    });
+                }
+            }
+            if (action === "upgrade" || action === "downgrade") {
+                if (window.$crisp) {
+                    window.$crisp.push(["do", "chat:open"]);
+                } else {
+                    toast.error("Chat support not available", {
+                        description: "Please contact support directly"
+                    });
+                }
+            }
+            if (action === "cancel") {
+                const response = await cancelSubscription();
+                toast.success("Subscription cancelled", {
+                    description: response.data.message || "Your subscription has been cancelled."
                 });
+                const plansData = await getAllPlans();
+                setPlans(plansData.data.plans || []);
+                setCurrentSubscription(plansData.data.currentSubscription || null);
+            }
+            if (action === "reactive") {
+                const response = await reactiveSubscription();
+                if (!response.data.isRequiredToCheckout) {
+                    toast.success("Subscription reactivated", {
+                        description: response.data.message || "Your subscription has been reactivated."
+                    });
+                    const plansData = await getAllPlans();
+                    setPlans(plansData.data.plans || []);
+                    setCurrentSubscription(plansData.data.currentSubscription || null);
+                } else {
+                    const checkoutResponse = await createCheckoutSession(response.data.planId);
+                    if (checkoutResponse.data.checkoutUrl) {
+                        console.log
+                        window.open(checkoutResponse.data.checkoutUrl, '_blank');
+                    } else {
+                        toast.error("Invalid checkout response", {
+                            description: "No checkout URL received"
+                        });
+                    }
+                }
             }
         } catch (error) {
-            toast.error("Failed to create checkout", {
+            toast.error("Failed to upgrade", {
                 description: error.message
             });
         } finally {
             setUpgradeLoading(null);
+        }
+    };
+
+    const handleConfirmCancel = async () => {
+        await executeAction(confirmDialog.planId, confirmDialog.action);
+        setConfirmDialog({ open: false, planId: null, action: null });
+    };
+
+    const handleCancelDialog = () => {
+        setConfirmDialog({ open: false, planId: null, action: null });
+    };
+
+    const handleContactSales = () => {
+        if (window.$crisp) {
+            window.$crisp.push(["do", "chat:open"]);
+        } else {
+            toast.error("Chat support not available", {
+                description: "Please contact support directly"
+            });
         }
     };
 
@@ -152,14 +301,45 @@ export default function SettingBillingSubscription() {
                 <p className="text-gray-500">Update your payment option and see all the features in your current plan.</p>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Current plan: Free trial</CardTitle>
-                    <CardDescription>
-                        You are currently on a free plan. At any time, you can upgrade your account to one of the plans below.
-                    </CardDescription>
-                </CardHeader>
-            </Card>
+            {currentSubscription?.isCancelled && currentSubscription?.isActive && (new Date(currentSubscription?.endDate) > new Date()) && (
+                <div className="border-violet-500 bg-violet-50/30 shadow-md border rounded-lg px-6 py-4">
+                    <div className="flex items-start gap-3">
+                        <div className="flex-1">
+                            <p className="font-semibold text-violet-800">
+                                Your {getCurrentPlanName()} plan is scheduled for cancellation.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <p className="text-sm text-gray-600">
+                                You still have access to all premium features until{' '}
+                                <span className="font-medium text-violet-700">{formatDate(currentSubscription?.endDate)}</span>.
+                                Want to continue enjoying these benefits?
+                            </p>
+                        </div>
+                        <Button
+                            onClick={handleReactivePlan}
+                            disabled={reactivatingPlan}
+                            size="sm"
+                            className="bg-violet-600 hover:bg-violet-700 text-white flex-shrink-0"
+                        >
+                            {reactivatingPlan ? (
+                                <>
+                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                    Reactivating...
+                                </>
+                            ) : (
+                                <>
+                                    <RefreshCw className="w-4 h-4 mr-2" />
+                                    Reactivate Plan
+                                </>
+                            )}
+                        </Button>
+                    </div>
+                </div>
+            )}
 
             <Card>
                 <CardHeader>
@@ -184,18 +364,34 @@ export default function SettingBillingSubscription() {
                             ))
                         ) : (
                             activePlans.map((plan, index) => (
-                                <div key={index} className="border rounded-lg p-6 flex flex-col h-full">
+                                <div
+                                    key={index}
+                                    className={`border rounded-lg p-6 flex flex-col h-full relative ${plan.isCurrentPlan
+                                        ? 'border-violet-500 bg-violet-50/30 shadow-md'
+                                        : 'border-gray-200'
+                                        }`}
+                                >
+                                    {/* Current Plan Badge */}
+                                    {plan.isCurrentPlan && (
+                                        <Badge
+                                            className="absolute -top-3 right-4 bg-violet-600 text-white px-3 py-1 text-xs font-semibold shadow-sm"
+                                        >
+                                            <Crown className="w-3 h-3 mr-1" />
+                                            Current Plan
+                                        </Badge>
+                                    )}
+
                                     <h3 className="text-xl font-bold mb-1">{plan.title}</h3>
                                     <div className="mb-6">
                                         <span className="text-3xl font-bold">{plan.price}</span>
-                                        <span className="text-gray-500">/mo</span>
+                                        {plan.id !== 'trial' && <span className="text-gray-500">/mo</span>}
                                         <p className="text-sm text-gray-500 mt-1">{plan.billedAs}</p>
                                     </div>
 
-                                    <Button 
-                                        className="mb-6" 
+                                    <Button
+                                        className={`mb-6`}
                                         onClick={() => handleUpgrade(plan.planId, plan.action)}
-                                        disabled={upgradeLoading === plan.planId}
+                                        disabled={upgradeLoading === plan.planId || plan.action === "none"}
                                     >
                                         {upgradeLoading === plan.planId ? (
                                             <>
@@ -230,14 +426,40 @@ export default function SettingBillingSubscription() {
                             <Tabs defaultValue={activePlans[0]?.id} value={activeTab} onValueChange={setActiveTab} className="w-full">
                                 <TabsList className="grid gap-2 mb-6" style={{ gridTemplateColumns: `repeat(${activePlans.length}, 1fr)` }}>
                                     {activePlans.map((plan) => (
-                                        <TabsTrigger key={plan.id} value={plan.id} className="capitalize">
+                                        <TabsTrigger
+                                            key={plan.id}
+                                            value={plan.id}
+                                            className={`capitalize relative ${plan.isCurrentPlan ? 'data-[state=active]:bg-violet-600 data-[state=active]:text-white' : ''
+                                                }`}
+                                        >
                                             {plan.title}
+                                            {plan.isCurrentPlan && (
+                                                <Crown className="w-3 h-3 ml-1" />
+                                            )}
                                         </TabsTrigger>
                                     ))}
                                 </TabsList>
 
                                 {activePlans.map((plan) => (
-                                    <TabsContent key={plan.id} value={plan.id} className="border rounded-lg p-6">
+                                    <TabsContent
+                                        key={plan.id}
+                                        value={plan.id}
+                                        className={`border rounded-lg p-6 relative ${plan.isCurrentPlan
+                                            ? 'border-violet-500 bg-violet-50/30'
+                                            : 'border-gray-200'
+                                            }`}
+                                    >
+                                        {/* Current Plan Badge for Mobile */}
+                                        {plan.isCurrentPlan && (
+                                            <Badge
+                                                variant="secondary"
+                                                className="absolute -top-3 right-4 bg-violet-600 text-white px-3 py-1 text-xs font-semibold shadow-sm"
+                                            >
+                                                <Crown className="w-3 h-3 mr-1" />
+                                                Current Plan
+                                            </Badge>
+                                        )}
+
                                         <h3 className="text-xl font-bold mb-1">{plan.title}</h3>
                                         <div className="mb-6">
                                             <span className="text-3xl font-bold">{plan.price}</span>
@@ -246,9 +468,9 @@ export default function SettingBillingSubscription() {
                                         </div>
 
                                         <Button
-                                            className="w-full mb-6"
+                                            className={`w-full mb-6`}
                                             onClick={() => handleUpgrade(plan.planId, plan.action)}
-                                            disabled={upgradeLoading === plan.planId}
+                                            disabled={upgradeLoading === plan.planId || plan.action === "none"}
                                         >
                                             {upgradeLoading === plan.planId ? (
                                                 <>
@@ -277,8 +499,42 @@ export default function SettingBillingSubscription() {
                             </div>
                         )}
                     </div>
+
+                    {/* Enterprise Plan Section */}
+                    <div className="border rounded-lg p-6">
+                        <h3 className="text-2xl font-bold mb-6">{activeEnterprisePlan.title}</h3>
+                        
+                        <div className="space-y-4">
+                            {activeEnterprisePlan.features.map((feature, idx) => (
+                                <div key={idx} className="flex items-start gap-2">
+                                    <Check className="text-primary h-5 w-5 mt-0.5 flex-shrink-0" />
+                                    <span>{feature}</span>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-6">
+                            <Button onClick={handleContactSales}>
+                                Contact sales
+                            </Button>
+                            
+                            <span className="text-primary cursor-pointer hover:underline">
+                                See all the features
+                            </span>
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
+
+            <ConfirmationDialog
+                isConfirmModalOpen={confirmDialog.open}
+                setIsConfirmModalOpen={(open) => setConfirmDialog(prev => ({ ...prev, open }))}
+                title="Cancel Subscription"
+                description="Are you sure you want to cancel your subscription?"
+                onConfirm={handleConfirmCancel}
+                onCancel={handleCancelDialog}
+                isLoading={upgradeLoading === confirmDialog.planId}
+            />
         </div>
     );
 }
