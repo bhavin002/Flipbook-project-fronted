@@ -362,7 +362,7 @@ export default function Editor() {
         return ref.current;
     }
 
-    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad } = useOutletContext();
+    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen } = useOutletContext();
     const autoScroll = useRef([]);
 
     const parentRef = useRef(null);
@@ -379,12 +379,13 @@ export default function Editor() {
     const [redoStack, setRedoStack] = useState([]); // Stack for redo
     const [zoomper, setZoomper] = useState(50);
     const [isPageShow, setIsPageShow] = useState(null);
-    const [pageCounter, setPageCounter] = useState(1);
+    const [pageCounter, setPageCounter] = useState(0);
     const scrollRef = useRef(null);
     const prevSelectedIndex = usePrevious(selectedIndex);
     const [undoStack, setUndoStack] = useState([]);
     const [isUndoAction, setIsUndoAction] = useState(true); // Stack for redo
     const [isRedoAction, setIsRedoAction] = useState(true); // Stack for redo
+    const [isPublishModalOpenInternal, setIsPublishModalOpenInternal] = useState(false); // Stack for redo
     const lastScrollTop = useRef(0);
     const scrollTimeout = useRef(null);
     const generateMainStageString = (stages) => {
@@ -419,7 +420,23 @@ export default function Editor() {
             console.log('dragging===========================================111');
         }
     }, [mainStage]);
-
+    useEffect(() => {
+        if (isPublishModalOpen) {
+            if(selectedIndex < 2){
+                setTimeout(() => {
+                     setPageCounter(1);
+                }, 100);
+            }
+            setSelectedIndex(0);
+            setPageCounter(0);
+            
+        }else{
+            setPageCounter(0);
+        }
+        setTimeout(() => {
+            setIsPublishModalOpenInternal(isPublishModalOpen)
+        }, 0);
+    }, [isPublishModalOpen]);
     useEffect(() => {
         setTimeout(() => {
             if (scrollRef.current) {
@@ -763,6 +780,7 @@ export default function Editor() {
         setMainStage([...mainStage]);
         setIsCropping(false);
     };
+    console.log(pageCounter, mainStage.length, 'pageCounterpageCounter');
 
     return (
         <div className="flex w-full flex-col h-full">
@@ -790,8 +808,9 @@ export default function Editor() {
                         {/* {mainStage.length !== pageCounter - 1 && <div className="h-full w-full fixed"><Loader /></div>} */}
                         <div style={{ width: "100%", height: "100%" }} className="relative overflow-auto" ref={childRef}>
                             {
+
                                 mainStage.map((stage, index) => {
-                                    if ((index == prevSelectedIndex || index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1)) {
+                                    if (((isPublishModalOpenInternal && index <= pageCounter) || (!isPublishModalOpenInternal && (index == prevSelectedIndex || index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1)))) {
                                         return (
                                             <div key={index} ref={(el) => (autoScroll.current[index] = el)} style={{ height: "100%", width: "100%" }} className="relative">
                                                 <StageComponent prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} />

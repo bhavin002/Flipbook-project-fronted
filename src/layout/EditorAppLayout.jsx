@@ -116,8 +116,8 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 }
             }
 
-            mainStage.forEach(e => {
-                e.temp = e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] :
+            mainStage.forEach((e, index) => {
+                e.temp = (index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1) && e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] :
                     (e.shapes || []);
             });
             const temp = JSON.parse(JSON.stringify(mainStage))
@@ -206,7 +206,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
             toast.error("Failed to update page data before customize", {
                 description: error.message || "Something went wrong"
             });
-        } 
+        }
     }
 
     useEffect(() => {
@@ -475,7 +475,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad }} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen }} />
                             </div>
                         </div>
                     </div>

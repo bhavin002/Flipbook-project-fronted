@@ -38,7 +38,6 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
     const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
     const [isPageModalOpen, setIsPageModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [isStageLoading, setStageIsLoading] = useState(true);
     const [selectionRect, setSelectionRect] = useState({
         x: 0,
         y: 0,
@@ -601,10 +600,7 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
             if (layers.length > 0) {
                 console.log('Stage has layers, fully loaded.');
                 setIsInitialLoad(true);
-                setStageIsLoading(false);
                 setPageCounter(pageCounter + 1);
-                if (pageCounter === mainStage.length) {
-                }
             }
         }
     }, [stageRef.current]);
@@ -729,7 +725,6 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
                 transformerRef.current.getLayer().batchDraw();
             };
             stage.selectedShapes = [shape];
-            setStageIsLoading(true);
         }
 
     };
@@ -951,7 +946,7 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
                 </>
             }
 
-            <StagePageMenu setSelectedIndex={setSelectedIndex} selectedIndex={selectedIndex} rectProps={rectProps} mainStage={mainStage} setMainStage={setMainStage} index={index} setPageCounter={setPageCounter} pageCounter={pageCounter} />
+            <StagePageMenu setSelectedIndex={setSelectedIndex} selectedIndex={selectedIndex} rectProps={rectProps} mainStage={mainStage} setMainStage={setMainStage} index={index} />
             <ConfirmationDialog
                 isConfirmModalOpen={isTemplateModalOpen}
                 setIsConfirmModalOpen={setIsTemplateModalOpen}
