@@ -376,7 +376,7 @@ export default function SettingBillingSubscription() {
                                         <Badge
                                             className="absolute -top-3 right-4 bg-violet-600 text-white px-3 py-1 text-xs font-semibold shadow-sm"
                                         >
-                                            <Crown className="w-3 h-3 mr-1" />
+                                            {plan.id !== "trial" && <Crown className="w-3 h-3 mr-1" />}
                                             Current Plan
                                         </Badge>
                                     )}
@@ -517,10 +517,6 @@ export default function SettingBillingSubscription() {
                             <Button onClick={handleContactSales}>
                                 Contact sales
                             </Button>
-                            
-                            <span className="text-primary cursor-pointer hover:underline">
-                                See all the features
-                            </span>
                         </div>
                     </div>
                 </CardContent>
