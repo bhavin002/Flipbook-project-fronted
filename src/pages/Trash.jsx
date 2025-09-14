@@ -133,8 +133,8 @@ export default function Trash({ isSidebarOpen }) {
     if (flipbooks.length === 0 && folders.length === 0 && !isLoading) {
         return (
             <ZeroState
-                title="Folder is empty"
-                description="Get started on your first flipbook – just click the button below!"
+                title="No files or folders in your Trash"
+                description="Move unwanted files to the Trash and Delete them permanently and free up storage space."
             />
         );
     }

@@ -73,11 +73,13 @@ import OrganizeShelf from "./pages/OrganizeShelf";
 import BookShelfDetails from "./pages/BookShelfDetails";
 import PublicBookShelf from "./public/PublicBookShelf";
 import { PermissionRoute } from "./Middleware/PermissionRoute";
+import { WorkspaceExpirationRoute } from "./Middleware/WorkspaceExpirationRoute";
 import EmbedFlipbook from "./embed/EmbedFlipbook";
 import EmbedBookShelf from "./embed/EmbedBookShelf";
 import { Success } from "./pages/Settings/payment/success";
 import { Cancel } from "./pages/Settings/payment/cancel";
 import { initCrisp } from "./crisp";
+import ExpireAccount from "./pages/ExpireAccount";
 
 
 // Route configurations
@@ -139,13 +141,15 @@ export default function App() {
                 <CurrencyProvider>
                   <WorkspaceProvider>
                     <FlipbookProvider>
-                      {apiCounter > 0 && <Loader />}
-                      <Routes>
+                      <WorkspaceExpirationRoute>
+                        {apiCounter > 0 && <Loader />}
+                        <Routes>
                         {/* Default redirect */}
                         <Route path="/" element={<Navigate to="/myflipbooks" replace />} />
 
-                        <Route path="/success" element={<PrivateRoute><Success /></PrivateRoute>} />
+                        <Route path="/success/:sessionId" element={<PrivateRoute><Success /></PrivateRoute>} />
                         <Route path="/cancel" element={<PrivateRoute><Cancel /></PrivateRoute>} />
+                        <Route path="/expire" element={<PrivateRoute><ExpireAccount /></PrivateRoute>} />
 
 
                         {/* Main content routes */}
@@ -470,7 +474,8 @@ export default function App() {
                         </Route>
                         {/* 404 Catch-all for protected routes */}
                         <Route path="*" element={<NotFound404 />} />
-                      </Routes>
+                        </Routes>
+                      </WorkspaceExpirationRoute>
                     </FlipbookProvider>
                   </WorkspaceProvider>
                 </CurrencyProvider>

@@ -12,6 +12,7 @@ const AuthContext = createContext({
     userMeta: null,
     permissions: null,
     updateUserMeta: () => { },
+    isWorkspaceExpired: false,
 });
 
 export function AuthProvider({ children }) {
@@ -19,6 +20,7 @@ export function AuthProvider({ children }) {
     const [isLoading, setIsLoading] = useState(true);
     const [userMeta, setUserMeta] = useState(null);
     const [permissions, setPermissions] = useState(null);
+    const [isWorkspaceExpired, setIsWorkspaceExpired] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,6 +30,12 @@ export function AuthProvider({ children }) {
         };
         initAuth();
     }, []);
+
+    const checkWorkspaceExpiration = (user) => {
+        const currentWorkspaceId = localStorage.getItem('fn_workspace_id') || user.workspaceId;
+        const workspaceInfo = user.workspaceInfo?.find(ws => ws.workspaceId === currentWorkspaceId);
+        return workspaceInfo?.isExpired || false;
+    };
 
     const isTokenVerified = async (token) => {
         if (!token) return false;
@@ -43,6 +51,8 @@ export function AuthProvider({ children }) {
             if(!session_id){
                 sessionStorage.setItem('session_id', uuidv4());
             }
+            const expired = checkWorkspaceExpiration(response.data.user);
+            setIsWorkspaceExpired(expired);
             return true;
         } catch (error) {
             return false;
@@ -101,6 +111,8 @@ export function AuthProvider({ children }) {
 
     const updateUserMeta = (newUserMeta) => {
         setUserMeta(newUserMeta);
+        const expired = checkWorkspaceExpiration(newUserMeta);
+        setIsWorkspaceExpired(expired);
     };
 
     return (
@@ -113,7 +125,8 @@ export function AuthProvider({ children }) {
             userMeta, 
             permissions, 
             updateUserMeta,
-            setPermissions 
+            setPermissions,
+            isWorkspaceExpired 
         }}>
             {children}
         </AuthContext.Provider>

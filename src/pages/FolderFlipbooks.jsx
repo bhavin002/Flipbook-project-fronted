@@ -38,7 +38,7 @@ export default function FolderFlipbooks({ isSidebarOpen }) {
         return (
             <ZeroState
                 title="Folder is empty"
-                description="Get started on your first flipbook – just click the button below!"
+                description="Try move one of your flipbooks here."
             />
         );
     }

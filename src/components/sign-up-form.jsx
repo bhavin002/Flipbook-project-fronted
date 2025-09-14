@@ -18,18 +18,22 @@ import LoadingButton from "@/utils/LoadingButton"
 const signUpSchema = z.object({
   firstName: z
     .string()
+    .trim()
     .min(1, "Please fill in this field")
     .regex(/^[a-zA-Z]+$/, "First name must contain only alphabetic characters"),
   lastName: z
     .string()
+    .trim()
     .min(1, "Please fill in this field")
     .regex(/^[a-zA-Z]+$/, "Last name must contain only alphabetic characters"),
   email: z
     .string()
+    .trim()
     .min(1, "Please fill in this field")
     .email("Please enter a valid email address"),
   password: z
     .string()
+    .trim()
     .min(1, "Please fill in this field")
     .min(8, "Password must be at least 8 characters long")
 });

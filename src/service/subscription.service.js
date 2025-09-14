@@ -24,3 +24,10 @@ export const reactiveSubscription = async () => {
     const response = await ApiClient().get(`/stripe/reactive-plan`);
     return response.data;
 }
+
+export const getCheckoutSessionInfo = async (sessionId) => {
+    const response = await ApiClient().get(`/stripe/get-session-info/${sessionId}`, {
+        showLoader: true
+    });
+    return response.data;
+}

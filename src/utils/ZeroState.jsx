@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export const ZeroState = ({
     title = "No items found",
-    description = "Get started by creating your first item"
+    description = ""
 }) => {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -78,12 +78,12 @@ export const ZeroState = ({
                         {title}
                     </motion.h3>
 
-                    <motion.p
+                    {description && <motion.p
                         variants={itemVariants}
                         className="text-primary/90 text-xl mb-8"
                     >
                         {description}
-                    </motion.p>
+                    </motion.p>}
                 </motion.div>
             )}
         </div>
