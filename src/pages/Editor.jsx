@@ -422,15 +422,15 @@ export default function Editor() {
     }, [mainStage]);
     useEffect(() => {
         if (isPublishModalOpen) {
-            if(selectedIndex < 2){
+            if (selectedIndex < 2) {
                 setTimeout(() => {
-                     setPageCounter(1);
+                    setPageCounter(1);
                 }, 100);
             }
             setSelectedIndex(0);
             setPageCounter(0);
-            
-        }else{
+
+        } else {
             setPageCounter(0);
         }
         setTimeout(() => {
@@ -447,6 +447,11 @@ export default function Editor() {
                 // Auto-center the scroll position
                 container.scrollLeft = (contentWidth - containerWidth) / 2;
             }
+            autoScroll.current[selectedIndex].scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+                inline: 'center'
+            });
         }, 100);
     }, [zoomper]); // Trigger whenever zoomper changes
 
@@ -510,7 +515,8 @@ export default function Editor() {
     useEffect(() => {
         autoScroll.current[selectedIndex].scrollIntoView({
             behavior: 'smooth',
-            block: 'center',
+            block: 'start',
+            inline: 'center'
         });
         if (selectedIndex) {
             // mainStage[prevSelectedIndex].shapes = mainStage[prevSelectedIndex].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || []
@@ -795,18 +801,24 @@ export default function Editor() {
                         />
                     </div>
                 </>}
-                <div style={{ userSelect: 'none' }} className="flex flex-col overflow-y-auto relative flex-grow w-full overflow-auto" >
+                <div style={{ userSelect: 'none' }} className="flex flex-col overflow-hidden relative flex-grow w-full" ref={parentRef} >
                     <div style={{
                         position: 'absolute',
                         top: '0px',
                         left: '0px',
-                        transformOrigin: "0 0",
-                        transform: `scale(${zoomper / 50})`,
+                        overflow: "auto",
                         width: "100%",
                         height: "100%",
-                    }} ref={parentRef}>
+                        overflow: "auto",
+                    }} ref={childRef}>
                         {/* {mainStage.length !== pageCounter - 1 && <div className="h-full w-full fixed"><Loader /></div>} */}
-                        <div style={{ width: "100%", height: "100%" }} className="relative overflow-auto" ref={childRef}>
+                        <div style={{
+                            width: "100%",
+                            height: "100%",
+                            transformOrigin: "0 0",
+                            transform: `scale(${zoomper / 50})`,
+                            // overflow: "auto",
+                        }} className="relative" >
                             {
 
                                 mainStage.map((stage, index) => {
@@ -870,7 +882,7 @@ export default function Editor() {
                 }
                 <PanelRight isCropping={isCropping} currentRightPanel={currentRightPanel} setCurrentRightPanel={setCurrentRightPanel} isRightLateralCollapse={isRightLateralCollapse} setIsRightLateralCollapse={setIsRightLateralCollapse} />
                 {!isCropping && <div className="fixed flex items-center bottom-[10px] right-[80px] gap-2 max-lg:hidden">
-                    <div className="flex items-center bg-white rounded-sm border border-gray-200 ">{undoStack.length}
+                    <div className="flex items-center bg-white rounded-sm border border-gray-200 ">
                         <Button size="xs" variant="ghost" onClick={handleUndo} disabled={undoStack.length <= 1}>
                             <Undo className="w-4 h-4" />
                         </Button>

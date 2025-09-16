@@ -111,7 +111,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     <Text
       ref={textRef}
       {...shape}
-      draggable
+      visible={shape.visible && !isEditing }
       onDblClick={handleTextDblClick}
       name="shape"
       onDragEnd={((e) => {
@@ -137,7 +137,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
           width: Math.max(5, node.width() * scaleX),
         });
       }}
-      visible={!isEditing}
+     
     />
   );
 };

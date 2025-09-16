@@ -96,20 +96,26 @@ export default function LateralPanelRightLayer({ selectedShape, setIsPageShow, s
     };
     const toggleVisiblity = (shape) => {
         setIsToggle(true);
-        mainStage[selectedIndex].stageref.current.children[0].children[1].children.find((e, index) => {
+        // mainStage[selectedIndex].shapes.find((e, index) => {
+           mainStage[selectedIndex].stageref.current.children[0].children[1].children.find((e, index) => {
             if (e.attrs.id == shape.id) {
-                mainStage[selectedIndex].stageref.current.children[0].children[1].children[index].setAttr('visible', !e.attrs.visible)
+                let visible = !e.attrs.visible;
+                mainStage[selectedIndex].shapes[index] = e.attrs;
+                mainStage[selectedIndex].stageref.current.children[0].children[1].children[index].setAttr('visible', visible)
                 return true;
             }
         })
-        mainStage.splice(selectedIndex, 1, mainStage[selectedIndex]);
         setMainStage([...mainStage]);
+        // mainStage.splice(selectedIndex, 1, mainStage[selectedIndex]);
+        // setTimeout(() => {
+        // }, 0);
     }
 
     const toggleLock = (shape = null, idDraggable = true) => {
         if (shape) {
             mainStage[selectedIndex].stageref.current.children[0].children[1].children.find((e, index) => {
                 if (e.attrs.id == shape.id) {
+                    mainStage[selectedIndex].shapes[index] = e.attrs;
                     mainStage[selectedIndex].stageref.current.children[0].children[1].children[index].setAttr('draggable', idDraggable)
                     return true;
                 }
@@ -124,6 +130,7 @@ export default function LateralPanelRightLayer({ selectedShape, setIsPageShow, s
             selectedShapes.forEach(element => {
                 mainStage[selectedIndex].stageref.current.children[0].children[1].children.find((e, index) => {
                     if (e.attrs.id == element) {
+                        mainStage[selectedIndex].shapes[index] = e.attrs;
                         mainStage[selectedIndex].stageref.current.children[0].children[1].children[index].setAttr('draggable', idDraggable)
                         return true;
                     }

@@ -735,7 +735,6 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
         // Call handleDragMove with 'drag' type
         handleDragMove(e, 'drag');
     };
-
     return (
         <div
             style={{ width: "100%", height: "100%" }}

@@ -75,6 +75,7 @@ export default function TextSidebarPanel({
                     textTransform: typeWiseData?.textCase || element.attrs.textTransform || "none",
                     textDecoration: getTextDecoration(typeWiseData?.styles || []),
                     visible: true,
+                    draggable: true,
                     layer: "Text",
                     fontFamily: typeWiseData?.fontFamily || element.attrs.fontFamily || 'Arial',
                 }

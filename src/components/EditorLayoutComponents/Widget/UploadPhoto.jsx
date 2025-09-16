@@ -130,7 +130,7 @@ export default function UploadPhoto({
                 width={shapeWidth}
                 height={shapeHeight}
                 ref={clipGroupRef}
-                fill={'#ffffff'}
+                fill={'z'}
                 clipFunc={(ctx) => {
                     ctx.beginPath();
                     ctx.moveTo(topLeftRadius, 0);

@@ -25,7 +25,7 @@ export default function LateralPanelRightPages({ setIsPageShow, isSidebarOpen, s
     const handleDragStart = () => {
         mainStage.forEach(element => {
             const temp = JSON.parse(JSON.stringify(element));
-            temp.shapes = element.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)))
+            temp.shapes = element.stageref && element?.stageref?.current ?  element?.stageref?.current?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) : []
             temp.shapes.forEach(element => { element.id = uuid() })
             temp.stageref.current = JSON.parse(temp.stageref.current);
             temp.selectedShapes = [];
