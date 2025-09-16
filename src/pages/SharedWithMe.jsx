@@ -28,8 +28,8 @@ export default function SharedWithMe({ isSidebarOpen }) {
     if (sharedFlipbooks.length === 0 && !isLoading) {
         return (
             <ZeroState
-                title="Folder is empty"
-                description="Get started on your first flipbook – just click the button below!"
+                title="There are no publications shared with you."
+                description="You don’t currently have publications shared with you."
             />
         );
     }

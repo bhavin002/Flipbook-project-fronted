@@ -73,11 +73,13 @@ import OrganizeShelf from "./pages/OrganizeShelf";
 import BookShelfDetails from "./pages/BookShelfDetails";
 import PublicBookShelf from "./public/PublicBookShelf";
 import { PermissionRoute } from "./Middleware/PermissionRoute";
+import { WorkspaceExpirationRoute } from "./Middleware/WorkspaceExpirationRoute";
 import EmbedFlipbook from "./embed/EmbedFlipbook";
 import EmbedBookShelf from "./embed/EmbedBookShelf";
 import { Success } from "./pages/Settings/payment/success";
 import { Cancel } from "./pages/Settings/payment/cancel";
 import { initCrisp } from "./crisp";
+import ExpireAccount from "./pages/ExpireAccount";
 
 
 // Route configurations
@@ -135,346 +137,419 @@ export default function App() {
           path="*"
           element={
             <FileUploadProvider>
-              <FolderProvider>
-                <CurrencyProvider>
-                  <WorkspaceProvider>
-                    <FlipbookProvider>
-                      {apiCounter > 0 && <Loader />}
-                      <Routes>
-                        {/* Default redirect */}
-                        <Route path="/" element={<Navigate to="/myflipbooks" replace />} />
+              <CurrencyProvider>
+                <WorkspaceProvider>
+                  <WorkspaceExpirationRoute>
+                    {apiCounter > 0 && <Loader />}
+                    <Routes>
+                      {/* Default redirect */}
+                      <Route path="/" element={<Navigate to="/myflipbooks" replace />} />
 
-                        <Route path="/success" element={<PrivateRoute><Success /></PrivateRoute>} />
-                        <Route path="/cancel" element={<PrivateRoute><Cancel /></PrivateRoute>} />
+                      <Route path="/success/:sessionId" element={<PrivateRoute><Success /></PrivateRoute>} />
+                      <Route path="/cancel" element={<PrivateRoute><Cancel /></PrivateRoute>} />
+                      <Route path="/expire" element={<PrivateRoute><ExpireAccount /></PrivateRoute>} />
 
 
-                        {/* Main content routes */}
-                        <Route path="/myflipbooks" element={
-                          <PrivateRoute>
+                      {/* Main content routes */}
+                      <Route path="/myflipbooks" element={
+                        <PrivateRoute>
+                          <FlipbookProvider>
+                            <FolderProvider>
+                              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                            </FolderProvider>
+                          </FlipbookProvider>
+                        </PrivateRoute>
+                      }>
+                        <Route index element={<Navigate to="flipbooks" replace />} />
+                        <Route path="flipbooks" element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
+                        <Route path="flipbooks/folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
+                        <Route path="template" element={
+                          <PermissionRoute requiredPermission="templates">
+                            <MyFlipbooks isSidebarOpen={isSidebarOpen} />
+                          </PermissionRoute>
+                        } />
+                        <Route path="template/folder/:id" element={
+                          <PermissionRoute requiredPermission="templates">
+                            <FolderFlipbooks isSidebarOpen={isSidebarOpen} />
+                          </PermissionRoute>
+                        } />
+                        <Route path="shared-with-me" element={<SharedWithMe isSidebarOpen={isSidebarOpen} />} />
+                        <Route path="trash" element={
+                          <PermissionRoute requiredPermission="trash">
+                            <Trash isSidebarOpen={isSidebarOpen} />
+                          </PermissionRoute>
+                        } />
+                      </Route>
+
+                      <Route path="/shelf" element={
+                        <PermissionRoute requiredPermission="createDropdown">
+                          <ShelfCreateLayout />
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<Navigate to="select" replace />} />
+                        <Route path="select/:id?" element={<CreateShelf />} />
+                        <Route path="organize/:id?" element={<OrganizeShelf />} />
+                      </Route>
+
+                      <Route path="/automation" element={
+                        <PermissionRoute requiredPermission="automation">
+                          <FlipbookProvider>
+                            <FolderProvider>
+                              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                            </FolderProvider>
+                          </FlipbookProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<AutomationContent />} />
+                      </Route>
+
+                      <Route path="/statistics" element={
+                        <PermissionRoute requiredPermission="statistics">
+                          <FlipbookProvider>
+                            <FolderProvider>
+                              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                            </FolderProvider>
+                          </FlipbookProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<StatisticsContent />} />
+                      </Route>
+
+                      {/* Branding routes */}
+                      <Route path="/branding" element={
+                        <PermissionRoute requiredPermission="branding">
+                          <FlipbookProvider>
+                            <FolderProvider>
+                              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                            </FolderProvider>
+                          </FlipbookProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<Navigate to="colors" replace />} />
+                        {brandingRoutes.map((route) => (
+                          <Route
+                            key={route.path}
+                            path={route.path}
+                            element={
+                              <PermissionRoute requiredPermission={route.permission}>
+                                {route.element}
+                              </PermissionRoute>
+                            }
+                          />
+                        ))}
+                      </Route>
+
+                      {/* Settings routes */}
+                      <Route path="/settings" element={
+                        <PermissionRoute requiredPermission="settings">
+                          <FlipbookProvider>
+                            <FolderProvider>
+                              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                            </FolderProvider>
+                          </FlipbookProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<Navigate to="workspace" replace />} />
+                        {settingsRoutes.map((route) => (
+                          <Route
+                            key={route.path}
+                            path={route.path}
+                            element={
+                              <PermissionRoute requiredPermission={route.permission}>
+                                {route.element}
+                              </PermissionRoute>
+                            }
+                          />
+                        ))}
+                      </Route>
+
+                      {/* Legacy settings route - redirect to workspace */}
+                      <Route path="/settings" element={<Navigate to="/settings/workspace" replace />} />
+                      <Route path="/settings/workspace" element={
+                        <PermissionRoute requiredPermission="settings">
+                          <FlipbookProvider>
+                            <FolderProvider>
+                              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                            </FolderProvider>
+                          </FlipbookProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<SettingWorkspace />} />
+                      </Route>
+
+                      {/* flipbook details page routes */}
+                      <Route path="/details/:id" element={
+                        <PermissionRoute requiredPermission="flipbookDetails">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <FlipbookProvider>
+                                  <FolderProvider>
+                                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                  </FolderProvider>
+                                </FlipbookProvider>
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<Details />} />
+                      </Route>
+                      <Route path="/embed/:id" element={
+                        <PermissionRoute requiredPermission="flipbookDetails">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <FlipbookProvider>
+                                  <FolderProvider>
+                                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                  </FolderProvider>
+                                </FlipbookProvider>
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<Details />} />
+                      </Route>
+                      <Route path="/stats/:id" element={
+                        <PermissionRoute requiredPermission="flipbookDetails">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <FlipbookProvider>
+                                  <FolderProvider>
+                                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                  </FolderProvider>
+                                </FlipbookProvider>
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<Details />} />
+                      </Route>
+                      <Route path="/send-email/:id" element={
+                        <PermissionRoute requiredPermission="flipbookDetails">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <FlipbookProvider>
+                                  <FolderProvider>
+                                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                  </FolderProvider>
+                                </FlipbookProvider>
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<Details />} />
+                      </Route>
+                      <Route path="/download-qr/:id" element={
+                        <PermissionRoute requiredPermission="flipbookDetails">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <FlipbookProvider>
+                                  <FolderProvider>
+                                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                  </FolderProvider>
+                                </FlipbookProvider>
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<Details />} />
+                      </Route>
+
+                      {/* shelf page routes */}
+                      <Route path="/shelf/details/:id" element={
+                        <PermissionRoute requiredPermission="flipbookDetails">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <FlipbookProvider>
+                                  <FolderProvider>
+                                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                  </FolderProvider>
+                                </FlipbookProvider>
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<BookShelfDetails />} />
+                      </Route>
+                      <Route path="/shelf/customize/:id" element={
+                        <PermissionRoute requiredPermission="flipbookDetails">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <FlipbookProvider>
+                                  <FolderProvider>
+                                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                  </FolderProvider>
+                                </FlipbookProvider>
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<BookShelfDetails />} />
+                      </Route>
+                      <Route path="/shelf/embed/:id" element={
+                        <PermissionRoute requiredPermission="flipbookDetails">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <FlipbookProvider>
+                                  <FolderProvider>
+                                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                  </FolderProvider>
+                                </FlipbookProvider>
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<BookShelfDetails />} />
+                      </Route>
+                      <Route path="/shelf/stats/:id" element={
+                        <PermissionRoute requiredPermission="flipbookDetails">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <FlipbookProvider>
+                                  <FolderProvider>
+                                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                  </FolderProvider>
+                                </FlipbookProvider>
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<BookShelfDetails />} />
+                      </Route>
+                      <Route path="/shelf/send-email/:id" element={
+                        <PermissionRoute requiredPermission="flipbookDetails">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <FlipbookProvider>
+                                  <FolderProvider>
+                                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                  </FolderProvider>
+                                </FlipbookProvider>
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<BookShelfDetails />} />
+                      </Route>
+                      <Route path="/shelf/download-qr/:id" element={
+                        <PermissionRoute requiredPermission="flipbookDetails">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <FlipbookProvider>
+                                  <FolderProvider>
+                                    <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                                  </FolderProvider>
+                                </FlipbookProvider>
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<BookShelfDetails />} />
+                      </Route>
+
+                      {/* my account page routes */}
+                      <Route path="/account/details" element={
+                        <PrivateRoute>
+                          <FlipbookProvider>
+                            <FolderProvider>
+                              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                            </FolderProvider>
+                          </FlipbookProvider>
+                        </PrivateRoute>
+                      }>
+                        <Route index element={<MyAccount />} />
+                      </Route>
+                      <Route path="/account/email-preferences" element={
+                        <PrivateRoute>
+                          <FolderProvider>
                             <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                          </PrivateRoute>
-                        }>
-                          <Route index element={<Navigate to="flipbooks" replace />} />
-                          <Route path="flipbooks" element={<MyFlipbooks isSidebarOpen={isSidebarOpen} />} />
-                          <Route path="flipbooks/folder/:id" element={<FolderFlipbooks isSidebarOpen={isSidebarOpen} />} />
-                          <Route path="template" element={
-                            <PermissionRoute requiredPermission="templates">
-                              <MyFlipbooks isSidebarOpen={isSidebarOpen} />
-                            </PermissionRoute>
-                          } />
-                          <Route path="template/folder/:id" element={
-                            <PermissionRoute requiredPermission="templates">
-                              <FolderFlipbooks isSidebarOpen={isSidebarOpen} />
-                            </PermissionRoute>
-                          } />
-                          <Route path="shared-with-me" element={<SharedWithMe isSidebarOpen={isSidebarOpen} />} />
-                          <Route path="trash" element={
-                            <PermissionRoute requiredPermission="trash">
-                              <Trash isSidebarOpen={isSidebarOpen} />
-                            </PermissionRoute>
-                          } />
-                        </Route>
+                          </FolderProvider>
+                        </PrivateRoute>
+                      }>
+                        <Route index element={<MyAccount />} />
+                      </Route>
 
-                        <Route path="/shelf" element={
-                          <PermissionRoute requiredPermission="createDropdown">
-                            <ShelfCreateLayout />
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<Navigate to="select" replace />} />
-                          <Route path="select/:id?" element={<CreateShelf />} />
-                          <Route path="organize/:id?" element={<OrganizeShelf />} />
-                        </Route>
+                      <Route path="/upload" element={
+                        <PermissionRoute requiredPermission="uploadFiles">
+                          <UploadFilesLayout />
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<UploadFiles />} />
+                      </Route>
 
-                        <Route path="/automation" element={
-                          <PermissionRoute requiredPermission="automation">
-                            <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<AutomationContent />} />
-                        </Route>
+                      <Route path="/customize/:id" element={
+                        <PermissionRoute requiredPermission="flipbookCustomize">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <CustomizeAppLayout />
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<Customize />} />
+                      </Route>
 
-                        <Route path="/statistics" element={
-                          <PermissionRoute requiredPermission="statistics">
-                            <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<StatisticsContent />} />
-                        </Route>
-
-                        {/* Branding routes */}
-                        <Route path="/branding" element={
-                          <PermissionRoute requiredPermission="branding">
-                            <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<Navigate to="colors" replace />} />
-                          {brandingRoutes.map((route) => (
-                            <Route
-                              key={route.path}
-                              path={route.path}
-                              element={
-                                <PermissionRoute requiredPermission={route.permission}>
-                                  {route.element}
-                                </PermissionRoute>
-                              }
-                            />
-                          ))}
-                        </Route>
-
-                        {/* Settings routes */}
-                        <Route path="/settings" element={
-                          <PermissionRoute requiredPermission="settings">
-                            <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<Navigate to="workspace" replace />} />
-                          {settingsRoutes.map((route) => (
-                            <Route
-                              key={route.path}
-                              path={route.path}
-                              element={
-                                <PermissionRoute requiredPermission={route.permission}>
-                                  {route.element}
-                                </PermissionRoute>
-                              }
-                            />
-                          ))}
-                        </Route>
-
-                        {/* Legacy settings route - redirect to workspace */}
-                        <Route path="/settings" element={<Navigate to="/settings/workspace" replace />} />
-                        <Route path="/settings/workspace" element={
-                          <PermissionRoute requiredPermission="settings">
-                            <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<SettingWorkspace />} />
-                        </Route>
-
-                        {/* flipbook details page routes */}
-                        <Route path="/details/:id" element={
-                          <PermissionRoute requiredPermission="flipbookDetails">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<Details />} />
-                        </Route>
-                        <Route path="/embed/:id" element={
-                          <PermissionRoute requiredPermission="flipbookDetails">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<Details />} />
-                        </Route>
-                        <Route path="/stats/:id" element={
-                          <PermissionRoute requiredPermission="flipbookDetails">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<Details />} />
-                        </Route>
-                        <Route path="/send-email/:id" element={
-                          <PermissionRoute requiredPermission="flipbookDetails">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<Details />} />
-                        </Route>
-                        <Route path="/download-qr/:id" element={
-                          <PermissionRoute requiredPermission="flipbookDetails">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<Details />} />
-                        </Route>
-
-                        {/* shelf page routes */}
-                        <Route path="/shelf/details/:id" element={
-                          <PermissionRoute requiredPermission="flipbookDetails">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<BookShelfDetails />} />
-                        </Route>
-                        <Route path="/shelf/customize/:id" element={
-                          <PermissionRoute requiredPermission="flipbookDetails">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<BookShelfDetails />} />
-                        </Route>
-                        <Route path="/shelf/embed/:id" element={
-                          <PermissionRoute requiredPermission="flipbookDetails">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<BookShelfDetails />} />
-                        </Route>
-                        <Route path="/shelf/stats/:id" element={
-                          <PermissionRoute requiredPermission="flipbookDetails">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<BookShelfDetails />} />
-                        </Route>
-                        <Route path="/shelf/send-email/:id" element={
-                          <PermissionRoute requiredPermission="flipbookDetails">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<BookShelfDetails />} />
-                        </Route>
-                        <Route path="/shelf/download-qr/:id" element={
-                          <PermissionRoute requiredPermission="flipbookDetails">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<BookShelfDetails />} />
-                        </Route>
-
-                        {/* my account page routes */}
-                        <Route path="/account/details" element={
-                          <PrivateRoute>
-                            <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                          </PrivateRoute>
-                        }>
-                          <Route index element={<MyAccount />} />
-                        </Route>
-                        <Route path="/account/email-preferences" element={
-                          <PrivateRoute>
-                            <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
-                          </PrivateRoute>
-                        }>
-                          <Route index element={<MyAccount />} />
-                        </Route>
-
-                        <Route path="/upload" element={
-                          <PermissionRoute requiredPermission="uploadFiles">
-                            <UploadFilesLayout />
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<UploadFiles />} />
-                        </Route>
-
-                        <Route path="/customize/:id" element={
-                          <PermissionRoute requiredPermission="flipbookCustomize">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <CustomizeAppLayout />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<Customize />} />
-                        </Route>
-
-                        <Route path="/create" element={
-                          <PermissionRoute requiredPermission="createDropdown">
-                            <ScratchAppLayout />
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<FlipbookFromScratch />} />
-                        </Route>
+                      <Route path="/create" element={
+                        <PermissionRoute requiredPermission="createDropdown">
+                          <ScratchAppLayout />
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<FlipbookFromScratch />} />
+                      </Route>
 
 
-                        <Route path="/admin-editor/:id" element={
-                          <PermissionRoute>
-                            <ViewModeProvider>
-                              <AdminEditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<Editor />} />
-                        </Route>
+                      <Route path="/admin-editor/:id" element={
+                        <PermissionRoute>
+                          <ViewModeProvider>
+                            <AdminEditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<Editor />} />
+                      </Route>
 
-                        <Route path="/editor/:id" element={
-                          <PermissionRoute requiredPermission="flipbookEdit">
-                            <ViewModeProvider>
-                              <FlipbookSettingsProvider>
-                                <ShopSettingsProvider>
-                                  <EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
-                                </ShopSettingsProvider>
-                              </FlipbookSettingsProvider>
-                            </ViewModeProvider>
-                          </PermissionRoute>
-                        }>
-                          <Route index element={<Editor />} />
-                        </Route>
-                        {/* 404 Catch-all for protected routes */}
-                        <Route path="*" element={<NotFound404 />} />
-                      </Routes>
-                    </FlipbookProvider>
-                  </WorkspaceProvider>
-                </CurrencyProvider>
-              </FolderProvider>
+                      <Route path="/editor/:id" element={
+                        <PermissionRoute requiredPermission="flipbookEdit">
+                          <ViewModeProvider>
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <EditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
+                          </ViewModeProvider>
+                        </PermissionRoute>
+                      }>
+                        <Route index element={<Editor />} />
+                      </Route>
+                      {/* 404 Catch-all for protected routes */}
+                      <Route path="*" element={<NotFound404 />} />
+                    </Routes>
+                  </WorkspaceExpirationRoute>
+                </WorkspaceProvider>
+              </CurrencyProvider>
             </FileUploadProvider>
           }
         />

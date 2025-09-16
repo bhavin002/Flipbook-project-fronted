@@ -1,16 +1,26 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { useNavigate } from "react-router-dom"
+import { getCheckoutSessionInfo } from "@/service/subscription.service";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom"
 
 export function Success() {
     const navigate = useNavigate();
+    const { sessionId } = useParams();
+    const [sessionInfo, setSessionInfo] = useState(null);
 
-    const paymentData = {
-        username: "John Doe",
-        workspaceName: "My Awesome Workspace",
-        planName: "Pro Plan",
-        price: "₹333"
-    };
+    useEffect(() => {
+        const getSessionInfo = async () => {
+            try {
+                const response = await getCheckoutSessionInfo(sessionId);
+                setSessionInfo(response.data)
+            } catch (error) {
+                navigate("/myflipbooks/flipbooks");
+            }
+        };
+
+        getSessionInfo();
+    }, [navigate]);
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-background">
@@ -37,23 +47,23 @@ export function Success() {
 
                                 <div className="flex justify-between items-center">
                                     <span className="text-muted-foreground">Customer:</span>
-                                    <span className="font-medium">{paymentData.username}</span>
+                                    <span className="font-medium">{sessionInfo?.userName}</span>
                                 </div>
 
                                 <div className="flex justify-between items-center">
                                     <span className="text-muted-foreground">Workspace:</span>
-                                    <span className="font-medium">{paymentData.workspaceName}</span>
+                                    <span className="font-medium">{sessionInfo?.workspaceName}</span>
                                 </div>
 
                                 <div className="flex justify-between items-center">
                                     <span className="text-muted-foreground">Plan:</span>
-                                    <span className="font-medium">{paymentData.planName}</span>
+                                    <span className="font-medium">{sessionInfo?.planName}</span>
                                 </div>
 
                                 <div className="border-t pt-3">
                                     <div className="flex justify-between items-center">
                                         <span className="text-muted-foreground font-semibold">Amount Paid:</span>
-                                        <span className="font-bold text-lg text-primary">{paymentData.price}</span>
+                                        <span className="font-bold text-lg text-primary">{sessionInfo?.price} {sessionInfo?.currency === "inr" ? "₹" : "$"}</span>
                                     </div>
                                 </div>
                             </div>

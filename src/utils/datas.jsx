@@ -8,7 +8,7 @@ import { FileCode, FileText, Image, CirclePlay, Pencil, SlidersHorizontal, Chart
 
 const defaultRoutes = {
     home: '/myflipbooks',
-    automation: '/automation',
+    // automation: '/automation',
     statistics: '/statistics',
     branding: '/branding/colors',
     settings: '/settings/workspace'
@@ -16,7 +16,7 @@ const defaultRoutes = {
 
 const navItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/myflipbooks' },
-    { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', permission: 'automation' },
+    // { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', permission: 'automation' },
     { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics', permission: 'statistics' },
     { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings', permission: 'branding' },
     { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', permission: 'settings' },
@@ -28,12 +28,12 @@ const editorNavItems = [
     { id: 'text', icon: Type, label: 'Text' },
     { id: 'uploads', icon: Upload, label: 'Uploads' },
     { id: 'elements', icon: Component, label: 'Elements' },
-    { id: 'automation', icon: Bot, label: 'Automation' }
+    // { id: 'automation', icon: Bot, label: 'Automation' }
 ];
 
 const bottomNavItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/myflipbooks', hasDrawer: true },
-    { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', hasDrawer: false, permission: 'automation' },
+    // { id: 'automation', icon: Bot, label: 'Automation', path: '/automation', hasDrawer: false, permission: 'automation' },
     { id: 'statistics', icon: PieChart, label: 'Statistics', path: '/statistics', hasDrawer: false, permission: 'statistics' },
     { id: 'branding', icon: Diamond, label: 'Branding', path: '/branding/profile/settings', hasDrawer: true, permission: 'branding' },
     { id: 'settings', icon: Settings, label: 'Settings', path: '/settings/workspace', hasDrawer: true, permission: 'settings' }
@@ -364,25 +364,25 @@ const mainPlans = {
 
 const planFeatures = {
     trial: [
-        "1 project",
-        "Basic analytics (limited)",
+        "1 flipbook",
+        "Basic sharing (link only)",
         "Email support",
         "Standard templates",
         "14-day full access",
         "No credit card required"
     ],
     starter: [
-        "Up to 5 projects",
-        "Basic analytics",
-        "Email support",
-        "Standard templates"
+        "5 flipbooks",
+        "Add links / detect links",
+        "Share link, email, QR code",
+        "Download as PDF"
     ],
     professional: [
-        "Unlimited projects",
-        "Advanced analytics",
-        "Priority support",
-        "Premium templates",
-        "Team collaboration"
+        "50 flipbooks",
+        "Videos, lead forms, charts",
+        "Password protection",
+        "Embed without watermark",
+        "Analytics & Google Analytics"
     ]
 };
 
@@ -391,36 +391,28 @@ const enterprisePlans = {
         title: "Enterprise Monthly",
         features: [
             "1000+ flipbooks",
-            "Collaboration",
-            "Centralized management for multiple teams",
-            "Assigning roles and permissions",
-            "Teammates activity logs",
-            "SSO sharing",
-            "Share flipbooks with readers",
-            "Import feeds (CSV, XLSX) or Sync with Google Spreadsheets",
-            "Automate interactions",
-            "Flipnova API access",
-            "Insert custom code in flipbooks",
-            "Zapier (coming soon)",
-            "Custom credits"
+            "Team collaboration",
+            "Role-based permissions",
+            "Activity logs",
+            "Custom domain",
+            "Brand customization",
+            "API access",
+            "Custom code insertion",
+            "Unlimited AI credits"
         ]
     },
     yearly: {
         title: "Enterprise Yearly",
         features: [
             "1000+ flipbooks",
-            "Collaboration",
-            "Centralized management for multiple teams",
-            "Assigning roles and permissions",
-            "Teammates activity logs",
-            "SSO sharing",
-            "Share flipbooks with readers",
-            "Import feeds (CSV, XLSX) or Sync with Google Spreadsheets",
-            "Automate interactions",
-            "Flipnova API access",
-            "Insert custom code in flipbooks",
-            "Zapier (coming soon)",
-            "Custom credits"
+            "Team collaboration",
+            "Role-based permissions",
+            "Activity logs",
+            "Custom domain",
+            "Brand customization",
+            "API access",
+            "Custom code insertion",
+            "Unlimited AI credits"
         ]
     }
 };
@@ -3316,7 +3308,6 @@ const permission = {
     "trash": true,
     "branding": true,
     "statistics": true,
-    "automation": true,
     "flipbookDetails": true,
     "flipbookEdit": true,
     "flipbookCustomize": true,
