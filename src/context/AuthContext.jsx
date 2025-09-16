@@ -115,6 +115,28 @@ export function AuthProvider({ children }) {
         setIsWorkspaceExpired(expired);
     };
 
+    const refreshUserInfo = async () => {
+        const token = localStorage.getItem('fn_access_token');
+        if (!token) return false;
+        
+        try {
+            const response = await GetUserInfoApi(token);
+            if (response.status !== 200) return false;
+            
+            setUserMeta(response.data.user);
+            const expired = checkWorkspaceExpiration(response.data.user);
+            setIsWorkspaceExpired(expired);
+            
+            if (expired) {
+                navigate('/expire');
+            }
+            
+            return true;
+        } catch (error) {
+            return false;
+        }
+    };
+
     return (
         <AuthContext.Provider value={{ 
             isAuthenticated, 
@@ -126,7 +148,8 @@ export function AuthProvider({ children }) {
             permissions, 
             updateUserMeta,
             setPermissions,
-            isWorkspaceExpired 
+            isWorkspaceExpired,
+            refreshUserInfo
         }}>
             {children}
         </AuthContext.Provider>

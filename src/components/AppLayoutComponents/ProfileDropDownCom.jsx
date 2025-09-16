@@ -8,7 +8,7 @@ import { useWorkspaces } from "@/context/WorkspaceContext";
 
 export default function ProfileDropDownCom() {
     const navigate = useNavigate();
-    const { logout, userMeta } = useAuth();
+    const { logout, userMeta, refreshUserInfo } = useAuth();
     const { currentWorkspace, workspaces, isLoading, setIsNeededRefetch, myWorkspaceId } = useWorkspaces();
     const { permissions } = useAuth();
 
@@ -29,10 +29,10 @@ export default function ProfileDropDownCom() {
         }
     };
 
-    const switchWorkspace = (workspaceId) => {
-        // Store selected workspace ID in session storage
+    const switchWorkspace = async (workspaceId) => {
         localStorage.setItem("fn_workspace_id", workspaceId);
-        setIsNeededRefetch(true)
+        setIsNeededRefetch(true);
+        await refreshUserInfo();
         navigate("/auth/sign-in");
     };
 

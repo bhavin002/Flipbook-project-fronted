@@ -1,23 +1,22 @@
+import { Loader } from '@/components/ui/loader';
 import { useAuth } from '@/context/AuthContext';
 import { Navigate, useLocation } from 'react-router-dom';
 
 export function WorkspaceExpirationRoute({ children }) {
-    const { isAuthenticated, isLoading, isWorkspaceExpired } = useAuth();
+    const { isLoading, isWorkspaceExpired } = useAuth();
     const location = useLocation();
+    const isExpirePage = location.pathname === '/expire';
 
-    // Don't check expiration while loading or if not authenticated
-    if (isLoading || !isAuthenticated) {
-        return children;
+    if (isLoading) {
+        return <Loader />
     }
 
-    // Allow access to expire page itself
-    if (location.pathname === '/expire') {
-        return children;
-    }
-
-    // Redirect to expire page if workspace is expired
-    if (isWorkspaceExpired) {
+    if (isWorkspaceExpired && !isExpirePage) {
         return <Navigate to="/expire" replace />;
+    }
+
+    if (!isWorkspaceExpired && isExpirePage) {
+        return <Navigate to="/myflipbooks/flipbooks" replace />;
     }
 
     return children;
