@@ -39,7 +39,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
         if (selectedShape?.length !== 1) return;
 
         const updatedStage = [...mainStage];
-        updatedStage[selectedIndex].selectedShape=[];
+        updatedStage[selectedIndex].selectedShape = [];
         updatedStage[selectedIndex].shapes = mainStage[selectedIndex].shapes.map((shape) => {
             if (selectedShape[0].attrs.id === shape.id) {
                 if (type === "horizontal") {
@@ -64,7 +64,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{
                                     backgroundColor: selectedShape?.length
                                         ? selectedShape[0].attrs.fill
@@ -112,7 +112,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -243,6 +243,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
         case 'stock-photo':
             return <>
                 {selectedShape?.length == 1 && <>
+
                     <Button variant="ghost" size="sm" onClick={() => {
                         setIsShapeDrawerOpen(true)
                         selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
@@ -278,6 +279,23 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
         case 'upload-photo':
             return <>
                 {selectedShape?.length == 1 && <>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <div
+                                    onClick={() => {
+                                        setIsShapeDrawerOpen(true)
+                                        selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
+                                    }}
+                                    className="w-8 h-8 rounded cursor-pointer border"
+                                    style={{ backgroundColor: selectedShape[0].attrs.fill }}
+                                ></div>
+                            </TooltipTrigger>
+                            <TooltipContent align="center" className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs px-2 py-1 rounded-md">
+                                <p className="text-xs">Color</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                     <Button variant="ghost" size="sm" onClick={() => {
                         setIsShapeDrawerOpen(true)
                         selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
@@ -387,7 +405,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -413,7 +431,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -439,7 +457,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -492,7 +510,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -518,7 +536,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -544,7 +562,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -570,7 +588,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -596,7 +614,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -622,7 +640,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -648,7 +666,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -687,7 +705,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>
@@ -725,7 +743,7 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                                     setIsShapeDrawerOpen(true)
                                     selectedSubMenu === "color" ? setSelectedSubMenu(null) : setSelectedSubMenu("color")
                                 }}
-                                className="w-8 h-8 rounded cursor-pointer"
+                                className="w-8 h-8 rounded cursor-pointer border"
                                 style={{ backgroundColor: selectedShape[0].attrs.fill }}
                             ></div>
                         </TooltipTrigger>

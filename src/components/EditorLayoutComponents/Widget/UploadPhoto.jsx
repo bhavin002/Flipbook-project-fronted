@@ -122,7 +122,7 @@ export default function UploadPhoto({
                 width={shapeWidth - 4}
                 height={shapeHeight - 4}
                 cornerRadius={shapeCornerRadius || [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
-                fill="#000000"
+                fill={shape.fill || 'white'}
             />
 
             {/* Nested Group with clipping */}
