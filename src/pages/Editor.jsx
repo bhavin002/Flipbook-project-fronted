@@ -362,7 +362,7 @@ export default function Editor() {
         return ref.current;
     }
 
-    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen } = useOutletContext();
+    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter } = useOutletContext();
     const autoScroll = useRef([]);
 
     const parentRef = useRef(null);
@@ -379,7 +379,6 @@ export default function Editor() {
     const [redoStack, setRedoStack] = useState([]); // Stack for redo
     const [zoomper, setZoomper] = useState(50);
     const [isPageShow, setIsPageShow] = useState(null);
-    const [pageCounter, setPageCounter] = useState(0);
     const scrollRef = useRef(null);
     const prevSelectedIndex = usePrevious(selectedIndex);
     const [undoStack, setUndoStack] = useState([]);
@@ -806,7 +805,6 @@ export default function Editor() {
                         position: 'absolute',
                         top: '0px',
                         left: '0px',
-                        overflow: "auto",
                         width: "100%",
                         height: "100%",
                         overflow: "auto",

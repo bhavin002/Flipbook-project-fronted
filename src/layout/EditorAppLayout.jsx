@@ -49,6 +49,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [showSessionDialog, setShowSessionDialog] = useState(false);
     const [isSessionTakeOverLoading, setIsSessionTakeOverLoading] = useState(false);
     const [currentEditor, setCurrentEditor] = useState("");
+    const [pageCounter, setPageCounter] = useState(0);
 
     useEffect(() => {
         const getFlipbook = async () => {
@@ -475,7 +476,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen }} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter }} />
                             </div>
                         </div>
                     </div>
@@ -488,6 +489,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         stageHeight={stageHeight}
                         publishing={publishing}
                         setPublishing={setPublishing}
+                        pageCounter={pageCounter}
                     />
                     <PreviewDialog
                         open={isPreviewOpen}

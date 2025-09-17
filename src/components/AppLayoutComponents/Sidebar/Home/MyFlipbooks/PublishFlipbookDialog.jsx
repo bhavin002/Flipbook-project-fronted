@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import { UpdateFlipbookPageDataApi } from "@/service/flipbook.service";
 import { LoadingOverlay } from "@/utils/Skeleton";
 import { GetWorkspaceReadersApi } from "@/service/teammate.service";
+import { Progress } from "@/components/ui/progress";
 
 export default function PublishFlipbookDialog({
     isPublishModalOpen,
@@ -37,7 +38,8 @@ export default function PublishFlipbookDialog({
     stageWidth,
     stageHeight,
     publishing,
-    setPublishing
+    setPublishing,
+    pageCounter
 }) {
     const [selectedRadio, setSelectedRadio] = useState("email");
     const [emailInput, setEmailInput] = useState("");
@@ -462,6 +464,7 @@ export default function PublishFlipbookDialog({
                         Description
                     </DialogDescription>
                 </DialogHeader>
+                {pageCounter !== mainStage.length && <Progress value={100 * pageCounter / mainStage.length} className="w-full" />}
                 <div className="px-1 max-h-[calc(100vh-300px)] overflow-y-auto">
                     {loading && <LoadingOverlay />}
                     <div className="grid gap-4 py-4">
@@ -630,7 +633,7 @@ export default function PublishFlipbookDialog({
                         Close
                     </Button>
                     <Button
-                        disabled={isPublishDisabled}
+                        disabled={isPublishDisabled || pageCounter !== mainStage.length}
                         onClick={handlePublish}
                     >
                         {publishing ? <LoadingButton /> : 'Publish Now'}
