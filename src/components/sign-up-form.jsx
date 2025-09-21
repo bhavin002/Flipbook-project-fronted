@@ -61,7 +61,6 @@ export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emai
   }, [defaultEmail, setValue]);
 
   const continueWithGoogle = useGoogleLogin({
-    flow: 'auth-code',
     onSuccess: async (codeResponse) => {
       setIsGoogleLoading(true);
       try {
