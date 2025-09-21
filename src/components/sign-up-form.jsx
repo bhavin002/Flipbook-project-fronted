@@ -14,6 +14,7 @@ import { SignUpApi } from "@/service/auth.service"
 import { PasswordInput } from "@/utils/PasswordInput"
 import LoadingButton from "@/utils/LoadingButton"
 import { useGoogleLogin } from "@react-oauth/google"
+import { useAuth } from "@/context/AuthContext"
 
 const signUpSchema = z.object({
   firstName: z
@@ -42,7 +43,8 @@ export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emai
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  
+  const { login } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -70,7 +72,9 @@ export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emai
           }
         });
 
-        console.log("Google OAuth response:", response);
+        const responseData = await response.json();
+        login(responseData.data)
+        navigate("/");
 
       } catch (error) {
         toast.error("Google Sign-Up Failed", {
@@ -119,10 +123,10 @@ export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emai
               <div style={{ "transform": "scale(1)", "margin": "auto" }}>
                 <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
               </div>
-              
-              <Button 
-                variant="outline" 
-                className="w-full" 
+
+              <Button
+                variant="outline"
+                className="w-full"
                 type="button"
                 onClick={() => continueWithGoogle()}
                 disabled={isGoogleLoading || isLoading}
