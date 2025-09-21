@@ -21,6 +21,7 @@ import { flipbookType } from "@/utils/enum";
 import RenameFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/RenameFlipbookDialog";
 import { CreateFlipbookActiveEditor, ReplaceFlipbookActiveEditor, DeleteFlipbookActiveEditor } from "@/service/flipbookAciveEditors.service"; // Assuming the file path based on user input
 import SessionConflictDialog from "@/components/EditorLayoutComponents/SessionConflictDialog";
+import SaveConfirmationDialog from "@/components/EditorLayoutComponents/SaveConfirmationDialog";
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
@@ -50,6 +51,9 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isSessionTakeOverLoading, setIsSessionTakeOverLoading] = useState(false);
     const [currentEditor, setCurrentEditor] = useState("");
     const [pageCounter, setPageCounter] = useState(0);
+    const [showSaveDialog, setShowSaveDialog] = useState(false);
+    const [pendingNavigation, setPendingNavigation] = useState(null);
+    const [isSaveLoading, setIsSaveLoading] = useState(false);
 
     useEffect(() => {
         const getFlipbook = async () => {
@@ -216,6 +220,35 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
             navigate(location.pathname, { replace: true });
         }
     }, [state]);
+
+    const handleNavigation = (path) => {
+        setPendingNavigation(path);
+        setShowSaveDialog(true);
+    };
+
+    const handleSaveAndNavigate = async () => {
+        try {
+            setIsSaveLoading(true);
+            await updatePageData();
+            setShowSaveDialog(false);
+            if (pendingNavigation) {
+                navigate(pendingNavigation);
+            }
+        } catch (error) {
+            toast.error("Failed to save changes", {
+                description: error.message || "Something went wrong"
+            });
+        } finally {
+            setIsSaveLoading(false);
+        }
+    };
+
+    const handleDiscardAndNavigate = () => {
+        setShowSaveDialog(false);
+        if (pendingNavigation) {
+            navigate(pendingNavigation);
+        }
+    };
 
     return (
         <>
@@ -389,7 +422,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 <header className="fixed top-0 left-0 right-0 z-10 bg-white">
                     <div className="flex h-16 w-full justify-between shrink-0 items-center px-4 lg:px-6">
                         <div className="cursor-pointer" onClick={() => {
-                            navigate("/myflipbooks")
+                            handleNavigation("/myflipbooks")
                         }}>
                             <img src="/assets/logo.png" width={200} alt="Logo" />
                         </div>
@@ -516,6 +549,13 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 currentEditor={currentEditor}
                 onTakeOver={handleTakeOver}
                 isLoading={isSessionTakeOverLoading}
+            />
+            <SaveConfirmationDialog
+                isOpen={showSaveDialog}
+                onOpenChange={setShowSaveDialog}
+                onSave={handleSaveAndNavigate}
+                onDiscard={handleDiscardAndNavigate}
+                isLoading={isSaveLoading}
             />
         </>
     );
