@@ -138,7 +138,10 @@ export default function MyAccountDetails() {
                         <div className="space-y-2">
                             <Label>Account image</Label>
                             <div className="flex items-center gap-4">
-                                <div className="flex shrink-0 p-2 overflow-hidden justify-center items-center size-20 border-2 border-dotted border-gray-300 text-gray-400 rounded-full dark:border-neutral-700 dark:text-neutral-600">
+                                <div 
+                                    className="flex shrink-0 p-2 overflow-hidden justify-center items-center size-20 border-2 border-dotted border-gray-300 text-gray-400 rounded-full dark:border-neutral-700 dark:text-neutral-600 cursor-pointer hover:bg-gray-50 transition-colors"
+                                    onClick={handleUploadClick}
+                                >
                                     {hasProfileImage ? (
                                         <img 
                                             src={getProfileImage()} 

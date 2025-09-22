@@ -12,7 +12,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Loader } from "@/components/ui/loader";
 import { toast } from "sonner";
 import { ValidateEmailApi, VerifyAccountApi } from "@/service/auth.service";
@@ -26,6 +26,7 @@ export default function ConfirmAccount() {
   const [email, setEmail] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
+  const location = useLocation();
 
   useEffect(() => {
     const confirmAccount = async () => {
@@ -56,7 +57,14 @@ export default function ConfirmAccount() {
     try {
       setIsVerifyLoading(true);
       const confirmToken = localStorage.getItem("fn_confirm_token");
-      const response = await VerifyAccountApi({ token: confirmToken, otp });
+      const payload = {
+        token: confirmToken,
+        otp,
+      }
+      if(location.state.teammateToken) {
+        payload.teammateToken = location.state.teammateToken;
+      }
+      const response = await VerifyAccountApi(payload);
       localStorage.removeItem("fn_confirm_token");
       await login(response.data);
     } catch (error) {

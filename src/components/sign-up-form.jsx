@@ -20,13 +20,11 @@ const signUpSchema = z.object({
   firstName: z
     .string()
     .trim()
-    .min(1, "Please fill in this field")
-    .regex(/^[a-zA-Z]+$/, "First name must contain only alphabetic characters"),
+    .min(3, "First name must be at least 3 characters "),
   lastName: z
     .string()
     .trim()
-    .min(1, "Please fill in this field")
-    .regex(/^[a-zA-Z]+$/, "Last name must contain only alphabetic characters"),
+    .min(3, "Last name must be at least 3 characters "),
   email: z
     .string()
     .trim()
@@ -39,7 +37,7 @@ const signUpSchema = z.object({
     .min(8, "Password must be at least 8 characters long")
 });
 
-export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emailReadOnly = false, setEmailReadOnly, teammateToken = null, setTeammateToken, ...props }) {
+export function SignUpForm({ className, defaultEmail = "", emailReadOnly = false, teammateToken = null, ...props }) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -82,7 +80,6 @@ export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emai
         });
       } finally {
         setIsGoogleLoading(false);
-        if (setTeammateToken) setTeammateToken(null);
       }
     },
     onError: (err) => {
@@ -97,10 +94,10 @@ export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emai
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const payload = teammateToken ? { ...data, teammateToken } : data;
+      const payload = data;
       const response = await SignUpApi(payload);
       localStorage.setItem("fn_confirm_token", response.data.token);
-      navigate("/account/confirm-account");
+      navigate("/account/confirm-account", { state: { teammateToken } });
     } catch (error) {
       toast.error("Sign Up failed", {
         description: error.message || "Oops! Something went wrong.",
@@ -108,9 +105,6 @@ export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emai
     } finally {
       setIsLoading(false);
       reset();
-      if (setDefaultEmail) setDefaultEmail("");
-      if (setEmailReadOnly) setEmailReadOnly(false);
-      if (setTeammateToken) setTeammateToken(null);
     }
   };
 
