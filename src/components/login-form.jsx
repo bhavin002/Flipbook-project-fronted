@@ -46,6 +46,7 @@ export function LoginForm({
   })
 
   const continueWithGoogle = useGoogleLogin({
+    flow: 'auth-code',
     onSuccess: async (codeResponse) => {
       setIsGoogleLoading(true);
       try {

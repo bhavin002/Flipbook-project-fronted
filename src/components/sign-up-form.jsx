@@ -61,6 +61,7 @@ export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emai
   }, [defaultEmail, setValue]);
 
   const continueWithGoogle = useGoogleLogin({
+    flow: 'auth-code',
     onSuccess: async (codeResponse) => {
       setIsGoogleLoading(true);
       try {
@@ -224,10 +225,10 @@ export function SignUpForm({ className, defaultEmail = "", setDefaultEmail, emai
           </div>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
+      {/* <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
         By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
         and <a href="#">Privacy Policy</a>.
-      </div>
+      </div> */}
     </div>
   );
 }
