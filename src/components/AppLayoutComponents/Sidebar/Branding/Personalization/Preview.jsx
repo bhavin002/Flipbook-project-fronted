@@ -134,7 +134,7 @@ export default function Preview() {
                         {previewUrls.profileImage && (
                             <div className="flex items-start">
                                 <img
-                                    className="w-28 rounded-full"
+                                    className="w-full h-auto max-h-28 object-contain"
                                     alt="profile"
                                     src={previewUrls.profileImage}
                                 />
@@ -151,7 +151,7 @@ export default function Preview() {
                                 </a>
                             )}
                             {formValues.description && (
-                                <p className="text-gray-500 text-xs">
+                                <p className="text-gray-500 text-xs" style={{ wordBreak: "break-all" }}>
                                     {formValues.description}
                                 </p>
                             )}

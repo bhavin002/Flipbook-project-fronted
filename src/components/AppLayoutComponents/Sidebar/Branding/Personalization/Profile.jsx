@@ -52,8 +52,8 @@ export default function Profile() {
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="flex items-center">
-                    <Switch 
-                        id="hide-profile-info" 
+                    <Switch
+                        id="hide-profile-info"
                         checked={isProfileInfoHidden}
                         onCheckedChange={(checked) => handleInputChange("isProfileInfoHidden", checked)}
                     />
@@ -65,8 +65,8 @@ export default function Profile() {
                     <Label className="font-medium flex items-center gap-2">
                         Profile Image
                     </Label>
-                    <Button 
-                        variant="outline" 
+                    <Button
+                        variant="outline"
                         onClick={handleDelete}
                         disabled={!hasProfileImage}
                     >
@@ -74,19 +74,21 @@ export default function Profile() {
                     </Button>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className="flex justify-center items-center size-20 rounded-full overflow-hidden">
-                        {hasProfileImage ? (
-                            <img 
-                                src={previewUrls.profileImage} 
-                                className="w-auto h-auto max-w-full" 
-                                alt="Profile" 
+
+                    {hasProfileImage ? (
+                        <div className="flex justify-center items-center size-20 rounded-full overflow-hidden border">
+                            <img
+                                src={previewUrls.profileImage}
+                                className="w-full h-full object-contain"
+                                alt="Profile"
                             />
-                        ) : (
-                            <div className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center">
-                                <Upload className="h-8 w-8 text-gray-400" />
-                            </div>
-                        )}
-                    </div>
+                        </div>
+
+                    ) : (
+                        <div className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center">
+                            <Upload className="h-8 w-8 text-gray-400" />
+                        </div>
+                    )}
                     <div className="space-y-2">
                         <input
                             type="file"
@@ -104,8 +106,8 @@ export default function Profile() {
                 </div>
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="name">Name</Label>
-                    <Input 
-                        id="name" 
+                    <Input
+                        id="name"
                         value={name}
                         onChange={(e) => handleInputChange("name", e.target.value)}
                     />
@@ -123,8 +125,8 @@ export default function Profile() {
                 </div>
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="link-to-website">Link to my website</Label>
-                    <Input 
-                        id="link-to-website" 
+                    <Input
+                        id="link-to-website"
                         placeholder="yourdomain.com"
                         value={websiteLink}
                         onChange={(e) => handleInputChange("websiteLink", e.target.value)}
