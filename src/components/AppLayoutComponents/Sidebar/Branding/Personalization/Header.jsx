@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useBranding } from "@/context/BrandingContext";
 import { useRef } from "react";
+import { toast } from "sonner";
 
 export default function Header() {
     const { form, handleFileUpload, handleDeleteFile, handleInputChange, previewUrls } = useBranding();
