@@ -78,7 +78,7 @@ export default function MyProfile() {
                             This publisher's profile is set to private. You don't have permission to view the content at this time.
                         </p>
 
-                        <div className="flex justify-center space-x-8 pt-6">
+                        {/* <div className="flex justify-center space-x-8 pt-6">
                             <div className="flex flex-col items-center space-y-2 opacity-60 hover:opacity-100 transition-opacity duration-300">
                                 <div className="p-3 bg-gray-100 rounded-full hover:bg-purple-100 transition-colors duration-300">
                                     <Shield className="w-5 h-5 text-gray-600 hover:text-purple-600 transition-colors duration-300" />
@@ -99,7 +99,7 @@ export default function MyProfile() {
                                 </div>
                                 <span className="text-xs text-gray-500 font-medium">Private</span>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
