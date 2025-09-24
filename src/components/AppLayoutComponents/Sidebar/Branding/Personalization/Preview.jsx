@@ -134,7 +134,7 @@ export default function Preview() {
                         {previewUrls.profileImage && (
                             <div className="flex items-start">
                                 <img
-                                    className="w-full h-auto max-h-28 object-contain"
+                                    className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover border border-gray-200 shadow-sm shrink-0"
                                     alt="profile"
                                     src={previewUrls.profileImage}
                                 />
@@ -208,6 +208,8 @@ export default function Preview() {
                                 style={{ 
                                     '--hover-color': formValues.elementColor 
                                 }}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 onMouseEnter={(e) => {
                                     e.target.style.color = formValues.elementColor;
                                 }}

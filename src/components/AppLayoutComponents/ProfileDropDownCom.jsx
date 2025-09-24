@@ -9,7 +9,6 @@ import { useWorkspaces } from "@/context/WorkspaceContext";
 export default function ProfileDropDownCom() {
     const navigate = useNavigate();
     const { logout, userMeta, refreshUserInfo } = useAuth();
-    console.log("userMeta ??",userMeta)
     const { currentWorkspace, workspaces, isLoading, setIsNeededRefetch, myWorkspaceId } = useWorkspaces();
     const { permissions } = useAuth();
 

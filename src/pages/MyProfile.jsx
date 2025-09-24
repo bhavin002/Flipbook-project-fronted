@@ -141,7 +141,7 @@ export default function MyProfile() {
                     <div className="w-full flex flex-col items-center md:items-start justify-center md:justify-start py-8 px-4 sm:px-8 md:py-12 lg:py-16">
                         <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10 w-full mx-auto md:mx-0">
                             {data.profileImage && <img
-                                className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover border border-gray-200 shadow-sm"
+                                className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover border border-gray-200 shadow-sm shrink-0"
                                 alt="profile"
                                 src={data.profileImage}
                             />}

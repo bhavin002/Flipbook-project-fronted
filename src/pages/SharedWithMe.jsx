@@ -56,7 +56,7 @@ export default function SharedWithMe({ isSidebarOpen }) {
 
                         <div className="px-4 pt-4 mt-[-15px] space-y-1 rounded-t-xl z-[11] relative bg-white">
                             <div className="flex items-center justify-between">
-                                <h3 className="font-semibold text-violet-900 transition-colors duration-200 hover:text-violet-600">
+                                <h3 title={flipbook.name} className="font-semibold text-violet-900 transition-colors duration-200 hover:text-violet-600 truncate">
                                     {flipbook.name}
                                 </h3>
                             </div>

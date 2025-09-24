@@ -346,7 +346,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                     {getVisibilityIcon(flipbook.visibilityStatus)}
                                 </div>}
                                 <div className="flex items-center justify-between">
-                                    <h3 className="font-semibold text-violet-900 transition-colors duration-200 hover:text-violet-600">
+                                    <h3 title={flipbook.name} className="font-semibold text-violet-900 transition-colors duration-200 hover:text-violet-600 truncate">
                                         {flipbook.name}
                                     </h3>
                                     {permissions.flipbookDetails && <MyFlipbookDropdown status={flipbook.tag ? flipbook.tag : flipbook.flipbookState} flipbook={flipbook} setFlipbooks={setFlipbooks} isTrash={isTrash} />}
