@@ -88,12 +88,10 @@ export default function BrandingSettings() {
                   <h3 className="text-base font-medium">Profile privacy</h3>
                   <div className="flex items-center">
                     <Switch
-                      id="profile-privacy"
                       checked={isProfilePrivate}
                       onCheckedChange={handleProfilePrivacyChange}
-                      disabled={isLoading}
                     />
-                    <Label htmlFor="profile-privacy" className="ml-3 text-gray-700">
+                    <Label className="ml-3 text-gray-700">
                       Make my profile private
                     </Label>
                   </div>
@@ -105,15 +103,14 @@ export default function BrandingSettings() {
                   </div>
 
                   <Input
-                    className="max-w-md"
+                    className="max-w-md focus-visible:ring-0 focus-visible:ring-ring"
                     value={import.meta.env.VITE_APP_URL + `/profile/${myWorkspaceId}`}
                     readOnly
-                    disabled
                   />
 
-                  <p className="text-gray-500 text-sm">
+                  {/* <p className="text-gray-500 text-sm">
                     This username cannot be changed later on.
-                  </p>
+                  </p> */}
                 </div>
               </CardContent>
             </Card>

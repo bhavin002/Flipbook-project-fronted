@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Trash2,
     Upload,
-    Info
+    Info,
+    Image
 } from "lucide-react";
 import {
     Tooltip,
@@ -97,7 +98,7 @@ export default function SocialThumnail() {
                         />
                     ) : (
                         <div className="w-full h-32 border-2 border-dashed border-gray-300 rounded flex items-center justify-center">
-                            <Upload className="h-8 w-8 text-gray-400" />
+                            <Image className="text-gray-400" />
                         </div>
                     )}
                 </div>

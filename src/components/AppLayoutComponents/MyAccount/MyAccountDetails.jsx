@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
 import { UpdateProfileApi } from "@/service/auth.service";
-import { Upload } from "lucide-react";
+import { Image, Upload } from "lucide-react";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -138,10 +138,7 @@ export default function MyAccountDetails() {
                         <div className="space-y-2">
                             <Label>Account image</Label>
                             <div className="flex items-center gap-4">
-                                <div 
-                                    className="flex shrink-0 p-2 overflow-hidden justify-center items-center size-20 border-2 border-dotted border-gray-300 text-gray-400 rounded-full dark:border-neutral-700 dark:text-neutral-600 cursor-pointer hover:bg-gray-50 transition-colors"
-                                    onClick={handleUploadClick}
-                                >
+                                <div className="flex shrink-0 p-2 overflow-hidden justify-center items-center size-20 border-2 border-dotted border-gray-300 text-gray-400 rounded-full dark:border-neutral-700 dark:text-neutral-600">
                                     {hasProfileImage ? (
                                         <img 
                                             src={getProfileImage()} 
@@ -149,7 +146,7 @@ export default function MyAccountDetails() {
                                             alt="Profile" 
                                         />
                                     ) : (
-                                        <Upload className="w-8 h-8" />
+                                        <Image />
                                     )}
                                 </div>
                                 <div className="space-y-2">

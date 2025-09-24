@@ -5,7 +5,7 @@ import Favicon from "./Favicon";
 import Header from "./Header";
 import Profile from "./Profile";
 import Social from "./Social";
-import SocialThumnail from "./SocialThumnail";
+// import SocialThumnail from "./SocialThumnail";
 import Footer from "./Footer";
 
 export default function TabPersonalization() {
@@ -28,10 +28,10 @@ export default function TabPersonalization() {
                     <Link2 className="w-5 h-5" />
                     <span className="text-xs mt-1">Social</span>
                 </TabsTrigger>
-                <TabsTrigger className="py-2 flex flex-col items-center" value="social-media-thumbnail">
+                {/* <TabsTrigger className="py-2 flex flex-col items-center" value="social-media-thumbnail">
                     <GalleryThumbnails className="w-5 h-5" />
                     <span className="text-xs mt-1">Thumbnail</span>
-                </TabsTrigger>
+                </TabsTrigger> */}
                 <TabsTrigger className="py-2 flex flex-col items-center" value="footer">
                     <PanelBottom className="w-5 h-5" />
                     <span className="text-xs mt-1">Footer</span>
@@ -49,9 +49,9 @@ export default function TabPersonalization() {
             <TabsContent value="social-media">
                 <Social />
             </TabsContent>
-            <TabsContent value="social-media-thumbnail">
+            {/* <TabsContent value="social-media-thumbnail">
                 <SocialThumnail />
-            </TabsContent>
+            </TabsContent> */}
             <TabsContent value="footer">
                 <Footer />
             </TabsContent>

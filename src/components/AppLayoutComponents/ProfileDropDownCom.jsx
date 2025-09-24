@@ -9,6 +9,7 @@ import { useWorkspaces } from "@/context/WorkspaceContext";
 export default function ProfileDropDownCom() {
     const navigate = useNavigate();
     const { logout, userMeta, refreshUserInfo } = useAuth();
+    console.log("userMeta ??",userMeta)
     const { currentWorkspace, workspaces, isLoading, setIsNeededRefetch, myWorkspaceId } = useWorkspaces();
     const { permissions } = useAuth();
 
@@ -36,6 +37,13 @@ export default function ProfileDropDownCom() {
         navigate("/auth/sign-in");
     };
 
+    // Function to get initials from user's first and last name
+    const getUserInitials = () => {
+        const firstName = userMeta?.firstName || "";
+        const lastName = userMeta?.lastName || "";
+        return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+    };
+
     // Function to get initials from workspace name
     const getInitials = (name) => {
         return name ? name.split(' ').map(word => word[0]).join('').substring(0, 1).toUpperCase() : "W";
@@ -45,15 +53,15 @@ export default function ProfileDropDownCom() {
         <DropdownMenu>
             <DropdownMenuTrigger>
                 <Avatar>
-                    <AvatarImage src={userMeta?.profileImage ? userMeta?.profileImage : "/assets/default_avatar.svg"} />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarImage src={userMeta?.profileImage} />
+                    <AvatarFallback className="bg-primary text-primary-foreground">{getUserInitials()}</AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-64">
                 <div className="flex items-center">
                     <Avatar>
-                        <AvatarImage src={userMeta?.profileImage ? userMeta?.profileImage : "/assets/default_avatar.svg"} />
-                        <AvatarFallback>CN</AvatarFallback>
+                        <AvatarImage src={userMeta?.profileImage} />
+                        <AvatarFallback className="bg-primary text-primary-foreground">{getUserInitials()}</AvatarFallback>
                     </Avatar>
                     <div>
                         <DropdownMenuLabel className="p-0 px-2 pb-1.5">{userMeta.firstName + " " + userMeta.lastName}</DropdownMenuLabel>

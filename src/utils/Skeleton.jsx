@@ -105,8 +105,7 @@ export const TextTemplateSkeleton = () => (
 );
 
 const TextElementSkeleton = () => (
-    <div className="rounded-lg bg-gray-200 animate-pulse p-2 w-full">
-        <div className="h-6 bg-gray-300 rounded pl-4"></div>
+    <div className="rounded-lg bg-violet-200/30 animate-pulse p-2 h-10 w-full">
     </div>
 );
 

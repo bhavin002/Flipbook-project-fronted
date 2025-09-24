@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+    Image,
     Trash2,
     Upload,
 } from "lucide-react";
@@ -86,7 +87,7 @@ export default function Profile() {
 
                     ) : (
                         <div className="w-20 h-20 border-2 border-dashed border-gray-300 rounded-full flex items-center justify-center">
-                            <Upload className="h-8 w-8 text-gray-400" />
+                            <Image className="text-gray-400" />
                         </div>
                     )}
                     <div className="space-y-2">

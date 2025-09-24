@@ -2,7 +2,7 @@ import Favicon from "../../components/AppLayoutComponents/Sidebar/Branding/Perso
 import Header from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/Header";
 import Profile from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/Profile";
 import Social from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/Social";
-import SocialThumnail from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/SocialThumnail";
+// import SocialThumnail from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/SocialThumnail";
 import Footer from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/Footer";
 import Preview from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/Preview";
 import TabPersonalization from "../../components/AppLayoutComponents/Sidebar/Branding/Personalization/TabPersonalization";
@@ -40,7 +40,7 @@ const BrandingContent = () => {
                         <Header />
                         <Profile />
                         <Social />
-                        <SocialThumnail />
+                        {/* <SocialThumnail /> */}
                         <Footer />
                     </div>
                     <TabPersonalization />
