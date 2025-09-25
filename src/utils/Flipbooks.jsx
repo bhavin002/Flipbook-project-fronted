@@ -34,6 +34,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     const templateButtons = getData('templateButtons');
     const bookshelfButtons = getData('bookshelfButtons');
     const { permissions } = useAuth();
+    const canBulkOperate = !!permissions?.trash;
 
     const handleItemClick = (action, flipbookId, flipbookState) => {
         if (action === 'share') {
@@ -169,6 +170,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     };
 
     const handleFlipbookSelection = (e, flipbookId) => {
+        if (!canBulkOperate) return;
         e.stopPropagation();
 
         setSelectedFlipbooks(prev => {
@@ -185,6 +187,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     };
 
     const handleSelectAll = () => {
+        if (!canBulkOperate) return;
         if (isAllSelected) {
             setSelectedFlipbooks([]);
         } else {
@@ -313,21 +316,23 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                             key={flipbook._id}
                             className="bg-white opacity-0 animate-fade-in rounded-xl overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-violet-100 relative group flex flex-col"
                         >
-                            <div
-                                className={`absolute inset-0 bg-black/40 opacity-0 ${isSelected ? 'opacity-100' : 'group-hover:opacity-100'} transition-opacity z-10 flex items-center justify-center`}
-                                onClick={(e) => handleFlipbookSelection(e, flipbook._id)}
-                            >
-                                <div className="absolute top-3 left-3 transform transition-transform duration-200">
-                                    <Checkbox
-                                        checked={isSelected}
-                                        className="h-5 w-5 border-2 border-white data-[state=checked]:bg-primary data-[state=checked]:border-primary"
-                                        onClick={(e) => e.stopPropagation()}
-                                        onCheckedChange={() => {
-                                            handleFlipbookSelection({ stopPropagation: () => { } }, flipbook._id);
-                                        }}
-                                    />
+                            {canBulkOperate && (
+                                <div
+                                    className={`absolute inset-0 bg-black/40 opacity-0 ${isSelected ? 'opacity-100' : 'group-hover:opacity-100'} transition-opacity z-10 flex items-center justify-center`}
+                                    onClick={(e) => handleFlipbookSelection(e, flipbook._id)}
+                                >
+                                    <div className="absolute top-3 left-3 transform transition-transform duration-200">
+                                        <Checkbox
+                                            checked={isSelected}
+                                            className="h-5 w-5 border-2 border-white data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                            onClick={(e) => e.stopPropagation()}
+                                            onCheckedChange={() => {
+                                                handleFlipbookSelection({ stopPropagation: () => { } }, flipbook._id);
+                                            }}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             <div className="relative bg-[#ede9f5] backdrop-blur-sm p-3 flex-grow">
                                 <img
@@ -401,7 +406,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                 onCancel={() => handleDeleteForeverConfirmation(false)}
             />
 
-            {selectedFlipbooks.length > 0 && (
+            {canBulkOperate && selectedFlipbooks.length > 0 && (
                 <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white text-gray-900 px-4 py-2 rounded-lg shadow-lg flex items-center justify-between w-96 z-50 border border-violet-200">
                     <div className="flex items-center gap-3">
                         {isAllSelected ? (

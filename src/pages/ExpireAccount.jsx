@@ -9,7 +9,6 @@ import { Crown, Lock, Shield, Info } from 'lucide-react';
 export default function ExpireAccount() {
     const navigate = useNavigate();
     const { permissions } = useAuth();
-    console.log("permissions ???", permissions);
 
     // If the user does not have billing permission (e.g., teammate), show an information page
     if (!permissions?.billing) {
