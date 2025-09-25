@@ -17,7 +17,7 @@ export default function RolesInfo() {
                         Administrator
                     </p>
                     <p className='text-xs'>
-                        Has the same access as the owner, but there can be multiple administrators.
+                        Has the same access as the owner, Does not have access to Billing.
                     </p>
                 </div>
                 <div>

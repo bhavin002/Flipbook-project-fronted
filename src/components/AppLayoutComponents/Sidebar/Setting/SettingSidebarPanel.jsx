@@ -17,6 +17,7 @@ import {
     SidebarMenuSub,
 } from "@/components/ui/sidebar";
 import { getData } from "@/utils/datas";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SettingSidebarPanel() {
     const navigate = useNavigate();
@@ -27,13 +28,22 @@ export default function SettingSidebarPanel() {
     const [selectedMainItem, setSelectedMainItem] = useState('workspace');
     const [selectedSubItem, setSelectedSubItem] = useState(null);
     const [isBillingOpen, setIsBillingOpen] = useState(false);
+    const { permissions } = useAuth();
+
+    // Filter menu items based on permissions
+    const filteredSettingMenuItems = settingMenuItems.filter(item => {
+        if (item.id === 'billing') {
+            return permissions?.billing;
+        }
+        return true;
+    });
 
     useEffect(() => {
         const currentPath = location.pathname;
         if (currentPath.includes('/settings/billing/')) {
             setIsBillingOpen(true);
             setSelectedMainItem('billing');
-            const billingItem = settingMenuItems.find(item => item.id === 'billing');
+            const billingItem = filteredSettingMenuItems.find(item => item.id === 'billing');
             const matchedSubItem = billingItem.subItems.find(subItem => 
                 currentPath === subItem.path
             );
@@ -42,7 +52,7 @@ export default function SettingSidebarPanel() {
                 setSelectedSubItem(matchedSubItem.id);
             }
         } else {
-            const matchedItem = settingMenuItems.find(item => 
+            const matchedItem = filteredSettingMenuItems.find(item => 
                 currentPath === item.path
             );
             
@@ -55,10 +65,10 @@ export default function SettingSidebarPanel() {
                 }
             }
         }
-    }, [location.pathname]);
+    }, [location.pathname, permissions]);
 
     const handleMainItemSelect = (itemId) => {
-        const selectedItem = settingMenuItems.find(item => item.id === itemId);
+        const selectedItem = filteredSettingMenuItems.find(item => item.id === itemId);
         
         if (itemId === 'billing') {
             if (!isBillingOpen) {
@@ -87,13 +97,18 @@ export default function SettingSidebarPanel() {
         setSelectedSubItem(subItemId);
         setSelectedMainItem('billing');
         
-        const billingItem = settingMenuItems.find(item => item.id === 'billing');
+        const billingItem = filteredSettingMenuItems.find(item => item.id === 'billing');
         const selectedSubItem = billingItem.subItems.find(subItem => subItem.id === subItemId);
         
         if (selectedSubItem) {
             navigate(selectedSubItem.path);
         }
     };
+
+    // Hide panel if no accessible items
+    if (!filteredSettingMenuItems.length) {
+        return null;
+    }
 
     return (
         <SidebarContent className="flex-1">
@@ -103,7 +118,7 @@ export default function SettingSidebarPanel() {
                 </SidebarGroupLabel>
                 <SidebarGroupContent>
                     <SidebarMenu>
-                        {settingMenuItems.map((item) => (
+                        {filteredSettingMenuItems.map((item) => (
                             <SidebarMenuItem key={item.id}>
                                 {item.id === 'billing' ? (
                                     <Collapsible

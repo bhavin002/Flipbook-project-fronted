@@ -29,6 +29,14 @@ export const WorkspaceProvider = ({ children }) => {
     );
   };
 
+  const updateWorkspaceAvatar = (workspaceId, newAvatar) => {
+    setWorkspaces(prev =>
+      prev.map(ws =>
+        ws._id === workspaceId ? { ...ws, logoUrl: newAvatar } : ws
+      )
+    );
+  };
+
   // Compute MyWorkspace ID (workspace where user is owner)
   const myWorkspaceId = useMemo(() => {
     const myWorkspace = workspaces.find(workspace => workspace.isOwner);
@@ -87,7 +95,8 @@ export const WorkspaceProvider = ({ children }) => {
       setIsNeededRefetch,
       myWorkspaceId,
       currentWorkspace,
-      updateWorkspaceName
+      updateWorkspaceName,
+      updateWorkspaceAvatar
     }}>
       {children}
     </WorkspaceContext.Provider>

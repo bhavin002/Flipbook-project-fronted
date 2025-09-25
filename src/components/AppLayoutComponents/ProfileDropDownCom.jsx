@@ -77,6 +77,7 @@ export default function ProfileDropDownCom() {
                                     <Loader2 className="h-4 w-4 animate-spin" />
                                 ) : (
                                     <Avatar className="h-6 w-6">
+                                        <AvatarImage src={currentWorkspace?.logoUrl} />
                                         <AvatarFallback className="text-[14px] bg-primary text-primary-foreground">
                                             {currentWorkspace ? getInitials(currentWorkspace.name) : "W"}
                                         </AvatarFallback>
@@ -114,6 +115,7 @@ export default function ProfileDropDownCom() {
                                     >
                                         <div className="flex items-center gap-2">
                                             <Avatar className="h-6 w-6">
+                                                <AvatarImage src={workspace.logoUrl} />
                                                 <AvatarFallback className="text-[14px] bg-primary text-primary-foreground">
                                                     {getInitials(workspace.name)}
                                                 </AvatarFallback>

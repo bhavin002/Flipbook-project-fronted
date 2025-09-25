@@ -4,12 +4,21 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getData } from "@/utils/datas";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SettingsDrawerPanel({ onCloseDrawer }) {
   const navigate = useNavigate();
   const location = useLocation();
   
   const settingMenuItems = getData('settingMenuItems');
+  const { permissions } = useAuth();
+
+  const filteredSettingMenuItems = settingMenuItems.filter(item => {
+    if (item.id === 'billing') {
+      return permissions?.billing;
+    }
+    return true;
+  });
 
   const [selectedMainItem, setSelectedMainItem] = useState('workspace');
   const [selectedSubItem, setSelectedSubItem] = useState(null);
@@ -22,7 +31,7 @@ export default function SettingsDrawerPanel({ onCloseDrawer }) {
       setIsBillingOpen(true);
       setSelectedMainItem('billing');
       
-      const billingItem = settingMenuItems.find(item => item.id === 'billing');
+      const billingItem = filteredSettingMenuItems.find(item => item.id === 'billing');
       const matchedSubItem = billingItem.subItems.find(subItem => 
         currentPath === subItem.path
       );
@@ -31,7 +40,7 @@ export default function SettingsDrawerPanel({ onCloseDrawer }) {
         setSelectedSubItem(matchedSubItem.id);
       }
     } else {
-      const matchedItem = settingMenuItems.find(item => 
+      const matchedItem = filteredSettingMenuItems.find(item => 
         currentPath === item.path
       );
       
@@ -44,10 +53,10 @@ export default function SettingsDrawerPanel({ onCloseDrawer }) {
         }
       }
     }
-  }, [location.pathname]);
+  }, [location.pathname, permissions]);
 
   const handleMainItemSelect = (itemId) => {
-    const selectedItem = settingMenuItems.find(item => item.id === itemId);
+    const selectedItem = filteredSettingMenuItems.find(item => item.id === itemId);
     
     if (itemId === 'billing') {
       if (!isBillingOpen) {
@@ -77,7 +86,7 @@ export default function SettingsDrawerPanel({ onCloseDrawer }) {
     setSelectedSubItem(subItemId);
     setSelectedMainItem('billing');
     
-    const billingItem = settingMenuItems.find(item => item.id === 'billing');
+    const billingItem = filteredSettingMenuItems.find(item => item.id === 'billing');
     const selectedSubItem = billingItem.subItems.find(subItem => subItem.id === subItemId);
     
     if (selectedSubItem) {
@@ -107,7 +116,7 @@ export default function SettingsDrawerPanel({ onCloseDrawer }) {
       
       <ScrollArea className="flex-1 px-2 py-2">
         <div className="space-y-1">
-          {settingMenuItems.map((item) => (
+          {filteredSettingMenuItems.map((item) => (
             <div key={item.id}>
               {item.id === 'billing' ? (
                 <Collapsible

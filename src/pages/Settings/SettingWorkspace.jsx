@@ -26,7 +26,7 @@ export default function SettingWorkspace() {
     const [isDataLoading, setIsDataLoading] = useState(true);
     const [selectedLogo, setSelectedLogo] = useState(null);
     const [workspaceData, setWorkspaceData] = useState(null);
-    const { myWorkspaceId, updateWorkspaceName } = useWorkspaces();
+    const { myWorkspaceId, updateWorkspaceName, updateWorkspaceAvatar } = useWorkspaces();
 
     const form = useForm({
         resolver: zodResolver(workspaceSchema),
@@ -102,6 +102,7 @@ export default function SettingWorkspace() {
 
             // Update local state
             setWorkspaceData(prev => ({ ...prev, previewBrandLogoId: selectedLogo?.src || null }));
+            updateWorkspaceAvatar(myWorkspaceId, selectedLogo?.src || null);
         } catch (error) {
             toast.error("Failed to update previewBrandLogoId", {
                 description: error.message || "Something went wrong"
@@ -123,7 +124,7 @@ export default function SettingWorkspace() {
 
             setSelectedLogo(null);
             setWorkspaceData(prev => ({ ...prev, previewBrandLogoId: null }));
-
+            updateWorkspaceAvatar(myWorkspaceId, null);
             toast.success("Logo removed successfully", {
                 description: response.message
             });
@@ -205,10 +206,10 @@ export default function SettingWorkspace() {
 
                         <Card>
                             <CardHeader>
-                                <CardTitle>Brand your workspace</CardTitle>
-                                <CardDescription>
+                                <CardTitle>Logo your workspace</CardTitle>
+                                {/* <CardDescription>
                                     Your previewBrandLogoId will be displayed in the top left corner of this workspace, replacing the Flipnova previewBrandLogoId.
-                                </CardDescription>
+                                </CardDescription> */}
                             </CardHeader>
 
                             <CardContent>

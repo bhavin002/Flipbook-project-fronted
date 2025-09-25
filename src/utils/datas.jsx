@@ -3317,6 +3317,7 @@ const permission = {
     "createFolder": true,
     "moveToTrashFolder": true,
     "uploadFiles": true,
+    "billing": true,
 }
 
 export function getData(dataType) {
