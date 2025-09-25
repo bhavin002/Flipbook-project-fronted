@@ -4,9 +4,14 @@ import { useState } from "react"
 import { format } from "date-fns"
 
 export default function SettingTeammateActivity() {
+    const ninetyDaysAgo = (() => {
+        const d = new Date();
+        d.setDate(d.getDate() - 90);
+        return d;
+    })();
     const [filterParams, setFilterParams] = useState({
         activityType: "all",
-        from: format(new Date("2025-04-16"), "yyyy-MM-dd"),
+        from: format(ninetyDaysAgo, "yyyy-MM-dd"),
         to: format(new Date(), "yyyy-MM-dd"),
         userId: "all",
         page: 1,

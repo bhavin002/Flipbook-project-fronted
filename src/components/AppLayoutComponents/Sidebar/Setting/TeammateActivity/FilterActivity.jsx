@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns"
-import { CalendarIcon } from "lucide-react"
+import { CalendarIcon, ListFilter } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -9,17 +9,21 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { GetActivityLogFilterApi } from "@/service/activityLog.service";
 
 export default function FilterActivity({ onFilterChange }) {
-    const [fromDate, setFromDate] = useState(new Date("2025-04-16"))
+    const defaultFrom = (() => { const d = new Date(); d.setDate(d.getDate() - 90); return d; })()
+    const [fromDate, setFromDate] = useState(defaultFrom)
     const [toDate, setToDate] = useState(new Date())
     const [activityOptions, setActivityOptions] = useState([])
     const [teammateOptions, setTeammateOptions] = useState([])
     const [selectedActivity, setSelectedActivity] = useState("all")
     const [selectedTeammate, setSelectedTeammate] = useState("all")
+
+    const initialFromRef = useRef(defaultFrom)
+    const initialToRef = useRef(toDate)
 
     useEffect(() => {
         const fetchFilterData = async () => {
@@ -54,6 +58,28 @@ export default function FilterActivity({ onFilterChange }) {
             page: 1,
             perPage: 30
         });
+    }
+
+    const isFilterApplied =
+        selectedActivity !== "all" ||
+        selectedTeammate !== "all" ||
+        (fromDate && initialFromRef.current && fromDate.getTime() !== initialFromRef.current.getTime()) ||
+        (toDate && initialToRef.current && toDate.getTime() !== initialToRef.current.getTime())
+
+    const handleClearFilter = () => {
+        setFromDate(initialFromRef.current)
+        setToDate(initialToRef.current)
+        setSelectedActivity("all")
+        setSelectedTeammate("all")
+
+        onFilterChange({
+            activityType: "all",
+            from: format(initialFromRef.current, "yyyy-MM-dd"),
+            to: format(initialToRef.current, "yyyy-MM-dd"),
+            userId: "all",
+            page: 1,
+            perPage: 30
+        })
     }
 
     return (
@@ -148,7 +174,7 @@ export default function FilterActivity({ onFilterChange }) {
                         </Select>
                     </div>
                     <Button className="h-10" onClick={handleApplyFilter}>Apply</Button>
-                    <Button variant="outline" className="h-10">Download CSV</Button>
+                    <Button variant="outline" className="h-10" disabled={!isFilterApplied} onClick={handleClearFilter}><ListFilter/> Clear filter</Button>
                 </div>
             </CardContent>
         </Card>
