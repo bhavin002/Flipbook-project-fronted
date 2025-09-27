@@ -4,8 +4,9 @@ import { Text } from 'react-konva';
 export default function KonvaText({ demo, shape, onChange, handleDragStart, handleDrag, scale }) {
   const [isEditing, setIsEditing] = useState(false);
   const textRef = useRef(null);
-
+  const [lastVisible, setLastVisible] = useState(shape.visible);
   const handleTextDblClick = (e) => {
+    setLastVisible(shape.visible);
     setIsEditing(true);
     const textNode = e.target;
     const textPosition = textNode.absolutePosition();
@@ -58,12 +59,15 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
 
 
     textarea.focus();
+    
     onChange({
       ...shape,
       height: textarea.scrollHeight
     })
     function removeTextarea() {
       setIsEditing(false);
+      shape.visible = lastVisible;
+      // setLastVisible(s)
       setTimeout(() => {
         if (textarea && demo.current.contains(textarea)) {
           demo.current.removeChild(textarea);
@@ -72,7 +76,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     }
     textarea.addEventListener('input', function (e) {
       textarea.style.height = 'auto';
-
+      shape.visible = lastVisible;
       onChange({
         ...shape,
         text: e.target.value,
@@ -83,7 +87,8 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
 
 
     textarea.addEventListener('blur', () => {
-      delete shape.height
+      delete shape.height;
+      shape.visible = lastVisible;
       onChange({
         ...shape,
         text: textarea.value
@@ -93,6 +98,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
 
     textarea.addEventListener('keydown', (e) => {
       if (e.keyCode === 13 && !e.shiftKey) {
+        shape.visible = lastVisible;
         onChange({
           ...shape,
           text: textarea.value
@@ -111,10 +117,11 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     <Text
       ref={textRef}
       {...shape}
-      visible={shape.visible && !isEditing }
+      visible={shape.visible && !isEditing}
       onDblClick={handleTextDblClick}
       name="shape"
       onDragEnd={((e) => {
+        shape.visible = lastVisible;
         onChange({
           ...shape,
           height: 'auto',
@@ -129,6 +136,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
         const scaleX = node.scaleX();
         node.scaleX(1);
         node.scaleY(1);
+        shape.visible = lastVisible;
         onChange({
           ...shape,
           x: node.x(),
@@ -137,7 +145,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
           width: Math.max(5, node.width() * scaleX),
         });
       }}
-     
+
     />
   );
 };

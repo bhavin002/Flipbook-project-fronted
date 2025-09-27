@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Group, Image, Rect } from "react-konva";
 
-export default function SlideShow({ shape, onSelect, handleDragStart, handleDrag, ...props }) {
+export default function SlideShow({ shape, onSelect, handleDragStart,
+    index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
+    handleDrag, ...props }) {
     const [image, setImage] = useState(null);
     const [bgImage, setBgImage] = useState(null);
     const [dimensions, setDimensions] = useState({
@@ -17,20 +19,44 @@ export default function SlideShow({ shape, onSelect, handleDragStart, handleDrag
         if (shape.src) {
             const img = new window.Image();
             img.src = shape.src;
+            imageLoadCounterPageWise[index] = (imageLoadCounterPageWise[index] || 0) + 1;
+            setImageLoadCounterPageWise({ ...imageLoadCounterPageWise });
             img.crossOrigin = 'Anonymous';
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setImage(img);
             };
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
+            }
         }
         if (haveImages) {
             const img = new window.Image();
             // img.src = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(shape.htmlData.images[0].url)}`;
             // img.crossOrigin = 'Anonymous';
             img.src = shape.htmlData.images[0].url;
+            imageLoadCounterPageWise[index] = (imageLoadCounterPageWise[index] || 0) + 1;
+            setImageLoadCounterPageWise({ ...imageLoadCounterPageWise });
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setBgImage(img);
             };
-        }else{
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
+            };
+        } else {
             // shape.fill = "#ffffffa6";
             shape.src = "/assets/icons/SlideShow.svg";
         }

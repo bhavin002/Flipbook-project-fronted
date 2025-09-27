@@ -8,6 +8,7 @@ export default function MaskedKonvaGif({
     handleDragStart,
     handleDrag,
     onSelect,
+    index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
     ...props
 }) {
     const imageRef = useRef(null);
@@ -25,8 +26,16 @@ export default function MaskedKonvaGif({
         let anim;
         try {
             if (!shape.src.includes('.gif')) return;
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             window.gifler(shape.src).get((a) => {
                 anim = a;
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 // Set canvas dimensions to match shape
                 canvas.width = shape.width || anim.frames[0].width;
                 canvas.height = shape.height || anim.frames[0].height;
@@ -37,8 +46,17 @@ export default function MaskedKonvaGif({
                         imageRef.current.getLayer().draw();
                     }
                 };
-            });
+            }).catch((error) => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
+            })
         } catch (error) {
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 1) - 1,
+            }));
             console.error('Error loading GIF:', error);
         }
 

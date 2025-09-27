@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Group, Image, Rect, Text } from "react-konva";
 
-export default function StockVideo({ shape, onSelect,handleDragStart, handelDrag, ...props }) {
+export default function StockVideo({ shape, onSelect, handleDragStart, handelDrag,
+    index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
+    ...props }) {
     const [image, setImage] = useState(null);
     const [bgImage, setBgImage] = useState(null);
     const [dimensions, setDimensions] = useState({
@@ -16,9 +18,23 @@ export default function StockVideo({ shape, onSelect,handleDragStart, handelDrag
         if (shape.iconSrc) {
             const img = new window.Image();
             img.src = shape.iconSrc;
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             // img.crossOrigin = 'Anonymous';
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setImage(img);
+            };
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
             };
         }
     }, [shape.iconSrc]);
@@ -27,9 +43,23 @@ export default function StockVideo({ shape, onSelect,handleDragStart, handelDrag
         if (shape.bgImage) {
             const img = new window.Image();
             img.src = shape.bgImage;
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             // img.crossOrigin = 'Anonymous';
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setBgImage(img);
+            };
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
             };
         }
     }, [shape.bgImage]);
@@ -38,7 +68,7 @@ export default function StockVideo({ shape, onSelect,handleDragStart, handelDrag
         return null;
     }
 
-    if(!bgImage){
+    if (!bgImage) {
         return null;
     }
 

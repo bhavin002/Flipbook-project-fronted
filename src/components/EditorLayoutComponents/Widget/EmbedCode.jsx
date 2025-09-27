@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Group, Image, Rect, Text } from "react-konva";
 
-export default function EmbedCode({ shape, onSelect, handleDragStart, handleDrag, ...props }) {
+export default function EmbedCode({ shape, onSelect, handleDragStart, handleDrag,
+    index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
+    ...props }) {
     const [image, setImage] = useState(null);
     const [bgImage, setBgImage] = useState(null);
     const [dimensions, setDimensions] = useState({
@@ -16,10 +18,24 @@ export default function EmbedCode({ shape, onSelect, handleDragStart, handleDrag
         if (shape.src) {
             const img = new window.Image();
             img.src = shape.src;
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             img.crossOrigin = 'Anonymous';
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setImage(img);
             };
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
+            }
         }
         if (shape?.htmlData?.coverImage) {
             const img = new window.Image();
@@ -27,10 +43,25 @@ export default function EmbedCode({ shape, onSelect, handleDragStart, handleDrag
             // img.crossOrigin = 'Anonymous';
             shape.fill = "#ffffffa6";
             img.src = shape.htmlData.coverImage.url;
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setBgImage(img);
             };
-        }else{
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
+            }
+
+        } else {
             // shape.fill = "#ffffffa6";
         }
     }, [shape.src, shape?.htmlData?.coverImage]);

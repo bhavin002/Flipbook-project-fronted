@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Group, Image, Rect } from "react-konva";
 
-export default function ShopButton({ mainStage, selectedIndex, shape, handleDragStart, handleDrag, onSelect, ...props }) {
+export default function ShopButton({ mainStage, selectedIndex, shape, handleDragStart, handleDrag, onSelect,
+    index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
+    ...props }) {
     const [image, setImage] = useState(null);
     const [colors, setColors] = useState({
         labelColor: shape?.data?.labelColor || '#ffffff',
@@ -45,18 +47,46 @@ export default function ShopButton({ mainStage, selectedIndex, shape, handleDrag
 
             const img = new window.Image();
             img.src = url;
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             img.crossOrigin = 'Anonymous';
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setImage(img);
                 URL.revokeObjectURL(url);
             };
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
+            }
         } else if (shape.src) {
             const img = new window.Image();
             img.src = shape.src;
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             img.crossOrigin = 'Anonymous';
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setImage(img);
             };
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
+            }
         }
     };
 

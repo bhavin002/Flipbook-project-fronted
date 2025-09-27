@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Group, Image, Rect } from "react-konva";
 
-export default function VideoButton({ shape, onSelect, handleDragStart, handleDrag, ...props }) {
+export default function VideoButton({ shape, onSelect, handleDragStart, handleDrag,
+    index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
+    ...props }) {
     const [image, setImage] = useState(null);
     const [dimensions, setDimensions] = useState({
         width: shape.width,
@@ -15,9 +17,23 @@ export default function VideoButton({ shape, onSelect, handleDragStart, handleDr
         if (shape.src) {
             const img = new window.Image();
             img.src = shape.src;
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             img.crossOrigin = 'Anonymous';
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setImage(img);
+            };
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
             };
         }
     }, [shape.src]);

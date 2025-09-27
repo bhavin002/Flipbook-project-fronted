@@ -25,8 +25,7 @@ export default function SessionConflictDialog({
         }
         onOpenChange?.(open)
     }
-
-    console.log("currentEditor ?", currentEditor)
+    
     return (
         <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogContent className="sm:max-w-[425px]">

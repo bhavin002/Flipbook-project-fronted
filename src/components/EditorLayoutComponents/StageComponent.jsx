@@ -22,7 +22,7 @@ import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 
-export default function StageComponent({ prevSelectedIndex, isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad }) {
+export default function StageComponent({ imageLoadCounterPageWise, setImageLoadCounterPageWise, prevSelectedIndex, isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad }) {
     // Consistent Refs Initialization
     const stageRef = useRef(null);
     const demo = useRef(null);
@@ -450,7 +450,7 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
             }
         });
     };
-
+    
     const handleMouseDown = (e) => {
         if (isCropping) return;
         if (e.target === e.target.getStage()) {
@@ -598,7 +598,6 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
         if (stage) {
             const layers = stage.getLayers();
             if (layers.length > 0) {
-                console.log('Stage has layers, fully loaded.');
                 setIsInitialLoad(true);
                 setPageCounter(pageCounter + 1);
             }
@@ -944,6 +943,14 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
                     <div className='absolute flex justify-between z-[111] border border-primary' style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y) }}></div>
                 </>
             }
+            {!!(imageLoadCounterPageWise[index]) &&
+                <>
+                    <Loader />
+                    <div className='absolute flex justify-between z-[111] border border-primary' style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y) }}></div>
+                </>
+
+            }
+
 
             <StagePageMenu setSelectedIndex={setSelectedIndex} selectedIndex={selectedIndex} rectProps={rectProps} mainStage={mainStage} setMainStage={setMainStage} index={index} />
             <ConfirmationDialog
@@ -1051,33 +1058,33 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
                                     case 'hyperlink':
                                         return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable setMainStage={setMainStage} selectedIndex={selectedIndex} mainStage={mainStage} mainStageString={mainStageString} setMainStageString={setMainStageString} />;
                                     case 'stock-photo':
-                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <StockPhoto index={index}  imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'upload-photo':
-                                        return <UploadPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <UploadPhoto index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'shape-widget':
                                         return <ShapeMakerForAll onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'link-button':
-                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <StockPhoto index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'tag':
                                         return <Tag onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />;
                                     case 'caption':
-                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <StockPhoto index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'embed-code':
-                                        return <EmbedCode onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />;
+                                        return <EmbedCode index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />;
                                     case 'slideshow':
-                                        return <SlideShow onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />;
+                                        return <SlideShow index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />;
                                     case 'video-embed':
-                                        return <VideoButton onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <VideoButton index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'video-button':
-                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <StockPhoto index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'audio-button':
-                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <StockPhoto index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'shop-area':
                                         return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />;
                                     case 'shop-button':
-                                        return <ShopButton onDragMove={handleShapeDragMove} mainStage={mainStage} handleDragStart={handleDragStart} handleDrag={handleDrag} selectedIndex={selectedIndex} key={shape.id} shape={shape} draggable onSelect={handleSelectShape} />;
+                                        return <ShopButton index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} onDragMove={handleShapeDragMove} mainStage={mainStage} handleDragStart={handleDragStart} handleDrag={handleDrag} selectedIndex={selectedIndex} key={shape.id} shape={shape} draggable onSelect={handleSelectShape} />;
                                     case 'product-tag':
-                                        return <RingShape onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />;
+                                        return <RingShape index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />;
                                     case 'quiz':
                                         return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
                                     case 'question':
@@ -1085,24 +1092,24 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
                                     case 'contact-form':
                                         return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable />
                                     case 'page-options':
-                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <StockPhoto index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'go-to-page':
-                                        return <StockPhoto isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <StockPhoto index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'stock-video':
-                                        return <StockVideo onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handelDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <StockVideo index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handelDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'stock-gif':
-                                        return <KonavGif onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <KonavGif index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'stock-sticker':
-                                        return <KonavGif onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <KonavGif index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'masked-image':
                                         return (
-                                            <MaskedImage
+                                            <MaskedImage index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise}
                                                 isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape}
                                             />
                                         );
                                     case 'masked-gif':
                                         return (
-                                            <MaskedKonvaGif
+                                            <MaskedKonvaGif index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise}
                                                 isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape}
                                             />
                                         );
@@ -1195,6 +1202,7 @@ export default function StageComponent({ prevSelectedIndex, isCropping, zoomper,
                     </Layer>
                 </Stage>}
             </div>
-        </div>
+        </div >
+
     )
 }

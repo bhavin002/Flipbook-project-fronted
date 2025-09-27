@@ -362,7 +362,7 @@ export default function Editor() {
         return ref.current;
     }
 
-    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter } = useOutletContext();
+    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter,imageLoadCounterPageWise, setImageLoadCounterPageWise } = useOutletContext();
     const autoScroll = useRef([]);
 
     const parentRef = useRef(null);
@@ -387,6 +387,7 @@ export default function Editor() {
     const [isPublishModalOpenInternal, setIsPublishModalOpenInternal] = useState(false); // Stack for redo
     const lastScrollTop = useRef(0);
     const scrollTimeout = useRef(null);
+    
     const generateMainStageString = (stages) => {
         // if (isCropping) return;
         return stages
@@ -785,7 +786,6 @@ export default function Editor() {
         setMainStage([...mainStage]);
         setIsCropping(false);
     };
-    console.log(pageCounter, mainStage.length, 'pageCounterpageCounter');
 
     return (
         <div className="flex w-full flex-col h-full">
@@ -823,7 +823,7 @@ export default function Editor() {
                                     if (((isPublishModalOpenInternal && index <= pageCounter) || (!isPublishModalOpenInternal && (index == prevSelectedIndex || index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1)))) {
                                         return (
                                             <div key={index} ref={(el) => (autoScroll.current[index] = el)} style={{ height: "100%", width: "100%" }} className="relative">
-                                                <StageComponent prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} />
+                                                <StageComponent imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} />
                                             </div>
                                         )
                                     } else return (<div key={index} style={{ height: "100%", width: "100%" }} className="relative" >

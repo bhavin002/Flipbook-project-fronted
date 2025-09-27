@@ -9,6 +9,7 @@ export default function KonvaGif({
     handleDragStart,
     handleDrag,
     onSelect,
+    index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
     ...props
 }) {
     const imageRef = useRef(null);
@@ -27,10 +28,18 @@ export default function KonvaGif({
         let anim;
         try {
             // const imgSrc = `${import.meta.env.VITE_API_URL}/file/image?src=${encodeURIComponent(shape.src)}`
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             const imgSrc = shape?.src;
 
             window.gifler(imgSrc).get((a) => {
                 anim = a;
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 0) + 1,
+                }));
                 // Set canvas dimensions to match shape
                 canvas.width = shape.width || anim.frames[0].width;
                 canvas.height = shape.height || anim.frames[0].height;
@@ -41,9 +50,11 @@ export default function KonvaGif({
                         imageRef.current.getLayer().draw();
                     }
                 };
+            }).catch((error) => {
+                setImageLoadCounterPageWise(prev => prev - 1)
             });
         } catch (error) {
-            console.error('Error loading GIF:', error);
+            setImageLoadCounterPageWise(prev => prev - 1)
         }
 
         return () => {

@@ -199,7 +199,7 @@ export const duplicateShapes = async (mainStage, selectedIndex, setMainStage, se
     );
     newShapes.forEach((e) => {
         let index = mainStage[selectedIndex].shapes.findIndex((shape) => shape.id === e.id);
-        mainStage[selectedIndex].shapes.splice(index + 1, 0, e);
+        mainStage[selectedIndex].shapes.splice(index, 0, e);
     });
     mainStage[selectedIndex].shapes.find((e, index) => {
         if (selectedShapes.includes(e.id)) {

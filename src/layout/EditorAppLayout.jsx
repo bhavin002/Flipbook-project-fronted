@@ -50,6 +50,8 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isSessionTakeOverLoading, setIsSessionTakeOverLoading] = useState(false);
     const [currentEditor, setCurrentEditor] = useState("");
     const [pageCounter, setPageCounter] = useState(0);
+    const [imageLoadCounterPageWise, setImageLoadCounterPageWise] = useState({});
+
 
     useEffect(() => {
         const getFlipbook = async () => {
@@ -116,7 +118,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                     return false
                 }
             }
-
+        
             mainStage.forEach((e, index) => {
                 e.temp = (index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1) && e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] :
                     (e.shapes || []);
@@ -146,6 +148,9 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
 
     useEffect(() => {
         const interval = setInterval(async () => {
+            if( Object.values(imageLoadCounterPageWise).some((count) => count > 0)){
+                return;
+            }
             if (id && mainStage.length > 0 && !publishing && isInitialLoad && !showSessionDialog) {
                 updatePageData();
             }
@@ -476,7 +481,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter }} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter ,imageLoadCounterPageWise, setImageLoadCounterPageWise}} />
                             </div>
                         </div>
                     </div>
@@ -490,6 +495,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         publishing={publishing}
                         setPublishing={setPublishing}
                         pageCounter={pageCounter}
+                        imageLoadCounterPageWise={imageLoadCounterPageWise}
                     />
                     <PreviewDialog
                         open={isPreviewOpen}

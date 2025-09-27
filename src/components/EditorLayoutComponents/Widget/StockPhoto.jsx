@@ -8,6 +8,7 @@ export default function StockPhoto({
     handleDragStart,
     handleDrag,
     onSelect,
+    index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
     ...props
 }) {
     const [loadedImage, setLoadedImage] = useState(null);
@@ -17,14 +18,26 @@ export default function StockPhoto({
     const clipGroupRef = useRef();
 
     useEffect(() => {
-        console.log("StockPhoto shape:", shape.src);
-        
         if (shape && shape.src) {
             const img = new window.Image();
             img.src = shape.src;
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             img.crossOrigin = 'Anonymous';
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setLoadedImage(img);
+            };
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
             };
         }
     }, [shape?.src]);

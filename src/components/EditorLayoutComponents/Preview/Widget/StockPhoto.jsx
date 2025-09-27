@@ -138,7 +138,7 @@ export default function StockPhoto({ shape, flipbookRef }) {
         const shadowOpacity = (effect.shadowOpacity || 0) / 100;
         const shadowColor = effect.shadowColor || '#000000';
         effectStyles.boxShadow = `${effect.shadowOffsetX || 0}px ${effect.shadowOffsetY || 0}px ${effect.shadowBlur || 0}px rgba(${parseHexToRgb(shadowColor)}, ${shadowOpacity})`;
-        effectStyles.backgroundColor = `rgba(${parseHexToRgb(shadowColor)}, ${shadowOpacity})`;
+        // effectStyles.backgroundColor = `rgba(${parseHexToRgb(shadowColor)}, ${shadowOpacity})`;
     }
     // Filters (applied to image)
     const filters = [];
@@ -208,7 +208,7 @@ export default function StockPhoto({ shape, flipbookRef }) {
                 left: `${crop.x * -1 || 0}px`,
                 top: `${crop.y * -1 || 0}px`,
                 position: "absolute",
-                backgroundColor: effectStyles.backgroundColor || 'white',
+                backgroundColor: shape.fill || 'white',
                 overflow: "hidden",
                 boxShadow: effectStyles.boxShadow || 'none',
                 borderRadius: effectStyles.borderRadius || '0px',

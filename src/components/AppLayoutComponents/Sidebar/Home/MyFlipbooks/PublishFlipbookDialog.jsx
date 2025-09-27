@@ -39,7 +39,9 @@ export default function PublishFlipbookDialog({
     stageHeight,
     publishing,
     setPublishing,
-    pageCounter
+    pageCounter,
+    imageLoadCounterPageWise
+
 }) {
     const [selectedRadio, setSelectedRadio] = useState("email");
     const [emailInput, setEmailInput] = useState("");
@@ -482,6 +484,7 @@ export default function PublishFlipbookDialog({
                         <div className="grid gap-2">
                             <Label htmlFor="description">
                                 Description
+                                 {/* {Object.values(imageLoadCounterPageWise).some((count) => count > 0)} */}
                             </Label>
                             <Textarea
                                 id="description"
@@ -633,7 +636,7 @@ export default function PublishFlipbookDialog({
                         Close
                     </Button>
                     <Button
-                        disabled={isPublishDisabled || pageCounter !== mainStage.length}
+                        disabled={isPublishDisabled || pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0)}
                         onClick={handlePublish}
                     >
                         {publishing ? <LoadingButton /> : 'Publish Now'}

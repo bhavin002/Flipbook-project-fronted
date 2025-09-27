@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Group, Ring } from "react-konva";
 
-export default function RingShape({ shape, onSelect, handleDragStart, handleDrag, ...props }) {
+export default function RingShape({ shape, onSelect, handleDragStart, handleDrag,
+    index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
+    ...props }) {
     const [image, setImage] = useState(null);
 
     const group = React.useRef();
@@ -10,9 +12,23 @@ export default function RingShape({ shape, onSelect, handleDragStart, handleDrag
         if (shape.src) {
             const img = new window.Image();
             img.src = shape.src;
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             img.crossOrigin = 'Anonymous';
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setImage(img);
+            };
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
             };
         }
     }, [shape.src]);

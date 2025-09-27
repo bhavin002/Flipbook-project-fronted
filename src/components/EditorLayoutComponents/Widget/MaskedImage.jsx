@@ -8,6 +8,7 @@ const MaskedImage = ({
   onSelect,
   handleDragStart,
   handleDrag,
+  index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
   ...props
 }) => {
   const groupRef = useRef();
@@ -21,8 +22,25 @@ const MaskedImage = ({
 
     const img = new window.Image();
     img.src = shape.src;
+    setImageLoadCounterPageWise((prev) => ({
+      ...prev,
+      [index]: (prev[index] || 0) + 1,
+    }));
     img.crossOrigin = 'Anonymous';
-    img.onload = () => setImage(img);
+    img.onload = () => {
+      setImageLoadCounterPageWise((prev) => ({
+        ...prev,
+        [index]: (prev[index] || 1) - 1,
+      }));
+      setImage(img);
+    };
+
+    img.onerror = () => {
+      setImageLoadCounterPageWise((prev) => ({
+        ...prev,
+        [index]: (prev[index] || 1) - 1,
+      }));
+    };
   }, [shape?.src]);
 
   // Apply effects and cropping

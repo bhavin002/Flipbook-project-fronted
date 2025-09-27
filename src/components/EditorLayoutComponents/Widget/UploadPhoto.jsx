@@ -8,6 +8,7 @@ export default function UploadPhoto({
     handleDragStart,
     handleDrag,
     onSelect,
+    index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
     ...props
 }) {
     const [loadedImage, setLoadedImage] = useState(null);
@@ -20,9 +21,25 @@ export default function UploadPhoto({
         if (shape && shape.src) {
             const img = new window.Image();
             img.src = shape.src;
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             img.crossOrigin = 'Anonymous';
+
             img.onload = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
                 setLoadedImage(img);
+            };
+
+            img.onerror = () => {
+                setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) - 1,
+                }));
             };
         }
     }, [shape?.src]);
@@ -101,6 +118,7 @@ export default function UploadPhoto({
     );
 
     if (!loadedImage) return null;
+console.log("re-rendering UploadPhoto",shape.fill);
 
     return (
         <Group
