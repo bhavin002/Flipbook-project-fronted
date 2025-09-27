@@ -693,21 +693,31 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             .join("" + selectedIndex + "");
     };
 
+    // utsav have change this logic to fix the some issue but for now we don't know the issue so for now use old logic (shape align issue in below logic)
+
+    // const handleDrag = (e) => {
+    //     if (isCropping) return;
+    //     const layer = e.target.getLayer();
+    //     layer.find('.guid-line').forEach((l) => l.destroy());
+    //     console.log('dragging===========================================');
+
+    //     // setMainStage(prevState => {
+    //     //     const updatedState = [...prevState];
+    //     //     updatedState[index] = {
+    //     //         ...updatedState[index],
+    //     //         shapes: 
+    //     //     };
+    //     //     return updatedState;
+    //     // });
+    //     stage.shapes = stage.stageref.current.children[0].children[1].children.map(e => e.attrs)
+    //     const newMainStageString = generateMainStageString(mainStage);
+    //     setMainStageString(newMainStageString);
+    // };
+
     const handleDrag = (e) => {
         if (isCropping) return;
         const layer = e.target.getLayer();
         layer.find('.guid-line').forEach((l) => l.destroy());
-        console.log('dragging===========================================');
-
-        // setMainStage(prevState => {
-        //     const updatedState = [...prevState];
-        //     updatedState[index] = {
-        //         ...updatedState[index],
-        //         shapes: 
-        //     };
-        //     return updatedState;
-        // });
-        stage.shapes = stage.stageref.current.children[0].children[1].children.map(e => e.attrs)
         const newMainStageString = generateMainStageString(mainStage);
         setMainStageString(newMainStageString);
     };
