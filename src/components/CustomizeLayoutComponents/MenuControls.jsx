@@ -115,6 +115,8 @@ export default function MenuControls() {
                 updateSettings({ backgroundAudioFile: file, backgroundAudio: true, backgroundAudioLink: URL.createObjectURL(file) });
                 setBackgroundAudioFile({ name: file.name, url: URL.createObjectURL(file) });
                 setCheckedItems(prev => ({ ...prev, "background-audio": true }));
+                setIsAutoPlay(true);
+                setIsAudioLoop(true);
             } catch (error) {
                 toast.error("Failed to upload audio", { description: error.message || "Oops! Something went wrong." });
             }

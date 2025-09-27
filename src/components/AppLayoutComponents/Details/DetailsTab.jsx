@@ -360,7 +360,7 @@ export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, set
                     </div>
                 </CardContent>
             </Card>
-            <Card>
+            {/* <Card>
                 <CardHeader>
                     <CardTitle>Order printed copies</CardTitle>
                     <CardDescription>Order high-quality printed copies of your publication from our print partner, Peecho.</CardDescription>
@@ -369,7 +369,7 @@ export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, set
                     <Button disabled>Order printed copies</Button>
                     <Crown className="h-5 w-5 text-amber-400 shrink-0" />
                 </CardContent>
-            </Card>
+            </Card> */}
         </div>
     )
 }

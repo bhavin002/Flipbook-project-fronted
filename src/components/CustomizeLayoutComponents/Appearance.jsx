@@ -33,7 +33,7 @@ export default function Appearance() {
         { id: "right-to-left", label: "Right to left orientation", isShowTooltip: false, fieldKey: "rightToLeftOrientation" },
         // { id: "shadow", label: "Shadow on pages", isShowTooltip: true, tooltip: "Note: when slide effect is selected, shadow on pages will be disabled.", fieldKey: "shadowOnPages" },
         { id: "animate", label: "Animate interactions", isShowTooltip: true, tooltip: "Make your interactions pop by animating them.", fieldKey: "animateInteraction" },
-        { id: "highlights", label: "Highlights on links", isShowTooltip: true, tooltip: "Make your links pop by highlighting them.", fieldKey: "highlightsOnLink" },
+        // { id: "highlights", label: "Highlights on links", isShowTooltip: true, tooltip: "Make your links pop by highlighting them.", fieldKey: "highlightsOnLink" },
     ];
 
     const layoutStyleMapping = {

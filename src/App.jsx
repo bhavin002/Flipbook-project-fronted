@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
 import { ViewModeProvider } from "@/context/ViewModeContext";
 
@@ -79,6 +79,7 @@ import EmbedBookShelf from "./embed/EmbedBookShelf";
 import { Success } from "./pages/Settings/payment/success";
 import { Cancel } from "./pages/Settings/payment/cancel";
 import { initCrisp } from "./crisp";
+import { Crisp } from "crisp-sdk-web";
 import ExpireAccount from "./pages/ExpireAccount";
 
 
@@ -111,10 +112,31 @@ const settingsRoutes = [
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const apiCounter = useApiCounterStore((state) => state.counter);
+  const location = useLocation();
 
   useEffect(() => {
-    initCrisp();
-  }, []);
+    const disallowedRoutes = [
+      '/public-flipbook',
+      '/embed-flipbook',
+      '/public-bookshelf',
+      '/embed-bookshelf',
+      '/profile',
+      '/customize'
+    ];
+    
+    const shouldShowCrisp = !disallowedRoutes.some(route => location.pathname.startsWith(route));
+    
+    if (shouldShowCrisp) {
+      initCrisp();
+      if (window.$crisp) {
+        Crisp.chat.show();
+      }
+    } else {
+      if (window.$crisp) {
+        Crisp.chat.hide();
+      }
+    }
+  }, [location.pathname]);
 
   return (
     <AuthProvider>
