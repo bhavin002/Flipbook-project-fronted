@@ -12,6 +12,19 @@ export default function Color({ setIsShapeDrawerOpen, setSelectedSubMenu, select
     const [isTransparent, setIsTransparent] = useState(currentColor === "transparent" ? true : false);
     const colorInputRef = useRef(null);
     
+    // Check if transparent toggle should be shown
+    const shouldShowTransparent = () => {
+        if (!selectedShape.length) return false; // No shape selected
+        
+        const shape = selectedShape[0].attrs;
+        const isUploadPhoto = shape.htmlType === "upload-photo";
+        const hasPngSrc = shape.src && shape.src.includes('.png');
+        
+        return isUploadPhoto && hasPngSrc;
+    };
+
+    const showTransparentToggle = shouldShowTransparent();
+    
     const handleAddColor = () => {
         setIsNewColorAdded(true);
         setTimeout(() => colorInputRef.current?.click(), 10);
@@ -85,25 +98,28 @@ export default function Color({ setIsShapeDrawerOpen, setSelectedSubMenu, select
 
     return (
         <div className="p-6 space-y-2 w-full overflow-y-auto">
-            <div className="flex justify-between items-center">
-                <Label htmlFor="transparent">
-                    Transparent
-                </Label>
-                <Switch
-                    id="transparent"
-                    className="border border-white"
-                    checked={isTransparent}
-                    onCheckedChange={setTransparent}
-                />
-            </div>
+            {/* Only show transparent toggle if conditions are met */}
+            {showTransparentToggle && (
+                <div className="flex justify-between items-center">
+                    <Label htmlFor="transparent">
+                        Transparent
+                    </Label>
+                    <Switch
+                        id="transparent"
+                        className="border border-white"
+                        checked={isTransparent}
+                        onCheckedChange={setTransparent}
+                    />
+                </div>
+            )}
             <Input
                 type="text"
                 value={currentColor || ''}
                 onChange={handleHexInputChange}
                 placeholder="paste a hex color here"
                 className="placeholder:text-[#d8dce3]"
-                disabled={isTransparent} />
-            <div className={`space-y-2 ${isTransparent ? 'opacity-50 pointer-events-none' : ''}`}>
+                disabled={showTransparentToggle && isTransparent} />
+            <div className={`space-y-2 ${showTransparentToggle && isTransparent ? 'opacity-50 pointer-events-none' : ''}`}>
                 <Label>Custom colors</Label>
                 <div className="flex flex-wrap gap-2">
                     <div className='relative w-fit'>
@@ -124,11 +140,11 @@ export default function Color({ setIsShapeDrawerOpen, setSelectedSubMenu, select
                     </div>
                 </div>
             </div>
-            <div className={`space-y-2 ${isTransparent ? 'opacity-50 pointer-events-none' : ''}`}>
+            <div className={`space-y-2 ${showTransparentToggle && isTransparent ? 'opacity-50 pointer-events-none' : ''}`}>
                 <BrandColors handlePaletteColorSelect={updateShapeColor} selectedColor={currentColor} />
                 <a href={`${import.meta.env.VITE_APP_URL}/branding/colors`} target="_blank" className="text-xs font-medium text-white cursor-pointer hover:underline">Manage brand colors</a>
             </div>
-            <div className={`space-y-2 ${isTransparent ? 'opacity-50 pointer-events-none' : ''}`}>
+            <div className={`space-y-2 ${showTransparentToggle && isTransparent ? 'opacity-50 pointer-events-none' : ''}`}>
                 <Label>Default Palette</Label>
                 <div className="flex flex-wrap gap-2">
                     {defaultPalette.map((color, index) => (
@@ -141,7 +157,7 @@ export default function Color({ setIsShapeDrawerOpen, setSelectedSubMenu, select
                     ))}
                 </div>
             </div>
-            <div className={`space-y-2 ${isTransparent ? 'opacity-50 pointer-events-none' : ''}`}>
+            <div className={`space-y-2 ${showTransparentToggle && isTransparent ? 'opacity-50 pointer-events-none' : ''}`}>
                 <Label>Grey shades</Label>
                 <div className="flex flex-wrap gap-2">
                     {grayShades.map((color, index) => (

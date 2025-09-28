@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useAuth } from "@/context/AuthContext";
@@ -51,17 +50,35 @@ export default function ProfileDropDownCom() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
-                <Avatar>
-                    <AvatarImage src={userMeta?.profileImage} />
-                    <AvatarFallback className="bg-primary text-primary-foreground">{getUserInitials()}</AvatarFallback>
-                </Avatar>
+                <div className="inline-flex shrink-0 items-center size-9 gap-x-3 text-start rounded-full focus:outline-none border border-gray-100 dark:border-neutral-700 justify-center overflow-hidden">
+                    {userMeta?.profileImage ? (
+                        <img
+                            src={userMeta.profileImage}
+                            alt="Profile"
+                            className="w-full h-full object-cover aspect-1"
+                        />
+                    ) : (
+                        <div className="w-[35px] h-[34px] bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
+                            {getUserInitials()}
+                        </div>
+                    )}
+                </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-64">
                 <div className="flex items-center">
-                    <Avatar>
-                        <AvatarImage src={userMeta?.profileImage} />
-                        <AvatarFallback className="bg-primary text-primary-foreground">{getUserInitials()}</AvatarFallback>
-                    </Avatar>
+                    <div className="inline-flex shrink-0 items-center size-9 gap-x-3 text-start rounded-full focus:outline-none border border-gray-100 dark:border-neutral-700 justify-center overflow-hidden">
+                        {userMeta?.profileImage ? (
+                            <img
+                                src={userMeta.profileImage}
+                                alt="Profile"
+                                className="w-full h-full object-cover aspect-1"
+                            />
+                        ) : (
+                            <div className="w-[35px] h-[34px] bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
+                                {getUserInitials()}
+                            </div>
+                        )}
+                    </div>
                     <div>
                         <DropdownMenuLabel className="p-0 px-2 pb-1.5">{userMeta.firstName + " " + userMeta.lastName}</DropdownMenuLabel>
                         <p className="text-xs ml-2 text-muted-foreground truncate max-w-40 -mt-2">{userMeta.email}</p>
@@ -75,13 +92,16 @@ export default function ProfileDropDownCom() {
                             <div className="flex items-center gap-2">
                                 {isLoading ? (
                                     <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : currentWorkspace?.logoUrl ? (
+                                    <img
+                                        src={currentWorkspace.logoUrl}
+                                        alt="Workspace"
+                                        className="w-full h-auto max-w-[24px] max-h-[24px] object-cover aspect-1 rounded-full"
+                                    />
                                 ) : (
-                                    <Avatar className="h-6 w-6">
-                                        <AvatarImage src={currentWorkspace?.logoUrl} />
-                                        <AvatarFallback className="text-[14px] bg-primary text-primary-foreground">
-                                            {currentWorkspace ? getInitials(currentWorkspace.name) : "W"}
-                                        </AvatarFallback>
-                                    </Avatar>
+                                    <div className="w-[24px] h-[24px] bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium">
+                                        {currentWorkspace ? getInitials(currentWorkspace.name) : "W"}
+                                    </div>
                                 )}
                                 <span className="text-sm font-medium">
                                     {isLoading
@@ -114,12 +134,17 @@ export default function ProfileDropDownCom() {
                                         onClick={() => switchWorkspace(workspace._id)}
                                     >
                                         <div className="flex items-center gap-2">
-                                            <Avatar className="h-6 w-6">
-                                                <AvatarImage src={workspace.logoUrl} />
-                                                <AvatarFallback className="text-[14px] bg-primary text-primary-foreground">
+                                            {workspace.logoUrl ? (
+                                                <img
+                                                    src={workspace.logoUrl}
+                                                    alt="Workspace"
+                                                    className="w-full h-auto max-w-[24px] max-h-[24px] object-cover aspect-1 rounded-full"
+                                                />
+                                            ) : (
+                                                <div className="w-[24px] h-[24px] bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-medium">
                                                     {getInitials(workspace.name)}
-                                                </AvatarFallback>
-                                            </Avatar>
+                                                </div>
+                                            )}
                                             <span className="text-sm">{workspace.name}</span>
                                             {workspace.isOwner && (
                                                 <span className="text-xs bg-muted px-1.5 py-0.5 rounded-md">Owner</span>

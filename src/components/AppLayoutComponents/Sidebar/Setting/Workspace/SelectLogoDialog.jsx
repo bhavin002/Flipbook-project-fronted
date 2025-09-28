@@ -77,6 +77,9 @@ export default function SelectLogoDialog({ onLogoSelect, mode = "select", disabl
             setLogos(prevLogos => [...prevLogos, ...newLogos]);
         } catch (error) {
             console.error("Error uploading logos:", error);
+            toast.error("Logo upload failed", {
+                description: error.message || "Oops! Something went wrong.",
+            });
         } finally {
             setIsUploading(false);
             if (fileInputRef.current) {

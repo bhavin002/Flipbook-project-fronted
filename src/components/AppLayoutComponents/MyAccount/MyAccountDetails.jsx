@@ -49,11 +49,6 @@ export default function MyAccountDetails() {
                 return;
             }
 
-            if (file.size > 5 * 1024 * 1024) {
-                toast.error("File size should be less than 5MB");
-                return;
-            }
-
             setSelectedFile(file);
             setValue("profilePicture", file);
 
@@ -138,11 +133,11 @@ export default function MyAccountDetails() {
                         <div className="space-y-2">
                             <Label>Account image</Label>
                             <div className="flex items-center gap-4">
-                                <div className="flex shrink-0 p-2 overflow-hidden justify-center items-center size-20 border-2 border-dotted border-gray-300 text-gray-400 rounded-full dark:border-neutral-700 dark:text-neutral-600">
+                                <div className="flex shrink-0 p-0 overflow-hidden justify-center items-center size-20 border-2 border-dotted border-gray-300 text-gray-400 rounded-full dark:border-neutral-700 dark:text-neutral-600">
                                     {hasProfileImage ? (
                                         <img 
                                             src={getProfileImage()} 
-                                            className="w-auto h-auto max-w-[76px] max-h-[76px] object-cover rounded-full" 
+                                            className="w-full h-full object-cover aspect-1" 
                                             alt="Profile" 
                                         />
                                     ) : (
