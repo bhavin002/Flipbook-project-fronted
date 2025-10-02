@@ -1,7 +1,7 @@
 import ShapeAction from "@/components/EditorLayoutComponents/widgetSidebar/ShapeAction"
 import Color from "../WidgetStyler/Color"
 import Effect from "../WidgetStyler/Effect"
-import ShapeStyle from "../WidgetStyler/ShapeStyle"
+// import ShapeStyle from "../WidgetStyler/ShapeStyle"
 import ImageFilter from "../WidgetStyler/ImageFilter"
 import ImageStyle from "../WidgetStyler/ImageStyle"
 import ImageAction from "@/components/EditorLayoutComponents/widgetSidebar/ImageAction"
@@ -40,11 +40,11 @@ function renderComponent( setIsShapeDrawerOpen, selectedShape, selectedSubMenu, 
             <Color setIsShapeDrawerOpen={setIsShapeDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} mainStage={mainStage} setMainStage={setMainStage} selectedIndex={selectedIndex} />
         )
     }
-    if (selectedSubMenu === 'shape-style') {
-        return (
-            <ShapeStyle selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex}/>
-        )
-    }
+    // if (selectedSubMenu === 'shape-style') {
+    //     return (
+    //         <ShapeStyle selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex}/>
+    //     )
+    // }
     if (selectedSubMenu === 'shape-action') {
         return (
             <ImageAction selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex}/>

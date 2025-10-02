@@ -85,7 +85,7 @@ export default function ImageStyle({
         shadowOpacity: effect.shadowOpacity !== undefined ? effect.shadowOpacity : 60,
         shadowOffsetX: effect.shadowOffsetX !== undefined ? effect.shadowOffsetX : 0,
         shadowOffsetY: effect.shadowOffsetY !== undefined ? effect.shadowOffsetY : 0,
-        shadowBlur: effect.shadowBlur !== undefined ? effect.shadowBlur : 10,
+        shadowBlur: effect.shadowBlur !== undefined ? effect.shadowBlur : 30,
         isBorderEnabled: effect.isBorderEnabled !== undefined ? effect.isBorderEnabled : true,
         borderColor: effect.borderColor || "#000000",
         borderWidth: effect.borderWidth !== undefined ? effect.borderWidth : 10,

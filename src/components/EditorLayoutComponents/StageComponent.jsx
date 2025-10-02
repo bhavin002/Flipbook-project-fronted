@@ -1202,13 +1202,13 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                 ref={transformerRef}
                                 onTransformEnd={handleDrag}
                                 onDragMove={(event) => handleDragMove(event, 'transform')}
-                                boundBoxFunc={(oldBox, newBox) => {
-                                    const minSize = stage.selectedShapes[0]?.attrs.type === 'text' ? 30 : 50;
-                                    if (newBox.width < minSize || newBox.height < (stage.selectedShapes[0]?.attrs.type === 'text' ? 10 : 50)) {
-                                        return oldBox;
-                                    }
-                                    return newBox;
-                                }}
+                                // boundBoxFunc={(oldBox, newBox) => {
+                                //     const minSize = stage.selectedShapes[0]?.attrs.type === 'text' ? 30 : 50;
+                                //     if (newBox.width < minSize || newBox.height < (stage.selectedShapes[0]?.attrs.type === 'text' ? 10 : 50)) {
+                                //         return oldBox;
+                                //     }
+                                //     return newBox;
+                                // }}
                                 enabledAnchors={
                                     stage.selectedShapes[0]?.attrs.type === 'text'
                                         ? ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'middle-left', 'middle-right']

@@ -98,12 +98,12 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                         </Label>
                     </div>
                 }
-                {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
+                {/* {selectedShape?.length == 1 && <Button variant="ghost" size="sm" onClick={() => {
                     setIsShapeDrawerOpen(true)
                     selectedSubMenu === "shape-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("shape-style")
                 }}>
                     Style
-                </Button>}
+                </Button>} */}
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger asChild>

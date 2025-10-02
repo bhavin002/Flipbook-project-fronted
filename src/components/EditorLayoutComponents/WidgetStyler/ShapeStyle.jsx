@@ -80,7 +80,7 @@ export default function ShapeStyle({
                 shadowOpacity: effect.shadowOpacity !== undefined ? effect.shadowOpacity : 60,
                 shadowOffsetX: effect.shadowOffsetX !== undefined ? effect.shadowOffsetX : 0,
                 shadowOffsetY: effect.shadowOffsetY !== undefined ? effect.shadowOffsetY : 0,
-                shadowBlur: effect.shadowBlur !== undefined ? effect.shadowBlur : 10,
+                shadowBlur: effect.shadowBlur !== undefined ? effect.shadowBlur : 30,
             });
         }
     }, [selectedShape]);
