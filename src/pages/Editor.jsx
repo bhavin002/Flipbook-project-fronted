@@ -175,10 +175,18 @@ import { Progress } from "@/components/ui/progress";
             borderDash: [5, 5],
             anchorSize: 21,
             anchorCornerRadius: 11,
+            anchorFill:"#ffffff",
+            borderStroke:"#8B5CF6",
+            borderStrokeWidth:2,
+            anchorStroke:"#8B5CF6",
             enabledAnchors: ['top-left', 'top-right', 'bottom-right', 'bottom-left']
         }).attachTo(this.cropImage);
 
         this.transformer = new Konva.Transformer({
+             anchorFill:"#ffffff",
+            borderStroke:"#8B5CF6",
+            borderStrokeWidth:2,
+            anchorStroke:"#8B5CF6",
         }).attachTo(this);
         layer.add(this.cropImageTransformer, this.transformer);
 
