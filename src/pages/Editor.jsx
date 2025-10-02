@@ -559,6 +559,7 @@ export default function Editor() {
     };
     // Undo functionality
     const handleUndo = () => {
+        if (isCropping) return;
         if (undoStack.length === 1) return; // No states to undo
         const temp = JSON.parse(JSON.stringify(mainStage));
         temp.forEach(stage => {
@@ -602,6 +603,7 @@ export default function Editor() {
 
     // Redo functionality
     const handleRedo = () => {
+        if (isCropping) return;
         setIsRedoAction(true);
         if (redoStack.length === 0) return; // No states to redo
         const temp = JSON.parse(JSON.stringify(mainStage));
@@ -703,6 +705,27 @@ export default function Editor() {
         if (stage.selectedShapes.length === 1 && allowHtmlTypesForCrop.includes(selectedShape.attrs.htmlType)) {
             if (selectedShape && selectedShape.getParent()) {
                 if (selectedShape?.children?.length) {
+                    // Save pre-crop snapshot to allow perfect cancel/restore
+                    const container = selectedShape.children[1];
+                    const imageNode = container.children[1];
+                    try {
+                        selectedShape._preCropSnapshot = {
+                            selectedAttrs: JSON.parse(JSON.stringify(selectedShape.attrs)),
+                            containerAttrs: JSON.parse(JSON.stringify(container.attrs)),
+                            imageAttrs: JSON.parse(JSON.stringify(imageNode.attrs)),
+                            imageCropTransform: imageNode.getCropTransform ? JSON.parse(JSON.stringify(imageNode.getCropTransform())) : null,
+                            labelVisible: selectedShape.children[0]?.visible ? selectedShape.children[0].visible() : true,
+                        };
+                    } catch (_) {
+                        // Fallback shallow save if deep clone fails
+                        selectedShape._preCropSnapshot = {
+                            selectedAttrs: { ...selectedShape.attrs },
+                            containerAttrs: { ...container.attrs },
+                            imageAttrs: { ...imageNode.attrs },
+                            imageCropTransform: imageNode.getCropTransform ? imageNode.getCropTransform() : null,
+                            labelVisible: selectedShape.children[0]?.visible ? selectedShape.children[0].visible() : true,
+                        };
+                    }
                     selectedShape.children[1].children[1].cropStart();
                     selectedShape.children[0].visible(false);
                     selectedShape.children[1]?.children[1].visible(false);
@@ -787,9 +810,60 @@ export default function Editor() {
         setIsCropping(false);
     };
 
+    const handleCropCancel = () => {
+         let x = [];
+        mainStage[selectedIndex]?.stageref?.current?.children[0]?.children[1]?.children.forEach((selectedShapeData) => {
+            if (
+                allowHtmlTypesForCrop.includes(selectedShapeData.attrs.htmlType) &&
+                selectedShapeData?.children?.length
+            ) {
+                const container = selectedShapeData.children[1];
+                const imageNode = container.children[1];
+
+                // End crop mode if it's active
+                if (imageNode.cropEnd) imageNode.cropEnd();
+
+                const snap = selectedShapeData._preCropSnapshot;
+                if (snap) {
+                    selectedShapeData.setAttrs(snap.selectedAttrs || {});
+                    container.setAttrs(snap.containerAttrs || {});
+                    const preservedImageInstance = imageNode.image && imageNode.image();
+                    const imageAttrsToRestore = { ...(snap.imageAttrs || {}) };
+                    if ('image' in imageAttrsToRestore) delete imageAttrsToRestore.image;
+                    imageNode.setAttrs(imageAttrsToRestore);
+                    if (preservedImageInstance) imageNode.image(preservedImageInstance);
+                    if (imageNode.setCropTransform) {
+                        imageNode.setCropTransform(snap.imageCropTransform || false);
+                    }
+                    if (selectedShapeData.children[0] && selectedShapeData.children[0].visible) {
+                        selectedShapeData.children[0].visible(!!snap.labelVisible);
+                    }
+                    imageNode.visible(true);
+                    if (typeof EffectEvent === 'function') {
+                        EffectEvent(selectedShapeData.attrs, imageNode);
+                    }
+
+                    delete selectedShapeData._preCropSnapshot;
+                } else {
+                    if (selectedShapeData.children[0] && selectedShapeData.children[0].visible) {
+                        selectedShapeData.children[0].visible(true);
+                    }
+                    imageNode.visible(true);
+                }
+                imageNode.width(selectedShapeData.width());
+                imageNode.height(selectedShapeData.height());
+                selectedShapeData.children[0].visible(true);
+                imageNode.visible(true);
+            }
+        });
+        mainStage.forEach(e => (e.selectedShapes = []));
+        setMainStage([...mainStage]);
+        setIsCropping(false);
+    }
+
     return (
         <div className="flex w-full flex-col h-full">
-            <TopToolbar setIsShapeDrawerOpen={setIsShapeDrawerOpen} isCropping={isCropping} handleCrop={handleCrop} handleCropEnd={handleCropEnd} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
+            <TopToolbar setIsShapeDrawerOpen={setIsShapeDrawerOpen} isCropping={isCropping} handleCrop={handleCrop} handleCropEnd={handleCropEnd} handleCropCancel={handleCropCancel}  selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
             <div className="flex w-full flex-grow relative">
                 {((mainStage.length !== pageCounter - 1) && !isInitialLoad) && <>
                     <div className="absolute inset-0 bg-white/40 backdrop-blur-sm z-40 pointer-events-auto" />
