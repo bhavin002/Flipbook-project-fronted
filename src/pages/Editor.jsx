@@ -187,6 +187,7 @@ import { Progress } from "@/components/ui/progress";
             borderStroke:"#8B5CF6",
             borderStrokeWidth:2,
             anchorStroke:"#8B5CF6",
+            rotateEnabled: false,
         }).attachTo(this);
         layer.add(this.cropImageTransformer, this.transformer);
 
