@@ -424,7 +424,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             if (lg.orientation === 'H') {
                 const line = new Konva.Line({
                     points: [-6000, 0, 6000, 0],
-                    stroke: 'rgb(0, 161, 255)',
+                    stroke: '#8B5CF6',
                     strokeWidth: 1,
                     name: 'guid-line',
                     dash: [4, 6],
@@ -437,7 +437,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             } else if (lg.orientation === 'V') {
                 const line = new Konva.Line({
                     points: [0, -6000, 0, 6000],
-                    stroke: 'rgb(0, 161, 255)',
+                    stroke: '#8B5CF6',
                     strokeWidth: 1,
                     name: 'guid-line',
                     dash: [4, 6],
@@ -1200,15 +1200,26 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                         {stage.selectedShapes.length > 0 && (
                             <Transformer
                                 ref={transformerRef}
+                                rotationSnaps={[0, 45, 90, 135, 180, 225, 270, 315]}
+                                // visual styles to match custom UI (image 2)
+                                borderStroke="#8B5CF6"
+                                borderStrokeWidth={2}
+                                anchorFill="#ffffff"
+                                anchorStroke="#A78BFA"
+                                anchorStrokeWidth={1}
+                                anchorSize={10}
+                                anchorCornerRadius={4}
+                                rotateAnchorOffset={28}
+                                rotateAnchorCursor="grab"
                                 onTransformEnd={handleDrag}
                                 onDragMove={(event) => handleDragMove(event, 'transform')}
-                                // boundBoxFunc={(oldBox, newBox) => {
-                                //     const minSize = stage.selectedShapes[0]?.attrs.type === 'text' ? 30 : 50;
-                                //     if (newBox.width < minSize || newBox.height < (stage.selectedShapes[0]?.attrs.type === 'text' ? 10 : 50)) {
-                                //         return oldBox;
-                                //     }
-                                //     return newBox;
-                                // }}
+                                boundBoxFunc={(oldBox, newBox) => {
+                                    const minSize = stage.selectedShapes[0]?.attrs.type === 'text' ? 30 : 0;
+                                    if (newBox.width < minSize || newBox.height < (stage.selectedShapes[0]?.attrs.type === 'text' ? 30 : 0)) {
+                                        return oldBox;
+                                    }
+                                    return newBox;
+                                }}
                                 enabledAnchors={
                                     stage.selectedShapes[0]?.attrs.type === 'text'
                                         ? ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'middle-left', 'middle-right']
