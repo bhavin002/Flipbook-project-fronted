@@ -637,6 +637,34 @@ export default function Editor() {
         console.log('undoStack===========================================222', undoStack)
     };
 
+    // Nudge selected shapes with arrow keys by fixed step
+    const moveSelectedShapes = (deltaX, deltaY) => {
+        if (isCropping) return;
+        const stageObj = mainStage[selectedIndex];
+        if (!stageObj || !stageObj.selectedShapes || stageObj.selectedShapes.length === 0) return;
+
+        // Move selected Konva nodes
+        stageObj.selectedShapes.forEach((node) => {
+            if (!node || typeof node.x !== 'function' || typeof node.y !== 'function') return;
+            node.x(node.x() + deltaX);
+            node.y(node.y() + deltaY);
+            if (node.getLayer) {
+                const layer = node.getLayer();
+                if (layer) layer.batchDraw();
+            }
+        });
+
+        // Commit immutable shapes array from current Konva nodes so React updates and history tracks
+        const konvaChildren = stageObj?.stageref?.current?.children?.[0]?.children?.[1]?.children || [];
+        const newShapes = konvaChildren.map((child) => ({ ...child.attrs }));
+        const nextMainStage = [...mainStage];
+        nextMainStage[selectedIndex] = {
+            ...nextMainStage[selectedIndex],
+            shapes: newShapes,
+        };
+        setMainStage(nextMainStage);
+    };
+
 
     useEffect(() => {
         const handleKeyboardShortcuts = (event) => {
@@ -655,9 +683,30 @@ export default function Editor() {
                 if (event.key === 'z' || event.key === 'Z') {
                     event.preventDefault(); // Prevent the default browser undo action
                     handleUndo();
-                } else if (event.key === 'y' || event.key === 'Y') {
-                    event.preventDefault(); // Prevent the default browser redo action
+                    return;
+                }
+                if (event.key === 'y' || event.key === 'Y') {
+                    event.preventDefault();
                     handleRedo();
+                    return;
+                }
+            }
+
+            // Arrow keys to nudge selection by 10 units when not typing
+            if (!isInputFocused) {
+                const STEP = 10;
+                if (event.key === 'ArrowLeft') {
+                    event.preventDefault();
+                    moveSelectedShapes(-STEP, 0);
+                } else if (event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    moveSelectedShapes(STEP, 0);
+                } else if (event.key === 'ArrowUp') {
+                    event.preventDefault();
+                    moveSelectedShapes(0, -STEP);
+                } else if (event.key === 'ArrowDown') {
+                    event.preventDefault();
+                    moveSelectedShapes(0, STEP);
                 }
             }
         };
