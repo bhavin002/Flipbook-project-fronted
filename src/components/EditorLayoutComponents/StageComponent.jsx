@@ -709,8 +709,18 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
         //     };
         //     return updatedState;
         // });
-        stage.shapes = stage.stageref.current.children[0].children[1].children.map(e => e.attrs)
-        const newMainStageString = generateMainStageString(mainStage);
+        // Read from Konva nodes and commit immutable shapes array so React re-renders
+        const konvaChildren = stage.stageref.current.children[0].children[1].children;
+        const newShapes = konvaChildren.map((child) => ({ ...child.attrs }));
+
+        const nextMainStage = [...mainStage];
+        nextMainStage[index] = {
+            ...nextMainStage[index],
+            shapes: newShapes,
+        };
+        setMainStage(nextMainStage);
+
+        const newMainStageString = generateMainStageString(nextMainStage);
         setMainStageString(newMainStageString);
     };
 
