@@ -112,6 +112,9 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
 
     const updatePageData = async () => {
         try {
+            if( Object.values(imageLoadCounterPageWise).some((count) => count > 0)){
+                return;
+            }
             setIsLoading(true);
             if (!showSessionDialog) {
                 if (!(await initSession())) {
