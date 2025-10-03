@@ -40,7 +40,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     textarea.style.textAlign = textNode.align();
     textarea.style.fontWeight = textNode.attrs?.fontStyle?.split(" ").includes("bold") ? "bold" : "normal";
     textarea.style.fontStyle = textNode.attrs?.fontStyle?.split(" ").includes("italic") ? "italic" : "normal";
-    textarea.style.letterSpacing = textNode.attrs.letterSpacing - 2 + "px";
+    textarea.style.letterSpacing = textNode.attrs.letterSpacing  + "px";
     textarea.style.lineHeight = textNode.attrs.lineHeight;
     textarea.style.textDecoration = textNode.attrs.textDecoration;
     textarea.style.color = textNode.fill();
@@ -57,10 +57,10 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     if (isFirefox) {
       px += 2 + Math.round(textNode.fontSize() / 20);
     }
-    
-    
+
+
     textarea.focus();
-    
+
     onChange({
       ...shape,
       height: textarea.scrollHeight
@@ -96,10 +96,11 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
       });
       removeTextarea();
     });
-
     textarea.addEventListener('keydown', (e) => {
       if (e.keyCode === 13 && !e.shiftKey) {
+        e.preventDefault(); // Prevent the default Enter behavior (newline insertion)
         shape.visible = lastVisible;
+        textarea.value = textarea.value.trim();
         onChange({
           ...shape,
           text: textarea.value
@@ -107,13 +108,14 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
         removeTextarea();
       }
       if (e.keyCode === 27) {
+        e.target.value = e.target.value.trim();
         removeTextarea();
       }
     });
   };
 
   if (shape.type !== 'text') return null;
-    console.log(shape);
+  console.log(shape);
 
   return (
     <Text
