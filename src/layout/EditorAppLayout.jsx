@@ -24,6 +24,7 @@ import SessionConflictDialog from "@/components/EditorLayoutComponents/SessionCo
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
+    const [isFormCustomize, setIsFormCustomize] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -220,6 +221,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
 
     useEffect(() => {
         if (state?.publish) {
+            setIsFormCustomize(true);
             setIsPublishModalOpen(true);
             navigate(location.pathname, { replace: true });
         }
@@ -484,7 +486,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter ,imageLoadCounterPageWise, setImageLoadCounterPageWise}} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter ,imageLoadCounterPageWise, setImageLoadCounterPageWise,isFormCustomize}} />
                             </div>
                         </div>
                     </div>

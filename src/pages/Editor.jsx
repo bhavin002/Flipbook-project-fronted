@@ -371,7 +371,7 @@ export default function Editor() {
         return ref.current;
     }
 
-    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter,imageLoadCounterPageWise, setImageLoadCounterPageWise } = useOutletContext();
+    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter,imageLoadCounterPageWise, setImageLoadCounterPageWise,isFormCustomize } = useOutletContext();
     const autoScroll = useRef([]);
 
     const parentRef = useRef(null);
@@ -431,9 +431,9 @@ export default function Editor() {
     }, [mainStage]);
     useEffect(() => {
         if (isPublishModalOpen) {
-            if (selectedIndex < 2) {
+            if (!isFormCustomize && selectedIndex < 2) {
                 setTimeout(() => {
-                    setPageCounter(1);
+                     setPageCounter(1);
                 }, 100);
             }
             setSelectedIndex(0);
