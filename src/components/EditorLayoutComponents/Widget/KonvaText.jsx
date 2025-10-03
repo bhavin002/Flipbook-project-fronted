@@ -6,7 +6,8 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
   const textRef = useRef(null);
   const [lastVisible, setLastVisible] = useState(shape.visible);
   const handleTextDblClick = (e) => {
-    setLastVisible(shape.visible);
+    // Always set lastVisible to true when starting to edit, regardless of current state
+    setLastVisible(true);
     setIsEditing(true);
     const textNode = e.target;
     const textPosition = textNode.absolutePosition();
@@ -67,8 +68,12 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     })
     function removeTextarea() {
       setIsEditing(false);
-      shape.visible = lastVisible;
-      // setLastVisible(s)
+      // Always restore visibility to true when finishing edit, preserving current text
+      onChange({
+        ...shape,
+        text: textarea.value,
+        visible: true
+      });
       setTimeout(() => {
         if (textarea && demo.current.contains(textarea)) {
           demo.current.removeChild(textarea);
@@ -77,11 +82,11 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     }
     textarea.addEventListener('input', function (e) {
       textarea.style.height = 'auto';
-      shape.visible = lastVisible;
       onChange({
         ...shape,
         text: e.target.value,
-        height: textarea.scrollHeight
+        height: textarea.scrollHeight,
+        visible: true
       })
       textarea.style.height = textarea.scrollHeight + 'px';
     });
@@ -89,22 +94,12 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
 
     textarea.addEventListener('blur', () => {
       delete shape.height;
-      shape.visible = lastVisible;
-      onChange({
-        ...shape,
-        text: textarea.value
-      });
       removeTextarea();
     });
     textarea.addEventListener('keydown', (e) => {
       if (e.keyCode === 13 && !e.shiftKey) {
         e.preventDefault(); // Prevent the default Enter behavior (newline insertion)
-        shape.visible = lastVisible;
         textarea.value = textarea.value.trim();
-        onChange({
-          ...shape,
-          text: textarea.value
-        });
         removeTextarea();
       }
       if (e.keyCode === 27) {
@@ -125,12 +120,12 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
       onDblClick={handleTextDblClick}
       name="shape"
       onDragEnd={((e) => {
-        shape.visible = lastVisible;
         onChange({
           ...shape,
           height: 'auto',
           x: e.target.x(),
-          y: e.target.y()
+          y: e.target.y(),
+          visible: true
         });
       }, handleDrag)}
       onDragStart={handleDragStart}
@@ -140,13 +135,13 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
         const scaleX = node.scaleX();
         node.scaleX(1);
         node.scaleY(1);
-        shape.visible = lastVisible;
         onChange({
           ...shape,
           x: node.x(),
           y: node.y(),
           height: 'auto',
           width: Math.max(5, node.width() * scaleX),
+          visible: true
         });
       }}
 

@@ -181,10 +181,10 @@ export default function ProfileDropDownCom() {
                         <Settings className="mr-2 h-4 w-4" /> Settings
                     </DropdownMenuItem>}
                 </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                {/* <DropdownMenuSeparator /> */}
+                {/* <DropdownMenuItem>
                     <Wrench className="mr-2 h-4 w-4" /> Help and support
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleItemClick("logout")}>
                     <LogOut className="mr-2 h-4 w-4" /> Log out
