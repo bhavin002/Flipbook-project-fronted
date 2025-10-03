@@ -95,10 +95,10 @@ export default function TextSidebarPanel({
             return "line-through";
         } else if (hasUnderline) {
             return "underline";
-        } else if (styles.includes("bold")) {
-            return "bold";
+        // } else if (styles.includes("bold")) {
+        //     return "bold";
         }
-        return "none";
+        return "";
     };
 
     const handleTextElementAction = (element) => {

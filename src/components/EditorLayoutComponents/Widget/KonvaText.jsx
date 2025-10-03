@@ -42,6 +42,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     textarea.style.fontStyle = textNode.attrs?.fontStyle?.split(" ").includes("italic") ? "italic" : "normal";
     textarea.style.letterSpacing = textNode.attrs.letterSpacing - 2 + "px";
     textarea.style.lineHeight = textNode.attrs.lineHeight;
+    textarea.style.textDecoration = textNode.attrs.textDecoration;
     textarea.style.color = textNode.fill();
 
     let rotation = textNode.rotation();
@@ -56,8 +57,8 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     if (isFirefox) {
       px += 2 + Math.round(textNode.fontSize() / 20);
     }
-
-
+    
+    
     textarea.focus();
     
     onChange({
@@ -112,6 +113,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
   };
 
   if (shape.type !== 'text') return null;
+    console.log(shape);
 
   return (
     <Text
