@@ -639,7 +639,7 @@ export default function PublishFlipbookDialog({
                         disabled={isPublishDisabled || pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0)}
                         onClick={handlePublish}
                     >
-                        {publishing ? <LoadingButton /> : 'Publish Now'}
+                        {publishing ? <LoadingButton buttonLabel="Publishing" /> : pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0) ? <LoadingButton buttonLabel="Preparing" /> : 'Publish Now'}
                     </Button>
                 </DialogFooter>
             </DialogContent>
