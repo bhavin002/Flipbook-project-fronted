@@ -537,12 +537,13 @@ export default function Editor() {
     const updateMainStage = () => {
         const temp = JSON.parse(JSON.stringify(mainStage));
         temp.forEach(stage => {
-            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
-            stage.shapes =
-                newObj ? newObj?.children[0]?.children[1]?.children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes
+            // let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
+            // stage.shapes =
+                // newObj ? newObj?.children[0]?.children[1]?.children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
             });
+            stage.stageref = null;
             // stage.stageref && (stage.stageref.current = newObj);
             stage.selectedShapes = [];
         })
@@ -572,11 +573,12 @@ export default function Editor() {
         if (undoStack.length === 1) return; // No states to undo
         const temp = JSON.parse(JSON.stringify(mainStage));
         temp.forEach(stage => {
-            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
-            stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
+            // let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
+            // stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
             });
+               stage.stageref = null;
             // stage.stageref = { current: newObj };
             stage.selectedShapes = [];
         })
@@ -587,11 +589,12 @@ export default function Editor() {
         // setIsChangeStack(false);
         const temp1 = JSON.parse(JSON.stringify(previousState));
         temp1.forEach(stage => {
-            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current
-            stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
+            // let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current
+            // stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
             });
+               stage.stageref = null;
             // stage.stageref = { current: newObj };
             stage.selectedShapes = [];
         })
@@ -617,21 +620,23 @@ export default function Editor() {
         if (redoStack.length === 0) return; // No states to redo
         const temp = JSON.parse(JSON.stringify(mainStage));
         temp.forEach(stage => {
-            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
-            stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
+            // let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
+            // stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
             });
+               stage.stageref = null;
             // stage.stageref = { current: newObj };
             stage.selectedShapes = [];
         })
         const temp2 = JSON.parse(JSON.stringify(redoStack[0].stages));
         temp2.forEach(stage => {
-            let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
-            stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
+            // let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
+            // stage.shapes = newObj ? newObj?.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes;
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
             });
+               stage.stageref = null;
             // stage.stageref = { current: newObj };
             stage.selectedShapes = [];
         })
