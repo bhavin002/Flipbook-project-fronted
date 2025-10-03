@@ -450,7 +450,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             }
         });
     };
-    
+
     const handleMouseDown = (e) => {
         if (isCropping) return;
         if (e.target === e.target.getStage()) {
@@ -1078,7 +1078,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                     case 'hyperlink':
                                         return <Hyperlink onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable setMainStage={setMainStage} selectedIndex={selectedIndex} mainStage={mainStage} mainStageString={mainStageString} setMainStageString={setMainStageString} />;
                                     case 'stock-photo':
-                                        return <StockPhoto index={index}  imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
+                                        return <StockPhoto index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'upload-photo':
                                         return <UploadPhoto index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape} />
                                     case 'shape-widget':
@@ -1214,9 +1214,16 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                 onTransformEnd={handleDrag}
                                 onDragMove={(event) => handleDragMove(event, 'transform')}
                                 boundBoxFunc={(oldBox, newBox) => {
-                                    const minSize = stage.selectedShapes[0]?.attrs.type === 'text' ? 30 : 0;
-                                    if (newBox.width < minSize || newBox.height < (stage.selectedShapes[0]?.attrs.type === 'text' ? 30 : 0)) {
-                                        return oldBox;
+                                    if (newBox.rotation == oldBox.rotation && stage.selectedShapes[0]?.attrs.type === 'text') {
+                                        if (newBox.width != oldBox.width) {
+                                            if (newBox.width < 30) {
+                                                return oldBox;
+                                            }
+                                        } if (newBox.height != oldBox.height) {
+                                            if (newBox.height < 30) {
+                                                return oldBox;
+                                            }
+                                        }
                                     }
                                     return newBox;
                                 }}
