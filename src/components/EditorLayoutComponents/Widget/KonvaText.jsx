@@ -3,12 +3,11 @@ import { Text } from 'react-konva';
 
 export default function KonvaText({ demo, shape, onChange, handleDragStart, handleDrag, scale }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [draftText, setDraftText] = useState(shape.text || "");
   const textRef = useRef(null);
-  const [lastVisible, setLastVisible] = useState(shape.visible);
   const handleTextDblClick = (e) => {
-    // Always set lastVisible to true when starting to edit, regardless of current state
-    setLastVisible(true);
     setIsEditing(true);
+    setDraftText(shape.text || "");
     const textNode = e.target;
     const textPosition = textNode.absolutePosition();
     const areaPosition = {
@@ -62,17 +61,13 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
 
     textarea.focus();
 
-    onChange({
-      ...shape,
-      height: textarea.scrollHeight
-    })
+    // Do NOT push edits to parent while typing; avoid undo/redo pollution
     function removeTextarea() {
       setIsEditing(false);
-      // Always restore visibility to true when finishing edit, preserving current text
+      // Commit once on finish
       onChange({
         ...shape,
-        text: textarea.value,
-        visible: true
+        text: textarea.value
       });
       setTimeout(() => {
         if (textarea && demo.current.contains(textarea)) {
@@ -82,12 +77,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     }
     textarea.addEventListener('input', function (e) {
       textarea.style.height = 'auto';
-      onChange({
-        ...shape,
-        text: e.target.value,
-        height: textarea.scrollHeight,
-        visible: true
-      })
+      setDraftText(e.target.value);
       textarea.style.height = textarea.scrollHeight + 'px';
     });
 
@@ -116,7 +106,10 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     <Text
       ref={textRef}
       {...shape}
+      // Hide Konva text while editing to avoid duplicate visual (no attrs change)
       visible={shape.visible && !isEditing}
+      // Show live draft while editing without committing to parent
+      text={isEditing ? draftText : shape.text}
       onDblClick={handleTextDblClick}
       name="shape"
       onDragEnd={((e) => {
@@ -124,8 +117,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
           ...shape,
           height: 'auto',
           x: e.target.x(),
-          y: e.target.y(),
-          visible: true
+          y: e.target.y()
         });
       }, handleDrag)}
       onDragStart={handleDragStart}
@@ -140,8 +132,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
           x: node.x(),
           y: node.y(),
           height: 'auto',
-          width: Math.max(5, node.width() * scaleX),
-          visible: true
+          width: Math.max(5, node.width() * scaleX)
         });
       }}
 
