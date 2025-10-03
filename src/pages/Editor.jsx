@@ -531,7 +531,7 @@ export default function Editor() {
             // mainStage[prevSelectedIndex].shapes = mainStage[prevSelectedIndex].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || []
         }
     }, [selectedIndex])
-    const MAX_HISTORY = 10; // Maximum states to store
+    const MAX_HISTORY = 100; // Maximum states to store
 
     // Update mainStage and maintain history
     const updateMainStage = () => {
