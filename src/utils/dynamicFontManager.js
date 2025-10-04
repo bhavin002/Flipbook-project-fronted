@@ -3,7 +3,7 @@
  * Handles font loading by ID, injection via script/link tags, and font management
  */
 
-import { SAMPLE_FONTS, SYSTEM_FONTS, FONT_CATEGORIES } from '@/data/sampleFonts';
+import { SAMPLE_FONTS, FONT_CATEGORIES } from '@/data/sampleFonts';
 
 class DynamicFontManager {
     constructor() {
@@ -11,7 +11,7 @@ class DynamicFontManager {
         this.loadingFonts = new Set();
         this.fontCache = new Map();
         this.injectedLinks = new Set();
-        this.fonts = [...SAMPLE_FONTS, ...SYSTEM_FONTS];
+        this.fonts = [...SAMPLE_FONTS];
     }
 
     /**

@@ -29,6 +29,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { FilterSlider } from '@/components/ui/filterSlider';
 import dynamicFontManager from '@/utils/dynamicFontManager';
+import { SAMPLE_FONTS } from '@/data/sampleFonts';
 
 export default function Text({ selectedShape, setMainStage, mainStage, selectedIndex }) {
     const [textStyle, setTextStyle] = useState({
@@ -45,9 +46,9 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
         lineHeight: selectedShape?.[0]?.attrs.lineHeight || 1
     });
 
-    // Font management state
-    const [fonts, setFonts] = useState([]);
-    const [filteredFonts, setFilteredFonts] = useState([]);
+    // Font management state - Now using SAMPLE_FONTS
+    const [allFonts, setAllFonts] = useState([...SAMPLE_FONTS]);
+    const [filteredFonts, setFilteredFonts] = useState([...SAMPLE_FONTS]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoadingFonts, setIsLoadingFonts] = useState(false);
     const [selectedFontId, setSelectedFontId] = useState('system-arial');
@@ -59,17 +60,17 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
         { id: 4, icon: "aA", name: "None", value: "none" }
     ];
 
-    // Load fonts on component mount
+    // Load fonts on component mount - Initialize with SAMPLE_FONTS
     useEffect(() => {
         const loadFonts = async () => {
             setIsLoadingFonts(true);
             try {
-                const allFonts = dynamicFontManager.getAllFonts();
-                setFonts(allFonts);
-                setFilteredFonts(allFonts);
+                const combinedFonts = [...SAMPLE_FONTS];
+                setAllFonts(combinedFonts);
+                setFilteredFonts(combinedFonts);
                 
-                // Preload some common fonts
-                const commonFontIds = ['system-arial', 'system-helvetica', 'system-times'];
+                // Preload some common fonts (now including SAMPLE_FONTS defaults)
+                const commonFontIds = ['system-arial', 'system-helvetica', 'system-times', SAMPLE_FONTS[0]?.id]; // e.g., first SAMPLE_FONT
                 await dynamicFontManager.preloadFonts(commonFontIds);
             } catch (error) {
                 console.error('Error loading fonts:', error);
@@ -83,7 +84,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
 
     // Filter fonts based on search query
     useEffect(() => {
-        let filtered = fonts;
+        let filtered = allFonts;
 
         // Filter by search query
         if (searchQuery.trim()) {
@@ -96,7 +97,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
         }
 
         setFilteredFonts(filtered);
-    }, [fonts, searchQuery]);
+    }, [allFonts, searchQuery]);
 
     useEffect(() => {
         if (selectedShape && selectedShape[0]) {
@@ -121,13 +122,13 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
         }
     }, [selectedShape]);
 
-    // Handle font selection
+    // Handle font selection - Dynamically loads font on click
     const handleFontSelect = async (fontId) => {
         setSelectedFontId(fontId);
-        const font = dynamicFontManager.getFontById(fontId);
+        const font = allFonts.find(f => f.id === fontId); // Use allFonts instead of dynamicFontManager.getFontById for consistency
         
         if (font) {
-            // Load font if not already loaded
+            // Load font if not already loaded (dynamic loading)
             const isLoaded = await dynamicFontManager.loadFontById(fontId);
             
             if (isLoaded) {
@@ -293,9 +294,9 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                             <SelectValue placeholder="Select font">
                                 {selectedFontId && (
                                     <span style={{ 
-                                        fontFamily: dynamicFontManager.getFontById(selectedFontId)?.family || 'Arial' 
+                                        fontFamily: allFonts.find(f => f.id === selectedFontId)?.family || 'Arial' 
                                     }}>
-                                        {dynamicFontManager.getFontById(selectedFontId)?.name || 'Select font'}
+                                        {allFonts.find(f => f.id === selectedFontId)?.name || 'Select font'}
                                     </span>
                                 )}
                             </SelectValue>
@@ -315,7 +316,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                                 </div>
                             </div>
                             
-                            {/* Font List */}
+                            {/* Font List with Previews */}
                             <div className="max-h-48 overflow-y-auto">
                                 {isLoadingFonts ? (
                                     <div className="p-4 text-center text-sm text-gray-500">
@@ -328,16 +329,13 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                                             value={font.id}
                                             className="cursor-pointer"
                                         >
-                                            <div className="flex items-center justify-between w-full">
-                                                <span 
-                                                    className="flex-1"
-                                                    style={{ fontFamily: font.family }}
-                                                >
-                                                    {font.name}
-                                                </span>
-                                                <span className="text-xs text-gray-400 ml-2">
-                                                    {font.type}
-                                                </span>
+                                            <div className="flex items-center justify-between w-full p-2">
+                                                {/* Preview Image */}
+                                                <img 
+                                                    src={font.preview} 
+                                                    alt={font.name} 
+                                                    className="h-6 mr-2"
+                                                />
                                             </div>
                                         </SelectItem>
                                     ))
