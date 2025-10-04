@@ -5,6 +5,14 @@ import App from './App.jsx'
 import { BrowserRouter } from "react-router-dom"
 import { Toaster } from "@/components/ui/sonner";
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import { preloadAllFonts } from '@/utils/dynamicFontManager'
+
+// Preload all fonts when the app starts
+preloadAllFonts().then(results => {
+    console.log('🚀 All fonts preloaded successfully!', results);
+}).catch(error => {
+    console.error('❌ Font preload failed:', error);
+});
 
 createRoot(document.getElementById('root')).render(
   // <StrictMode>

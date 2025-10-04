@@ -9,6 +9,7 @@ import {
     AlignRight,
     AlignJustify,
     ChevronDown,
+    Search,
 } from "lucide-react";
 import {
     Select,
@@ -27,11 +28,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { FilterSlider } from '@/components/ui/filterSlider';
+import dynamicFontManager, { preloadAllFonts } from '@/utils/dynamicFontManager';
 
 export default function Text({ selectedShape, setMainStage, mainStage, selectedIndex }) {
     const [textStyle, setTextStyle] = useState({
         text: selectedShape?.[0]?.attrs.text || '',
         fontFamily: selectedShape?.[0]?.attrs.fontFamily || 'Arial',
+        fontId: selectedShape?.[0]?.attrs.fontId || 'system-arial',
         fontSize: selectedShape?.[0]?.attrs.fontSize || 16,
         fontWeight: selectedShape?.[0]?.attrs.fontWeight || 'normal',
         fontStyle: selectedShape?.[0]?.attrs.fontStyle || 'normal',
@@ -42,6 +45,13 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
         lineHeight: selectedShape?.[0]?.attrs.lineHeight || 1
     });
 
+    // Font management state
+    const [fonts, setFonts] = useState([]);
+    const [filteredFonts, setFilteredFonts] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isLoadingFonts, setIsLoadingFonts] = useState(false);
+    const [selectedFontId, setSelectedFontId] = useState('system-arial');
+
     const textTransformItems = [
         { id: 1, icon: "Aa", name: 'Capitalize', value: 'capitalize' },
         { id: 2, icon: "AA", name: 'Uppercase', value: 'uppercase' },
@@ -49,11 +59,53 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
         { id: 4, icon: "aA", name: "None", value: "none" }
     ];
 
+    // Load fonts on component mount
+    useEffect(() => {
+        const loadFonts = async () => {
+            setIsLoadingFonts(true);
+            try {
+                const allFonts = dynamicFontManager.getAllFonts();
+                setFonts(allFonts);
+                setFilteredFonts(allFonts);
+                
+                // Preload ALL fonts at once
+                console.log('Preloading all fonts...');
+                const preloadResults = await preloadAllFonts();
+                console.log('Font preload results:', preloadResults);
+            } catch (error) {
+                console.error('Error loading fonts:', error);
+            } finally {
+                setIsLoadingFonts(false);
+            }
+        };
+        
+        loadFonts();
+    }, []);
+
+    // Filter fonts based on search query
+    useEffect(() => {
+        let filtered = fonts;
+
+        // Filter by search query
+        if (searchQuery.trim()) {
+            const query = searchQuery.toLowerCase();
+            filtered = filtered.filter(font => 
+                font.name.toLowerCase().includes(query) ||
+                font.family.toLowerCase().includes(query) ||
+                font.tags.some(tag => tag.toLowerCase().includes(query))
+            );
+        }
+
+        setFilteredFonts(filtered);
+    }, [fonts, searchQuery]);
+
     useEffect(() => {
         if (selectedShape && selectedShape[0]) {
+            const fontId = selectedShape[0].attrs.fontId || 'system-arial';
             setTextStyle({
                 text: selectedShape[0].attrs.text || '',
                 fontFamily: selectedShape[0].attrs.fontFamily || 'Arial',
+                fontId: fontId,
                 fontSize: selectedShape[0].attrs.fontSize || 16,
                 fontWeight: selectedShape[0].attrs.fontWeight || 'normal',
                 fontStyle: selectedShape[0].attrs.fontStyle || 'normal',
@@ -63,11 +115,36 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                 letterSpacing: selectedShape[0].attrs.letterSpacing || 0,
                 lineHeight: selectedShape[0].attrs.lineHeight || 1
             });
+            setSelectedFontId(fontId);
             if (selectedShape.length === 1) {
                 toggleStyle('textTransform', selectedShape[0].attrs.textTransform);
             }
         }
     }, [selectedShape]);
+
+    // Handle font selection
+    const handleFontSelect = async (fontId) => {
+        setSelectedFontId(fontId);
+        const font = dynamicFontManager.getFontById(fontId);
+        
+        if (font) {
+            // Load font if not already loaded
+            const isLoaded = await dynamicFontManager.loadFontById(fontId);
+            
+            if (isLoaded) {
+                // Update both fontId and fontFamily
+                updateItem('fontId', fontId);
+                updateItem('fontFamily', font.family);
+                setTextStyle(prev => ({
+                    ...prev,
+                    fontId: fontId,
+                    fontFamily: font.family
+                }));
+            } else {
+                console.error(`Failed to load font: ${font.name}`);
+            }
+        }
+    };
 
     const updateItem = (key, value) => {
         if (!selectedShape || !selectedShape[0]) return;
@@ -210,26 +287,69 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                 <div>
                     <Label className="text-xs font-medium mb-1">Font</Label>
                     <Select
-                        value={textStyle.fontFamily}
-                        onValueChange={(value) => {
-                            updateItem('fontFamily', value);
-                            setTextStyle(prev => ({ ...prev, fontFamily: value }));
-                        }}
+                        value={selectedFontId}
+                        onValueChange={handleFontSelect}
                     >
                         <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select font" />
+                            <SelectValue placeholder="Select font">
+                                {selectedFontId && (
+                                    <span style={{ 
+                                        fontFamily: dynamicFontManager.getFontById(selectedFontId)?.family || 'Arial' 
+                                    }}>
+                                        {dynamicFontManager.getFontById(selectedFontId)?.name || 'Select font'}
+                                    </span>
+                                )}
+                            </SelectValue>
                         </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="Arial">Arial</SelectItem>
-                            <SelectItem value="Helvetica">Helvetica</SelectItem>
-                            <SelectItem value="Times New Roman">Times New Roman</SelectItem>
-                            <SelectItem value="Courier New">Courier New</SelectItem>
-                            <SelectItem value="Verdana">Verdana</SelectItem>
-                            <SelectItem value="Georgia">Georgia</SelectItem>
-                            <SelectItem value="Palatino">Palatino</SelectItem>
-                            <SelectItem value="Garamond">Garamond</SelectItem>
-                            <SelectItem value="Bookman">Bookman</SelectItem>
-                            <SelectItem value="Comic Sans MS">Comic Sans MS</SelectItem>
+                        <SelectContent className="max-h-60">
+                            {/* Search within dropdown */}
+                            <div className="p-2 border-b">
+                                <div className="relative">
+                                    <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                                    <Input
+                                        placeholder="Search fonts..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="pl-8 h-8"
+                                        onClick={(e) => e.stopPropagation()}
+                                    />
+                                </div>
+                            </div>
+                            
+                            {/* Font List */}
+                            <div className="max-h-48 overflow-y-auto">
+                                {isLoadingFonts ? (
+                                    <div className="p-4 text-center text-sm text-gray-500">
+                                        Loading fonts...
+                                    </div>
+                                ) : (
+                                    filteredFonts.map((font) => (
+                                        <SelectItem 
+                                            key={font.id} 
+                                            value={font.id}
+                                            className="cursor-pointer"
+                                        >
+                                            <div className="flex items-center justify-between w-full">
+                                                <span 
+                                                    className="flex-1"
+                                                    style={{ fontFamily: font.family }}
+                                                >
+                                                    {font.name}
+                                                </span>
+                                                <span className="text-xs text-gray-400 ml-2">
+                                                    {font.type}
+                                                </span>
+                                            </div>
+                                        </SelectItem>
+                                    ))
+                                )}
+                                
+                                {filteredFonts.length === 0 && !isLoadingFonts && (
+                                    <div className="p-4 text-center text-sm text-gray-500">
+                                        No fonts found
+                                    </div>
+                                )}
+                            </div>
                         </SelectContent>
                     </Select>
                 </div>
