@@ -166,7 +166,16 @@ export default function TextSidebarPanel({
                                     onClick={() => handleTextElementAction(element)}
                                     className="rounded-lg cursor-pointer w-full bg-primary hover:bg-violet-700 p-2"
                                 >
-                                    <p className={`text-[${element.size || matchingFont?.fontSize || 16}px] font-semibold pl-4`}>
+                                    <p className={`text-[${element.size || matchingFont?.fontSize || 16}px] font-semibold pl-4`}
+                                        style={{
+                                            fontFamily: matchingFont?.fontFamily || element.attrs.fontFamily || 'Arial',
+                                            fontWeight: matchingFont?.fontWeight || element.attrs.fontStyle || 'normal',
+                                            letterSpacing: (matchingFont?.letterSpacing || element.attrs.letterSpacing || 0) + 'px',
+                                            lineHeight: matchingFont?.lineHeight || element.attrs.lineHeight || 1.2,
+                                            textTransform: matchingFont?.textCase || element.attrs.textTransform || 'none',
+                                            textDecoration: getTextDecoration(matchingFont?.styles || []),
+                                        }}
+                                    >
                                         {matchingFont?.name || element.title}
                                     </p>
                                 </div>
