@@ -1,10 +1,3 @@
-/**
- * Sample Font Data Structure
- * This simulates the backend API response for fonts
- * Each font has an ID, name, family, and loading information
- */
-
-// Font map from backend with IDs, names, and actual Flipsnack preview URLs
 const fontMapWithPreviews = {
     '145': { name: 'Abel', preview: 'https://cdn.flipsnack.com/library/fonts/fa5bf398db80ee712abb43dcf10608931_lg_m' },
     '29047': { name: 'Aboreto', preview: 'https://cdn.flipsnack.com/library/fonts/fbdd2ad51-e585-4585-a91f-43f75ce3af2d_lg_m' },
@@ -18,14 +11,14 @@ const fontMapWithPreviews = {
     '28996': { name: 'Almarai', preview: 'https://cdn.flipsnack.com/library/fonts/f9b6d4c49-1b6d-4393-8f5d-392b9ec8432a_lg_m' },
     '37': { name: 'Amatic SC', preview: 'https://cdn.flipsnack.com/library/fonts/fd819798d-26ab-458a-9c2e-c36b618e8503_lg_m' },
     '29049': { name: 'Anek Telugu', preview: 'https://cdn.flipsnack.com/library/fonts/fc823d6d9-7d31-4b0a-a0c7-1285d682b6bb_lg_m' },
-    '29050': { name: 'Anek Telugu Condensed', preview: 'https://cdn.flipsnack.com/library/fonts/f81600a7c-f543-4192-a91b-330f601cc357_lg_m' },
-    '29051': { name: 'Anek Telugu Expanded', preview: 'https://cdn.flipsnack.com/library/fonts/fd58d7152-1292-4c76-8b47-a11c9d3dd20d_lg_m' },
+    // '29050': { name: 'Anek Telugu Condensed', preview: 'https://cdn.flipsnack.com/library/fonts/f81600a7c-f543-4192-a91b-330f601cc357_lg_m' },
+    // '29051': { name: 'Anek Telugu Expanded', preview: 'https://cdn.flipsnack.com/library/fonts/fd58d7152-1292-4c76-8b47-a11c9d3dd20d_lg_m' },
     '1': { name: 'Annie Use Your Telescope', preview: 'https://cdn.flipsnack.com/library/fonts/f5d97fd9a-1e5f-4085-9dad-967fba3f8604_lg_m' },
     '33': { name: 'Antic', preview: 'https://cdn.flipsnack.com/library/fonts/feeb2ac3e-505a-40b7-a0c9-612f22acbc0f_lg_m' },
     '146': { name: 'Anton', preview: 'https://cdn.flipsnack.com/library/fonts/f1aa9bf59111857cc628f93df10608935_lg_m' },
     '28997': { name: 'Anybody', preview: 'https://cdn.flipsnack.com/library/fonts/fe81d3244-7742-4781-99c7-16d9fdd9c62c_lg_m' },
-    '29101': { name: 'Anybody Condensed', preview: 'https://cdn.flipsnack.com/library/fonts/fcc546a5d-d3ce-43a3-a87a-6fccd216f473_lg_m' },
-    '29102': { name: 'Anybody Expanded', preview: 'https://cdn.flipsnack.com/library/fonts/f482aa40e-e72b-4105-b581-8c8da5b82279_lg_m' },
+    // '29101': { name: 'Anybody Condensed', preview: 'https://cdn.flipsnack.com/library/fonts/fcc546a5d-d3ce-43a3-a87a-6fccd216f473_lg_m' },
+    // '29102': { name: 'Anybody Expanded', preview: 'https://cdn.flipsnack.com/library/fonts/f482aa40e-e72b-4105-b581-8c8da5b82279_lg_m' },
     '28998': { name: 'Archivo', preview: 'https://cdn.flipsnack.com/library/fonts/f2a0a495c-3779-4267-890b-5253b73d635c_lg_m' },
     '147': { name: 'Archivo Narrow', preview: 'https://cdn.flipsnack.com/library/fonts/fb3415b7134d76a1c1f569dbf10608954_lg_m' },
     '34': { name: 'Arimo', preview: 'https://cdn.flipsnack.com/library/fonts/f0ce485b0-a158-4c55-a032-fc85816f76b5_lg_m' },
@@ -43,14 +36,14 @@ const fontMapWithPreviews = {
     '29107': { name: 'Changa', preview: 'https://cdn.flipsnack.com/library/fonts/f1c6081d3-9193-4441-a880-18ece4ddd2c3_lg_m' },
     '29108': { name: 'Chivo', preview: 'https://cdn.flipsnack.com/library/fonts/fdc782f54-eacb-4496-9960-b549c2889d86_lg_m' },
     '150': { name: 'Cinzel', preview: 'https://cdn.flipsnack.com/library/fonts/f8d5d7584e2c928b4a67447ff10608987_lg_m' },
-    '149': { name: 'Cinzel Black', preview: 'https://cdn.flipsnack.com/library/fonts/fa1ec1b69a5bc1488358ca53f10608984_lg_m' },
+    // '149': { name: 'Cinzel Black', preview: 'https://cdn.flipsnack.com/library/fonts/fa1ec1b69a5bc1488358ca53f10608984_lg_m' },
     '151': { name: 'Clicker Script', preview: 'https://cdn.flipsnack.com/library/fonts/ff8d962f305d7c5523a8136af10608990_lg_m' },
     '29109': { name: 'Climate Crisis', preview: 'https://cdn.flipsnack.com/library/fonts/f96372694-5351-4c5a-add4-b1e7e7608b95_lg_m' },
     '152': { name: 'Concert One', preview: 'https://cdn.flipsnack.com/library/fonts/f5cdc6386297febdfb10d366f10608995_lg_m' },
     '153': { name: 'Cormorant Garamond', preview: 'https://cdn.flipsnack.com/library/fonts/f845e865498c36cf17803d02f10609136_lg_m' },
-    '154': { name: 'Cormorant Garamond Light', preview: 'https://cdn.flipsnack.com/library/fonts/fb68776054bf7264b25ce7d5f10609126_lg_m' },
-    '155': { name: 'Cormorant Garamond Medium', preview: 'https://cdn.flipsnack.com/library/fonts/f528a9ff5270b6b469199e7ef10609130_lg_m' },
-    '156': { name: 'Cormorant Garamond SemiBold', preview: 'https://cdn.flipsnack.com/library/fonts/fe40369fb54a874e1a83dff9f10609139_lg_m' },
+    // '154': { name: 'Cormorant Garamond Light', preview: 'https://cdn.flipsnack.com/library/fonts/fb68776054bf7264b25ce7d5f10609126_lg_m' },
+    // '155': { name: 'Cormorant Garamond Medium', preview: 'https://cdn.flipsnack.com/library/fonts/f528a9ff5270b6b469199e7ef10609130_lg_m' },
+    // '156': { name: 'Cormorant Garamond SemiBold', preview: 'https://cdn.flipsnack.com/library/fonts/fe40369fb54a874e1a83dff9f10609139_lg_m' },
     '38': { name: 'Courgette', preview: 'https://cdn.flipsnack.com/library/fonts/f7a47cea0-91ee-40d0-9e09-c344f47db633_lg_m' },
     '25': { name: 'Coustard', preview: 'https://cdn.flipsnack.com/library/fonts/faa2677f2-136a-472c-8d91-14dd97d7f8b7_lg_m' },
     '54': { name: 'Crimson Text', preview: 'https://cdn.flipsnack.com/library/fonts/fb2057cb6-5d69-4600-9d21-b96ebe00a628_lg_m' },
@@ -67,8 +60,8 @@ const fontMapWithPreviews = {
     '4': { name: 'Fjalla One', preview: 'https://cdn.flipsnack.com/library/fonts/f9906bb1e-4fdc-4e58-b5be-01da39c12873_lg_m' },
     '29062': { name: 'Forum', preview: 'https://cdn.flipsnack.com/library/fonts/f24fb41dc-4205-46d5-a061-9fee9fbb9afb_lg_m' },
     '29065': { name: 'Fraunces 9pt', preview: 'https://cdn.flipsnack.com/library/fonts/fe5ae4e71-4cff-4924-91cc-54dcb26e4076_lg_m' },
-    '29063': { name: 'Fraunces 9pt Soft', preview: 'https://cdn.flipsnack.com/library/fonts/f5b7f0832-bd65-4b34-b5fc-8674421c8b40_lg_m' },
-    '29064': { name: 'Fraunces 9pt SuperSoft', preview: 'https://cdn.flipsnack.com/library/fonts/fb09e1302-748a-4291-b67a-27f37822c401_lg_m' },
+    // '29063': { name: 'Fraunces 9pt Soft', preview: 'https://cdn.flipsnack.com/library/fonts/f5b7f0832-bd65-4b34-b5fc-8674421c8b40_lg_m' },
+    // '29064': { name: 'Fraunces 9pt SuperSoft', preview: 'https://cdn.flipsnack.com/library/fonts/fb09e1302-748a-4291-b67a-27f37822c401_lg_m' },
     '158': { name: 'Fredericka the Great', preview: 'https://cdn.flipsnack.com/library/fonts/f37e5dc3c01fa76842b02bf6f10609174_lg_m' },
     '42': { name: 'Fugaz One', preview: 'https://cdn.flipsnack.com/library/fonts/f37a43dd8-d324-4fb9-afd3-e38f4d99f664_lg_m' },
     '29066': { name: 'Gayathri', preview: 'https://cdn.flipsnack.com/library/fonts/f9a550913-8a73-4872-b81c-dd12f4ca53c2_lg_m' },
@@ -86,7 +79,7 @@ const fontMapWithPreviews = {
     '29114': { name: 'IBM Plex Sans', preview: 'https://cdn.flipsnack.com/library/fonts/fed8df6f4-f205-436c-b457-2e5eba27e4a4_lg_m' },
     '160': { name: 'Indie Flower', preview: 'https://cdn.flipsnack.com/library/fonts/f3fe9f9487eda1113a92a7b4f10609179_lg_m' },
     '29002': { name: 'Instrument Sans', preview: 'https://cdn.flipsnack.com/library/fonts/f57c6d4cb-c17e-454c-98c2-b70bf8baad3b_lg_m' },
-    '29003': { name: 'Instrument Sans Condensed', preview: 'https://cdn.flipsnack.com/library/fonts/ffa7212ed-30cf-4fe6-b00e-66bc70c50688_lg_m' },
+    // '29003': { name: 'Instrument Sans Condensed', preview: 'https://cdn.flipsnack.com/library/fonts/ffa7212ed-30cf-4fe6-b00e-66bc70c50688_lg_m' },
     '29069': { name: 'Instrument Serif', preview: 'https://cdn.flipsnack.com/library/fonts/f87d9f43c-eae5-41b4-bd47-f3c39adfa705_lg_m' },
     '29004': { name: 'Inter 24pt', preview: 'https://cdn.flipsnack.com/library/fonts/f8eab1215-3472-4ecb-9a3a-c91f54d81937_lg_m' },
     '29116': { name: 'Inter Tight', preview: 'https://cdn.flipsnack.com/library/fonts/fb6e3d6c3-5196-45d2-bb49-a2d52e4fd80e_lg_m' },
@@ -94,9 +87,9 @@ const fontMapWithPreviews = {
     '29115': { name: 'Jomolhari', preview: 'https://cdn.flipsnack.com/library/fonts/f92e8a7b6-282d-4a63-a80c-22f09a39b8ca_lg_m' },
     '22': { name: 'Josefin Sans', preview: 'https://cdn.flipsnack.com/library/fonts/f8f704a1b-44df-43f0-aa21-7cd650920e42_lg_m' },
     '162': { name: 'Josefin Slab', preview: 'https://cdn.flipsnack.com/library/fonts/fc7a34f3b34e27f6bfe2314af10609252_lg_m' },
-    '163': { name: 'Josefin Slab Light', preview: 'https://cdn.flipsnack.com/library/fonts/f5485249a645a58b088364f2f10609246_lg_m' },
-    '164': { name: 'Josefin Slab SemiBold', preview: 'https://cdn.flipsnack.com/library/fonts/f605399e15643abc08ec0776f10609257_lg_m' },
-    '165': { name: 'Josefin Slab Thin', preview: 'https://cdn.flipsnack.com/library/fonts/f8eede132809016f1dc1b6bef10609261_lg_m' },
+    // '163': { name: 'Josefin Slab Light', preview: 'https://cdn.flipsnack.com/library/fonts/f5485249a645a58b088364f2f10609246_lg_m' },
+    // '164': { name: 'Josefin Slab SemiBold', preview: 'https://cdn.flipsnack.com/library/fonts/f605399e15643abc08ec0776f10609257_lg_m' },
+    // '165': { name: 'Josefin Slab Thin', preview: 'https://cdn.flipsnack.com/library/fonts/f8eede132809016f1dc1b6bef10609261_lg_m' },
     '27': { name: 'Julius Sans One', preview: 'https://cdn.flipsnack.com/library/fonts/f909d5be5-b4b0-487a-aad8-89e49ca84f87_lg_m' },
     '3289': { name: 'Just Me Again Down Here', preview: 'https://cdn.flipsnack.com/library/fonts/faf43fdda-a1b9-4995-bbca-643caeae62f2_lg_m' },
     '29070': { name: 'Kaisei Decol', preview: 'https://cdn.flipsnack.com/library/fonts/fd123ae35-ec97-41d7-9e63-085a2ea775cc_lg_m' },
@@ -127,21 +120,21 @@ const fontMapWithPreviews = {
     '29076': { name: 'Neonderthaw', preview: 'https://cdn.flipsnack.com/library/fonts/f0cad0e28-bfa3-4758-81ce-444ae396163b_lg_m' },
     '29077': { name: 'Neuton', preview: 'https://cdn.flipsnack.com/library/fonts/f67a0891a-4f26-4f42-bec3-d4a8089adc38_lg_m' },
     '29078': { name: 'Newsreader 9pt', preview: 'https://cdn.flipsnack.com/library/fonts/f5b95d373-7934-4fae-b450-a31baeccb10b_lg_m' },
-    '170': { name: 'Nexa Demo', preview: 'https://cdn.flipsnack.com/library/fonts/f108938d2b01b735939a7101f10609289_lg_m' },
+    // '170': { name: 'Nexa Demo', preview: 'https://cdn.flipsnack.com/library/fonts/f108938d2b01b735939a7101f10609289_lg_m' },
     '53': { name: 'Nixie One', preview: 'https://cdn.flipsnack.com/library/fonts/f4fc01079-817f-4932-b6a2-f504c40785d1_lg_m' },
     '29006': { name: 'Noto Sans Mono', preview: 'https://cdn.flipsnack.com/library/fonts/ff23b9988-e915-4d20-8bce-4aaaf0f70609_lg_m' },
-    '29103': { name: 'Noto Sans Mono ExtraCondensed', preview: 'https://cdn.flipsnack.com/library/fonts/f313be9bd-dd0a-43f8-97f6-cc3dcb463a7b_lg_m' },
+    // '29103': { name: 'Noto Sans Mono ExtraCondensed', preview: 'https://cdn.flipsnack.com/library/fonts/f313be9bd-dd0a-43f8-97f6-cc3dcb463a7b_lg_m' },
     '29079': { name: 'Noto Serif', preview: 'https://cdn.flipsnack.com/library/fonts/fa4a07e60-be23-4d1d-9c7a-529505117db6_lg_m' },
     '29080': { name: 'Noto Serif Display', preview: 'https://cdn.flipsnack.com/library/fonts/f059f3bc5-0b9c-41b8-bb54-2f16628829b8_lg_m' },
-    '29081': { name: 'Noto Serif Display Condensed', preview: 'https://cdn.flipsnack.com/library/fonts/f226d408a-f59a-40df-be2a-40350604b1aa_lg_m' },
+    // '29081': { name: 'Noto Serif Display Condensed', preview: 'https://cdn.flipsnack.com/library/fonts/f226d408a-f59a-40df-be2a-40350604b1aa_lg_m' },
     '29123': { name: 'Nunito', preview: 'https://cdn.flipsnack.com/library/fonts/fb5a5ec91-5e61-44f2-915a-2d767aa5cb5a_lg_m' },
     '46': { name: 'Old Standard TT', preview: 'https://cdn.flipsnack.com/library/fonts/fb047f552-005c-41a2-8c71-6c6d66355bd1_lg_m' },
     '3287': { name: 'Open Sans', preview: 'https://cdn.flipsnack.com/library/fonts/ff2caab9c-75cf-428d-9b75-5ef064780847_lg_m' },
     '29082': { name: 'Oranienbaum', preview: 'https://cdn.flipsnack.com/library/fonts/f4edfd925-8fea-4b0a-9c49-cc96690ba48a_lg_m' },
-    '171': { name: 'Ostrich Sans', preview: 'https://cdn.flipsnack.com/library/fonts/f380fb2acdb9d56a9b51d959f10609323_lg_m' },
-    '172': { name: 'Ostrich Sans Dashed', preview: 'https://cdn.flipsnack.com/library/fonts/f41a97d3530e00ecec58b4d9f10609309_lg_m' },
-    '173': { name: 'Ostrich Sans Inline', preview: 'https://cdn.flipsnack.com/library/fonts/f6f196a308b6127c6d18df19f10609316_lg_m' },
-    '174': { name: 'Ostrich Sans Rounded', preview: 'https://cdn.flipsnack.com/library/fonts/f5b18517b993c0ce5e402d12f10609324_lg_m' },
+    // '171': { name: 'Ostrich Sans', preview: 'https://cdn.flipsnack.com/library/fonts/f380fb2acdb9d56a9b51d959f10609323_lg_m' },
+    // '172': { name: 'Ostrich Sans Dashed', preview: 'https://cdn.flipsnack.com/library/fonts/f41a97d3530e00ecec58b4d9f10609309_lg_m' },
+    // '173': { name: 'Ostrich Sans Inline', preview: 'https://cdn.flipsnack.com/library/fonts/f6f196a308b6127c6d18df19f10609316_lg_m' },
+    // '174': { name: 'Ostrich Sans Rounded', preview: 'https://cdn.flipsnack.com/library/fonts/f5b18517b993c0ce5e402d12f10609324_lg_m' },
     '3285': { name: 'Oswald', preview: 'https://cdn.flipsnack.com/library/fonts/ff3cae4c3-4dda-4906-9bb3-9cb86c506073_lg_m' },
     '29124': { name: 'Oxygen', preview: 'https://cdn.flipsnack.com/library/fonts/f4b810d8d-ac45-4f37-90b4-0d5a6317beb4_lg_m' },
     '12': { name: 'Pacifico', preview: 'https://cdn.flipsnack.com/library/fonts/f4e72dbba-f59e-4afa-9928-440fdf75f2c9_lg_m' },
@@ -158,7 +151,7 @@ const fontMapWithPreviews = {
     '8': { name: 'Playfair Display SC', preview: 'https://cdn.flipsnack.com/library/fonts/fe43ae31a-5ae9-440d-97a8-d9a3ad58c7b3_lg_m' },
     '29087': { name: 'Playwrite AU SA', preview: 'https://cdn.flipsnack.com/library/fonts/f3c2bff96-29af-4221-b31f-351bef000620_lg_m' },
     '178': { name: 'Poiret One', preview: 'https://cdn.flipsnack.com/library/fonts/fa8d8fac527c66932147c385f10609503_lg_m' },
-    '179': { name: 'Pompiere ', preview: 'https://cdn.flipsnack.com/library/fonts/fc82e037aef2bced69034189f10609507_lg_m' },
+    // '179': { name: 'Pompiere ', preview: 'https://cdn.flipsnack.com/library/fonts/fc82e037aef2bced69034189f10609507_lg_m' },
     '29126': { name: 'Poppins', preview: 'https://cdn.flipsnack.com/library/fonts/fedca3434-a866-4af6-a4e6-6f075d47db81_lg_m' },
     '180': { name: 'Prata', preview: 'https://cdn.flipsnack.com/library/fonts/f60624850c1e02350e687f2ef10609511_lg_m' },
     '3283': { name: 'PT Sans', preview: 'https://cdn.flipsnack.com/library/fonts/f3a6aabd4-5f81-4b28-87a3-29d92f7c493a_lg_m' },
@@ -204,92 +197,22 @@ const fontMapWithPreviews = {
     '29100': { name: 'Zilla Slab', preview: 'https://cdn.flipsnack.com/library/fonts/f4656bccc-5548-47d7-af76-cc07fff72f80_lg_m' }
 };
 
-// Helper function to determine font category
-const getFontCategory = (fontName) => {
-    const scriptFonts = ['Dancing Script', 'Great Vibes', 'Pacifico', 'Allura', 'Amatic SC', 'Clicker Script', 'Courgette', 'Fredericka the Great', 'Grand Hotel', 'Kaushan Script', 'Marck Script', 'Parisienne', 'Petit Formal Script', 'Pinyon Script', 'Sacramento', 'Yellowtail', 'WindSong', 'Annie Use Your Telescope', 'Clicker Script', 'Fredericka the Great', 'Grand Hotel', 'Indie Flower', 'Italiana', 'Just Me Again Down Here', 'Kaushan Script', 'Marck Script', 'Mouse Memoirs', 'Mrs Sheppards', 'Neonderthaw', 'Parisienne', 'Petit Formal Script', 'Pinyon Script', 'Pompiere', 'Reenie Beanie', 'Sacramento', 'Stalemate', 'Yellowtail', 'WindSong'];
-    const displayFonts = ['Abril Fatface', 'Alfa Slab One', 'Anton', 'Bebas Neue', 'Bowlby One', 'Cinzel', 'Cinzel Black', 'Concert One', 'Fjalla One', 'Fugaz One', 'Gravitas One', 'Hammersmith One', 'League Gothic', 'Limelight', 'Lobster', 'Monoton', 'Mrs Sheppards', 'Ostrich Sans', 'Ostrich Sans Dashed', 'Ostrich Sans Inline', 'Ostrich Sans Rounded', 'Poiret One', 'Rozha One', 'Ultra', 'Unica One', 'Vast Shadow', 'Wire One', 'Alfa Slab One', 'Anton', 'Bowlby One', 'Cinzel', 'Cinzel Black', 'Concert One', 'Fjalla One', 'Fugaz One', 'Gravitas One', 'Hammersmith One', 'League Gothic', 'Limelight', 'Lobster', 'Monoton', 'Ostrich Sans', 'Ostrich Sans Dashed', 'Ostrich Sans Inline', 'Ostrich Sans Rounded', 'Poiret One', 'Rozha One', 'Ultra', 'Unica One', 'Vast Shadow', 'Wire One'];
-    const serifFonts = ['Crimson Text', 'Cormorant Garamond', 'Cormorant Garamond Light', 'Cormorant Garamond Medium', 'Cormorant Garamond SemiBold', 'EB Garamond', 'Gentium Basic', 'Gentium Book Basic', 'Libre Baskerville', 'Lora', 'Merriweather', 'Old Standard TT', 'PT Serif', 'Playfair Display', 'Playfair Display SC', 'Vidaloka', 'Vollkorn', 'Young Serif', 'Bodoni Moda 18pt', 'Cormorant Garamond', 'Cormorant Garamond Light', 'Cormorant Garamond Medium', 'Cormorant Garamond SemiBold', 'EB Garamond', 'Fraunces 9pt', 'Fraunces 9pt Soft', 'Fraunces 9pt SuperSoft', 'Gentium Basic', 'Gentium Book Basic', 'Instrument Serif', 'Italiana', 'Libre Baskerville', 'Lora', 'Marcellus', 'Merriweather', 'Newsreader 9pt', 'Noto Serif', 'Noto Serif Display', 'Noto Serif Display Condensed', 'Old Standard TT', 'PT Serif', 'Playfair Display', 'Playfair Display SC', 'Source Serif 4 18pt', 'STIX Two Text', 'Vidaloka', 'Vollkorn', 'Young Serif', 'Zilla Slab'];
-    
-    if (scriptFonts.some(font => fontName.includes(font))) return 'script';
-    if (displayFonts.some(font => fontName.includes(font))) return 'display';
-    if (serifFonts.some(font => fontName.includes(font))) return 'serif';
-    return 'sans-serif';
-};
 
-// Helper function to get font tags
-const getFontTags = (fontName, category) => {
-    const tags = [];
-    
-    if (category === 'script') {
-        tags.push('handwriting', 'elegant', 'decorative');
-    } else if (category === 'display') {
-        tags.push('bold', 'headline', 'decorative');
-    } else if (category === 'serif') {
-        tags.push('readable', 'traditional', 'classic');
-    } else {
-        tags.push('modern', 'clean', 'readable');
-    }
-    
-    // Add specific tags based on font characteristics
-    if (fontName.toLowerCase().includes('condensed')) tags.push('condensed');
-    if (fontName.toLowerCase().includes('mono')) tags.push('monospace');
-    if (fontName.toLowerCase().includes('rounded')) tags.push('rounded');
-    if (fontName.toLowerCase().includes('slab')) tags.push('slab');
-    if (fontName.toLowerCase().includes('thin')) tags.push('thin');
-    if (fontName.toLowerCase().includes('light')) tags.push('light');
-    if (fontName.toLowerCase().includes('black')) tags.push('black');
-    if (fontName.toLowerCase().includes('bold')) tags.push('bold');
-    
-    return tags;
-};
 
-// Convert fontMapWithPreviews to SAMPLE_FONTS array and sort alphabetically
 export const SAMPLE_FONTS = Object.entries(fontMapWithPreviews)
     .map(([id, fontData]) => {
         const { name, preview } = fontData;
-        const category = getFontCategory(name);
-        const tags = getFontTags(name, category);
-        
-        // Generate Google Fonts URL (clean name for URL)
-        let fontFamily = name.replace(/ \d+pt$/, '').replace(/\s+/g, '+'); // Remove "18pt" etc.
+        let fontFamily = name.replace(/ \d+pt$/, '').replace(/\s+/g, '+');
         const url = `https://fonts.googleapis.com/css2?family=${fontFamily}:wght@300;400;500;600;700&display=swap`;
         
         return {
-            id: id,
-            name: name,
+            id,
+            name,
             family: name,
-            type: 'google',
-            weights: [300, 400, 500, 600, 700],
-            styles: ['normal', 'italic'],
-            url: url,
-            preview: preview, // Actual Flipsnack preview URL
-            category: category,
-            tags: tags
+            url,
+            preview
         };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
-// Font categories for filtering
-export const FONT_CATEGORIES = [
-    { id: "all", name: "All Fonts", icon: "🔤" },
-    { id: "sans-serif", name: "Sans Serif", icon: "📝" },
-    { id: "serif", name: "Serif", icon: "📖" },
-    { id: "display", name: "Display", icon: "🎨" },
-    { id: "script", name: "Script", icon: "✍️" },
-    { id: "monospace", name: "Monospace", icon: "💻" }
-];
-
-// Font tags for filtering
-export const FONT_TAGS = [
-    "modern", "readable", "elegant", "bold", "friendly", "clean", "versatile",
-    "decorative", "headline", "traditional", "web-safe", "technical", "rounded",
-    "geometric", "high-contrast", "neutral", "professional", "book", "condensed",
-    "humanist", "handwriting", "casual", "classic", "thin", "monospace", "code",
-    "light", "black", "slab", "script", "display", "serif", "sans-serif"
-];
-
-export default {
-    SAMPLE_FONTS,
-    FONT_CATEGORIES,
-    FONT_TAGS
-};
+export default SAMPLE_FONTS;

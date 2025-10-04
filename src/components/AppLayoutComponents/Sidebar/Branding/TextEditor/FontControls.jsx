@@ -3,17 +3,15 @@ import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import dynamicFontManager from '@/utils/dynamicFontManager';
-import { SAMPLE_FONTS } from '@/data/sampleFonts';
+import SAMPLE_FONTS from '@/data/sampleFonts';
 
 export default function FontControls({ config, updateConfig }) {
-    // Font management state
     const [allFonts, setAllFonts] = useState([...SAMPLE_FONTS]);
     const [filteredFonts, setFilteredFonts] = useState([...SAMPLE_FONTS]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoadingFonts, setIsLoadingFonts] = useState(false);
-    const [selectedFontId, setSelectedFontId] = useState('145'); // Default to Abel font
+    const [selectedFontId, setSelectedFontId] = useState('2');
 
-    // Load fonts on component mount
     useEffect(() => {
         const loadFonts = async () => {
             setIsLoadingFonts(true);
@@ -21,10 +19,6 @@ export default function FontControls({ config, updateConfig }) {
                 const combinedFonts = [...SAMPLE_FONTS];
                 setAllFonts(combinedFonts);
                 setFilteredFonts(combinedFonts);
-
-                // Preload some common fonts
-                // const commonFontIds = ['145', '2', '21', '3287']; // Abel, Roboto, Montserrat, Open Sans
-                // await dynamicFontManager.preloadFonts(commonFontIds);
             } catch (error) {
                 console.error('Error loading fonts:', error);
             } finally {
@@ -43,8 +37,7 @@ export default function FontControls({ config, updateConfig }) {
             const query = searchQuery.toLowerCase();
             filtered = filtered.filter(font =>
                 font.name.toLowerCase().includes(query) ||
-                font.family.toLowerCase().includes(query) ||
-                font.tags.some(tag => tag.toLowerCase().includes(query))
+                font.family.toLowerCase().includes(query)
             );
         }
 
@@ -63,7 +56,6 @@ export default function FontControls({ config, updateConfig }) {
         const font = allFonts.find(f => f.id === fontId);
 
         if (font) {
-            // Load font if not already loaded
             const isLoaded = await dynamicFontManager.loadFontById(fontId);
 
             if (isLoaded) {
