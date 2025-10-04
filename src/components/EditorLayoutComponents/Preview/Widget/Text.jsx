@@ -1,6 +1,14 @@
 import React from 'react';
+import { useEffect } from 'react';
+import dynamicFontManager from '@/utils/dynamicFontManager';
+
 
 export default function Text({ shape }) {
+    useEffect(() => {
+        if (shape.fontId) {
+            dynamicFontManager.loadFontById(shape.fontId);
+        }
+    }, [shape.fontId]);
     return (
         <p
             style={{

@@ -21,17 +21,17 @@ export default function FontControls({ config, updateConfig }) {
                 const combinedFonts = [...SAMPLE_FONTS];
                 setAllFonts(combinedFonts);
                 setFilteredFonts(combinedFonts);
-                
+
                 // Preload some common fonts
-                const commonFontIds = ['145', '2', '21', '3287']; // Abel, Roboto, Montserrat, Open Sans
-                await dynamicFontManager.preloadFonts(commonFontIds);
+                // const commonFontIds = ['145', '2', '21', '3287']; // Abel, Roboto, Montserrat, Open Sans
+                // await dynamicFontManager.preloadFonts(commonFontIds);
             } catch (error) {
                 console.error('Error loading fonts:', error);
             } finally {
                 setIsLoadingFonts(false);
             }
         };
-        
+
         loadFonts();
     }, []);
 
@@ -41,7 +41,7 @@ export default function FontControls({ config, updateConfig }) {
 
         if (searchQuery.trim()) {
             const query = searchQuery.toLowerCase();
-            filtered = filtered.filter(font => 
+            filtered = filtered.filter(font =>
                 font.name.toLowerCase().includes(query) ||
                 font.family.toLowerCase().includes(query) ||
                 font.tags.some(tag => tag.toLowerCase().includes(query))
@@ -53,25 +53,21 @@ export default function FontControls({ config, updateConfig }) {
 
     // Sync selectedFontId with config.fontFamily when config changes
     useEffect(() => {
-        if (config.fontFamily) {
-            const matchingFont = allFonts.find(font => font.family === config.fontFamily);
-            if (matchingFont) {
-                setSelectedFontId(matchingFont.id);
-            }
-        }
+        setSelectedFontId(config.fontId);
+        dynamicFontManager.loadFontById(config.fontId);
     }, [config.fontFamily, allFonts]);
 
     // Handle font selection with dynamic loading
     const handleFontSelect = async (fontId) => {
         setSelectedFontId(fontId);
         const font = allFonts.find(f => f.id === fontId);
-        
+
         if (font) {
             // Load font if not already loaded
             const isLoaded = await dynamicFontManager.loadFontById(fontId);
-            
+
             if (isLoaded) {
-                updateConfig({ fontFamily: font.family ,fontId: font.id});
+                updateConfig({ fontFamily: font.family, fontId: font.id });
             } else {
                 console.error(`Failed to load font: ${font.name}`);
             }
@@ -115,8 +111,8 @@ export default function FontControls({ config, updateConfig }) {
                         <SelectValue placeholder="Select font">
                             {selectedFontId && (
                                 <div className="flex items-center gap-2">
-                                    <span style={{ 
-                                        fontFamily: allFonts.find(f => f.id === selectedFontId)?.family || 'Arial' 
+                                    <span style={{
+                                        fontFamily: allFonts.find(f => f.id === selectedFontId)?.family || 'Arial'
                                     }}>
                                         {allFonts.find(f => f.id === selectedFontId)?.name || 'Select font'}
                                     </span>
@@ -138,7 +134,7 @@ export default function FontControls({ config, updateConfig }) {
                                 />
                             </div>
                         </div>
-                        
+
                         {/* Font List with Previews */}
                         <div className="max-h-48 overflow-y-auto">
                             {isLoadingFonts ? (
@@ -147,17 +143,17 @@ export default function FontControls({ config, updateConfig }) {
                                 </div>
                             ) : (
                                 filteredFonts.map((font) => (
-                                    <SelectItem 
-                                        key={font.id} 
+                                    <SelectItem
+                                        key={font.id}
                                         value={font.id}
                                         className="cursor-pointer"
                                     >
                                         <div className="flex items-center justify-between w-full p-2">
                                             <div className="flex items-center gap-3">
                                                 {/* Preview Image */}
-                                                <img 
-                                                    src={font.preview} 
-                                                    alt={font.name} 
+                                                <img
+                                                    src={font.preview}
+                                                    alt={font.name}
                                                     className="h-6 mr-2"
                                                 />
                                             </div>
@@ -165,7 +161,7 @@ export default function FontControls({ config, updateConfig }) {
                                     </SelectItem>
                                 ))
                             )}
-                            
+
                             {filteredFonts.length === 0 && !isLoadingFonts && (
                                 <div className="p-4 text-center text-sm text-gray-500">
                                     No fonts found

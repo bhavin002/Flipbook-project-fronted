@@ -21,6 +21,7 @@ import { flipbookType } from "@/utils/enum";
 import RenameFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/RenameFlipbookDialog";
 import { CreateFlipbookActiveEditor, ReplaceFlipbookActiveEditor, DeleteFlipbookActiveEditor } from "@/service/flipbookAciveEditors.service"; // Assuming the file path based on user input
 import SessionConflictDialog from "@/components/EditorLayoutComponents/SessionConflictDialog";
+import dynamicFontManager from '@/utils/dynamicFontManager';
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
@@ -68,8 +69,16 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                     description: response.data.description || "",
                     flipbookType: response.data.flipbookType
                 });
-                const validPageData = response.data.pages;
-                setMainStage(validPageData.map(e => JSON.parse(e.pageData)));
+                let validPageData = response.data.pages;
+                validPageData = validPageData.map(e => JSON.parse(e.pageData));
+                validPageData.forEach((page, index) => {
+                    page.shapes.forEach(async (shape) => {
+                        if (shape.type === 'text') {
+                            await dynamicFontManager.loadFontById(shape.fontId);
+                        }
+                    })
+                });
+                setMainStage(validPageData);
                 await initSession(); // Initialize session after flipbook data is loaded
             } catch (error) {
                 toast.error(error?.message || "Error fetching page data");
@@ -113,7 +122,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
 
     const updatePageData = async () => {
         try {
-            if( Object.values(imageLoadCounterPageWise).some((count) => count > 0)){
+            if (Object.values(imageLoadCounterPageWise).some((count) => count > 0)) {
                 return;
             }
             setIsLoading(true);
@@ -122,7 +131,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                     return false
                 }
             }
-        
+
             mainStage.forEach((e, index) => {
                 e.temp = (index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1) && e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] :
                     (e.shapes || []);
@@ -152,7 +161,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
 
     useEffect(() => {
         const interval = setInterval(async () => {
-            if( Object.values(imageLoadCounterPageWise).some((count) => count > 0)){
+            if (Object.values(imageLoadCounterPageWise).some((count) => count > 0)) {
                 return;
             }
             if (id && mainStage.length > 0 && !publishing && isInitialLoad && !showSessionDialog) {
@@ -486,7 +495,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter ,imageLoadCounterPageWise, setImageLoadCounterPageWise,isFormCustomize}} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize }} />
                             </div>
                         </div>
                     </div>
