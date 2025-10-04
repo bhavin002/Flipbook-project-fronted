@@ -110,12 +110,7 @@ class DynamicFontManager {
         this.loadingFonts.add(fontId);
 
         try {
-            if (font.type === 'system') {
-                // System fonts are always available
-                this.loadedFonts.add(fontId);
-                this.loadingFonts.delete(fontId);
-                return true;
-            } else if (font.type === 'google') {
+             if (font.type === 'google') {
                 await this.loadGoogleFont(font);
                 this.loadedFonts.add(fontId);
                 this.loadingFonts.delete(fontId);
@@ -306,7 +301,6 @@ class DynamicFontManager {
             loadedFonts: this.loadedFonts.size,
             loadingFonts: this.loadingFonts.size,
             injectedLinks: this.injectedLinks.size,
-            systemFonts: this.fonts.filter(f => f.type === 'system').length,
             googleFonts: this.fonts.filter(f => f.type === 'google').length,
             customFonts: this.fonts.filter(f => f.type === 'custom').length
         };

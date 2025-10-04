@@ -77,6 +77,7 @@ export default function TextSidebarPanel({
                     visible: true,
                     draggable: true,
                     layer: "Text",
+                    fontId: typeWiseData?.fontId || element.attrs.fontId || 2,
                     fontFamily: typeWiseData?.fontFamily || element.attrs.fontFamily || 'Arial',
                 }
             };

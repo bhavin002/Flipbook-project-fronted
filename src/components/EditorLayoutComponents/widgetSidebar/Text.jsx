@@ -35,7 +35,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
     const [textStyle, setTextStyle] = useState({
         text: selectedShape?.[0]?.attrs.text || '',
         fontFamily: selectedShape?.[0]?.attrs.fontFamily || 'Arial',
-        fontId: selectedShape?.[0]?.attrs.fontId || 'system-arial',
+        fontId: selectedShape?.[0]?.attrs.fontId || '2',
         fontSize: selectedShape?.[0]?.attrs.fontSize || 16,
         fontWeight: selectedShape?.[0]?.attrs.fontWeight || 'normal',
         fontStyle: selectedShape?.[0]?.attrs.fontStyle || 'normal',
@@ -51,7 +51,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
     const [filteredFonts, setFilteredFonts] = useState([...SAMPLE_FONTS]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isLoadingFonts, setIsLoadingFonts] = useState(false);
-    const [selectedFontId, setSelectedFontId] = useState('system-arial');
+    const [selectedFontId, setSelectedFontId] = useState('2');
 
     const textTransformItems = [
         { id: 1, icon: "Aa", name: 'Capitalize', value: 'capitalize' },
@@ -70,7 +70,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                 setFilteredFonts(combinedFonts);
                 
                 // Preload some common fonts (now including SAMPLE_FONTS defaults)
-                const commonFontIds = ['system-arial', 'system-helvetica', 'system-times', SAMPLE_FONTS[0]?.id]; // e.g., first SAMPLE_FONT
+                const commonFontIds = [SAMPLE_FONTS[0]?.id, SAMPLE_FONTS[1]?.id, SAMPLE_FONTS[2]?.id].filter(Boolean);
                 await dynamicFontManager.preloadFonts(commonFontIds);
             } catch (error) {
                 console.error('Error loading fonts:', error);
@@ -101,7 +101,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
 
     useEffect(() => {
         if (selectedShape && selectedShape[0]) {
-            const fontId = selectedShape[0].attrs.fontId || 'system-arial';
+            const fontId = selectedShape[0].attrs.fontId || '2';
             setTextStyle({
                 text: selectedShape[0].attrs.text || '',
                 fontFamily: selectedShape[0].attrs.fontFamily || 'Arial',

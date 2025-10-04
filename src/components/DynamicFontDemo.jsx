@@ -16,7 +16,7 @@ export default function DynamicFontDemo() {
     const [filteredFonts, setFilteredFonts] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
-    const [selectedFontId, setSelectedFontId] = useState('system-arial');
+    const [selectedFontId, setSelectedFontId] = useState('2');
     const [isLoading, setIsLoading] = useState(false);
     const [loadingStatus, setLoadingStatus] = useState({});
     const [sampleText, setSampleText] = useState('The quick brown fox jumps over the lazy dog');
@@ -30,7 +30,7 @@ export default function DynamicFontDemo() {
                 setFilteredFonts(allFonts);
                 
                 // Preload some common fonts
-                const commonFontIds = ['system-arial', 'system-helvetica', 'system-times'];
+                const commonFontIds = ['2', '3', '145']; // Roboto, Roboto Slab, Abel
                 await dynamicFontManager.preloadFonts(commonFontIds);
             } catch (error) {
                 console.error('Error loading fonts:', error);

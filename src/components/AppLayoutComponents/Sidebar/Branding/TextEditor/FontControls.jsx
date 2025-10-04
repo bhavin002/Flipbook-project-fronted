@@ -71,7 +71,7 @@ export default function FontControls({ config, updateConfig }) {
             const isLoaded = await dynamicFontManager.loadFontById(fontId);
             
             if (isLoaded) {
-                updateConfig({ fontFamily: font.family });
+                updateConfig({ fontFamily: font.family ,fontId: font.id});
             } else {
                 console.error(`Failed to load font: ${font.name}`);
             }
