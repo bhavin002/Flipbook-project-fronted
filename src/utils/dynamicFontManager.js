@@ -12,8 +12,6 @@ class DynamicFontManager {
         this.fontCache = new Map();
         this.injectedLinks = new Set();
         this.fonts = [...SAMPLE_FONTS, ...SYSTEM_FONTS];
-        this.isPreloading = false;
-        this.preloadComplete = false;
     }
 
     /**
@@ -204,121 +202,6 @@ class DynamicFontManager {
     }
 
     /**
-     * Preload all Google Fonts at once
-     * @returns {Promise<Object>} Preload results
-     */
-    async preloadAllFonts() {
-        if (this.isPreloading) {
-            console.log('Font preloading already in progress...');
-            return { loaded: [], failed: [], alreadyLoaded: [] };
-        }
-
-        if (this.preloadComplete) {
-            console.log('All fonts already preloaded');
-            return { loaded: [], failed: [], alreadyLoaded: [] };
-        }
-
-        this.isPreloading = true;
-        console.log('Starting preload of all fonts...');
-
-        try {
-            // Get all Google Fonts
-            const googleFonts = this.fonts.filter(font => font.type === 'google');
-            const fontIds = googleFonts.map(font => font.id);
-
-            // Group fonts by URL to avoid duplicate requests
-            const fontGroups = this.groupFontsByUrl(googleFonts);
-            
-            const results = {
-                loaded: [],
-                failed: [],
-                alreadyLoaded: []
-            };
-
-            // Load each font group
-            for (const [url, fonts] of fontGroups) {
-                try {
-                    await this.loadGoogleFontGroup(url, fonts);
-                    results.loaded.push(...fonts.map(f => f.id));
-                } catch (error) {
-                    console.error(`Failed to load font group: ${url}`, error);
-                    results.failed.push(...fonts.map(f => f.id));
-                }
-            }
-
-            // Mark system fonts as loaded
-            const systemFonts = this.fonts.filter(font => font.type === 'system');
-            results.alreadyLoaded.push(...systemFonts.map(f => f.id));
-
-            this.preloadComplete = true;
-            console.log('All fonts preloaded successfully!', results);
-            
-            return results;
-        } catch (error) {
-            console.error('Error preloading fonts:', error);
-            return { loaded: [], failed: [], alreadyLoaded: [] };
-        } finally {
-            this.isPreloading = false;
-        }
-    }
-
-    /**
-     * Group fonts by their Google Fonts URL to minimize requests
-     * @param {Array} fonts - Array of font objects
-     * @returns {Map} Map of URL to fonts array
-     */
-    groupFontsByUrl(fonts) {
-        const groups = new Map();
-        
-        fonts.forEach(font => {
-            const url = font.url;
-            if (!groups.has(url)) {
-                groups.set(url, []);
-            }
-            groups.get(url).push(font);
-        });
-        
-        return groups;
-    }
-
-    /**
-     * Load a group of fonts with the same URL
-     * @param {string} url - Google Fonts URL
-     * @param {Array} fonts - Array of font objects
-     * @returns {Promise<void>}
-     */
-    async loadGoogleFontGroup(url, fonts) {
-        if (this.injectedLinks.has(url)) {
-            // Mark all fonts in this group as loaded
-            fonts.forEach(font => {
-                this.loadedFonts.add(font.id);
-            });
-            return;
-        }
-
-        return new Promise((resolve, reject) => {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = url;
-            
-            link.onload = () => {
-                this.injectedLinks.add(url);
-                // Mark all fonts in this group as loaded
-                fonts.forEach(font => {
-                    this.loadedFonts.add(font.id);
-                });
-                resolve();
-            };
-            
-            link.onerror = () => {
-                reject(new Error(`Failed to load font group: ${url}`));
-            };
-            
-            document.head.appendChild(link);
-        });
-    }
-
-    /**
      * Get font family name for CSS
      * @param {string} fontId - Font ID
      * @returns {string} Font family name
@@ -446,7 +329,6 @@ export const {
     loadFontById,
     loadFontsByIds,
     preloadFonts,
-    preloadAllFonts,
     getFontFamily,
     getFontPreview,
     getFontWeights,

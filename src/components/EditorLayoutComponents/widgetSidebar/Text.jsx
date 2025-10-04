@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { FilterSlider } from '@/components/ui/filterSlider';
-import dynamicFontManager, { preloadAllFonts } from '@/utils/dynamicFontManager';
+import dynamicFontManager from '@/utils/dynamicFontManager';
 
 export default function Text({ selectedShape, setMainStage, mainStage, selectedIndex }) {
     const [textStyle, setTextStyle] = useState({
@@ -68,10 +68,9 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                 setFonts(allFonts);
                 setFilteredFonts(allFonts);
                 
-                // Preload ALL fonts at once
-                console.log('Preloading all fonts...');
-                const preloadResults = await preloadAllFonts();
-                console.log('Font preload results:', preloadResults);
+                // Preload some common fonts
+                const commonFontIds = ['system-arial', 'system-helvetica', 'system-times'];
+                await dynamicFontManager.preloadFonts(commonFontIds);
             } catch (error) {
                 console.error('Error loading fonts:', error);
             } finally {
