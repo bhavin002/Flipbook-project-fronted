@@ -60,7 +60,7 @@ export default function TrackableLinks() {
     return (
         <div className="py-6 max-w-[100vw] overflow-auto space-y-4">
             <div className="p-4 md:p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
-                <h1 className="text-xl md:text-2xl font-bold mb-2">Links for New flipbook</h1>
+                <h1 className="text-2xl font-bold mb-2">Links for New flipbook</h1>
                 <p className="text-sm md:text-base text-gray-500">Create unique links for your flipbook. Track the performance and engagement rate of each link.</p>
             </div>
              <Card>

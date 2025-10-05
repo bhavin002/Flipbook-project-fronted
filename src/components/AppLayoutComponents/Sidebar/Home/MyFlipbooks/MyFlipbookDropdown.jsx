@@ -19,6 +19,7 @@ import { MakeCopyOfFlipbookApi, MoveToTrashFlipbookApi, DeleteFlipbookApi, Recov
 import { toast } from "sonner";
 import { flipbookType } from "@/utils/enum";
 import { CancelDraftFlipbookApi } from "@/service/flipbook.publish.service";
+import { Button } from "@/components/ui/button";
 
 export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isTrash }) {
     const [isSaveAsTemplateModalOpen, setIsSaveAsTemplateModalOpen] = useState(false);
@@ -486,9 +487,9 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
         <>
             <DropdownMenu open={isDropdownOpen} onOpenChange={handleDropdownOpenChange}>
                 <DropdownMenuTrigger asChild>
-                    <button className='absolute top-3 right-3 bg-primary p-1.5 rounded-full shadow-sm cursor-pointer text-white hover:scale-110 transition-all duration-200'>
+                    <Button variant="ghost" size="icon">
                         <EllipsisVertical className="w-4 h-4" />
-                    </button>
+                    </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56" align="end">
                     <DropdownMenuGroup>

@@ -55,7 +55,7 @@ export default function Statistics({ flipbookId }) {
     return (
         <div className="py-6 max-w-[100vw] overflow-auto space-y-4">
             <div className="p-4 md:p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
-                <h1 className="text-xl md:text-2xl font-bold mb-2">Statistics <span className="text-primary">{bookshelfSettings?.bookshelfName || "New Flipbook"}</span></h1>
+                <h1 className="text-2xl font-bold mb-2">Statistics <span className="text-primary">{bookshelfSettings?.bookshelfName || "New Flipbook"}</span></h1>
                 <p className="text-sm md:text-base text-gray-500">Key performance indicators for your flipbook, for a selected date range</p>
             </div>
             <div className="flex gap-2 flex-wrap">
