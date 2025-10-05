@@ -52,7 +52,7 @@ export default function Details() {
                 onValueChange={handleTabChange}
                 className="flex flex-col h-full"
             >
-                <TabsList className="overflow-x-auto max-md:w-full w-fit justify-start overflow-y-hidden">
+                <TabsList className="overflow-x-auto max-md:w-full w-fit justify-start overflow-y-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     <TabsTrigger className="py-2 flex flex-col lg:flex-row lg:items-center lg:gap-2" value="details">
                         <BookOpenText className="w-5 h-5" />
                         <span className="text-xs mt-1 lg:mt-0">Details</span>
