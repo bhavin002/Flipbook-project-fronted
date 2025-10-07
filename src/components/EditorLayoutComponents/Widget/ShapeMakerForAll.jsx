@@ -1,41 +1,71 @@
 import React from 'react';
-import { Group, Path, Shape } from 'react-konva';
+import { Group, Path, Rect, Line } from 'react-konva';
 
 export default function ShapeMakerForAll({ shape, handleDragStart, handleDrag, onSelect, ...props }) {
     const group = React.useRef();
+
     const handleGroupClick = (e) => {
         e.cancelBubble = true;
         if (onSelect) {
             onSelect(e.currentTarget);
         }
     };
-    return (
-        <>
-            <Group
-                ref={group}
-                draggable
-                onClick={handleGroupClick}
-                onTap={handleGroupClick}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDrag}
-                {...props}
-                {...shape}
-                name="shape"
-            >
-                {shape.data.map(element => {
-                    return (<Path
-                        // {...shape}
-                        strokeWidth={shape.strokeWidth}
-                        x={0}
-                        y={0}
-                        stroke={shape.stroke ? shape.fill : shape.stroke}
-                        fill={shape.stroke ? shape.stroke : shape.fill}
-                        draggable={false}
-                        data={element}
-                    />)
-                })}
 
-            </Group>
-        </>
+    return (
+        <Group
+            ref={group}
+            draggable
+            onClick={handleGroupClick}
+            onTap={handleGroupClick}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDrag}
+            {...props}
+            {...shape}
+            name="shape"
+        >
+            {shape.data.map((element, index) => {
+                if (element.type === 'path') {
+                    return (
+                        <Path
+                            key={`path-${index}`}
+                            data={element.data}
+                            strokeWidth={shape.strokeWidth}
+                            x={0}
+                            y={0}
+                            stroke={shape.stroke ? shape.fill : shape.stroke}
+                            fill={shape.stroke ? shape.stroke : shape.fill}
+                            draggable={false}
+                        />
+                    );
+                } else if (element.type === 'rect') {
+                    return (
+                        <Rect
+                            key={`rect-${index}`}
+                            x={Number(element.x) || 0}
+                            y={Number(element.y) || 0}
+                            width={Number(element.width)}
+                            height={Number(element.height)}
+                            stroke={shape.stroke ? shape.fill : shape.stroke}
+                            fill={shape.stroke ? shape.stroke : shape.fill}
+                            strokeWidth={shape.strokeWidth}
+                            draggable={false}
+                        />
+                    );
+                } else if (element.type === 'polygon') {
+                    return (
+                        <Line
+                            key={`polygon-${index}`}
+                            points={element.points}
+                            stroke={shape.stroke ? shape.fill : shape.stroke}
+                            fill={shape.stroke ? shape.stroke : shape.fill}
+                            strokeWidth={shape.strokeWidth}
+                            closed
+                            draggable={false}
+                        />
+                    );
+                }
+                return null;
+            })}
+        </Group>
     );
 };

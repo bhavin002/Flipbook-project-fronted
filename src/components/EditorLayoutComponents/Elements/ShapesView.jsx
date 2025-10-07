@@ -24,13 +24,7 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
                             <div key={shape.id} className="shape-element-box">
                                 <div className="shape-element">
                                     <div
-                                        key={shape.id}
-                                        className="flex justify-center items-center"
-                                        style={{
-                                            height: shape.height || '54px',
-                                            width: shape.width || '54px'
-                                        }}
-                                        draggable
+draggable
                                         onDragStart={(e) => {
                                             mainStage[selectedIndex].dragRect.current = shape?.attrs;
                                         }}
@@ -81,15 +75,22 @@ const ShapesView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIn
                                                 setIsEditorDrawerOpen(false);
                                             }
                                         }}
-                                        dangerouslySetInnerHTML={{ __html: shape.svg }}
-                                    ></div>
+                                    // dangerouslySetInnerHTML={{ __html: shape.svg }}
+                                    >
+                                        <svg class="shape-svg panel-shape" style={{ width: "54px", height: "54px", stroke: "rgb(255, 255, 255)", fill: "rgb(255, 255, 255)", opacity: "1", borderRadius: "0px", pointerEvents:"none"}}    key={shape.id}
+                                        className="flex justify-center items-center"
+                                        
+                                        dangerouslySetInnerHTML={{ __html: shape.svg }}>
+
+                                    </svg>
                                 </div>
                             </div>
-                        )
+                            </div>
+                )
                     })}
-                </div>
             </div>
         </div>
+        </div >
     );
 };
 
