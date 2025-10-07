@@ -1,29 +1,29 @@
 const icons = {
-    "icon-1": `<svg id="icon-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" class="fill-svg" stroke="none" preserveAspectRatio="none">
-                        <path fill-rule="evenodd" d="M0 0h55v55H0z"/                        </svg>`,
-    "icon-2": `<svg id="icon-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" class="stroke-svg" fill="none" preserveAspectRatio="none">
-                    <path fill-rule="evenodd" stroke-width="2" d="M1 1h53v53H1z"/>
-                    </svg>`,
-    "icon-5": `<svg id="icon-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" class="fill-svg" stroke="none" preserveAspectRatio="none">
+    "icon-1": `<svg id="icon-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" stroke="none" preserveAspectRatio="none">
+                        <path fill-rule="evenodd" d="M0 0h55v55H0z"/>                       </svg>`,
+    "icon-2": `<svg id="icon-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" fill="none" preserveAspectRatio="none">
+    <path fill-rule="evenodd" stroke-width="2" d="M1 1h53v53H1z"/>
+</svg>`,
+    "icon-5": `<svg id="icon-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" stroke="none" preserveAspectRatio="none">
                     <path d="M5,0 H50 A5,5 0 0 1 55,5 V50 A5,5 0 0 1 50,55 H5 A5,5 0 0 1 0,50 V5 A5,5 0 0 1 5,0 Z"/>
                 </svg>`,
-    "icon-6": `<svg id="icon-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" class="stroke-svg" fill="none" preserveAspectRatio="none">
+    "icon-6": `<svg id="icon-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" fill="none" preserveAspectRatio="none">
   <path d="M6,1 H49 A5,5 0 0 1 54,6 V49 A5,5 0 0 1 49,54 H6 A5,5 0 0 1 1,49 V6 A5,5 0 0 1 6,1 Z" stroke-width="2"/>
 </svg>
 `,
-    "icon-9": `<svg id="icon-9" xmlns="http://www.w3.org/2000/svg" class="fill-svg" stroke="none" viewBox="0 0 55 55" preserveAspectRatio="none">
+    "icon-9": `<svg id="icon-9" xmlns="http://www.w3.org/2000/svg" stroke="none" viewBox="0 0 55 55" preserveAspectRatio="none">
                 <path fill-rule="evenodd" d="M27.5 0L55 55H0z"/>
             </svg>`,
-    "icon-10": `<svg id="icon-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" class="stroke-svg" fill="none" preserveAspectRatio="none">
+    "icon-10": `<svg id="icon-10" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" fill="none" preserveAspectRatio="none">
                 <path fill-rule="evenodd" stroke-width="2" d="M27.5 2.236L1.618 54h51.764L27.5 2.236z"/>
             </svg>`,
-    "icon-13": `<svg id="icon-13" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" class="fill-svg" stroke="none" preserveAspectRatio="none">
+    "icon-13": `<svg id="icon-13" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" stroke="none" preserveAspectRatio="none">
     <path d="M27.5,0 A27.5,27.5 0 1,0 27.5,55 A27.5,27.5 0 1,0 27.5,0" fill-rule="evenodd"/>
 </svg>`,
-    "icon-14": `<svg id="icon-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" class="stroke-svg" fill="none" preserveAspectRatio="none">
+    "icon-14": `<svg id="icon-14" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" fill="none" preserveAspectRatio="none">
     <path d="M27.5,27.5 m-24.5,0 a24.5,24.5 0 1,0 49,0 a24.5,24.5 0 1,0 -49,0" stroke-width="2" fill-rule="evenodd"/>
 </svg>`,
-    "icon-33": `<svg id="icon-33" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 55 55" class="fill-svg" stroke="none">
+    "icon-33": `<svg id="icon-33" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 55 55" stroke="none">
     <path style="fill-rule:evenodd;clip-rule:evenodd;" d="M54.813,26.804c-0.301-1.171-1.322-2.143-1.456-3.225
         c-0.016-0.133-0.046-0.260-0.089-0.385c-0.001-0.120-0.014-0.238-0.040-0.356c-0.225-1.069,0.426-2.310,0.331-3.525
         c-0.044-0.570-0.169-1.121-0.381-1.655c-0.198-0.532-0.474-1.027-0.823-1.481c-0.736-0.960-2.056-1.456-2.602-2.400
@@ -56,73 +56,73 @@ const icons = {
         c0.180-1.204-0.381-2.488-0.079-3.536c0.037-0.127,0.058-0.257,0.068-0.388c0.045-0.110,0.081-0.225,0.104-0.344
         c0.210-1.073,1.295-1.960,1.682-3.114c0.181-0.544,0.284-1.099,0.298-1.673C55.020,27.926,54.958,27.359,54.813,26.804z"/>
 </svg>`,
-    "icon-41": `<svg id="icon-41" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38" preserveAspectRatio="none" class="stroke-svg" fill="none">
+    "icon-41": `<svg id="icon-41" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38 38" preserveAspectRatio="none" fill="none">
   <path fill-rule="evenodd" stroke-width="2" d="M22.988 36.054c-.962-.313-2.267-.102-3.04.344-1.519.876-2.964.808-4.348-.284-.734-.579-1.571-.799-2.496-.719-.751.066-1.492.077-2.195-.278-.673-.338-1.253-.777-1.588-1.464-.42-.86-1.077-1.343-2.009-1.586-1.539-.402-2.438-1.447-2.655-3.033-.138-1.003-.614-1.763-1.417-2.376-1.264-.965-1.725-2.257-1.34-3.811.274-1.11.176-2.161-.372-3.166-.813-1.492-.686-2.904.372-4.227.664-.83.866-1.764.754-2.807-.15-1.376.393-2.462 1.49-3.28.187-.139.395-.251.602-.36.749-.394 1.202-1.011 1.43-1.82.49-1.731 1.646-2.67 3.434-2.806.642-.048 1.061-.384 1.397-.889.639-.958 1.554-1.454 2.681-1.6.397-.05.783.005 1.153.113.773.227 1.45.12 2.11-.37.833-.621 1.793-.747 2.805-.547.407.08.782.237 1.109.475.987.719 2.062.847 3.243.642 1.363-.237 2.533.237 3.312 1.362.736 1.063 1.648 1.702 2.91 2.004 1.371.328 2.237 1.292 2.5 2.682.218 1.159.769 2.027 1.721 2.72 1.24.903 1.7 2.174 1.365 3.67-.248 1.104-.049 2.075.524 3.036.771 1.296.76 2.634-.124 3.87-.699.978-.905 2.009-.738 3.181.2 1.397-.338 2.557-1.5 3.3-1.08.69-1.74 1.574-2.08 2.802-.372 1.349-1.333 2.18-2.71 2.404-1.188.193-2.136.686-2.854 1.669-.673.92-2.263 1.534-3.446 1.149z"/>
 </svg>`,
-    "icon-21": `<svg id="icon-21" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 54" class="fill-svg" stroke="none" preserveAspectRatio="none">
+    "icon-21": `<svg id="icon-21" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 54" stroke="none" preserveAspectRatio="none">
     <path fill-rule="evenodd" d="M53.968 33.946c0 .16-4.752 8.524-7.075 12.542-.076.132-8.434 4.968-12.488 7.277-.142.08-9.74.134-14.365.127-.156 0-8.586-4.753-12.642-7.078-.126-.072-4.964-8.436-7.28-12.501-.075-.132-.124-9.71-.117-14.34 0-.16 4.743-8.572 7.062-12.614.085-.147 8.454-4.999 12.5-7.303.141-.08 14.82-.072 14.969.013 4.003 2.3 12.289 7.143 12.373 7.29 2.319 4.041 4.632 8.087 6.939 12.136.08.14.13 5.135.13 7.464 0 2.33.002 4.658-.006 6.987z"/>
 </svg>
 `,
-    "icon-22": `<svg id="icon-22" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" class="stroke-svg" fill="none" preserveAspectRatio="none">
+    "icon-22": `<svg id="icon-22" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" fill="none" preserveAspectRatio="none">
     <path fill-rule="evenodd" stroke-width="2" d="M53.634 34.72c.005-1.562.006-2.812.005-5.624v-1.359c0-1.233-.014-3.065-.035-4.539-.012-.819-.026-1.504-.04-1.997a23.549 23.549 0 0 0-.025-.611c-2.325-4.08-4.6-8.058-6.836-11.956.116.203.018.13.205.254a11.197 11.197 0 0 0-.258-.164 76.248 76.248 0 0 0-1-.608c-.813-.487-1.95-1.16-3.303-1.955-2.533-1.487-5.61-3.276-7.648-4.447.219.126-.068.104.266.117a24.132 24.132 0 0 0-.468-.012c-.4-.008-.973-.015-1.69-.021a720.673 720.673 0 0 0-5.098-.02c-1.9-.001-3.735.003-5.096.012-.716.005-1.289.01-1.69.018-.204.003-.361.007-.467.011.358-.013.047.01.268-.116a1041.033 1041.033 0 0 0-7.727 4.456A445.48 445.48 0 0 0 9.66 8.117c-.436.26-.777.465-1.01.61-.116.071-.204.127-.26.164.19-.126.089-.051.206-.256-1.172 2.043-2.94 5.16-4.396 7.754a475.294 475.294 0 0 0-1.88 3.374 82.36 82.36 0 0 0-.562 1.034c-.064.12-.112.213-.142.274.105-.212.05-.085.05-.318-.003 2.364.008 5.922.028 8.848.011 1.567.025 2.885.039 3.83.008.502.016.894.024 1.166.004.135.008.238.012.305-.015-.251.001-.1-.116-.306 1.178 2.067 2.97 5.18 4.457 7.74a513.265 513.265 0 0 0 1.95 3.335c.257.436.46.775.603 1.008.071.117.126.205.163.262-.152-.234-.052-.094-.265-.217 2.061 1.182 5.188 2.954 7.776 4.407 1.38.775 2.543 1.424 3.38 1.884.445.245.794.435 1.036.563.12.065.213.113.274.143-.221-.11-.086-.05-.32-.05 2.367.003 5.93-.01 8.854-.032 1.572-.011 2.892-.025 3.839-.04a80.29 80.29 0 0 0 1.17-.026l.306-.013c-.23.014-.1 0-.3.114 2.057-1.172 5.165-2.961 7.728-4.45a493.409 493.409 0 0 0 3.331-1.95 84.97 84.97 0 0 0 1.009-.605c.116-.07.204-.126.26-.163-.218.143-.091.051-.212.26 1.173-2.028 2.943-5.126 4.405-7.71a469.353 469.353 0 0 0 1.883-3.354c.245-.442.434-.788.563-1.029.064-.12.112-.212.142-.272-.105.21-.05.086-.051.318z"/>
 </svg>
 `,
-    "icon-25": `<svg xmlns="http://www.w3.org/2000/svg" id="icon-25" viewBox="0 0 55 55" preserveAspectRatio="none" class="fill-svg" stroke="none">
-  <path d="M27.5,0 L55,15 L55,40 L27.5,55 L0,40 L0,15 Z" >
+    "icon-25": `<svg xmlns="http://www.w3.org/2000/svg" id="icon-25" viewBox="0 0 55 55" preserveAspectRatio="none" stroke="none">
+  <path d="M27.5,0 L55,15 L55,40 L27.5,55 L0,40 L0,15 Z" />
 </svg>
 `,
-    "icon-26": `<svg id="icon-26" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" preserveAspectRatio="none" class="stroke-svg" fill="none">
+    "icon-26": `<svg id="icon-26" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" preserveAspectRatio="none" fill="none">
   <path d="M27.5,2 L53,15 L53,40 L27.5,53 L2,40 L2,15 Z" stroke-width="2"/>
 </svg>
 `,
-    "icon-29": `<svg id="icon-29" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" preserveAspectRatio="none" class="fill-svg" stroke="none">
+    "icon-29": `<svg id="icon-29" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" preserveAspectRatio="none" stroke="none">
     <path fill-rule="evenodd" d="M27.5 55L0 27.5 27.5 0l27.5 27.5z"/>
 </svg>
 `,
-    "icon-30": `<svg id="icon-30" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" preserveAspectRatio="none" class="stroke-svg" fill="none">
+    "icon-30": `<svg id="icon-30" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 55 55" preserveAspectRatio="none" fill="none">
   <path fill-rule="evenodd" d="M27.5 55L0 27.5 27.5 0l27.5 27.5z"/>
 </svg>
 `,
-    "icon-4": `<svg version="1.1" id="icon-4" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 51 51" enable-background="new 0 0 51 51" xml:space="preserve" class="fill-svg" stroke="none">
+    "icon-4": `<svg version="1.1" id="icon-4" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 51 51" enable-background="new 0 0 51 51" xml:space="preserve" stroke="none">
     <path d="M49,2v47H2V2H49 M51,0H0v51h51V0L51,0z"/>
     <path d="M47,47H4V4h43V47z"/>
 </svg>
 `,
-    "icon-8": `<svg version="1.1" id="icon-8" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 51 51" enable-background="new 0 0 51 51" xml:space="preserve" class="fill-svg" stroke="none">
+    "icon-8": `<svg version="1.1" id="icon-8" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 51 51" enable-background="new 0 0 51 51" xml:space="preserve" stroke="none">
     <path d="M46,2c1.7,0,3,1.3,3,3v41c0,1.7-1.3,3-3,3H5c-1.7,0-3-1.3-3-3V5c0-1.7,1.3-3,3-3H46 M46,0H5C2.2,0,0,2.2,0,5v41c0,2.8,2.2,5,5,5h41c2.8,0,5-2.2,5-5V5C51,2.2,48.8,0,46,0L46,0z"/>
     <path fill-rule="evenodd" clip-rule="evenodd" d="M9,4h33c2.8,0,5,2.2,5,5v33c0,2.8-2.2,5-5,5H9c-2.8,0-5-2.2-5-5V9C4,6.2,6.2,4,9,4z"/>
 </svg>
 `,
-    "icon-12": `<svg version="1.1" id="icon-12" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 45 45" enable-background="new 0 0 45 45" xml:space="preserve" class="fill-svg" stroke="none">
+    "icon-12": `<svg version="1.1" id="icon-12" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 45 45" enable-background="new 0 0 45 45" xml:space="preserve" stroke="none">
     <path d="M22.5,4.5L41.8,43H3.2L22.5,4.5 M22.5,0L0,45h45L22.5,0L22.5,0z"/>
     <path d="M7,41L22.5,9L38,41H7z"/>
 </svg>
 `,
-    "icon-16": `<svg version="1.1" id="icon-16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 51 51" enable-background="new 0 0 51 51" xml:space="preserve" class="fill-svg" stroke="none">
+    "icon-16": `<svg version="1.1" id="icon-16" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 51 51" enable-background="new 0 0 51 51" xml:space="preserve" stroke="none">
     <path d="M25.5,2C38.5,2,49,12.5,49,25.5S38.5,49,25.5,49S2,38.5,2,25.5S12.5,2,25.5,2 M25.5,0C11.4,0,0,11.4,0,25.5S11.4,51,25.5,51S51,39.6,51,25.5S39.6,0,25.5,0L25.5,0z"/>
     <path  d="M25.5,4C37.4,4,47,13.6,47,25.5S37.4,47,25.5,47S4,37.4,4,25.5S13.6,4,25.5,4z"/>
 </svg>
 `,
-    "icon-24": `<svg version="1.1" id="icon-24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 51 51" enable-background="new 0 0 51 51" xml:space="preserve" class="fill-svg" stroke="none">
+    "icon-24": `<svg version="1.1" id="icon-24" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 51 51" enable-background="new 0 0 51 51" xml:space="preserve" stroke="none">
     <path d="M31.8,2l10.9,6.3L49,19.2v12.6l-6.3,10.9L31.8,49H19.2L8.3,42.7L2,31.8V19.2L8.3,8.3L19.2,2H31.8 M32.3,0
         H18.7L6.8,6.8L0,18.7v13.7l6.8,11.8L18.7,51h13.7l11.8-6.8L51,32.3V18.7L44.2,6.8L32.3,0L32.3,0z"/>
     <path d="M19.7,47l-10-5.8L4,31.3V19.7l5.8-10l10-5.8h11.5l10,5.8l5.8,10v11.5l-5.8,10l-10,5.8H19.7z"/>
 </svg>
 `,
     "icon-28": `<svg version="1.1" id="icon-28" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 40 58" enable-background="new 0 0 40 58" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 40 58" enable-background="new 0 0 40 58" xml:space="preserve" stroke="none">
     <path d="M36,45.7L20,53L4,45.7V12.3L20,5l16,7.3V45.7z"/>
     <path d="M20,2.2l18,8.2v37.1l-18,8.2L2,47.6V10.4L20,2.2 M20,0L0,9.2v39.7L20,58l20-9.2V9.2L20,0L20,0z"/>
 </svg>
 `,
     "icon-32": `<svg version="1.1" id="icon-32" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 63 34" enable-background="new 0 0 63 34" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 63 34" enable-background="new 0 0 63 34" xml:space="preserve" stroke="none">
     <path d="M31.5,2.3L58.8,17L31.5,31.7L4.2,17L31.5,2.3 M31.5,0L0,17l31.5,17L63,17L31.5,0L31.5,0z"/>
     <path d="M55,17L31,29L8,17L31,5L55,17z"/>
 </svg>
 `,
     "icon-42": `<svg version="1.1" id="icon-42" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 51 51" style="enable-background:new 0 0 51 51;" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 51 51" style="enable-background:new 0 0 51 51;" xml:space="preserve" stroke="none">
     <g>
         <path style="fill-rule:evenodd;clip-rule:evenodd;" d="M46.855,24.957c-0.236-0.915-1.035-1.675-1.138-2.521
             c-0.012-0.104-0.037-0.203-0.07-0.301c-0.001-0.094-0.011-0.186-0.031-0.278c-0.176-0.836,0.333-1.806,0.259-2.756
@@ -231,22 +231,22 @@ const icons = {
     </g>
 </svg>
 `,
-    "icon-43": `<svg version="1.1" id="icon-43" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" class="fill-svg" viewBox="0 0 51 26" enable-background="new 0 0 51 26" xml:space="preserve">
+    "icon-43": `<svg version="1.1" id="icon-43" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" viewBox="0 0 51 26" enable-background="new 0 0 51 26" xml:space="preserve">
         <path d="M51,26H0V0h51V26z"/>
 </svg>
 `,
-    "icon-44": `<svg version="1.1" id="icon-44" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" class="stroke-svg" fill="none" viewBox="0 0 51 26" enable-background="new 0 0 51 26" xml:space="preserve">
+    "icon-44": `<svg version="1.1" id="icon-44" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" fill="none" viewBox="0 0 51 26" enable-background="new 0 0 51 26" xml:space="preserve">
         <path fill-rule="evenodd" stroke-width="2" d="M47,22H4V4h43V22z"/>
 </svg>
 `,
     "icon-45": `<svg version="1.1" id="icon-45" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 51 26" enable-background="new 0 0 51 26" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 51 26" enable-background="new 0 0 51 26" xml:space="preserve" stroke="none">
     <path d="M47,22H4V4h43V22z"/>
     <path d="M0,0v26h51V0H0z M49,24H2V2h47V24z"/>
 </svg>
 `,
     "icon-46": `<svg version="1.1" id="icon-46" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 86 94" enable-background="new 0 0 86 94" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 86 94" enable-background="new 0 0 86 94" xml:space="preserve" stroke="none">
     <g>
         <path d="M12.04,45.46 L42.84,52.2 L85.85,43.94 L55.06,37.2 Z"/>
         <path d="M24.06,23.51 L67.32,15.2 L0.15,0.66 L9.43,11.43 L0.15,18.34 Z"/>
@@ -397,7 +397,7 @@ const icons = {
 </svg>
 `,
     "icon-47": `<svg version="1.1" id="icon-47" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 76" enable-background="new 0 0 93 76" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 76" enable-background="new 0 0 93 76" xml:space="preserve" stroke="none">
     <g>
         <path d="M46.5,74.69 L19.96,48.14 L18.69,48.14 L46.5,75.96 L74.31,48.14 L73.04,48.14 Z"/>
         <path d="M27.52,20.3c-0.03-0.05-0.42-0.78-0.86-0.41l-7.81,7.81h1.27L27.52,20.3z"/>
@@ -699,7 +699,7 @@ const icons = {
     </g>
 </svg>
 `,
-    "icon-49": `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="icon-49" x="0px" y="0px" width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 89 93" enable-background="new 0 0 89 93" xml:space="preserve" class="fill-svg" stroke="none">
+    "icon-49": `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="icon-49" x="0px" y="0px" width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 89 93" enable-background="new 0 0 89 93" xml:space="preserve" stroke="none">
     <g>
         <g>
             <g>
@@ -788,7 +788,7 @@ const icons = {
 </svg>
 `,
     "icon-51": `<svg version="1.1" id="icon-51" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 94 68" enable-background="new 0 0 94 68" xml:space="preserve" class="fill-svg stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 94 68" enable-background="new 0 0 94 68" xml:space="preserve" stroke="none">
     <g>
         <g>
             <g>
@@ -885,7 +885,7 @@ const icons = {
 </svg>
 `,
     "icon-52": `<svg version="1.1" id="icon-52" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 68" enable-background="new 0 0 93 68" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 68" enable-background="new 0 0 93 68" xml:space="preserve" stroke="none">
     <g>
         <g>
             <path d="M22.72,46.48c-1.09-1.17-2-2.4-2.43-3.55h-6.89c0.29,3.11,2.5,5.51,4.6,7.91
@@ -935,7 +935,7 @@ const icons = {
 </svg>
 `,
     "icon-53": `<svg version="1.1" id="icon-53" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 43" enable-background="new 0 0 93 43" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 43" enable-background="new 0 0 93 43" xml:space="preserve" stroke="none">
     <g>
         <path d="M3.26,18.83c0.04-0.03,0.12-0.05,0.23-0.04c0.1,0.01,0.17,0.06,0.22,0.14
             c0.05,0.09,0.13,0.13,0.23,0.14c0.11,0.01,0.29-0.09,0.54-0.32c0.08,0.11,0.12,0.16,0.2,0.27c2.34-0.37,4.76-1.9,7.28-4.58
@@ -1197,7 +1197,7 @@ const icons = {
 </svg>
 `,
     "icon-54": `<svg version="1.1" id="icon-54" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 94 25" enable-background="new 0 0 94 25" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 94 25" enable-background="new 0 0 94 25" xml:space="preserve" stroke="none">
     <g>
         <g>
             <path d="M17.26,6.31c0.14-0.03,0.24-0.02,0.3,0.02c0.06,0.04,0.11,0.02,0.17-0.06
@@ -1731,7 +1731,7 @@ const icons = {
 </svg>
 `,
     "icon-55": `<svg version="1.1" id="icon-55" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 58" enable-background="new 0 0 93 58" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 58" enable-background="new 0 0 93 58" xml:space="preserve" stroke="none">
     <g>
         <g>
             <path d="M14.49,25.12c0.5,0.53,1.09,0.95,1.79,1.25c0.7,0.3,1.49,0.45,2.36,0.45
@@ -1817,7 +1817,7 @@ const icons = {
 </svg>
 `,
     "icon-56": `<svg version="1.1" id="icon-56" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 94 43" enable-background="new 0 0 94 43" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 94 43" enable-background="new 0 0 94 43" xml:space="preserve" stroke="none">
     <g>
         <rect x="0.51" y="0.47" width="22.72" height="17.51"/>
         <path d="M47.86,31.65c0.31,0.03,0.61-0.02,0.89-0.13c0.28-0.11,0.55-0.25,0.8-0.41
@@ -1903,7 +1903,7 @@ const icons = {
 </svg>
 `,
     "icon-58": `<svg version="1.1" id="icon-58" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 23 93" enable-background="new 0 0 23 93" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 23 93" enable-background="new 0 0 23 93" xml:space="preserve" stroke="none">
     <g>
         <g>
             <g>
@@ -2052,7 +2052,7 @@ const icons = {
 </svg>
 `,
     "icon-59": `<svg version="1.1" id="icon-59" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 94 90" enable-background="new 0 0 94 90" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 94 90" enable-background="new 0 0 94 90" xml:space="preserve" stroke="none">
     <path d="M0.47,0.37v89.25l46.6-26.49l46.45,26.41V0.37H0.47z M11.3,12.33h71.26v0.43H11.3V12.33z
          M82.34,15.17l-6.56,36.73h-5.25l-2.62-17.05L66.6,24.35l-1.31,10.49l-2.62,17.05h-5.25l-6.56-36.73h5.25l2.62,17.05l1.33,10.49
         l1.29-10.49l2.62-17.05h5.25l2.62,17.05l1.29,10.49l1.33-10.49l2.62-17.05H82.34z M47.41,30.91v3.94h-6.56v13.12h9.18v3.94H35.61
@@ -2061,7 +2061,7 @@ const icons = {
 </svg>
 `,
     "icon-63": `<svg version="1.1" id="icon-63" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 34" enable-background="new 0 0 93 34" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 34" enable-background="new 0 0 93 34" xml:space="preserve" stroke="none">
     <g>
         <g>
             <path d="M16.5,7.58c0.57,0.04,1,0.05,1.28,0.05c0.1,0.12,0.15,0.24,0.15,0.36
@@ -2276,7 +2276,7 @@ const icons = {
 </svg>
 `,
     "icon-64": `<svg version="1.1" id="icon-64" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 50" enable-background="new 0 0 93 50" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 50" enable-background="new 0 0 93 50" xml:space="preserve" stroke="none">
     <g>
         <g>
             <g>
@@ -2711,7 +2711,7 @@ const icons = {
 </svg>
 `,
     "icon-66": `<svg version="1.1" id="icon-66" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 29" enable-background="new 0 0 93 29" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 29" enable-background="new 0 0 93 29" xml:space="preserve" stroke="none">
     <g>
         <path d="M16.3,10.74c-0.08-0.15-0.19-0.26-0.32-0.32c-0.13-0.06-0.28-0.1-0.45-0.1
             c-0.18,0-0.33,0.03-0.46,0.1c-0.13,0.06-0.24,0.17-0.33,0.32c-0.09,0.15-0.15,0.35-0.19,0.6c-0.04,0.25-0.07,0.56-0.07,0.93v5.3
@@ -2808,7 +2808,7 @@ const icons = {
 </svg>
 `,
     "icon-68": `<svg version="1.1" id="icon-68" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 21" enable-background="new 0 0 93 21" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 21" enable-background="new 0 0 93 21" xml:space="preserve" stroke="none">
     <g>
         <polygon points="26.1,6.73 24.5,11.1 27.98,11.1 26.33,6.73 	"/>
         <path d="M72.43,7.57c-0.17-0.21-0.42-0.4-0.76-0.58c-0.33-0.17-0.69-0.26-1.08-0.26h-2.18v7.16h2.18
@@ -2892,7 +2892,7 @@ const icons = {
 </svg>
 `,
     "icon-69": `<svg version="1.1" id="icon-69" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 68 93" enable-background="new 0 0 68 93" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 68 93" enable-background="new 0 0 68 93" xml:space="preserve" stroke="none">
     <g>
         <g>
             <g>
@@ -2976,7 +2976,7 @@ const icons = {
 </svg>
 `,
     "icon-70": `<svg version="1.1" id="icon-70" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 42" enable-background="new 0 0 93 42" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 42" enable-background="new 0 0 93 42" xml:space="preserve" stroke="none">
     <g>
         <rect x="0.01" y="0.1" width="22.71" height="17.51"/>
         <path d="M48.56,27.69c-0.3-0.34-0.67-0.61-1.08-0.79c-0.42-0.18-0.87-0.27-1.36-0.27
@@ -3035,7 +3035,7 @@ const icons = {
 </svg>
 `,
     "icon-71": `<svg version="1.1" id="icon-71" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 93" enable-background="new 0 0 93 93" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 93" enable-background="new 0 0 93 93" xml:space="preserve" stroke="none">
     <g>
         <path d="M51.66,30.93l-3.01,1.49l2.26,2.26l1.5-3.02c0.09-0.19,0.21-0.42,0.34-0.68
             c0.13-0.26,0.27-0.54,0.44-0.83c-0.29,0.17-0.57,0.32-0.83,0.45C52.09,30.73,51.86,30.84,51.66,30.93z"/>
@@ -3062,7 +3062,7 @@ const icons = {
 </svg>
 `,
     "icon-72": `<svg version="1.1" id="icon-72" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 57" enable-background="new 0 0 93 57" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 57" enable-background="new 0 0 93 57" xml:space="preserve" stroke="none">
     <path d="M91.47,15.91c-1.29-1.46-2.8-2.22-4.69-2.89c-1.51-0.53-3.03-1.06-4.54-1.59
         c-1.75-0.61-3.5-1.23-5.26-1.84c-1.89-0.66-3.78-1.32-5.66-1.98c-1.91-0.67-3.83-1.34-5.74-2.01c-1.84-0.64-3.68-1.28-5.52-1.92
         c-4.9-1.71-8.93-3.55-13.53-3.6c-1.99-0.02-4.08,0.3-6.4,1.11c-1.58,0.55-3.15,1.1-4.73,1.65c-1.82,0.64-3.65,1.27-5.47,1.91
@@ -3076,7 +3076,7 @@ const icons = {
 </svg>
 `,
     "icon-73": `<svg version="1.1" id="icon-73" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 69" enable-background="new 0 0 93 69" xml:space="preserve" class="fill-svg stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 69" enable-background="new 0 0 93 69" xml:space="preserve" stroke="none">
     <g>
         <g>
             <g>
@@ -3103,7 +3103,7 @@ const icons = {
 </svg>
 `,
     "icon-74": `<svg version="1.1" id="icon-74" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 41" enable-background="new 0 0 93 41" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 41" enable-background="new 0 0 93 41" xml:space="preserve" stroke="none">
     <g>
         <g>
             <path d="M18.11,0.32l0,1.01c4.26,0,8.69,1.03,12.97,2.02c3.8,0.88,7.39,1.71,10.5,1.71
@@ -3154,7 +3154,7 @@ const icons = {
 </svg>
 `,
     "icon-75": `<svg version="1.1" id="icon-75" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 41" enable-background="new 0 0 93 41" xml:space="preserve" class="fill-svg" stroke="none">
+    width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 93 41" enable-background="new 0 0 93 41" xml:space="preserve" stroke="none">
     <g>
         <g>
             <path d="M18.08,0.36l0,1.01c4.26-0.01,8.69,1.01,12.97,2c3.8,0.87,7.39,1.7,10.5,1.7
@@ -3191,7 +3191,7 @@ const icons = {
     </g>
 </svg>
 `,
-    "icon-76": `<svg id="icon-76" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 49.5 47.1" class="fill-svg" stroke="none"  preserveAspectRatio="none"><path d="M24.8 0l5.8 18h18.9L34.2 29.1l5.9 18L24.8 36 9.5 47.1l5.8-18L0 18h18.9z"/></svg>
+    "icon-76": `<svg id="icon-76" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 49.5 47.1" stroke="none"  preserveAspectRatio="none"><path d="M24.8 0l5.8 18h18.9L34.2 29.1l5.9 18L24.8 36 9.5 47.1l5.8-18L0 18h18.9z"/></svg>
 `,
 };
 
