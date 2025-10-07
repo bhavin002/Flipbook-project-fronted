@@ -1,16 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import dynamicFontManager from '@/utils/dynamicFontManager';
 import SAMPLE_FONTS from '@/data/sampleFonts';
+import { Separator } from '@/components/ui/separator';
 
 export default function FontControls({ config, updateConfig }) {
     const [allFonts, setAllFonts] = useState([...SAMPLE_FONTS]);
     const [filteredFonts, setFilteredFonts] = useState([...SAMPLE_FONTS]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [searchInput, setSearchInput] = useState('');
     const [isLoadingFonts, setIsLoadingFonts] = useState(false);
     const [selectedFontId, setSelectedFontId] = useState('2');
+    const searchInputRef = useRef(null);
 
     useEffect(() => {
         const loadFonts = async () => {
@@ -43,6 +46,10 @@ export default function FontControls({ config, updateConfig }) {
 
         setFilteredFonts(filtered);
     }, [allFonts, searchQuery]);
+
+    const handleSearch = () => {
+        setSearchQuery(searchInput);
+    };
 
     // Sync selectedFontId with config.fontFamily when config changes
     useEffect(() => {
@@ -112,19 +119,27 @@ export default function FontControls({ config, updateConfig }) {
                             )}
                         </SelectValue>
                     </SelectTrigger>
-                    <SelectContent className="max-h-60">
-                        {/* Search within dropdown */}
-                        <div className="p-2 border-b">
+                    <SelectContent className="max-h-60 w-60">
+                        {/* Search within dropdown - Fixed at top */}
+                        <div className="sticky top-0 bg-white z-10 pb-2">
                             <div className="relative">
                                 <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                                 <Input
-                                    placeholder="Search fonts..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    ref={searchInputRef}
+                                    placeholder="Search fonts... (Press Enter)"
+                                    value={searchInput}
+                                    onChange={(e) => setSearchInput(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleSearch();
+                                        }
+                                        e.stopPropagation();
+                                    }}
                                     className="pl-8 h-8"
                                     onClick={(e) => e.stopPropagation()}
                                 />
                             </div>
+                            <Separator className="mt-2" />
                         </div>
 
                         {/* Font List with Previews */}
