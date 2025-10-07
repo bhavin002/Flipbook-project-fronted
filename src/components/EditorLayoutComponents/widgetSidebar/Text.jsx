@@ -30,6 +30,7 @@ import { Label } from "@/components/ui/label";
 import { FilterSlider } from '@/components/ui/filterSlider';
 import dynamicFontManager from '@/utils/dynamicFontManager';
 import { SAMPLE_FONTS } from '@/data/sampleFonts';
+import { Separator } from '@/components/ui/separator';
 
 export default function Text({ selectedShape, setMainStage, mainStage, selectedIndex }) {
     const [textStyle, setTextStyle] = useState({
@@ -50,6 +51,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
     const [allFonts, setAllFonts] = useState([...SAMPLE_FONTS]);
     const [filteredFonts, setFilteredFonts] = useState([...SAMPLE_FONTS]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [searchInput, setSearchInput] = useState('');
     const [isLoadingFonts, setIsLoadingFonts] = useState(false);
     const [selectedFontId, setSelectedFontId] = useState('2');
 
@@ -68,7 +70,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                 const combinedFonts = [...SAMPLE_FONTS];
                 setAllFonts(combinedFonts);
                 setFilteredFonts(combinedFonts);
-                
+
                 // Preload some common fonts (now including SAMPLE_FONTS defaults)
                 const commonFontIds = [SAMPLE_FONTS[0]?.id, SAMPLE_FONTS[1]?.id, SAMPLE_FONTS[2]?.id].filter(Boolean);
                 await dynamicFontManager.preloadFonts(commonFontIds);
@@ -78,7 +80,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                 setIsLoadingFonts(false);
             }
         };
-        
+
         loadFonts();
     }, []);
 
@@ -89,15 +91,18 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
         // Filter by search query
         if (searchQuery.trim()) {
             const query = searchQuery.toLowerCase();
-            filtered = filtered.filter(font => 
+            filtered = filtered.filter(font =>
                 font.name.toLowerCase().includes(query) ||
-                font.family.toLowerCase().includes(query) ||
-                font.tags.some(tag => tag.toLowerCase().includes(query))
+                font.family.toLowerCase().includes(query)
             );
         }
 
         setFilteredFonts(filtered);
     }, [allFonts, searchQuery]);
+
+    const handleSearch = () => {
+        setSearchQuery(searchInput);
+    };
 
     useEffect(() => {
         if (selectedShape && selectedShape[0]) {
@@ -126,11 +131,11 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
     const handleFontSelect = async (fontId) => {
         setSelectedFontId(fontId);
         const font = allFonts.find(f => f.id === fontId); // Use allFonts instead of dynamicFontManager.getFontById for consistency
-        
+
         if (font) {
             // Load font if not already loaded (dynamic loading)
             const isLoaded = await dynamicFontManager.loadFontById(fontId);
-            
+
             if (isLoaded) {
                 // Update both fontId and fontFamily
                 updateItem('fontId', fontId);
@@ -293,8 +298,8 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                         <SelectTrigger className="w-full">
                             <SelectValue placeholder="Select font">
                                 {selectedFontId && (
-                                    <span style={{ 
-                                        fontFamily: allFonts.find(f => f.id === selectedFontId)?.family || 'Arial' 
+                                    <span style={{
+                                        fontFamily: allFonts.find(f => f.id === selectedFontId)?.family || 'Arial'
                                     }}>
                                         {allFonts.find(f => f.id === selectedFontId)?.name || 'Select font'}
                                     </span>
@@ -302,20 +307,26 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                             </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="max-h-60">
-                            {/* Search within dropdown */}
-                            <div className="p-2 border-b">
-                                <div className="relative">
+                            {/* Search within dropdown - Fixed at top */}
+                            <div className="sticky top-0 bg-white z-10 pb-2">
+                                <div className="relative" onKeyDown={(e) => e.stopPropagation()}>
                                     <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                                     <Input
-                                        placeholder="Search fonts..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        placeholder="Search fonts... (Press Enter)"
+                                        value={searchInput}
+                                        onChange={(e) => setSearchInput(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleSearch();
+                                            }
+                                            e.stopPropagation();
+                                        }}
                                         className="pl-8 h-8"
                                         onClick={(e) => e.stopPropagation()}
                                     />
                                 </div>
+                                <Separator className="mt-2" />
                             </div>
-                            
                             {/* Font List with Previews */}
                             <div className="max-h-48 overflow-y-auto">
                                 {isLoadingFonts ? (
@@ -324,16 +335,16 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                                     </div>
                                 ) : (
                                     filteredFonts.map((font) => (
-                                        <SelectItem 
-                                            key={font.id} 
+                                        <SelectItem
+                                            key={font.id}
                                             value={font.id}
                                             className="cursor-pointer"
                                         >
                                             <div className="flex items-center justify-between w-full p-2">
                                                 {/* Preview Image */}
-                                                <img 
-                                                    src={font.preview} 
-                                                    alt={font.name} 
+                                                <img
+                                                    src={font.preview}
+                                                    alt={font.name}
                                                     className="h-6 mr-2"
                                                 />
                                             </div>
