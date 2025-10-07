@@ -18,7 +18,7 @@ const iconsWithIsMasked = [1, 5, 9, 13, 33, 21, 25, 29, 43, 72, 76, 79, 80, 82, 
     478, 479, 482, 484, 490, 494, 496, 498, 500, 502, 504, 506, 508, 521, 522, 523, 524, 525, 526,
     527, 534, 535, 536, 537, 538, 539, 540];
 
-const parseSVG = (svgString, shapeAttrs = {}) => {
+const parseSVG = (svgString) => {
     const elements = [];
     let viewBoxDimensions = { width: 55, height: 55 }; // Default fallback dimensions
 
@@ -46,8 +46,6 @@ const parseSVG = (svgString, shapeAttrs = {}) => {
         // Extract <path> elements
         const paths = doc.querySelectorAll('path');
         paths.forEach((path) => {
-            const stroke = path.getAttribute('stroke') || shapeAttrs.stroke || 'none';
-            const fill = path.getAttribute('fill') || shapeAttrs.fill || '#757575';
             elements.push({
                 type: 'path',
                 data: path.getAttribute('d') || '',
@@ -57,8 +55,6 @@ const parseSVG = (svgString, shapeAttrs = {}) => {
         // Extract <rect> elements
         const rects = doc.querySelectorAll('rect');
         rects.forEach((rect) => {
-            const stroke = rect.getAttribute('stroke') || shapeAttrs.stroke || 'none';
-            const fill = rect.getAttribute('fill') || shapeAttrs.fill || '#757575';
             elements.push({
                 type: 'rect',
                 x: parseFloat(rect.getAttribute('x')) || 0,
@@ -78,8 +74,6 @@ const parseSVG = (svgString, shapeAttrs = {}) => {
                     .flatMap((point) => point.split(',').map(Number))
                     .filter((num) => !isNaN(num))
                 : [];
-            const stroke = polygon.getAttribute('stroke') || shapeAttrs.stroke || 'none';
-            const fill = polygon.getAttribute('fill') || shapeAttrs.fill || '#757575';
             elements.push({
                 type: 'polygon',
                 points,
