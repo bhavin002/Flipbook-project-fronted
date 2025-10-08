@@ -80,6 +80,36 @@ const parseSVG = (svgString) => {
             });
         });
 
+        //circle
+        const circles = doc.querySelectorAll('circle');
+        circles.forEach((circle) => {
+            const cx = parseFloat(circle.getAttribute('cx')) || 0;
+            const cy = parseFloat(circle.getAttribute('cy')) || 0;
+            const r = parseFloat(circle.getAttribute('r')) || 0;
+            elements.push({
+                type: 'circle',
+                cx,
+                cy,
+                r,
+            });
+        });
+
+        //ellipse
+        const ellipses = doc.querySelectorAll('ellipse');
+        ellipses.forEach((ellipse) => {
+            const cx = parseFloat(ellipse.getAttribute('cx')) || 0;
+            const cy = parseFloat(ellipse.getAttribute('cy')) || 0;
+            const rx = parseFloat(ellipse.getAttribute('rx')) || 0;
+            const ry = parseFloat(ellipse.getAttribute('ry')) || 0;
+            elements.push({
+                type: 'ellipse',
+                cx,
+                cy,
+                rx,
+                ry,
+            });
+        });
+
     } catch (error) {
         console.error('Error parsing SVG:', error);
     }

@@ -33,7 +33,40 @@ export default function MaskedImageWidget({ shape }) {
         >
             <defs>
                 <clipPath id={maskId}>
-                    <path d={shape.data} />
+                    {shape.data.map((element, index) => {
+                        if (element.type === 'path') {
+                            return <path d={element.data} />
+                        }
+                        else if (element.type === 'rect') {
+                            return <rect
+                                key={`rect-${index}`}
+                                x={Number(element.x) || 0}
+                                y={Number(element.y) || 0}
+                                width={Number(element.width)}
+                                height={Number(element.height)}
+                            />
+                        } else if (element.type === 'polygon') {
+                            return <polygon
+                                key={`polygon-${index}`}
+                                points={element.points}
+                            />
+                        } else if (element.type === 'circle') {
+                            return <circle
+                                key={`circle-${index}`}
+                                cx={Number(element.cx) || 0}
+                                cy={Number(element.cy) || 0}
+                                r={Number(element.r) || 0}
+                            />
+                        } else if (element.type === 'ellipse') {
+                            return <ellipse
+                                key={`ellipse-${index}`}
+                                cx={Number(element.cx) || 0}
+                                cy={Number(element.cy) || 0}
+                                rx={Number(element.rx) || 0}
+                                ry={Number(element.ry) || 0}
+                            />
+                        }
+                    })}
                 </clipPath>
             </defs>
             <image

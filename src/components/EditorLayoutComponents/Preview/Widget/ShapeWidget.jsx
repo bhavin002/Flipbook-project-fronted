@@ -56,7 +56,7 @@ const modalHandlers = {
 
 export default function ShapeWidget({ shape, flipbookRef }) {
 
-    console.log("shape ShapeWidget",shape)
+    console.log("shape ShapeWidget", shape)
 
     const [isHovered, setIsHovered] = useState(false);
 
@@ -64,10 +64,10 @@ export default function ShapeWidget({ shape, flipbookRef }) {
     const handleClick = () => {
         if (shape.htmlData?.action) {
             const action = shape.htmlData.action;
-            
+
             if (actionHandlers[action]) {
                 const shouldShowModal = actionHandlers[action](shape.htmlData, flipbookRef);
-                
+
                 // If action handler returns true, show modal
                 if (shouldShowModal && modalHandlers[action]) {
                     modalHandlers[action](shape.htmlData);
@@ -143,14 +143,57 @@ export default function ShapeWidget({ shape, flipbookRef }) {
                     zIndex: 0,
                 }}
             >
-                {shape.data.map((path, index) => {
-                    return <path 
-                        key={index}
-                        d={path} 
-                        stroke={shape.stroke ? shape.fill : shape.stroke}
-                        fill={shape.stroke ? shape.stroke : shape.fill} 
-                        strokeWidth={shape.strokeWidth || 0} 
-                    />;
+                {shape.data.map((element, index) => {
+                    if (element.type === 'path') {
+                        return <path
+                            key={`path-${index}`}
+                            d={element.data}
+                            stroke={shape.stroke ? shape.fill : shape.stroke}
+                            fill={shape.stroke ? shape.stroke : shape.fill}
+                            strokeWidth={shape.strokeWidth || 0}
+                        />;
+                    }
+                    else if (element.type === 'rect') {
+                        return <rect
+                            key={`rect-${index}`}
+                            x={Number(element.x) || 0}
+                            y={Number(element.y) || 0}
+                            width={Number(element.width)}
+                            height={Number(element.height)}
+                            stroke={shape.stroke ? shape.fill : shape.stroke}
+                            fill={shape.stroke ? shape.stroke : shape.fill}
+                            strokeWidth={shape.strokeWidth || 0}
+                        />;
+                    } else if (element.type === 'polygon') {
+                        return <polygon
+                            key={`polygon-${index}`}
+                            points={element.points}
+                            stroke={shape.stroke ? shape.fill : shape.stroke}
+                            fill={shape.stroke ? shape.stroke : shape.fill}
+                            strokeWidth={shape.strokeWidth || 0}
+                        />;
+                    } else if (element.type === 'circle') {
+                        return <circle
+                            key={`circle-${index}`}
+                            cx={Number(element.cx) || 0}
+                            cy={Number(element.cy) || 0}
+                            r={Number(element.r) || 0}
+                            stroke={shape.stroke ? shape.fill : shape.stroke}
+                            fill={shape.stroke ? shape.stroke : shape.fill}
+                            strokeWidth={shape.strokeWidth || 0}
+                        />;
+                    } else if (element.type === 'ellipse') {
+                        return <ellipse
+                            key={`ellipse-${index}`}
+                            cx={Number(element.cx) || 0}
+                            cy={Number(element.cy) || 0}
+                            rx={Number(element.rx) || 0}
+                            ry={Number(element.ry) || 0}
+                            stroke={shape.stroke ? shape.fill : shape.stroke}
+                            fill={shape.stroke ? shape.stroke : shape.fill}
+                            strokeWidth={shape.strokeWidth || 0}
+                        />;
+                    }
                 })}
             </svg>
             {/* Hover overlay for open-overlay action */}

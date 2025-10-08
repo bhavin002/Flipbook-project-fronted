@@ -800,7 +800,8 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                 if (shape.attrs.title === 'shape-widget') {
                                     isOverShapeWidget = true;
                                     targetShape = shape.attrs;
-                                    shapeWidgetData = shape.children[0].dataArray;
+                                    // shapeWidgetData = shape.children[0].dataArray;
+                                    shapeWidgetData = shape.children.map(child => child.dataArray ? child.dataArray : null).filter(data => data !== null);
                                 } else if (shape.attrs.isMasked && (shape.attrs.title === 'masked-image' || shape.attrs.title === 'masked-gif' || shape.attrs.title === 'masked-sticker')) {
                                     isOverMaskedImage = true;
                                     targetShape = shape.attrs;
@@ -1135,7 +1136,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                         );
                                     case 'masked-sticker':
                                         return (
-                                            <MaskedKonvaGif
+                                            <MaskedKonvaGif index={index} imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise}
                                                 isCropping={isCropping} onDragMove={handleShapeDragMove} key={shape.id} handleDragStart={handleDragStart} handleDrag={handleDrag} shape={shape} draggable onSelect={handleSelectShape}
                                             />
                                         );

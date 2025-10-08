@@ -235,9 +235,9 @@ const Section = ({ setMainStage, title, images, onViewAll, lastImageRef, mainSta
                         if (shape.attrs.title === 'shape-widget') {
                             isOverShapeWidget = true;
                             shapeWidget = shape.attrs;
-                            shapeWidgetData = shape.children[0].dataArray;
+                            shapeWidgetData = shape.children.map(child => child.dataArray ? child.dataArray : null).filter(data => data !== null);
                         }
-                        else if (shape.attrs.title === 'masked-image') {
+                        else if (shape.attrs.isMasked && (shape.attrs.title === 'masked-image' || shape.attrs.title === 'masked-gif' || shape.attrs.title === 'masked-sticker')) {
                             isOverMaskedImage = true;
                             shapeWidget = shape.attrs;
                         }

@@ -23,6 +23,7 @@ export default function ShapeMakerForAll({ shape, handleDragStart, handleDrag, o
             {...shape}
             name="shape"
         >
+
             {shape.data.map((element, index) => {
                 if (element.type === 'path') {
                     return (
@@ -63,9 +64,49 @@ export default function ShapeMakerForAll({ shape, handleDragStart, handleDrag, o
                             draggable={false}
                         />
                     );
+                } else if (element.type === 'circle') {
+                    return (
+                        <Path
+                            key={`circle-${index}`}
+                            data={`M ${element.cx - element.r}, ${element.cy}
+                                   a ${element.r},${element.r} 0 1,0 ${element.r * 2},0
+                                   a ${element.r},${element.r} 0 1,0 ${-element.r * 2},0`}
+                            strokeWidth={shape.strokeWidth}
+                            x={0}
+                            y={0}
+                            stroke={shape.stroke ? shape.fill : shape.stroke}
+                            fill={shape.stroke ? shape.stroke : shape.fill}
+                            draggable={false}
+                        />
+                    );
+                } else if (element.type === 'ellipse') {
+                    return (
+                        <Path
+                            key={`ellipse-${index}`}
+                            data={`M ${element.cx - element.rx}, ${element.cy}
+                                   a ${element.rx},${element.ry} 0 1,0 ${element.rx * 2},0
+                                      a ${element.rx},${element.ry} 0 1,0 ${-element.rx * 2},0`}
+                            strokeWidth={shape.strokeWidth}
+                            x={0}
+                            y={0}
+                            stroke={shape.stroke ? shape.fill : shape.stroke}
+                            fill={shape.stroke ? shape.stroke : shape.fill}
+                            draggable={false}
+                        />
+                    );
                 }
                 return null;
             })}
+            <Rect
+                x={0}
+                y={0}
+                width={shape.width || 100} // Default width if not provided
+                height={shape.height || 100} // Default height if not provided
+                // Uncomment and set width and height if needed
+                // width={shape.width}
+                // height={shape.height}
+                fill="transparent"
+            />
         </Group>
     );
 };

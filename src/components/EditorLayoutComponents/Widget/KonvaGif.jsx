@@ -22,6 +22,7 @@ export default function KonvaGif({
         const node = document.createElement('canvas');
         return node;
     }, []);
+    console.log("imageLoadCounterPageWise", imageLoadCounterPageWise);
 
     // Handle GIF animation
     useEffect(() => {
@@ -38,7 +39,7 @@ export default function KonvaGif({
                 anim = a;
                 setImageLoadCounterPageWise((prev) => ({
                     ...prev,
-                    [index]: (prev[index] || 0) + 1,
+                    [index]: (prev[index] || 0) - 1,
                 }));
                 // Set canvas dimensions to match shape
                 canvas.width = shape.width || anim.frames[0].width;
@@ -50,11 +51,12 @@ export default function KonvaGif({
                         imageRef.current.getLayer().draw();
                     }
                 };
-            }).catch((error) => {
-                setImageLoadCounterPageWise(prev => prev - 1)
-            });
+            })
         } catch (error) {
-            setImageLoadCounterPageWise(prev => prev - 1)
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) - 1,
+            }));
         }
 
         return () => {

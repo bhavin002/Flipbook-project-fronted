@@ -8,70 +8,74 @@ export default function MaskedKonvaGif({
     handleDragStart,
     handleDrag,
     onSelect,
-    index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
+    index,
+    imageLoadCounterPageWise,
+    setImageLoadCounterPageWise,
     ...props
 }) {
     const imageRef = useRef(null);
     const rectRef = useRef(null);
     const groupRef = useRef();
 
-    // Create a canvas for GIF rendering
+    // Create canvas for GIF rendering
     const canvas = useMemo(() => {
         const node = document.createElement('canvas');
         return node;
     }, []);
 
+    // -------------------------------
     // Handle GIF animation
+    // -------------------------------
     useEffect(() => {
         let anim;
         try {
-            if (!shape.src.includes('.gif')) return;
+            if (!shape.src?.includes('.gif')) return;
+
             setImageLoadCounterPageWise((prev) => ({
                 ...prev,
                 [index]: (prev[index] || 0) + 1,
             }));
-            window.gifler(shape.src).get((a) => {
-                anim = a;
-                setImageLoadCounterPageWise((prev) => ({
-                    ...prev,
-                    [index]: (prev[index] || 1) - 1,
-                }));
-                // Set canvas dimensions to match shape
-                canvas.width = shape.width || anim.frames[0].width;
-                canvas.height = shape.height || anim.frames[0].height;
-                anim.animateInCanvas(canvas);
-                anim.onDrawFrame = (ctx, frame) => {
-                    ctx.drawImage(frame.buffer, frame.x, frame.y);
-                    if (imageRef.current && imageRef.current.getLayer()) {
-                        imageRef.current.getLayer().draw();
-                    }
-                };
-            }).catch((error) => {
-                setImageLoadCounterPageWise((prev) => ({
-                    ...prev,
-                    [index]: (prev[index] || 1) - 1,
-                }));
-            })
+
+            window.gifler(shape.src)
+                .get((a) => {
+                    anim = a;
+                    setImageLoadCounterPageWise((prev) => ({
+                        ...prev,
+                        [index]: (prev[index] || 1) - 1,
+                    }));
+
+                    // Set canvas dimensions
+                    canvas.width = shape.width || anim.frames[0].width;
+                    canvas.height = shape.height || anim.frames[0].height;
+
+                    anim.animateInCanvas(canvas);
+
+                    anim.onDrawFrame = (ctx, frame) => {
+                        ctx.drawImage(frame.buffer, frame.x, frame.y);
+                        if (imageRef.current && imageRef.current.getLayer()) {
+                            imageRef.current.getLayer().draw();
+                        }
+                    };
+                })
         } catch (error) {
+            console.error('Error loading GIF:', error);
             setImageLoadCounterPageWise((prev) => ({
                 ...prev,
                 [index]: (prev[index] || 1) - 1,
             }));
-            console.error('Error loading GIF:', error);
         }
 
         return () => {
-            if (anim) {
-                anim.stop();
-            }
+            if (anim) anim.stop();
         };
     }, [shape.src, canvas, shape.width, shape.height]);
 
-    // Apply effects and cropping
+    // -------------------------------
+    // Apply cropping (optional)
+    // -------------------------------
     useEffect(() => {
         if (!imageRef.current) return;
         const node = imageRef.current;
-        const rectNode = rectRef.current;
 
         if (shape && shape.cropImage) {
             try {
@@ -86,75 +90,76 @@ export default function MaskedKonvaGif({
                 console.error('Error parsing cropImage:', error);
             }
         }
+    }, [isCropping, shape]);
 
-        // EffectEvent(shape, rectNode, node);
-        // node.getLayer()?.batchDraw();
-    }, [
-        isCropping,
-        shape,
-        shape?.fill,
-        shape?.effect?.opacity,
-    ]);
-
+    // -------------------------------
+    // Handle selection
+    // -------------------------------
     const handleGroupClick = (e) => {
         e.cancelBubble = true;
-        if (onSelect) {
-            onSelect(e.currentTarget);
-        }
+        onSelect?.(e.currentTarget);
     };
 
+    // -------------------------------
+    // Multiple maskData clip function
+    // -------------------------------
     const getClipFunc = (ctx) => {
-        const maskData = shape.maskData;
-        if (maskData) {
-            var paths = maskData;
-            ctx.beginPath();
-            for (var i = 0; i < paths.length; i++) {
-                var cmd = paths[i].command;
-                var points = paths[i].points;
+        const allMasks = shape.maskData || [];
+        ctx.beginPath();
+
+        allMasks.forEach((maskData) => {
+            if (!maskData) return;
+
+            maskData.forEach(({ command: cmd, points }) => {
                 switch (cmd) {
-                    case "L":
-                        ctx.lineTo(points[0], points[1]);
-                        break;
-                    case "M":
+                    case 'M':
                         ctx.moveTo(points[0], points[1]);
                         break;
-                    case "C":
-                        ctx.bezierCurveTo(points[0], points[1], points[2], points[3], points[4], points[5]);
+                    case 'L':
+                        ctx.lineTo(points[0], points[1]);
                         break;
-                    case "Q":
+                    case 'C':
+                        ctx.bezierCurveTo(
+                            points[0], points[1],
+                            points[2], points[3],
+                            points[4], points[5]
+                        );
+                        break;
+                    case 'Q':
                         ctx.quadraticCurveTo(points[0], points[1], points[2], points[3]);
                         break;
-                    case "A":
-                        var cx = points[0],
-                            cy = points[1],
-                            rx = points[2],
-                            ry = points[3],
-                            sa = points[4],
-                            ea = points[5],
-                            rot = points[6],
-                            counterclockwise = points[7],
-                            r = rx > ry ? rx : ry,
-                            scaleX = rx > ry ? 1 : rx / ry,
-                            scaleY = rx > ry ? ry / rx : 1;
+                    case 'A': {
+                        const [cx, cy, rx, ry, sa, ea, rot, ccw] = points;
+                        const r = Math.max(rx, ry);
+                        const scaleX = rx > ry ? 1 : rx / ry;
+                        const scaleY = rx > ry ? ry / rx : 1;
+
+                        ctx.save();
                         ctx.translate(cx, cy);
                         ctx.rotate(rot);
                         ctx.scale(scaleX, scaleY);
-                        ctx.arc(0, 0, r, sa, sa + ea, 1 - counterclockwise);
-                        ctx.scale(1 / scaleX, 1 / scaleY);
-                        ctx.rotate(-rot);
-                        ctx.translate(-cx, -cy);
+                        ctx.arc(0, 0, r, sa, sa + ea, !ccw);
+                        ctx.restore();
                         break;
-                    case "z":
+                    }
+                    case 'z':
+                    case 'Z':
                         ctx.closePath();
                         break;
                 }
-            }
-        }
+            });
+        });
     };
 
+    // -------------------------------
+    // Shape dimensions
+    // -------------------------------
     const shapeWidth = shape?.width || canvas.width || 0;
     const shapeHeight = shape?.height || canvas.height || 0;
 
+    // -------------------------------
+    // Render
+    // -------------------------------
     return (
         <Group
             ref={groupRef}
@@ -169,17 +174,17 @@ export default function MaskedKonvaGif({
             {...shape}
             {...props}
         >
-            {/* Rectangle with shadow */}
+            {/* Shadow rectangle */}
             <Rect
                 ref={rectRef}
-                x={0 + 2}
-                y={0 + 2}
+                x={2}
+                y={2}
                 width={shapeWidth - 4}
                 height={shapeHeight - 4}
                 fill="#000000"
             />
 
-            {/* Nested Group with clipping */}
+            {/* Masked GIF Group */}
             <Group
                 clipFunc={shape.maskData ? getClipFunc : null}
                 x={0}
@@ -198,7 +203,6 @@ export default function MaskedKonvaGif({
                     width={shapeWidth}
                     height={shapeHeight}
                     fill={shape.fill || 'white'}
-                    zIndex={0}
                 />
                 <Image
                     ref={imageRef}
@@ -207,9 +211,6 @@ export default function MaskedKonvaGif({
                     y={0}
                     width={shapeWidth}
                     height={shapeHeight}
-                    scaleX={1}
-                    scaleY={1}
-                    zIndex={1}
                 />
             </Group>
         </Group>

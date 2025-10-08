@@ -172,16 +172,25 @@ const GIFsView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedInde
     );
 };
 
-const Section = ({ setIsEditorDrawerOpen, setMainStage, title, gifs, lastGifRef, mainStage, selectedIndex }) => {
-    // Function to handle GIF drag start
-    const handleGifDragStart = async (gif) => {
+const Section = ({
+    setIsEditorDrawerOpen,
+    setMainStage,
+    title,
+    gifs,
+    lastGifRef,
+    mainStage,
+    selectedIndex
+}) => {
+    // Unified handler (merged from handleImageSelect logic)
+    const handleGifSelect = async (gif, isDragStart = false) => {
         const dimensions = await new Promise((resolve, reject) => {
             const img = new Image();
             img.src = gif.media_formats.gif.url;
             img.onload = () => resolve({ width: img.width, height: img.height });
-            img.onerror = () => reject("Error loading image");
+            img.onerror = () => reject("Error loading GIF");
         });
-        mainStage[selectedIndex].dragRect.current = {
+
+        const imageData = {
             width: dimensions.width,
             height: dimensions.height,
             type: "img",
@@ -192,73 +201,171 @@ const Section = ({ setIsEditorDrawerOpen, setMainStage, title, gifs, lastGifRef,
             htmlType: "stock-gif",
             sidebar: "image-action"
         };
-    };
 
-    // Function to handle GIF click
-    const handleGifClick = async (gif) => {
-        const dimensions = await new Promise((resolve, reject) => {
-            const img = new Image();
-            img.src = gif.media_formats.gif.url;
-            img.onload = () => resolve({ width: img.width, height: img.height });
-            img.onerror = () => reject("Error loading image");
-        });
+        if (isDragStart) {
+            mainStage[selectedIndex].dragRect.current = imageData;
+            return;
+        }
 
-        const shape = {
-            attrs: {
-                width: dimensions.width,
-                height: dimensions.height,
-                type: "img",
-                src: `${gif.media_formats.gif.url}`,
-                visible: true,
-                title: "stock-gif",
-                layer: "Stock Gif",
-                htmlType: "stock-gif",
-                sidebar: "image-action"
-            }
-        };
+        const item = { attrs: imageData };
 
-        if (shape?.attrs) {
-            // Get the group from the stage
+        if (item.attrs) {
+            // Get group from stage
             let group = mainStage[selectedIndex].stageref.current.children[0].children[1];
 
             // Calculate the center of the group
             const groupWidth = group.width();
             const groupHeight = group.height();
-            const dropX = (groupWidth / 2) / group.scaleX() - (shape?.attrs.width || 50) / 2;
-            const dropY = (groupHeight / 2) / group.scaleY() - (shape?.attrs.height || 50) / 2;
+            const dropX = (groupWidth / 2) / group.scaleX() - (item.attrs.width || 50) / 2;
+            const dropY = (groupHeight / 2) / group.scaleY() - (item.attrs.height || 50) / 2;
 
-            // Create new shape at the center of the group
+            let isOverShapeWidget = false;
+            let isOverMaskedImage = false;
+            let shapeWidget = null;
+            let shapeWidgetData = [];
+
+            // Check if over shape widget or masked image
+            mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach((shape) => {
+                if (mainStage[selectedIndex].selectedShapes.length === 1) {
+                    if (shape.attrs.id === mainStage[selectedIndex].selectedShapes[0].attrs.id) {
+                        if (shape.attrs.title === "shape-widget") {
+                            isOverShapeWidget = true;
+                            shapeWidget = shape.attrs;
+                            shapeWidgetData = shape.children
+                                .map((child) => (child.dataArray ? child.dataArray : null))
+                                .filter((data) => data !== null);
+                        } else if (shape.attrs.isMasked && (shape.attrs.title === 'masked-image' || shape.attrs.title === 'masked-gif' || shape.attrs.title === 'masked-sticker')) {
+                            isOverMaskedImage = true;
+                            shapeWidget = shape.attrs;
+                        }
+                    }
+                }
+            });
+
+            // Create new shape at center
             let newShape = {
                 x: dropX,
                 y: dropY,
-                ...shape?.attrs,
+                ...item.attrs,
                 id: uuid()
             };
-            // Add the new shape at the center of the group
-            setMainStage(prevState => {
-                const updatedState = [...prevState];
-                updatedState[selectedIndex] = {
-                    ...updatedState[selectedIndex],
-                    shapes: [...updatedState[selectedIndex].shapes, newShape]
-                };
-                return updatedState;
-            });
 
-            // Select the newly added shape
-            setTimeout(() => {
-                mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach((child) => {
-                    if (child.attrs.id === newShape.id) {
-                        setMainStage(prevState => {
-                            const updatedState = [...prevState];
-                            updatedState[selectedIndex] = {
-                                ...updatedState[selectedIndex],
-                                selectedShapes: [child]
-                            };
-                            return updatedState;
-                        });
-                    }
+            // Handle masked image replace
+            if (isOverMaskedImage) {
+                mainStage[selectedIndex].selectedShapes = [];
+                const htmlType = imageData.htmlType;
+                const typeMapping = {
+                    "upload-photo": "masked-image",
+                    "stock-gif": "masked-gif",
+                    "stock-photo": "masked-image",
+                    "stock-sticker": "masked-sticker"
+                };
+                const layerMapping = {
+                    "upload-photo": "Masked Image",
+                    "stock-gif": "Masked Gif",
+                    "stock-photo": "Masked Image",
+                    "stock-sticker": "Masked Sticker"
+                };
+                const shapeType = typeMapping[htmlType] || "masked-sticker";
+                const layerType = layerMapping[htmlType] || "Masked Sticker";
+
+                setMainStage((prevState) => {
+                    const updatedState = [...prevState];
+                    const updatedShapes = updatedState[selectedIndex].shapes.map((shape, idx) => {
+                        if (shape.id !== shapeWidget.id) return shape;
+                        const shapeNode =
+                            updatedState[selectedIndex].stageref.current.children[0].children[1].children[idx].attrs;
+                        return {
+                            ...shape,
+                            title: shapeType,
+                            layer: layerType,
+                            htmlType: shapeType,
+                            x: shapeNode.x,
+                            y: shapeNode.y,
+                            scaleX: shapeNode.scaleX,
+                            scaleY: shapeNode.scaleY,
+                            width: shapeNode.width,
+                            height: shapeNode.height,
+                            src: imageData.src,
+                            type: "img"
+                        };
+                    });
+                    updatedState[selectedIndex] = {
+                        ...updatedState[selectedIndex],
+                        shapes: updatedShapes
+                    };
+                    return updatedState;
                 });
-            }, 100);
+                return;
+            }
+
+            // Handle shape-widget masking logic
+            if (isOverShapeWidget && shapeWidget?.isMasked) {
+                newShape = {
+                    src: imageData.src,
+                    height: Number(shapeWidget.height),
+                    width: Number(shapeWidget.width),
+                    x: shapeWidget.x,
+                    y: shapeWidget.y,
+                    scaleX: shapeWidget.scaleX,
+                    scaleY: shapeWidget.scaleY,
+                    skewX: shapeWidget.skewX,
+                    skewY: shapeWidget.skewY,
+                    title: "masked-gif",
+                    layer: "Masked Gif",
+                    htmlType: "masked-gif",
+                    type: "img",
+                    isMasked: true,
+                    data: shapeWidget.data,
+                    maskData: shapeWidgetData,
+                    maskType: shapeWidget.maskType,
+                    draggable: true,
+                    visible: true,
+                    id: uuid()
+                };
+
+                mainStage[selectedIndex].selectedShapes = [];
+                setMainStage((prevState) => {
+                    const updatedState = [...prevState];
+                    const updatedShapes = updatedState[selectedIndex].shapes.filter(
+                        (shape) => shape.id !== shapeWidget.id
+                    );
+                    updatedState[selectedIndex] = {
+                        ...updatedState[selectedIndex],
+                        shapes: [...updatedShapes, newShape]
+                    };
+                    return updatedState;
+                });
+            } else {
+                // Add new shape to stage
+                setMainStage((prevState) => {
+                    const updatedState = [...prevState];
+                    updatedState[selectedIndex] = {
+                        ...updatedState[selectedIndex],
+                        shapes: [...updatedState[selectedIndex].shapes, newShape]
+                    };
+                    return updatedState;
+                });
+            }
+
+            // Select new shape
+            if (newShape) {
+                setTimeout(() => {
+                    mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach((child) => {
+                        if (child.attrs.id === newShape.id) {
+                            setMainStage((prevState) => {
+                                const updatedState = [...prevState];
+                                updatedState[selectedIndex] = {
+                                    ...updatedState[selectedIndex],
+                                    selectedShapes: [child]
+                                };
+                                return updatedState;
+                            });
+                        }
+                    });
+                }, 100);
+            }
+
             setIsEditorDrawerOpen(false);
         }
     };
@@ -268,28 +375,16 @@ const Section = ({ setIsEditorDrawerOpen, setMainStage, title, gifs, lastGifRef,
             <h3 className="text-white font-bold">{title}</h3>
             <div className="grid grid-cols-3 gap-2 mt-2">
                 {gifs.map((gif, index) => {
-                    if (index === gifs.length - 1) {
-                        return (
-                            <img
-                                draggable
-                                onDragStart={() => handleGifDragStart(gif)}
-                                onClick={() => handleGifClick(gif)}
-                                ref={lastGifRef}
-                                key={gif.id}
-                                src={gif.media_formats.gif.url}
-                                alt={gif.content_description}
-                                className="rounded-lg w-full h-24 object-cover cursor-pointer"
-                            />
-                        );
-                    }
+                    const isLast = index === gifs.length - 1;
                     return (
                         <img
-                            draggable
-                            onDragStart={() => handleGifDragStart(gif)}
-                            onClick={() => handleGifClick(gif)}
                             key={gif.id}
                             src={gif.media_formats.gif.url}
                             alt={gif.content_description}
+                            ref={isLast ? lastGifRef : null}
+                            draggable
+                            onDragStart={() => handleGifSelect(gif, true)}
+                            onClick={() => handleGifSelect(gif, false)}
                             className="rounded-lg w-full h-24 object-cover cursor-pointer"
                         />
                     );
@@ -298,5 +393,7 @@ const Section = ({ setIsEditorDrawerOpen, setMainStage, title, gifs, lastGifRef,
         </div>
     );
 };
+
+
 
 export default GIFsView;

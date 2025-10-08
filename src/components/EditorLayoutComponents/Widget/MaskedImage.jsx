@@ -8,7 +8,9 @@ const MaskedImage = ({
   onSelect,
   handleDragStart,
   handleDrag,
-  index, imageLoadCounterPageWise, setImageLoadCounterPageWise,
+  index,
+  imageLoadCounterPageWise,
+  setImageLoadCounterPageWise,
   ...props
 }) => {
   const groupRef = useRef();
@@ -16,17 +18,21 @@ const MaskedImage = ({
   const rectRef = useRef();
   const [image, setImage] = useState(null);
 
+  // -------------------------------
   // Load the image
+  // -------------------------------
   useEffect(() => {
     if (!shape?.src) return;
 
     const img = new window.Image();
+    img.crossOrigin = 'Anonymous';
     img.src = shape.src;
+
     setImageLoadCounterPageWise((prev) => ({
       ...prev,
       [index]: (prev[index] || 0) + 1,
     }));
-    img.crossOrigin = 'Anonymous';
+
     img.onload = () => {
       setImageLoadCounterPageWise((prev) => ({
         ...prev,
@@ -43,105 +49,106 @@ const MaskedImage = ({
     };
   }, [shape?.src]);
 
+  // -------------------------------
   // Apply effects and cropping
+  // -------------------------------
   useEffect(() => {
     if (!image || !imageRef.current) return;
 
     const node = imageRef.current;
     const rectNode = rectRef.current;
 
-    // Apply cropping if available
+    // Apply cropping
     if (shape && shape.cropImage) {
       try {
-        const cropImage = typeof shape.cropImage === 'string'
-          ? JSON.parse(shape.cropImage)
-          : shape.cropImage;
+        const cropImage =
+          typeof shape.cropImage === 'string'
+            ? JSON.parse(shape.cropImage)
+            : shape.cropImage;
 
         if (cropImage && cropImage.attrs) {
-          // Apply cropping attributes to the image node
-          // groupRef.current.attrs.scaleX *= cropImage.attrs.scaleX || 1;
-          // groupRef.current.attrs.scaleY *= cropImage.attrs.scaleY || 1;
-          // cropImage.attrs.scaleX = 1;
-          // cropImage.attrs.scaleY = 1
           node.cropTransform({ ...cropImage.attrs });
         }
       } catch (error) {
-        console.error("Error parsing cropImage:", error);
+        console.error('Error parsing cropImage:', error);
       }
     }
 
     // Apply effects
     EffectEvent(shape, rectNode, node);
     node.getLayer()?.batchDraw();
-  }, [
-    image,
-    isCropping,
-    shape,
-  ]);
+  }, [image, isCropping, shape]);
 
-  // Get the mask clipping function
+  // -------------------------------
+  // Mask Clip Function (supports multiple masks)
+  // -------------------------------
   const getClipFunc = (ctx) => {
-    const maskData = shape.maskData;
-    if (maskData) {
-      var paths = maskData;
-      ctx.beginPath();
-      for (var i = 0; i < paths.length; i++) {
-        var cmd = paths[i].command;
-        var points = paths[i].points;
+    const allMasks = shape.maskData || [];
+    ctx.beginPath();
+
+    allMasks.forEach((maskData) => {
+      if (!maskData) return;
+
+      maskData.forEach(({ command: cmd, points }) => {
         switch (cmd) {
-          case "L":
-            ctx.lineTo(points[0], points[1]);
-            break;
-          case "M":
+          case 'M':
             ctx.moveTo(points[0], points[1]);
             break;
-          case "C":
-            ctx.bezierCurveTo(points[0], points[1], points[2], points[3], points[4], points[5]);
+          case 'L':
+            ctx.lineTo(points[0], points[1]);
             break;
-          case "Q":
+          case 'C':
+            ctx.bezierCurveTo(
+              points[0], points[1],
+              points[2], points[3],
+              points[4], points[5]
+            );
+            break;
+          case 'Q':
             ctx.quadraticCurveTo(points[0], points[1], points[2], points[3]);
             break;
-          case "A":
-            var cx = points[0],
-              cy = points[1],
-              rx = points[2],
-              ry = points[3],
-              sa = points[4],
-              ea = points[5],
-              rot = points[6],
-              counterclockwise = points[7],
-              r = rx > ry ? rx : ry,
-              scaleX = rx > ry ? 1 : rx / ry,
-              scaleY = rx > ry ? ry / rx : 1;
+          case 'A': {
+            const [cx, cy, rx, ry, sa, ea, rot, ccw] = points;
+            const r = Math.max(rx, ry);
+            const scaleX = rx > ry ? 1 : rx / ry;
+            const scaleY = rx > ry ? ry / rx : 1;
+
+            ctx.save();
             ctx.translate(cx, cy);
             ctx.rotate(rot);
             ctx.scale(scaleX, scaleY);
-            ctx.arc(0, 0, r, sa, sa + ea, 1 - counterclockwise);
-            ctx.scale(1 / scaleX, 1 / scaleY);
-            ctx.rotate(-rot);
-            ctx.translate(-cx, -cy);
+            ctx.arc(0, 0, r, sa, sa + ea, !ccw);
+            ctx.restore();
             break;
-          case "z":
+          }
+          case 'z':
+          case 'Z':
             ctx.closePath();
             break;
         }
-      }
-    }
+      });
+    });
   };
 
+  // -------------------------------
+  // Group click handler
+  // -------------------------------
   const handleGroupClick = (e) => {
     e.cancelBubble = true;
     onSelect?.(e.currentTarget);
   };
 
-  // Get shape dimensions
+  // -------------------------------
+  // Shape dimensions and effects
+  // -------------------------------
   const shapeWidth = shape?.width || image?.width || 0;
   const shapeHeight = shape?.height || image?.height || 0;
 
-  // Get corner radius values from shape effect
-  const shapeEffect = shape?.effect || {};
   if (!image) return null;
 
+  // -------------------------------
+  // JSX Render
+  // -------------------------------
   return (
     <Group
       ref={groupRef}
@@ -159,8 +166,8 @@ const MaskedImage = ({
       {/* Shadow Rectangle */}
       <Rect
         ref={rectRef}
-        x={0 + 2}
-        y={0 + 2}
+        x={2}
+        y={2}
         width={shapeWidth - 4}
         height={shapeHeight - 4}
         fill="#000000"
@@ -176,7 +183,6 @@ const MaskedImage = ({
         y={shape.flipY ? shapeHeight : 0}
         scaleX={shape.flipX ? -1 : 1}
         scaleY={shape.flipY ? -1 : 1}
-
       >
         <Rect
           x={0}
@@ -184,18 +190,14 @@ const MaskedImage = ({
           width={shapeWidth}
           height={shapeHeight}
           fill={shape.fill || 'white'}
-          zIndex={0}
         />
         <Image
           ref={imageRef}
           image={image}
           x={0}
           y={0}
-          scaleX={1}
-          scaleY={1}
           width={shapeWidth}
           height={shapeHeight}
-          zIndex={1}
         />
       </Group>
     </Group>
