@@ -154,7 +154,7 @@ export default function KonvaGif({
                     bottomRightRadius,
                     bottomLeftRadius,
                 ]}
-                fill={shape?.effect?.shadowColor || '#000000'}
+                fill={'transparent'}
             />
 
             {/* Nested Group with clipping */}
