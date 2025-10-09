@@ -175,18 +175,18 @@ import { Progress } from "@/components/ui/progress";
             borderDash: [5, 5],
             anchorSize: 21,
             anchorCornerRadius: 11,
-            anchorFill:"#ffffff",
-            borderStroke:"#8B5CF6",
-            borderStrokeWidth:2,
-            anchorStroke:"#8B5CF6",
+            anchorFill: "#ffffff",
+            borderStroke: "#8B5CF6",
+            borderStrokeWidth: 2,
+            anchorStroke: "#8B5CF6",
             enabledAnchors: ['top-left', 'top-right', 'bottom-right', 'bottom-left']
         }).attachTo(this.cropImage);
 
         this.transformer = new Konva.Transformer({
-             anchorFill:"#ffffff",
-            borderStroke:"#8B5CF6",
-            borderStrokeWidth:2,
-            anchorStroke:"#8B5CF6",
+            anchorFill: "#ffffff",
+            borderStroke: "#8B5CF6",
+            borderStrokeWidth: 2,
+            anchorStroke: "#8B5CF6",
             rotateEnabled: false,
         }).attachTo(this);
         layer.add(this.cropImageTransformer, this.transformer);
@@ -371,7 +371,7 @@ export default function Editor() {
         return ref.current;
     }
 
-    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter,imageLoadCounterPageWise, setImageLoadCounterPageWise,isFormCustomize } = useOutletContext();
+    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage } = useOutletContext();
     const autoScroll = useRef([]);
 
     const parentRef = useRef(null);
@@ -396,7 +396,7 @@ export default function Editor() {
     const [isPublishModalOpenInternal, setIsPublishModalOpenInternal] = useState(false); // Stack for redo
     const lastScrollTop = useRef(0);
     const scrollTimeout = useRef(null);
-    
+
     const generateMainStageString = (stages) => {
         // if (isCropping) return;
         return stages
@@ -425,15 +425,17 @@ export default function Editor() {
         // mainStage[selectedIndex].shapes = mainStage[selectedIndex].stageref && mainStage[selectedIndex].stageref.current &&  mainStage[selectedIndex].stageref.current.children[0].children[1].children.map(e => e.attrs)
         const newMainStageString = generateMainStageString(mainStage);
         if (newMainStageString !== mainStageString) {
+
             debouncedUpdate(newMainStageString);
             console.log('dragging===========================================111');
+            undoStack.length > 1 && setIsAnyChangeMadeInStage(true);
         }
     }, [mainStage]);
     useEffect(() => {
         if (isPublishModalOpen) {
             if (!isFormCustomize && selectedIndex < 2) {
                 setTimeout(() => {
-                     setPageCounter(1);
+                    setPageCounter(1);
                 }, 100);
             }
             setSelectedIndex(0);
@@ -539,7 +541,7 @@ export default function Editor() {
         temp.forEach(stage => {
             // let newObj = typeof (stage.stageref?.current) === 'string' ? JSON.parse(stage.stageref?.current) : stage.stageref?.current;
             // stage.shapes =
-                // newObj ? newObj?.children[0]?.children[1]?.children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes
+            // newObj ? newObj?.children[0]?.children[1]?.children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] : stage.shapes
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
             });
@@ -578,7 +580,7 @@ export default function Editor() {
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
             });
-               stage.stageref = null;
+            stage.stageref = null;
             // stage.stageref = { current: newObj };
             stage.selectedShapes = [];
         })
@@ -594,7 +596,7 @@ export default function Editor() {
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
             });
-               stage.stageref = null;
+            stage.stageref = null;
             // stage.stageref = { current: newObj };
             stage.selectedShapes = [];
         })
@@ -625,7 +627,7 @@ export default function Editor() {
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
             });
-               stage.stageref = null;
+            stage.stageref = null;
             // stage.stageref = { current: newObj };
             stage.selectedShapes = [];
         })
@@ -636,7 +638,7 @@ export default function Editor() {
             stage.shapes.forEach(element => {
                 element.visible = (element.visible == null || element.visible == undefined) ? true : element.visible;
             });
-               stage.stageref = null;
+            stage.stageref = null;
             // stage.stageref = { current: newObj };
             stage.selectedShapes = [];
         })
@@ -874,7 +876,7 @@ export default function Editor() {
     };
 
     const handleCropCancel = () => {
-         let x = [];
+        let x = [];
         mainStage[selectedIndex]?.stageref?.current?.children[0]?.children[1]?.children.forEach((selectedShapeData) => {
             if (
                 allowHtmlTypesForCrop.includes(selectedShapeData.attrs.htmlType) &&
@@ -926,7 +928,7 @@ export default function Editor() {
 
     return (
         <div className="flex w-full flex-col h-full">
-            <TopToolbar setIsShapeDrawerOpen={setIsShapeDrawerOpen} isCropping={isCropping} handleCrop={handleCrop} handleCropEnd={handleCropEnd} handleCropCancel={handleCropCancel}  selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
+            <TopToolbar setIsShapeDrawerOpen={setIsShapeDrawerOpen} isCropping={isCropping} handleCrop={handleCrop} handleCropEnd={handleCropEnd} handleCropCancel={handleCropCancel} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
             <div className="flex w-full flex-grow relative">
                 {((mainStage.length !== pageCounter - 1) && !isInitialLoad) && <>
                     <div className="absolute inset-0 bg-white/40 backdrop-blur-sm z-40 pointer-events-auto" />
@@ -960,7 +962,7 @@ export default function Editor() {
                                     if (((isPublishModalOpenInternal && index <= pageCounter) || (!isPublishModalOpenInternal && (index == prevSelectedIndex || index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1)))) {
                                         return (
                                             <div key={index} ref={(el) => (autoScroll.current[index] = el)} style={{ height: "100%", width: "100%" }} className="relative">
-                                                <StageComponent imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} />
+                                                <StageComponent imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} setIsAnyChangeMadeInStage={setIsAnyChangeMadeInStage}/>
                                             </div>
                                         )
                                     } else return (<div key={index} style={{ height: "100%", width: "100%" }} className="relative" >

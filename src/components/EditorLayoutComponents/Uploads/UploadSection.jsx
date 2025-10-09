@@ -73,7 +73,6 @@ export default function UploadSection({
   };
 
   const handleSelectFile = (fileId, checked, event) => {
-    // Stop event propagation to prevent parent click handler from firing
     if (event) {
       event.stopPropagation();
     }
@@ -118,7 +117,6 @@ export default function UploadSection({
         description: response.message || "Files successfully moved"
       });
 
-      // Close dropdown after successful move
       setIsMoveDropdownOpen(false);
     } catch (error) {
       toast.error("Failed to move files", {
@@ -223,24 +221,22 @@ export default function UploadSection({
 
   const videoMediaTypes = [
     "video/mp4",
-  ]
+  ];
 
   const imageMediaTypes = [
     "image/jpeg",
     "image/png",
     "image/webp",
     "image/svg+xml",
-  ]
+  ];
 
   const handleImageSelect = async (media, isDragStart = false) => {
-    const mediaSrc = media.mediaType === "video/mp4" ? `${media.thumbnailUrl}` : `${media.url}`
-    // const imgSrc = `${import.meta.env.VITE_API_URL}/file/image?src=${encodeURIComponent(mediaSrc)}`
+    const mediaSrc = media.mediaType === "video/mp4" ? `${media.thumbnailUrl}` : `${media.url}`;
     const imgSrc = mediaSrc;
-
 
     const dimensions = await new Promise((resolve, reject) => {
       const img = new Image();
-      img.src = imgSrc
+      img.src = imgSrc;
       img.onload = () => resolve({ width: img.width, height: img.height });
       img.onerror = () => reject("Error loading image");
     });
@@ -281,16 +277,33 @@ export default function UploadSection({
     const item = { attrs: imageData };
 
     if (item.attrs) {
-      // Get the group from the stage
       let group = mainStage[selectedIndex].stageref.current.children[0].children[1];
 
-      // Calculate the center of the group
       const groupWidth = group.width();
       const groupHeight = group.height();
       const dropX = (groupWidth / 2) / group.scaleX() - (item.attrs.width || 50) / 2;
       const dropY = (groupHeight / 2) / group.scaleY() - (item.attrs.height || 50) / 2;
 
-      // Create new shape at the center of the group
+      let isOverShapeWidget = false;
+      let isOverMaskedImage = false;
+      let shapeWidget = null;
+      let shapeWidgetData = [];
+
+      mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach(shape => {
+        if (mainStage[selectedIndex].selectedShapes.length === 1) {
+          if (shape.attrs.id === mainStage[selectedIndex].selectedShapes[0].attrs.id) {
+            if (shape.attrs.title === 'shape-widget') {
+              isOverShapeWidget = true;
+              shapeWidget = shape.attrs;
+              shapeWidgetData = shape.children.map(child => child.dataArray ? child.dataArray : null).filter(data => data !== null);
+            } else if (shape.attrs.isMasked && (shape.attrs.title === 'masked-image' || shape.attrs.title === 'masked-gif' || shape.attrs.title === 'masked-sticker')) {
+              isOverMaskedImage = true;
+              shapeWidget = shape.attrs;
+            }
+          }
+        }
+      });
+
       let newShape = {
         x: dropX,
         y: dropY,
@@ -298,30 +311,119 @@ export default function UploadSection({
         id: uuid()
       };
 
-      setMainStage(prevState => {
-        const updatedState = [...prevState];
-        updatedState[selectedIndex] = {
-          ...updatedState[selectedIndex],
-          shapes: [...updatedState[selectedIndex].shapes, newShape]
+      if (isOverMaskedImage) {
+        mainStage[selectedIndex].selectedShapes = [];
+        const htmlType = imageData.htmlType;
+        const typeMapping = {
+          'upload-photo': 'masked-image',
+          'stock-gif': 'masked-gif',
+          'stock-photo': 'masked-image',
+          'stock-sticker': 'masked-sticker',
+          'stock-video': 'masked-video'
         };
-        return updatedState;
-      });
-
-      // Select the newly added shape
-      setTimeout(() => {
-        mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach((child) => {
-          if (child.attrs.id === newShape.id) {
-            setMainStage(prevState => {
-              const updatedState = [...prevState];
-              updatedState[selectedIndex] = {
-                ...updatedState[selectedIndex],
-                selectedShapes: [child]
-              };
-              return updatedState;
-            });
-          }
+        const layerMapping = {
+          'upload-photo': 'Masked Image',
+          'stock-gif': 'Masked Gif',
+          'stock-photo': 'Masked Image',
+          'stock-sticker': 'Masked Sticker',
+          'stock-video': 'Masked Video'
+        };
+        const shapeType = typeMapping[htmlType] || 'masked-image';
+        const layerType = layerMapping[htmlType] || 'Masked Image';
+        setMainStage(prevState => {
+          const updatedState = [...prevState];
+          const updatedShapes = updatedState[selectedIndex].shapes.map((shape, idx) => {
+            if (shape.id !== shapeWidget.id) return shape;
+            const shapeNode = updatedState[selectedIndex].stageref.current.children[0].children[1].children[idx].attrs;
+            return {
+              ...shape,
+              title: shapeType,
+              layer: layerType,
+              htmlType: shapeType,
+              x: shapeNode.x,
+              y: shapeNode.y,
+              scaleX: shapeNode.scaleX,
+              scaleY: shapeNode.scaleY,
+              width: shapeNode.width,
+              height: shapeNode.height,
+              src: imageData.src,
+              type: 'img',
+              bgImage: imageData.bgImage,
+              iconSrc: imageData.iconSrc
+            };
+          });
+          updatedState[selectedIndex] = {
+            ...updatedState[selectedIndex],
+            shapes: updatedShapes,
+          };
+          return updatedState;
         });
-      }, 100);
+        setIsEditorDrawerOpen(false);
+        return;
+      }
+
+      if (isOverShapeWidget && shapeWidget?.isMasked) {
+        newShape = {
+          src: imageData.src,
+          height: Number(shapeWidget.height),
+          width: Number(shapeWidget.width),
+          x: shapeWidget.x,
+          y: shapeWidget.y,
+          scaleX: shapeWidget.scaleX,
+          scaleY: shapeWidget.scaleY,
+          skewX: shapeWidget.skewX,
+          skewY: shapeWidget.skewY,
+          title: media.mediaType === "video/mp4" ? 'masked-video' : 'masked-image',
+          layer: media.mediaType === "video/mp4" ? 'Masked Video' : 'Masked Image',
+          htmlType: media.mediaType === "video/mp4" ? 'masked-video' : 'masked-image',
+          type: 'img',
+          isMasked: true,
+          data: shapeWidget.data,
+          maskData: shapeWidgetData,
+          maskType: shapeWidget.maskType,
+          draggable: true,
+          visible: true,
+          id: uuid(),
+          bgImage: imageData.bgImage,
+          iconSrc: imageData.iconSrc
+        };
+        mainStage[selectedIndex].selectedShapes = [];
+        setMainStage(prevState => {
+          const updatedState = [...prevState];
+          const updatedShapes = updatedState[selectedIndex].shapes.filter(shape => shape.id !== shapeWidget.id);
+          updatedState[selectedIndex] = {
+            ...updatedState[selectedIndex],
+            shapes: [...updatedShapes, newShape],
+          };
+          return updatedState;
+        });
+      } else {
+        setMainStage(prevState => {
+          const updatedState = [...prevState];
+          updatedState[selectedIndex] = {
+            ...updatedState[selectedIndex],
+            shapes: [...updatedState[selectedIndex].shapes, newShape]
+          };
+          return updatedState;
+        });
+      }
+
+      if (newShape) {
+        setTimeout(() => {
+          mainStage[selectedIndex].stageref.current.children[0].children[1].children.forEach((child) => {
+            if (child.attrs.id === newShape.id) {
+              setMainStage(prevState => {
+                const updatedState = [...prevState];
+                updatedState[selectedIndex] = {
+                  ...updatedState[selectedIndex],
+                  selectedShapes: [child],
+                };
+                return updatedState;
+              });
+            }
+          });
+        }, 100);
+      }
 
       setIsEditorDrawerOpen(false);
     }
@@ -331,7 +433,6 @@ export default function UploadSection({
     const attrs = element.attrs;
     let dragMask = document.getElementById(`image${index}`);
     dragMask.style.opacity = 1;
-
     dragMask.style.width = `94px`;
     dragMask.style.backgroundSize = `94px 94px `;
     dragMask.style.height = `100%`;
@@ -341,9 +442,7 @@ export default function UploadSection({
   const renderMedia = (media, index) => {
     if (videoMediaTypes.includes(media.mediaType)) {
       return (
-        <div
-          className="relative w-full"
-        >
+        <div className="relative w-full">
           <img
             src={media.thumbnailUrl}
             alt={`Upload ${media._id}`}
@@ -372,8 +471,8 @@ export default function UploadSection({
                           stroke="#626262"
                           strokeWidth="0.2"
                           d="M139.7,60.3c-6,3.5-13.6,1.4-17.1-4.6c-3.5-6-1.4-13.6,4.6-17.1c6-3.5,13.6-1.4,17.1,4.6
-                                C147.8,49.2,145.7,56.9,139.7,60.3z M139.1,48.9l-8.2-4.8c-0.7-0.4-1.3-0.1-1.3,0.8l0,9.5c0,0.9,0.6,1.2,1.4,0.8l8.1-4.7
-                                C139.9,50,139.9,49.3,139.1,48.9z"
+                              C147.8,49.2,145.7,56.9,139.7,60.3z M139.1,48.9l-8.2-4.8c-0.7-0.4-1.3-0.1-1.3,0.8l0,9.5c0,0.9,0.6,1.2,1.4,0.8l8.1-4.7
+                              C139.9,50,139.9,49.3,139.1,48.9z"
                         ></path>
                       </g>
                     </g>
@@ -382,8 +481,6 @@ export default function UploadSection({
               </svg>
             </div>
           </div>
-
-          {/* Play SVG Icon */}
           <div className="absolute inset-0 flex items-center justify-center">
             <svg
               version="1.1"
@@ -402,8 +499,8 @@ export default function UploadSection({
                         stroke="#626262"
                         strokeWidth="0.2"
                         d="M139.7,60.3c-6,3.5-13.6,1.4-17.1-4.6c-3.5-6-1.4-13.6,4.6-17.1c6-3.5,13.6-1.4,17.1,4.6
-                                C147.8,49.2,145.7,56.9,139.7,60.3z M139.1,48.9l-8.2-4.8c-0.7-0.4-1.3-0.1-1.3,0.8l0,9.5c0,0.9,0.6,1.2,1.4,0.8l8.1-4.7
-                                C139.9,50,139.9,49.3,139.1,48.9z"
+                            C147.8,49.2,145.7,56.9,139.7,60.3z M139.1,48.9l-8.2-4.8c-0.7-0.4-1.3-0.1-1.3,0.8l0,9.5c0,0.9,0.6,1.2,1.4,0.8l8.1-4.7
+                            C139.9,50,139.9,49.3,139.1,48.9z"
                       ></path>
                     </g>
                   </g>
@@ -432,7 +529,6 @@ export default function UploadSection({
     }
   };
 
-  // Check if an element should be visible - always visible on mobile, otherwise based on hover
   const isElementVisible = (itemIndex, itemId) => {
     return windowInnerWidth <= 768 || hoveredImageIndex === itemIndex || activeImageDropdownIndex === itemIndex || isFileSelected(itemId);
   };
@@ -512,24 +608,21 @@ export default function UploadSection({
                 >
                   {renderMedia(item, itemIndex)}
 
-                  {/* Always show checkbox on mobile, otherwise show on hover or when selected */}
                   <div
                     className="absolute top-1 left-1.5"
-                    onClick={(e) => e.stopPropagation()} // Stop click propagation
+                    onClick={(e) => e.stopPropagation()}
                     style={{ display: isElementVisible(itemIndex, item._id) ? 'block' : 'none' }}
                   >
                     <Checkbox
                       className="bg-white border-white data-[state=checked]:bg-white data-[state=checked]:text-primary"
                       checked={isFileSelected(item._id)}
                       onCheckedChange={(checked) => handleSelectFile(item._id, checked, event)}
-                      onClick={(e) => e.stopPropagation()} // Add another layer of protection
+                      onClick={(e) => e.stopPropagation()}
                     />
                   </div>
 
-                  {/* Show file type label and dropdown on mobile or when not in selection mode */}
                   {(!hasSelectedFiles || windowInnerWidth <= 768) && (
                     <>
-                      {/* Always show file type on mobile, otherwise show on hover */}
                       <div
                         className="absolute left-1 bottom-1 text-center bg-black bg-opacity-70 text-white px-2 py-0.5 rounded-[12px] text-xs font-medium"
                         style={{ display: isElementVisible(itemIndex, item._id) ? 'block' : 'none' }}
@@ -537,7 +630,6 @@ export default function UploadSection({
                         {item.fileType || 'Image'}
                       </div>
 
-                      {/* Always show dropdown on mobile, otherwise show on hover */}
                       <div style={{ display: isElementVisible(itemIndex, item._id) ? 'block' : 'none' }}>
                         <MediaImageDropDownCom
                           mediaFile={item}

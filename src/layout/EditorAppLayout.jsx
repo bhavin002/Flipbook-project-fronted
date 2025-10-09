@@ -53,8 +53,9 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [currentEditor, setCurrentEditor] = useState("");
     const [pageCounter, setPageCounter] = useState(0);
     const [imageLoadCounterPageWise, setImageLoadCounterPageWise] = useState({});
-
-
+    const [isAnyChangeMadeInStage, setIsAnyChangeMadeInStage] = useState(false);
+    console.log("isAnyChangeMadeInStage", isAnyChangeMadeInStage);
+    
     useEffect(() => {
         const getFlipbook = async () => {
             try {
@@ -143,6 +144,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 delete e.temp;
                 e.stageref = null;
             });
+            setIsAnyChangeMadeInStage(false);
             return await UpdateFlipbookPageDataApi(id, {
                 width: stageWidth,
                 height: stageHeight,
@@ -495,7 +497,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize }} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage }} />
                             </div>
                         </div>
                     </div>
