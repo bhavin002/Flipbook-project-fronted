@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams, useBlocker } from "react-router-dom";
 import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
 import { Button } from "@/components/ui/button";
 import { Download, Eye, Share2, SlidersHorizontal } from "lucide-react";
@@ -21,6 +21,7 @@ import { flipbookType } from "@/utils/enum";
 import RenameFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/RenameFlipbookDialog";
 import { CreateFlipbookActiveEditor, ReplaceFlipbookActiveEditor, DeleteFlipbookActiveEditor } from "@/service/flipbookAciveEditors.service"; // Assuming the file path based on user input
 import SessionConflictDialog from "@/components/EditorLayoutComponents/SessionConflictDialog";
+import SaveConfirmationDialog from "@/components/EditorLayoutComponents/SaveConfirmationDialog";
 import dynamicFontManager from '@/utils/dynamicFontManager';
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
@@ -54,7 +55,9 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [pageCounter, setPageCounter] = useState(0);
     const [imageLoadCounterPageWise, setImageLoadCounterPageWise] = useState({});
     const [isAnyChangeMadeInStage, setIsAnyChangeMadeInStage] = useState(false);
-    console.log("isAnyChangeMadeInStage", isAnyChangeMadeInStage);
+    const [showSaveDialog, setShowSaveDialog] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const pendingNavigationRef = useRef(null);
     
     useEffect(() => {
         const getFlipbook = async () => {
@@ -173,6 +176,58 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
 
         return () => clearInterval(interval);
     }, [mainStage, publishing]);
+
+    const blocker = useBlocker(
+        ({ nextLocation }) => {
+            const isLeavingEditor = !nextLocation.pathname.includes('/editor');
+            return isAnyChangeMadeInStage && isLeavingEditor && isInitialLoad;
+        }
+    );
+
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (isAnyChangeMadeInStage && isInitialLoad) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isAnyChangeMadeInStage, isInitialLoad]);
+
+    useEffect(() => {
+        if (blocker.state === 'blocked') {
+            pendingNavigationRef.current = blocker.proceed;
+            setShowSaveDialog(true);
+        }
+    }, [blocker]);
+
+    const handleSaveAndNavigate = async () => {
+        try {
+            setIsSaving(true);
+            await updatePageData();
+            setShowSaveDialog(false);
+            if (pendingNavigationRef.current) {
+                pendingNavigationRef.current();
+                pendingNavigationRef.current = null;
+            }
+        } catch (error) {
+            toast.error("Failed to save changes", {
+                description: error.message || "Something went wrong"
+            });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleCancelNavigation = () => {
+        setShowSaveDialog(false);
+        if (blocker.state === 'blocked') {
+            blocker.reset();
+        }
+        pendingNavigationRef.current = null;
+    };
 
     useEffect(() => {
         return async () => {
@@ -512,6 +567,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         setPublishing={setPublishing}
                         pageCounter={pageCounter}
                         imageLoadCounterPageWise={imageLoadCounterPageWise}
+                        setIsAnyChangeMadeInStage={setIsAnyChangeMadeInStage}
                     />
                     <PreviewDialog
                         open={isPreviewOpen}
@@ -538,6 +594,13 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 currentEditor={currentEditor}
                 onTakeOver={handleTakeOver}
                 isLoading={isSessionTakeOverLoading}
+            />
+            <SaveConfirmationDialog
+                isOpen={showSaveDialog}
+                onOpenChange={setShowSaveDialog}
+                onSave={handleSaveAndNavigate}
+                onCancel={handleCancelNavigation}
+                isLoading={isSaving}
             />
         </>
     );

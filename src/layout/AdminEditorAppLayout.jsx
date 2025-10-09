@@ -42,6 +42,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isInitialLoad, setIsInitialLoad] = useState(false);
     const [pageCounter, setPageCounter] = useState(0);
     const [imageLoadCounterPageWise, setImageLoadCounterPageWise] = useState({});
+    const [isAnyChangeMadeInStage, setIsAnyChangeMadeInStage] = useState(false);
 
     useEffect(() => {
         const fetchTemplateCategories = async () => {
@@ -423,7 +424,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise }} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage }} />
                             </div>
                         </div>
                     </div>

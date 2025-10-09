@@ -100,7 +100,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
   };
 
   if (shape.type !== 'text') return null;
-  console.log(shape);
+  
 
   return (
     <Text

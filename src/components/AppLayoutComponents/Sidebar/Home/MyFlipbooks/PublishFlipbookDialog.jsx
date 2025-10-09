@@ -34,6 +34,7 @@ export default function PublishFlipbookDialog({
     setIsPublishModalOpen,
     flipbookId, // Add flipbookId prop
     onPublishSuccess, // Optional callback for success handling
+    setIsAnyChangeMadeInStage,
     mainStage,
     stageWidth,
     stageHeight,
@@ -411,13 +412,19 @@ export default function PublishFlipbookDialog({
                 onPublishSuccess(response);
             }
 
+            // Reset change state first to prevent save dialog
+            setIsAnyChangeMadeInStage(false);
+            
             // Close modal on success
             setIsPublishModalOpen(false);
 
-            navigate(`/details/${flipbookId}`)
-
             // Reset form state
             resetForm();
+
+            // Navigate after a brief delay to ensure state updates
+            setTimeout(() => {
+                navigate(`/details/${flipbookId}`);
+            }, 100);
 
         } catch (err) {
             toast.error("Failed to publish flipbook", {
