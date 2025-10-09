@@ -170,20 +170,18 @@ export default function MaskedKonvaGif({
             onTap={handleGroupClick}
             name="shape"
             id={shape.id}
-            clipFunc={shape.maskData ? getClipFunc : null}
+            // clipFunc={shape.maskData ? getClipFunc : null}
             {...shape}
             {...props}
         >
             {/* Shadow rectangle */}
             <Rect
-                ref={rectRef}
-                x={2}
-                y={2}
-                width={shapeWidth - 4}
-                height={shapeHeight - 4}
-                fill="#000000"
+                x={0}
+                y={0}
+                width={shape.width || 100}
+                height={shape.height || 100}
+                fill="transparent"
             />
-
             {/* Masked GIF Group */}
             <Group
                 clipFunc={shape.maskData ? getClipFunc : null}

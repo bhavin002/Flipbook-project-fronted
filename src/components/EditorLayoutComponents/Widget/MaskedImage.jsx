@@ -159,22 +159,19 @@ const MaskedImage = ({
       onTap={handleGroupClick}
       name="shape"
       id={shape.id}
-      clipFunc={shape.maskData ? getClipFunc : null}
+      // clipFunc={shape.maskData ? getClipFunc : null}
       {...shape}
       {...props}
     >
-      {/* Shadow Rectangle */}
       <Rect
-        ref={rectRef}
-        x={2}
-        y={2}
-        width={shapeWidth - 4}
-        height={shapeHeight - 4}
-        fill="#000000"
+        x={0}
+        y={0}
+        width={shape.width || 100}
+        height={shape.height || 100}
+        fill="transparent"
       />
-
-      {/* Masked Image Group */}
       <Group
+        draggable={false}
         clipFunc={shape.maskData ? getClipFunc : null}
         width={shapeWidth}
         height={shapeHeight}
@@ -185,6 +182,7 @@ const MaskedImage = ({
         scaleY={shape.flipY ? -1 : 1}
       >
         <Rect
+          draggable={false}
           x={0}
           y={0}
           width={shapeWidth}
@@ -192,6 +190,7 @@ const MaskedImage = ({
           fill={shape.fill || 'white'}
         />
         <Image
+          draggable={false}
           ref={imageRef}
           image={image}
           x={0}
@@ -200,6 +199,7 @@ const MaskedImage = ({
           height={shapeHeight}
         />
       </Group>
+
     </Group>
   );
 };

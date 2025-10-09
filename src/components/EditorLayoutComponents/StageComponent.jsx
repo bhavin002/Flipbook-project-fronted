@@ -22,7 +22,7 @@ import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 
-export default function StageComponent({ imageLoadCounterPageWise, setImageLoadCounterPageWise, prevSelectedIndex, isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad }) {
+export default function StageComponent({ imageLoadCounterPageWise, setImageLoadCounterPageWise, prevSelectedIndex, isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad, setIsAnyChangeMadeInStage }) {
     // Consistent Refs Initialization
     const stageRef = useRef(null);
     const demo = useRef(null);
@@ -719,7 +719,8 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             shapes: newShapes,
         };
         setMainStage(nextMainStage);
-
+        console.log('dragging===========================================111');
+        setIsAnyChangeMadeInStage(true);
         const newMainStageString = generateMainStageString(nextMainStage);
         setMainStageString(newMainStageString);
     };
