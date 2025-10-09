@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
-import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
 import { Button } from "@/components/ui/button";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/utils/AppSidebar";
@@ -12,6 +11,7 @@ import BottomShapeEditorLayout from "@/components/EditorLayoutComponents/Widget/
 import { toast } from "sonner";
 import useWindowWidth from "@/hooks/use-window-width";
 import PreviewDialog from "@/components/EditorLayoutComponents/Preview/PreviewDialog";
+import dynamicFontManager from '@/utils/dynamicFontManager';
 import { EditTemplateApi, GetAllTemplateCategories, GetTemplateApi } from "@/service/template.service";
 import LoadingButton from "@/utils/LoadingButton";
 import {
@@ -22,7 +22,8 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 
-export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
+export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
+    const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
     const [selectedIndex, setSelectedIndex] = useState(0);
@@ -38,6 +39,9 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
     const [templateType, setTemplateType] = useState("2");
     const [templateCategories, setTemplateCategories] = useState([]);
     const [templateCategory, setTemplateCategory] = useState("all-templates");
+    const [isInitialLoad, setIsInitialLoad] = useState(false);
+    const [pageCounter, setPageCounter] = useState(0);
+    const [imageLoadCounterPageWise, setImageLoadCounterPageWise] = useState({});
 
     useEffect(() => {
         const fetchTemplateCategories = async () => {
@@ -62,11 +66,19 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
             try {
                 const response = await GetTemplateApi(id);
                 setTemplateCategory(response.data?.categoryId || "all-templates");
+                setTemplateType(response.data.type);
                 setStageWidth(response.data.width);
                 setStageHeight(response.data.height);
-                setTemplateType(response.data.type);
-                const validPageData = response.data.pages;
-                setMainStage(validPageData.map(e => JSON.parse(e.pageData)));
+                let validPageData = response.data.pages;
+                validPageData = validPageData.map(e => JSON.parse(e.pageData));
+                validPageData.forEach((page, index) => {
+                    page.shapes.forEach(async (shape) => {
+                        if (shape.type === 'text') {
+                            await dynamicFontManager.loadFontById(shape.fontId);
+                        }
+                    })
+                });
+                setMainStage(validPageData);
             } catch (error) {
                 toast.error(error?.message || "Error fetching page data");
             }
@@ -411,7 +423,7 @@ export default function AdminEditorAppLayout({ isSidebarOpen, setIsSidebarOpen }
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu }} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise }} />
                             </div>
                         </div>
                     </div>
