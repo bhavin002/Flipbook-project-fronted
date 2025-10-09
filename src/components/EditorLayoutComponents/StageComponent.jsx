@@ -453,19 +453,33 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
 
     const handleMouseDown = (e) => {
         if (isCropping) return;
-        if (e.target === e.target.getStage()) {
-            const pos = e.target.getStage().getPointerPosition();
-            startPoint.current = pos;
-            setSelecting(true);
-            setSelectionRect({
-                visible: true,
+        // if (!e.target.attrs.draggable || e.target === e.target.getStage()) {
+        // if (!e.target.attrs.draggable) {
+        //     if (e.target === e.target.getStage()) {
+        const stage = e.target.getStage();
+        const shapes = stage.find('.shape');
+        const pos = e.target.getStage().getPointerPosition();
+        startPoint.current = pos;
+        const selected = shapes.filter((shape) =>
+            shape.attrs.draggable && Konva.Util.haveIntersection({
                 x: pos.x,
                 y: pos.y,
                 width: 0,
                 height: 0
-            });
-        }
-    };
+            }, shape.getClientRect())
+        );
+        if (selected.length > 0) return;
+        setSelecting(true);
+        setSelectionRect({
+            // visible: true,
+            x: pos.x,
+            y: pos.y,
+            width: 0,
+            height: 0
+        });
+    }
+    //     }
+    // };
 
     const handleMouseMove = (e) => {
         if (isCropping) return;
@@ -484,10 +498,25 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
     const handleMouseUp = (e) => {
         if (isCropping) return;
         setSelecting(false);
-        if (!selectionRect.visible) return;
+        if (!selectionRect.visible || !selectionRect.width || !selectionRect.height) {
+            const clickedOnEmpty = e.target === e.target.getStage();
+            if (clickedOnEmpty) {
+                setSelectionRect({ ...selectionRect, visible: false });
+                setMainStage(prevState => {
+                    const updatedState = [...prevState];
+                    updatedState[index] = {
+                        ...updatedState[index],
+                        selectedShapes: []
+                    };
+                    return updatedState;
+                });
+            }
+            return;
+        };
 
         const stage = e.target.getStage();
         const shapes = stage.find('.shape');
+        // const shapes = mainStage[index].stageref.current.children[0].children[1].children;
         const box = {
             x: selectionRect.x,
             y: selectionRect.y,
@@ -495,18 +524,27 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             height: selectionRect.height
         };
         const selected = shapes.filter((shape) =>
-            Konva.Util.haveIntersection(box, shape.getClientRect())
+            shape.attrs.draggable && Konva.Util.haveIntersection(box, shape.getClientRect())
         );
-        setMainStage(prevState => {
-            const updatedState = [...prevState];
-            updatedState[index] = {
-                ...updatedState[index],
-                selectedShapes: selected
-            };
-            return updatedState;
-        });
-        // setSelectedShapes(selected);
-        setSelectionRect({ ...selectionRect, visible: false });
+        // setMainStage(prevState => {
+        //     const updatedState = [...prevState];
+        //     updatedState[index] = {
+        //         ...updatedState[index],
+        //         selectedShapes: selected
+        //     };
+        //     return updatedState;
+        // });
+        const nextMainStage = [...mainStage];
+        nextMainStage[index] = {
+            ...nextMainStage[index],
+            selectedShapes: selected,
+        };
+        setTimeout(() => {
+            
+            setMainStage(nextMainStage);
+            // setSelectedShapes(selected);
+            setSelectionRect({ ...selectionRect, visible: false });
+        }, 0);
     };
 
     const handleDragMove = (e, type) => {
@@ -607,18 +645,18 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
     const handleClick = (e) => {
         if (isCropping) return;
         if (selectionRect.visible) return;
-        const clickedOnEmpty = e.target === e.target.getStage();
-        if (clickedOnEmpty) {
-            setMainStage(prevState => {
-                const updatedState = [...prevState];
-                updatedState[index] = {
-                    ...updatedState[index],
-                    selectedShapes: []
-                };
-                return updatedState;
-            });
-            return;
-        }
+        // const clickedOnEmpty = e.target === e.target.getStage();
+        // if (clickedOnEmpty) {
+        //     setMainStage(prevState => {
+        //         const updatedState = [...prevState];
+        //         updatedState[index] = {
+        //             ...updatedState[index],
+        //             selectedShapes: []
+        //         };
+        //         return updatedState;
+        //     });
+        //     return;
+        // }
 
         const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
         const isSelected = stage.selectedShapes.includes(e.target);
