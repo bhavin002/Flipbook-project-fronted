@@ -96,3 +96,17 @@ export const GetSharedFlipbooksApi = async () => {
     const response = await ApiClient().get(`/flipbook-publish/shared-with-me`);
     return response.data;
 }
+
+export const UpdateFlipbookPublishDetailsOnlyApi = async (data) => {
+    const response = await ApiClient().post(`/flipbook-publish/update-publish-details-only`, data);
+    return response.data;
+}
+
+export const UpdatePublishThumbnailsApi = async (data) => {
+    const response = await ApiClient().post(`/flipbook-publish/update-publish-thumbnails`, data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+    return response.data;
+}

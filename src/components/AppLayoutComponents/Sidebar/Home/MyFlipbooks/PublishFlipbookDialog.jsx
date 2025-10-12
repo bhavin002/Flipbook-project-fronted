@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import GenericSelection from "@/utils/GenericSelection";
 import { GetWorkspaceGroupsApi } from "@/service/workspace.group.service";
-import { GetFlipbookPublishInfoApi, UpdatePublishFlipbookApi } from "@/service/flipbook.publish.service"; // Import the new API
+import { GetFlipbookPublishInfoApi, UpdatePublishFlipbookApi, UpdateFlipbookPublishDetailsOnlyApi, UpdatePublishThumbnailsApi } from "@/service/flipbook.publish.service"; // Import the new API
 import { PublishFlipbookApi } from "@/service/flipbook.publish.service";
 import { flipbookVisibility } from "@/utils/enum";
 import { toast } from "sonner";
@@ -398,14 +398,26 @@ export default function PublishFlipbookDialog({
             });
 
             const payload = buildPayload();
-            // Generate thumbnails from mainStage
-            const thumbnails = await generateThumbnails(mainStage);
-            // Build FormData
-            const formData = buildFormData(payload, thumbnails);
-            // Call the API with FormData
-            const response = isPublished
-                ? await UpdatePublishFlipbookApi(formData)
-                : await PublishFlipbookApi(formData);
+            
+            let response;
+            if (isPublished) {
+                response = await UpdateFlipbookPublishDetailsOnlyApi(payload);
+                
+                const thumbnails = await generateThumbnails(mainStage);
+                const thumbnailFormData = new FormData();
+                thumbnailFormData.append('flipbookId', flipbookId);
+                thumbnails.forEach((thumb, idx) => {
+                    thumbnailFormData.append('thumbnails', thumb, `thumbnail_${idx}.jpg`);
+                });
+                
+                UpdatePublishThumbnailsApi(thumbnailFormData).catch(err => {
+                    console.error('Failed to update thumbnails:', err);
+                });
+            } else {
+                const thumbnails = await generateThumbnails(mainStage);
+                const formData = buildFormData(payload, thumbnails);
+                response = await PublishFlipbookApi(formData);
+            }
 
             // Call success callback if provided
             if (onPublishSuccess) {
