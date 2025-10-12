@@ -13,10 +13,6 @@ export default function MyFlipbooks({ isSidebarOpen }) {
             title="Not found shared flipbooks"
             description="Once a flipbook is shared with reader, it will appear here."
         />)
-    } else if (flipbooks.length === 0 && !isLoading && !isTemplateView) {
-        return (
-            <CreateFirstFlipbook />
-        );
     } else if (flipbooks.length === 0 && !isLoading && isTemplateView) {
         return (
             <ZeroState
@@ -24,6 +20,17 @@ export default function MyFlipbooks({ isSidebarOpen }) {
                 description="Create a flipbook and save it as a template."
             />
         )
+    } else if (flipbooks.length === 0 && (location.search.includes('filter=') || location.search.includes('search='))) {
+        return (
+            <ZeroState
+                title="No results found"
+                description="Try adjusting your filters or search terms."
+            />
+        );
+    } else if (flipbooks.length === 0 && !isLoading && !isTemplateView) {
+        return (
+            <CreateFirstFlipbook />
+        );
     }
 
     return (

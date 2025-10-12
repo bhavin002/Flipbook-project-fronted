@@ -16,7 +16,7 @@ export const useFlipbookSettings = (settings) => {
       logoLink: settings.logoLink,
       backgroundColorHash: settings.backgroundColorHash,
       backgroundColor: settings.backgroundColor,
-      backgroundImage: settings.backgroundImage == null ? "" : settings.backgroundImageURL,
+      backgroundImage: "backgroundImage" in settings && settings.backgroundImage === null ? "" : settings.backgroundImageURL,
       backgroundImageType: settings.backgroundImageType,
       playerAccentColorHash: settings.playerAccentColorHash,
       showPageOverview: settings.pageOverview,
