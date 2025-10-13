@@ -212,7 +212,7 @@ export const duplicateShapes = async (mainStage, selectedIndex, setMainStage, se
 };
 
 export const IsPublished = () => {
-    const currentUrlBasePath = window.location.pathname.split('/')[1];
+    const currentUrlBasePath = window.top.location.pathname.split('/')[1];
     if (currentUrlBasePath === "public-flipbook") {
         return true;
     }
