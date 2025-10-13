@@ -1,15 +1,70 @@
-import React from 'react';
+import React from "react";
+// Helper: parse HEX → RGB
+function parseHexToRgb(hex) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `${r}, ${g}, ${b}`;
+}
 
-export default function MaskedImageWidget({ shape }) {
+export default function MaskedImageWidget({ shape, flipbookRef }) {
+
+
+    // Extract direct image URL
     let directUrl = shape.src;
-    if (typeof shape.src === 'string' && shape.src.includes('src=')) {
+    if (typeof shape.src === "string" && shape.src.includes("src=")) {
         const match = shape.src.match(/src=([^&]+)/);
-        if (match && match[1]) {
-            directUrl = decodeURIComponent(match[1]);
+        if (match && match[1]) directUrl = decodeURIComponent(match[1]);
+    }
+
+    // Parse crop data
+    let crop = {};
+    if (shape.cropImage) {
+        try {
+            crop = JSON.parse(shape.cropImage).attrs;
+        } catch (e) {
+            console.error("Failed to parse cropImage:", e);
         }
     }
 
+    // Parse effect data
+    let effect = {};
+    if (shape.effect) {
+        try {
+            effect = shape.effect;
+        } catch (e) {
+            console.error("Failed to parse effect:", e);
+        }
+    }
+
+    // Dimensions
+    const displayWidth = crop.width && crop.height ? crop.width : shape.width;
+    const displayHeight = crop.height && crop.width ? crop.height : shape.height;
+
+    // === Build visual effect styles ===
+    const effectStyles = {};
+
+    // Corner radius
+    if (effect.individualCorners) {
+        effectStyles.borderTopLeftRadius = `${effect.topLeftRadius || 0}px`;
+        effectStyles.borderTopRightRadius = `${effect.topRightRadius || 0}px`;
+        effectStyles.borderBottomRightRadius = `${effect.bottomRightRadius || 0}px`;
+        effectStyles.borderBottomLeftRadius = `${effect.bottomLeftRadius || 0}px`;
+    } else {
+        effectStyles.borderRadius = `${effect.cornerRadius || 0}px`;
+    }
+
+    // Shadow
+    if (effect.isShadowEnabled) {
+        const shadowOpacity = (effect.shadowOpacity || 0) / 100;
+        const shadowColor = effect.shadowColor || "#000000";
+        effectStyles.boxShadow = `${effect.shadowOffsetX || 0}px ${effect.shadowOffsetY || 0}px ${effect.shadowBlur || 0
+            }px rgba(${parseHexToRgb(shadowColor)}, ${shadowOpacity})`;
+    }
+
+
     const maskId = `mask-${shape.id}`;
+
     return (
         <svg
             height={shape.height}
@@ -69,12 +124,18 @@ export default function MaskedImageWidget({ shape }) {
                     })}
                 </clipPath>
             </defs>
+            {/* Cropped + Masked image */}
             <image
                 href={directUrl}
-                width={shape.width}
-                height={shape.height}
-                clipPath={shape.maskData ? `url(#${maskId})` : undefined}
+                x={crop.x || 0}
+                y={crop.y || 0}
+                width={displayWidth}
+                height={displayHeight}
                 preserveAspectRatio="none"
+                clipPath={shape.maskData ? `url(#${maskId})` : undefined}
+                style={{
+                    ...effectStyles,
+                }}
             />
         </svg>
     );
