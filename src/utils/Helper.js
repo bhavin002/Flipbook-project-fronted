@@ -43,11 +43,11 @@ export const deleteStage = (mainStage, setMainStage, index, selectedIndex, setSe
     mainStage.length - 1 == index && setSelectedIndex(index - 1);
     mainStage.length - 1 == selectedIndex && setSelectedIndex(selectedIndex - 1);
     if (index < mainStage.length - 1) {
-        const temp = JSON.parse(JSON.stringify(mainStage[index + 1]));
-        temp.shapes = JSON.parse(temp.stageref.current).children[0].children[1].children.map(e => e.attrs)
-        temp.stageref.current = JSON.parse(temp.stageref.current);
-        temp.selectedShapes = [];
-        mainStage.splice(index, 2, temp)
+        // const temp = JSON.parse(JSON.stringify(mainStage[index + 1]));
+        // temp.shapes = JSON.parse(temp.stageref.current).children[0].children[1].children.map(e => e.attrs)
+        // temp.stageref.current = JSON.parse(temp.stageref.current);
+        // temp.selectedShapes = [];
+        mainStage.splice(index, 1)
         mainStage.length == 1 && setSelectedIndex(0);
         setMainStage([...mainStage])
     } else {

@@ -175,7 +175,7 @@ const MaskedImage = ({
         clipFunc={shape.maskData ? getClipFunc : null}
         width={shapeWidth}
         height={shapeHeight}
-        fill={shape.fill || 'white'}
+        fill={shape.fill || 'transparent'}
         x={shape.flipX ? shapeWidth : 0}
         y={shape.flipY ? shapeHeight : 0}
         scaleX={shape.flipX ? -1 : 1}
@@ -187,7 +187,7 @@ const MaskedImage = ({
           y={0}
           width={shapeWidth}
           height={shapeHeight}
-          fill={shape.fill || 'white'}
+          fill={shape.fill || 'transparent'}
         />
         <Image
           draggable={false}
