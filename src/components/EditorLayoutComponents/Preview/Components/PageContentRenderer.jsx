@@ -2,7 +2,7 @@ import React from 'react';
 import SlideShow from "../Widget/SlideShow.jsx";
 import AudioButton from "../Widget/AudioButton.jsx";
 import GoToUrl from "../Widget/GoToUrl.jsx";
-import GoToButtonLink from "../Widget/goToButtonLink.jsx";
+import GoToButtonLink from "../Widget/GoToButtonLink.jsx";
 import Tag from "../Widget/Tag.jsx";
 import SquareCaption from "../Widget/SquareCaption.jsx";
 import VideoButton from "../Widget/VideoButton.jsx";
