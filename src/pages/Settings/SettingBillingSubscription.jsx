@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import SubscriptionPlans from '@/utils/subscriptionPlans';
+import SubscriptionPlans from '@/utils/SubscriptionPlans';
 
 export default function SettingBillingSubscription() {
     return (

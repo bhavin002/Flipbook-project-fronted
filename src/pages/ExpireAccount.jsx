@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileDropDownCom from '@/components/AppLayoutComponents/ProfileDropDownCom';
-import SubscriptionPlans from '@/utils/subscriptionPlans';
+import SubscriptionPlans from '@/utils/SubscriptionPlans';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Crown, Lock, Shield, Info } from 'lucide-react';
