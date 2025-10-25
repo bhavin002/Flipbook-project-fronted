@@ -184,7 +184,7 @@ export default function TextSidebarPanel({
                     )}
                 </div>
                 <a
-                    href="http://localhost:5173/branding/text-styles"
+                    href="/branding/text-styles"
                     target="_blank"
                     className="text-sm flex justify-end font-medium text-white cursor-pointer hover:underline"
                 >
