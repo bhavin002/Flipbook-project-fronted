@@ -1,0 +1,45 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+
+      - name: Deploy and Rebuild Frontend
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e
+            cd /home/opc/shadcn-flipbook
+            echo "Pulling latest code from staging branch..."
+            git pull origin staging
+
+            echo "Installing dependencies..."
+            npm install
+
+            echo "Building project..."
+            npm run build
+
+            echo "Updating live dist folder..."
+            sudo rm -rf /var/www/shadcn-flipbook/dist
+            sudo cp -r ./dist /var/www/shadcn-flipbook/
+            sudo chown -R nginx:nginx /var/www/shadcn-flipbook/dist
+            sudo restorecon -Rv /var/www/shadcn-flipbook/dist
+            sudo systemctl reload nginx
+
+            echo "✅ Deployment complete!"
+          EOF
