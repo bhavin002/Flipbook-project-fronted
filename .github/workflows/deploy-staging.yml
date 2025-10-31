@@ -20,19 +20,19 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
 
-      - name: Deploy and Rebuild Frontend
-        run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }} # <- 'opc' will be used from your GitHub secret
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
             set -e
+            echo "🚀 Starting deployment..."
             cd /home/opc/shadcn-flipbook
-            echo "Configuring GitHub credentials..."
-            git config --global credential.helper store
-            echo "https://${{ github.actor }}:${{ secrets.TOKEN_GIT_SG }}@github.com" > ~/.git-credentials
-
-            echo "Pulling latest code from staging branch..."
-            git pull https://github.com/${{ github.repository }} staging
-          EOF
-
+            echo "Pulling latest code..."
+            git fetch origin staging
+            git reset --hard origin/staging
 
             echo "Installing dependencies..."
             npm install
@@ -40,12 +40,10 @@ jobs:
             echo "Building project..."
             npm run build
 
-            echo "Updating live dist folder..."
+            echo "Updating dist folder..."
             sudo rm -rf /var/www/shadcn-flipbook/dist
             sudo cp -r ./dist /var/www/shadcn-flipbook/
-            sudo chown -R nginx:nginx /var/www/shadcn-flipbook/dist
-            sudo restorecon -Rv /var/www/shadcn-flipbook/dist
+            sudo chown -R nginx:nginx /var/www/shadcn-flipbook/dist || echo "⚠️ nginx user not found, skipping chown"
+            sudo restorecon -Rv /var/www/shadcn-flipbook/dist || true
             sudo systemctl reload nginx
-
-            echo "✅ Deployment complete!"
-          EOF
+            echo "✅ Deployment completed successfully!"
