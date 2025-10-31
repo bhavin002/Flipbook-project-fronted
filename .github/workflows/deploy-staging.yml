@@ -22,11 +22,17 @@ jobs:
 
       - name: Deploy and Rebuild Frontend
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
             set -e
             cd /home/opc/shadcn-flipbook
+            echo "Configuring GitHub credentials..."
+            git config --global credential.helper store
+            echo "https://${{ github.actor }}:${{ secrets.TOKEN_GIT_SG }}@github.com" > ~/.git-credentials
+
             echo "Pulling latest code from staging branch..."
-            git pull origin staging
+            git pull https://github.com/${{ github.repository }} staging
+          EOF
+
 
             echo "Installing dependencies..."
             npm install
