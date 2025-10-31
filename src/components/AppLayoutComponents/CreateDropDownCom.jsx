@@ -128,7 +128,7 @@ export default function CreateDropDownCom() {
             <DropdownMenuTrigger>
                 <Button>
                     <Plus /> <span className="hidden md:inline">
-                        Create7777
+                        Create
                     </span>
                 </Button>
             </DropdownMenuTrigger>
