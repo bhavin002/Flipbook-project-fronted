@@ -23,13 +23,19 @@ jobs:
       - name: Deploy to Server
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USER }} # <- 'opc' will be used from your GitHub secret
-          key: ${{ secrets.SERVER_SSH_KEY }}
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
             set -e
             echo "🚀 Starting deployment..."
             cd /home/opc/shadcn-flipbook
+
+            echo "Setting up Git credentials..."
+            git config --global user.name "GitHub Actions"
+            git config --global user.email "actions@github.com"
+            git remote set-url origin https://${{ secrets.TOKEN_GIT_SG }}@github.com/bhavin002/shadcn-flipbook.git
+
             echo "Pulling latest code..."
             git fetch origin staging
             git reset --hard origin/staging
