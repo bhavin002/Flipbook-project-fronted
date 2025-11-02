@@ -616,10 +616,10 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             </TabsContent>
                             <TabsContent
                                 value="mobile"
-                                className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden"
+                                className="w-full h-full flex items-center justify-center data-[state=inactive]:hidden m-0"
                             >
                                 <div
-                                    className={`w-[90%] max-w-[400px] h-full flex flex-col items-center justify-center overflow-hidden`}
+                                    className={`w-full h-full flex flex-col items-center justify-center overflow-hidden`}
                                     style={{ backgroundColor: visibilitySettings.backgroundColorHash }}
                                     id={id}
                                 >

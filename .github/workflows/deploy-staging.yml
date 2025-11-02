@@ -1,0 +1,55 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e
+            echo "🚀 Starting deployment..."
+            cd /home/opc/shadcn-flipbook
+
+            echo "Setting up Git credentials..."
+            git config --global user.name "GitHub Actions"
+            git config --global user.email "actions@github.com"
+            git remote set-url origin https://${{ secrets.TOKEN_GIT_SG }}@github.com/bhavin002/shadcn-flipbook.git
+
+            echo "Pulling latest code..."
+            git fetch origin staging
+            git reset --hard origin/staging
+
+            echo "Installing dependencies..."
+            npm install
+
+            echo "Building project..."
+            npm run build
+
+            echo "Updating dist folder..."
+            sudo rm -rf /var/www/shadcn-flipbook/dist
+            sudo cp -r ./dist /var/www/shadcn-flipbook/
+            sudo chown -R nginx:nginx /var/www/shadcn-flipbook/dist || echo "⚠️ nginx user not found, skipping chown"
+            sudo restorecon -Rv /var/www/shadcn-flipbook/dist || true
+            sudo systemctl reload nginx
+            echo "✅ Deployment completed successfully!"
