@@ -30,7 +30,7 @@ export default function CreateFirstFlipbook() {
     };
 
     const handleFileInputChange = async (event) => {
-        const files = Array.from(event.target.files);
+        const files = Array.from(event.target.files).sort((a, b) => a.name.localeCompare(b.name));
         if (!files.length) return;
         
         // File type validation

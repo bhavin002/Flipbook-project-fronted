@@ -28,6 +28,8 @@ import { UpdateFlipbookPageDataApi } from "@/service/flipbook.service";
 import { LoadingOverlay } from "@/utils/Skeleton";
 import { GetWorkspaceReadersApi } from "@/service/teammate.service";
 import { Progress } from "@/components/ui/progress";
+import { jsPDF } from "jspdf";
+import JSZip from 'jszip';
 
 export default function PublishFlipbookDialog({
     isPublishModalOpen,
@@ -368,7 +370,226 @@ export default function PublishFlipbookDialog({
         return formData;
     }
 
-    // Handle publish action
+    // PDF Start
+    // ==== STAGE TO DATAURL - FIXED ==== 
+    const stageToDataURL = async (stageRef, { bleedPx = 0 } = {}) => {
+        const stageContainer = stageRef.current.children[0].children[1];
+        if (!stageContainer) return null;
+
+        // Konva Stage (not layer)
+        const stage = stageContainer;
+        if (!stage) return null;
+
+        const oldScale = stage.scale();
+        const oldPos = stage.position();
+        const oldStageWidth = stage.width();
+        const oldStageHeight = stage.height();
+
+        stage.scale({ x: 1, y: 1 });
+        stage.position({ x: 0, y: 0 });
+        stage.height(stageHeight);
+        stage.width(stageWidth);
+        stage.draw();
+
+        // 3. Original size + bleed
+        const w = stage.width() + bleedPx * 2;
+        const h = stage.height() + bleedPx * 2;
+
+        // 4. High quality export
+        const canvas = await stage.toCanvas({
+            pixelRatio: 2,           // 1:1 pixel perfect
+            x: -bleedPx,
+            y: -bleedPx,
+            width: w,
+            height: h,
+        });
+
+        // 5. Restore original zoom (editor view)
+        stage.scale(oldScale);
+        stage.position(oldPos);
+        stage.width(oldStageWidth);
+        stage.height(oldStageHeight);
+        stage.draw();
+
+        // 6. Add background
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = canvas.width;
+        finalCanvas.height = canvas.height;
+        const ctx = finalCanvas.getContext('2d');
+
+        const bgColor = '#FFFFFF';
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
+        ctx.drawImage(canvas, 0, 0);
+
+        return finalCanvas.toDataURL('image/jpeg', 0.95);
+    };
+    const buildPdfFromDataUrls = (dataUrls, pageSizePx, dpi = 300) => {
+        const mm = (px) => (px * 75) / dpi;
+        const pdf = new jsPDF({
+            unit: 'mm',
+            format: [mm(pageSizePx.w), mm(pageSizePx.h)],
+            orientation: pageSizePx.w > pageSizePx.h ? 'l' : 'p',
+        });
+
+        dataUrls.forEach((url, i) => {
+            if (i > 0) pdf.addPage();
+            pdf.addImage(url, 'JPEG', 0, 0, mm(pageSizePx.w), mm(pageSizePx.h));
+        });
+
+        return pdf;
+    };
+    const generateFlipbookPdf = async (mainStage, stageWidth, stageHeight, bleedPx = 0) => {
+        const dataUrls = [];
+        for (const page of mainStage) {
+            const url = await stageToDataURL(page.stageref, { bleedPx });
+            if (url) dataUrls.push(url);
+        }
+
+        const pdf = buildPdfFromDataUrls(dataUrls, { w: stageWidth, h: stageHeight }, 300);
+        return pdf.output('blob');
+    };
+    const handleDownloadPDF = async () => {
+        if (!flipbookId || mainStage.length === 0) {
+            toast.error("No pages to export");
+            return;
+        }
+
+        setPublishing(true);
+        try {
+            const pdfBlob = await generateFlipbookPdf(mainStage, stageWidth, stageHeight, 0);
+
+            const url = URL.createObjectURL(pdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `flipbook_${flipbookId}.pdf`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            toast.success("PDF downloaded successfully!");
+        } catch (err) {
+            toast.error("PDF generation failed", { description: err.message });
+        } finally {
+            setPublishing(false);
+        }
+    };
+    // PDF END
+
+
+    // ZIP Start
+    const generateFlipbookImages = async (mainStage, bleedPx = 0) => {
+        const images = [];
+        for (let i = 0; i < mainStage.length; i++) {
+            const url = await stageToDataURL(mainStage[i].stageref, { bleedPx });
+            if (url) {
+                const blob = await (await fetch(url)).blob();
+                images.push({
+                    // generateFlipbookImages ma name change karo (optional)
+                    name: images.length === 1
+                        ? `flipbook_${flipbookId}.jpg`
+                        : `page_${i + 1}.jpg`,
+                    blob
+                });
+            }
+        }
+        return images;
+    };
+    const createZipFromImages = async (images, zipName) => {
+        const zip = new JSZip();
+
+        // Add each image to zip
+        images.forEach((img) => {
+            zip.file(img.name, img.blob);
+        });
+
+        // Generate ZIP blob
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        return zipBlob;
+    };
+    const handleDownloadZIP = async () => {
+        if (!flipbookId || mainStage.length === 0) {
+            toast.error("No pages to export");
+            return;
+        }
+
+        setPublishing(true);
+        try {
+            const images = await generateFlipbookImages(mainStage, 0);
+
+            // 🔥 NEW: SINGLE PAGE = Direct JPG | MULTIPLE = ZIP
+            if (images.length === 1) {
+                const blob = images[0].blob;
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `flipbook_${flipbookId}.jpg`;  // .jpg extension
+                a.click();
+                URL.revokeObjectURL(url);
+                toast.success("Image downloaded successfully!");
+            }
+            else {
+                const zipBlob = await createZipFromImages(images, `flipbook_${flipbookId}`);
+                const url = URL.createObjectURL(zipBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `flipbook_${flipbookId}_pages.zip`;
+                a.click();
+                URL.revokeObjectURL(url);
+                toast.success(`ZIP with ${images.length} pages downloaded!`);
+            }
+
+        } catch (err) {
+            console.error(err);
+            toast.error("Download failed", { description: err.message });
+        } finally {
+            setPublishing(false);
+        }
+    };
+    // END Start
+
+    const handleDownloadJSON = () => {
+        if (!flipbookId || mainStage.length === 0) {
+            toast.error("No data to export");
+            return;
+        }
+
+        // 🔥 EXACT SAME JSON JO SERVER PAR JAI CHE!
+        mainStage.forEach(e => {
+            e.temp = e.stageref.current.children[0].children[1].children.map(node =>
+                JSON.parse(JSON.stringify(node.attrs))
+            ) || [];
+        });
+
+        const temp = JSON.parse(JSON.stringify(mainStage));
+        temp.forEach(e => {
+            e.selectedShapes = [];
+            e.shapes = e.temp;
+            delete e.temp;
+            e.stageref = null;
+        });
+
+        const finalJSON = {
+            width: stageWidth,
+            height: stageHeight,
+            pages: temp.map(e => ({
+                pageData: e  // Server par exact aaj jai che!
+            }))
+        };
+
+        // Download karo
+        const blob = new Blob([JSON.stringify(finalJSON, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `flipbook_${flipbookId}_SERVER.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+        toast.success("JSON Downloaded – Ready for Import!");
+    };
+
+
+
     const handlePublish = async () => {
         if (!flipbookId) {
             console.error('FlipbookId is required for publishing');
@@ -398,18 +619,18 @@ export default function PublishFlipbookDialog({
             });
 
             const payload = buildPayload();
-            
+
             let response;
             if (isPublished) {
                 response = await UpdateFlipbookPublishDetailsOnlyApi(payload);
-                
+
                 const thumbnails = await generateThumbnails(mainStage);
                 const thumbnailFormData = new FormData();
                 thumbnailFormData.append('flipbookId', flipbookId);
                 thumbnails.forEach((thumb, idx) => {
                     thumbnailFormData.append('thumbnails', thumb, `thumbnail_${idx}.jpg`);
                 });
-                
+
                 UpdatePublishThumbnailsApi(thumbnailFormData).catch(err => {
                     console.error('Failed to update thumbnails:', err);
                 });
@@ -426,7 +647,7 @@ export default function PublishFlipbookDialog({
 
             // Reset change state first to prevent save dialog
             setIsAnyChangeMadeInStage(false);
-            
+
             // Close modal on success
             setIsPublishModalOpen(false);
 
@@ -446,6 +667,7 @@ export default function PublishFlipbookDialog({
             setPublishing(false);
         }
     };
+
 
     // Reset form to initial state
     const resetForm = () => {
@@ -503,7 +725,7 @@ export default function PublishFlipbookDialog({
                         <div className="grid gap-2">
                             <Label htmlFor="description">
                                 Description
-                                 {/* {Object.values(imageLoadCounterPageWise).some((count) => count > 0)} */}
+                                {/* {Object.values(imageLoadCounterPageWise).some((count) => count > 0)} */}
                             </Label>
                             <Textarea
                                 id="description"
@@ -650,16 +872,43 @@ export default function PublishFlipbookDialog({
                         </TabsContent>
                     </Tabs>
                 </div>
-                <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsPublishModalOpen(false)}>
-                        Close
-                    </Button>
-                    <Button
-                        disabled={isPublishDisabled || pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0)}
-                        onClick={handlePublish}
-                    >
-                        {publishing ? <LoadingButton buttonLabel="Publishing" /> : pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0) ? <LoadingButton buttonLabel="Preparing" /> : 'Publish Now'}
-                    </Button>
+                <DialogFooter className={'flex-wrap'}>
+                    <div className="flex flex-col md:flex-row gap-2 md:gap-4 justify-end w-full">
+
+                        <Button variant="outline" onClick={() => setIsPublishModalOpen(false)}>
+                            Close
+                        </Button>
+                        <Button
+                            disabled={isPublishDisabled || pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0)}
+                            onClick={handlePublish}
+                        >
+                            {publishing ? <LoadingButton buttonLabel="Publishing" /> : pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0) ? <LoadingButton buttonLabel="Preparing" /> : 'Publish Now'}
+                        </Button>
+                    </div>
+                    <div className="flex flex-col md:flex-row gap-2 md:gap-4 justify-end w-full mt-2">
+
+                        <Button
+                            variant="secondary"
+                            disabled={publishing || pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0)}
+                            onClick={handleDownloadPDF}
+                        >
+                            {publishing ? <LoadingButton buttonLabel="Preparing PDF" /> : pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0) ? <LoadingButton buttonLabel="Preparing" /> : 'Download PDF'}
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            disabled={publishing || pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0)}
+                            onClick={handleDownloadZIP}
+                        >
+                            {publishing ? <LoadingButton buttonLabel="Preparing ZIP" /> : pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0) ? <LoadingButton buttonLabel="Preparing" /> : 'Download ZIP'}
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            disabled={publishing || pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0)}
+                            onClick={handleDownloadJSON}
+                        >
+                            {publishing ? <LoadingButton buttonLabel="Preparing JSON" /> : pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0) ? <LoadingButton buttonLabel="Preparing" /> : 'Download JSON'}
+                        </Button>
+                    </div>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

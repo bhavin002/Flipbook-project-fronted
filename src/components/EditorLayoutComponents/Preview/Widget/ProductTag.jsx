@@ -32,9 +32,58 @@ export default function ProductTag({ shape, visibilitySettings }) {
                 cursor: 'pointer'
             }}
         >
-            {shape.data.map((path, index) => (
-                <path key={index} d={path} />
-            ))}
+            {shape.data.map((element, index) => {
+                if (element.type === 'path') {
+                    return <path
+                        key={`path-${index}`}
+                        d={element.data}
+                        stroke={shape.stroke ? shape.fill : shape.stroke}
+                        fill={shape.stroke ? shape.stroke : shape.fill}
+                        strokeWidth={shape.strokeWidth || 0}
+                    />;
+                }
+                else if (element.type === 'rect') {
+                    return <rect
+                        key={`rect-${index}`}
+                        x={Number(element.x) || 0}
+                        y={Number(element.y) || 0}
+                        width={Number(element.width)}
+                        height={Number(element.height)}
+                        stroke={shape.stroke ? shape.fill : shape.stroke}
+                        fill={shape.stroke ? shape.stroke : shape.fill}
+                        strokeWidth={shape.strokeWidth || 0}
+                    />;
+                } else if (element.type === 'polygon') {
+                    return <polygon
+                        key={`polygon-${index}`}
+                        points={element.points}
+                        stroke={shape.stroke ? shape.fill : shape.stroke}
+                        fill={shape.stroke ? shape.stroke : shape.fill}
+                        strokeWidth={shape.strokeWidth || 0}
+                    />;
+                } else if (element.type === 'circle') {
+                    return <circle
+                        key={`circle-${index}`}
+                        cx={Number(element.cx) || 0}
+                        cy={Number(element.cy) || 0}
+                        r={Number(element.r) || 0}
+                        stroke={shape.stroke ? shape.fill : shape.stroke}
+                        fill={shape.stroke ? shape.stroke : shape.fill}
+                        strokeWidth={shape.strokeWidth || 0}
+                    />;
+                } else if (element.type === 'ellipse') {
+                    return <ellipse
+                        key={`ellipse-${index}`}
+                        cx={Number(element.cx) || 0}
+                        cy={Number(element.cy) || 0}
+                        rx={Number(element.rx) || 0}
+                        ry={Number(element.ry) || 0}
+                        stroke={shape.stroke ? shape.fill : shape.stroke}
+                        fill={shape.stroke ? shape.stroke : shape.fill}
+                        strokeWidth={shape.strokeWidth || 0}
+                    />;
+                }
+            })}
         </svg>
     );
 } 
