@@ -10,13 +10,14 @@ import { useFileUpload } from "@/context/FileUploadContext";
 import { FlipbookUploadMode } from "@/utils/enum";
 import LoadingButton from "@/utils/LoadingButton";
 import { useFlipbook } from "@/context/FlipbookContext";
+import { UploadFilesNewApi, subscribeToUploadProgress, GenerateFlipbookApi } from "@/service/flipbook.service";
 
 export default function CreateFirstFlipbook() {
     const { fetchFlipbooks } = useFlipbook();
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
     const { setFiles } = useFileUpload();
-    
+
     const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
     const [multiFileDialogOpen, setMultiFileDialogOpen] = useState(false);
     const [pendingFiles, setPendingFiles] = useState([]);
@@ -29,50 +30,92 @@ export default function CreateFirstFlipbook() {
         }
     };
 
-    const handleFileInputChange = async (event) => {
-        const files = Array.from(event.target.files).sort((a, b) => a.name.localeCompare(b.name));
-        if (!files.length) return;
-        
-        // File type validation
-        const allowedTypes = [
-            "application/pdf",
-            "application/vnd.ms-powerpoint",
-            "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-            "application/vnd.oasis.opendocument.presentation",
-            "image/jpeg",
-            "image/png",
-            "image/gif"
-        ];
-        
-        const allValid = files.every(file => allowedTypes.includes(file.type));
-        if (!allValid) {
-            toast.error("Invalid file type", {
-                description: "Please select only PDF, PPTX, ODP, JPG, PNG, or GIF files."
-            });
-            return;
-        }
+    // const handleFileInputChange = async (event) => {
+    //     const files = Array.from(event.target.files).sort((a, b) => a.name.localeCompare(b.name));
+    //     if (!files.length) return;
 
-        if (files.length === 1) {
-            const file = files[0];
-            setUploadDialogOpen(true);
-            try {
-                const formData = new FormData();
-                formData.append("files", file);
-                const response = await UploadPdfApi(formData);
-                const bookId = response.data.bookId;
-                setTimeout(() => {
-                    navigate(`/customize/${bookId}`);
-                }, 100);
-            } catch (error) {
-                toast.error("Failed to upload file", {
-                    description: error.message
-                });
-            } finally {
-                setUploadDialogOpen(false);
-            }
-        } else {
-            setPendingFiles(files);
-            setMultiFileDialogOpen(true);
+    //     // File type validation
+    //     const allowedTypes = [
+    //         "application/pdf",
+    //         "application/vnd.ms-powerpoint",
+    //         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    //         "application/vnd.oasis.opendocument.presentation",
+    //         "image/jpeg",
+    //         "image/png",
+    //         "image/gif"
+    //     ];
+
+    //     const allValid = files.every(file => allowedTypes.includes(file.type));
+    //     if (!allValid) {
+    //         toast.error("Invalid file type", {
+    //             description: "Please select only PDF, PPTX, ODP, JPG, PNG, or GIF files."
+    //         });
+    //         return;
+    //     }
+
+    //     if (files.length === 1) {
+    //         const file = files[0];
+    //         setUploadDialogOpen(true);
+    //         try {
+    //             const formData = new FormData();
+    //             formData.append("files", file);
+    //             const response = await UploadPdfApi(formData);
+    //             const bookId = response.data.bookId;
+    //             setTimeout(() => {
+    //                 navigate(`/customize/${bookId}`);
+    //             }, 100);
+    //         } catch (error) {
+    //             toast.error("Failed to upload file", {
+    //                 description: error.message
+    //             });
+    //         } finally {
+    //             setUploadDialogOpen(false);
+    //         }
+    //     } else {
+    //         setPendingFiles(files);
+    //         setMultiFileDialogOpen(true);
+    //     }
+    // };
+
+    const handleFileInputChange = async (event) => {
+        const files = Array.from(event.target.files);
+        if (!files.length) return;
+
+        setUploadDialogOpen(true);
+        const formData = new FormData();
+        files.forEach(file => formData.append("files", file));
+
+        try {
+            // Step 1 — Upload to new API
+            const uploadRes = await UploadFilesNewApi(formData);
+            const { sessionId, mainFolderId, files: uploadedFiles } = uploadRes;
+
+            // Step 2 — Subscribe to SSE stream
+            const eventSource = subscribeToUploadProgress(sessionId, (data) => {
+                if (data.file) {
+                    console.log("Progress:", data.file, data.status, data.page || "");
+                }
+                if (data.stage === "all_done") {
+                    toast.success("Upload complete! Generating flipbook...");
+                    eventSource.close();
+
+                    // Step 3 — Auto trigger generate
+                    GenerateFlipbookApi({
+                        mainFolderId,
+                        files: uploadedFiles,
+                        mode: 1, // combine
+                    }).then((genRes) => {
+                        const { bookIds } = genRes.data;
+                        if (bookIds && bookIds.length) {
+                            navigate(`/customize/${bookIds[0]}`);
+                        }
+                    });
+                }
+            });
+        } catch (err) {
+            toast.error("Upload failed", { description: err.message });
+        } finally {
+            setUploadDialogOpen(false);
         }
     };
 
@@ -150,6 +193,17 @@ export default function CreateFirstFlipbook() {
                                         className="hidden"
                                         onChange={handleFileInputChange}
                                     />
+                                    {uploadDialogOpen && (
+                                        <div className="p-6">
+                                            <div className="text-lg mb-2">{progressText}</div>
+                                            <div className="w-full h-2 bg-gray-200 rounded">
+                                                <div
+                                                    className="bg-purple-600 h-full transition-all"
+                                                    style={{ width: `${progressPercent}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="flex justify-between items-center gap-2">
                                     <div>
