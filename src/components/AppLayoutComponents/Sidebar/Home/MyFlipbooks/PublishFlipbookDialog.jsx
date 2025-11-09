@@ -885,7 +885,7 @@ export default function PublishFlipbookDialog({
                             {publishing ? <LoadingButton buttonLabel="Publishing" /> : pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0) ? <LoadingButton buttonLabel="Preparing" /> : 'Publish Now'}
                         </Button>
                     </div>
-                    <div className="flex flex-col md:flex-row gap-2 md:gap-4 justify-end w-full mt-2">
+                    <div className="flex flex-col md:flex-row gap-2 md:gap-4 justify-end w-full mt-2 hidden">
 
                         <Button
                             variant="secondary"
