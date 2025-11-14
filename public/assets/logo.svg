@@ -1,0 +1,17 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon: Layered pages with tilted 'F' -->
+  <!-- Back layer -->
+  <rect x="15" y="35" width="70" height="85" rx="6" fill="#7c3aed" opacity="0.2"/>
+  
+  <!-- Middle layer -->
+  <rect x="25" y="25" width="70" height="85" rx="6" fill="#7c3aed" opacity="0.5"/>
+  
+  <!-- Front layer (tilted) -->
+  <g transform="rotate(-8 70 57.5)">
+    <rect x="35" y="15" width="70" height="85" rx="6" fill="#7c3aed"/>
+    <!-- Big white "F" -->
+    <text x="70" y="75" font-family="Inter, Arial, sans-serif" font-size="58" font-weight="700" fill="#FFFFFF" text-anchor="middle">
+      F
+    </text>
+  </g>
+</svg>

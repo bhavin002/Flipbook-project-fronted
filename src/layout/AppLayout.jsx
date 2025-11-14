@@ -34,10 +34,10 @@ export default function AppLayout({ setIsSidebarOpen }) {
             <div className="flex flex-col min-h-screen">
                 <header className="fixed top-0 left-0 right-0 z-10 bg-white">
                     <div className="flex h-16 w-full justify-between shrink-0 items-center px-4 md:px-6">
-                        <div className="cursor-pointer" onClick={() => {
-                            navigate("/myflipbooks")
+                        <div className="flex gap-2 sm:gap-3 px-3 pr-2 py-2 items-center cursor-pointer" onClick={() => {
+                            navigate("/myflipbooks/flipbooks")
                         }}>
-                            <img src="/assets/logo.png" width={200} />
+                            <img src="/assets/logo.png" alt="Flipdrag" className='max-h-16' />
                         </div>
                         {shouldShowSearchAndFilter() && (
                             <div className="relative md:flex gap-6 hidden">
@@ -54,7 +54,7 @@ export default function AppLayout({ setIsSidebarOpen }) {
                         </div>
                     </div>
                     {shouldShowSearchAndFilter() && (
-                        <div className="h-12 relative flex gap-2 justify-end mx-4 md:hidden items-center">
+                        <div className="h-12 relative flex gap-2 justify-end mx-4 mt-1 md:hidden items-center">
                             <SearchInputCom
                                 searchValue={searchValue}
                                 setSearchValue={setSearchValue}
@@ -67,7 +67,7 @@ export default function AppLayout({ setIsSidebarOpen }) {
                     </div>
                 </header>
 
-                <div className="flex-1 max-md:flex md:mt-[64px] max-md:mt-[156px] max-md:mb-[80px] overflow-y-auto">
+                <div className="flex-1 z-0 max-md:flex md:mt-[64px] max-md:mt-[156px] max-md:mb-[80px] overflow-y-auto">
                     <div className="flex flex-1">
                         <div className="hidden relative md:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
                             <SidebarProvider value={{ selectedItem, setSelectedItem, width: "15rem" }}>
@@ -77,7 +77,7 @@ export default function AppLayout({ setIsSidebarOpen }) {
                         </div>
 
                         <div className="flex flex-1 flex-col md:max-h-[calc(100vh-64px)] md:overflow-y-auto">
-                            <div className="hidden pb-4 md:block px-4 sticky top-0 bg-white z-10">
+                            <div className="hidden py-4 md:block px-4 sticky top-0 bg-white z-10 border-t">
                                 <AppBreadcrumbs />
                             </div>
                             <Outlet />
