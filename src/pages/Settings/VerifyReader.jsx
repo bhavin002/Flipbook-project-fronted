@@ -70,8 +70,13 @@ export default function VerifyReader() {
                 <div className="w-full max-w-sm">
                     <Card className="shadow rounded-xl">
                         <CardHeader className="text-center space-y-4">
-                            <div style={{ "transform": "scale(1)", "margin": "auto" }}>
-                                <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                            <div className="flex items-center gap-2 sm:gap-3 px-3 pr-2 py-2" style={{ "transform": "scale(1)", "margin": "auto" }}>
+                                <div className="relative flex items-center">
+                                    <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                                    <span className="absolute -right-6 top-3 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-[1px] rounded">
+                                        BETA
+                                    </span>
+                                </div>
                             </div>
                             <CardTitle>Verifying Invitation...</CardTitle>
                             <CardDescription>
@@ -90,8 +95,13 @@ export default function VerifyReader() {
                 <div className={cn("flex flex-col gap-6")}>
                     <Card className="shadow rounded-xl">
                         <CardHeader className="text-center space-y-4">
-                            <div style={{ "transform": "scale(1)", "margin": "auto" }}>
-                                <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                            <div className="flex items-center gap-2 sm:gap-3 px-3 pr-2 py-2" style={{ "transform": "scale(1)", "margin": "auto" }}>
+                                <div className="relative flex items-center">
+                                    <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                                    <span className="absolute -right-6 top-3 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-[1px] rounded">
+                                        BETA
+                                    </span>
+                                </div>
                             </div>
                             {isVerified ? (
                                 <CardTitle>Invitation Accepted Successfully!</CardTitle>

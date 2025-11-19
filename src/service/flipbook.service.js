@@ -109,7 +109,7 @@ export const UploadFilesNewApi = async formData => {
       headers: { 'Content-Type': 'multipart/form-data' }
     }
   )
-  return response.data // ✅ not response.data
+  return response.data
 }
 
 export const GenerateFlipbookApi = async data => {
