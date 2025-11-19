@@ -151,7 +151,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
             formData.append('width', stageWidth);
             formData.append('height', stageHeight);
             formData.append('type', templateType);
-            if(templateCategory !== "all-templates"){
+            if (templateCategory !== "all-templates") {
                 formData.append('categoryId', templateCategory);
             }
 
@@ -342,10 +342,16 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
             <div className="flex flex-col min-h-screen">
                 <header className="fixed top-0 left-0 right-0 z-10 bg-white">
                     <div className="flex h-16 w-full justify-between shrink-0 items-center px-4 lg:px-6">
-                        <div className="cursor-pointer" onClick={() => {
-                            navigate("/myflipbooks")
-                        }}>
-                            <img src="/assets/logo.png" width={200} alt="Logo" />
+                        <div className="flex items-center gap-2 sm:gap-3 px-3 pr-2 py-2">
+                            <div
+                                className="relative flex items-center cursor-pointer"
+                                onClick={() => navigate("/myflipbooks/flipbooks")}
+                            >
+                                <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                                <span className="absolute -right-6 top-3 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-[1px] rounded cursor-default">
+                                    BETA
+                                </span>
+                            </div>
                         </div>
                         <div className="flex-1 gap-2 flex justify-center max-md:hidden">
                             <Select value={templateType} onValueChange={setTemplateType}>

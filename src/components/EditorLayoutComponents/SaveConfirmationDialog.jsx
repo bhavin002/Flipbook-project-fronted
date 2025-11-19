@@ -11,7 +11,7 @@ export default function SaveConfirmationDialog({
 }) {
     return (
         <Dialog open={isOpen} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[540px] w-[90vw]">
                 <DialogHeader>
                     <DialogTitle>Save Changes</DialogTitle>
                     <DialogDescription>

@@ -24,7 +24,7 @@ export default function ShelfCreateLayout() {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState(null);
     const { currentWorkspace } = useWorkspaces();
-    
+
     const isEditMode = Boolean(id);
 
     useEffect(() => {
@@ -39,7 +39,7 @@ export default function ShelfCreateLayout() {
     useEffect(() => {
         const fetchShelfData = async () => {
             if (!isEditMode) return;
-            
+
             setLoading(true);
             try {
                 const response = await GetShelfFlipbookIdsApi(id);
@@ -64,16 +64,16 @@ export default function ShelfCreateLayout() {
                 setData(response.data);
                 if (isEditMode && shelfData && response.data.flipbooks) {
                     const flipbookIds = shelfData.flipbooks || [];
-                    
+
                     const flipbookMap = new Map();
                     response.data.flipbooks.forEach(fb => {
                         flipbookMap.set(fb._id, fb);
                     });
-                    
+
                     const preSelectedFlipbooks = flipbookIds
                         .map(id => flipbookMap.get(id))
                         .filter(Boolean);
-                    
+
                     setSelectedFlipbooks(preSelectedFlipbooks);
                 }
             } catch (err) {
@@ -84,7 +84,7 @@ export default function ShelfCreateLayout() {
                 setLoading(false);
             }
         };
-        
+
         if (currentWorkspace && (!isEditMode || shelfData)) {
             fetchFlipbooks();
         }
@@ -95,7 +95,7 @@ export default function ShelfCreateLayout() {
             setOrderedFlipbooks(selectedFlipbooks);
         }
     }, [selectedFlipbooks, activeTab]);
-    
+
     const isSelectStep = activeTab === "Select";
     const canProceed = selectedFlipbooks.length > 0;
 
@@ -145,10 +145,16 @@ export default function ShelfCreateLayout() {
             <div className="flex flex-col min-h-screen">
                 <header className="fixed top-0 left-0 right-0 z-10 bg-white">
                     <div className="flex h-16 w-full justify-between shrink-0 items-center px-4 md:px-6">
-                        <div className="cursor-pointer" onClick={() => {
-                            navigate("/myflipbooks")
-                        }}>
-                            <img src="/assets/logo.png" width={200} alt="Logo" />
+                        <div className="flex items-center gap-2 sm:gap-3 px-3 pr-2 py-2">
+                            <div
+                                className="relative flex items-center cursor-pointer"
+                                onClick={() => navigate("/myflipbooks/flipbooks")}
+                            >
+                                <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                                <span className="absolute -right-6 top-3 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-[1px] rounded cursor-default">
+                                    BETA
+                                </span>
+                            </div>
                         </div>
                         <div className="relative lg:flex gap-6 hidden">
                             <div className="flex items-center space-x-2">

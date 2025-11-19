@@ -42,7 +42,6 @@ export default function CreateDropDownCom() {
     const [uploadingSeparately, setUploadingSeparately] = useState(false);
     const [progressPercent, setProgressPercent] = useState(0);
     const [progressText, setProgressText] = useState("");
-    const [uploadComplete, setUploadComplete] = useState(false);
     const [fileProgressList, setFileProgressList] = useState([]);
     const [productCatalogOpen, setProductCatalogOpen] = useState(false);
     const { userMeta } = useAuth();
@@ -54,7 +53,6 @@ export default function CreateDropDownCom() {
         if (eventSourceRef.current) eventSourceRef.current.close();
         setProgressPercent(0);
         setProgressText("");
-        setUploadComplete(false);
         setFileProgressList([]);
     };
 
@@ -114,7 +112,7 @@ export default function CreateDropDownCom() {
     const uploadSingleFile = async (file) => {
         resetUpload();
         setUploadDialogOpen(true);
-        setProgressText("Starting upload...");
+        setProgressText("Uploading your file...");
 
         try {
             const formData = new FormData();
@@ -126,14 +124,13 @@ export default function CreateDropDownCom() {
             eventSourceRef.current = subscribeToUploadProgress(sessionId, async (data) => {
                 if (data.status === "rendering") {
                     const percent = Math.round((data.page / (data.total || 1)) * 100);
-                    setProgressText(`Processing ${data.file} — ${data.page}/${data.total}`);
+                    setProgressText(`Hang tight! Processing pages... ${data.page}/${data.total}`);
                     setProgressPercent(percent);
                 }
 
                 if (data.stage === "all_done") {
-                    // Smoothly complete to 100%
                     smoothTo100(setProgressPercent);
-                    setProgressText("Generating flipbook...");
+                    setProgressText("Generating your flipbook...");
 
                     setTimeout(async () => {
                         const genRes = await GenerateFlipbookApi({
@@ -146,7 +143,6 @@ export default function CreateDropDownCom() {
                         if (bookIds?.length) {
                             setProgressPercent(100);
                             setProgressText("Flipbook created successfully 🎉");
-                            setUploadComplete(true);
 
                             setTimeout(() => {
                                 setUploadDialogOpen(false);
@@ -166,6 +162,7 @@ export default function CreateDropDownCom() {
     };
 
     const handleUploadSeparately = async () => {
+        setMultiFileDialogOpen(false);
         setUploadingSeparately(true);
         setUploadDialogOpen(true);
         resetUpload();
@@ -177,7 +174,6 @@ export default function CreateDropDownCom() {
             const uploadRes = await UploadFilesNewApi(formData);
             const { sessionId, mainFolderId, files: uploadedFiles } = uploadRes;
 
-            // Initialize UI progress for each file
             setFileProgressList(
                 pendingFiles.map((file) => ({
                     name: file.name,
@@ -186,7 +182,6 @@ export default function CreateDropDownCom() {
                 }))
             );
 
-            // Subscribe to SSE for real-time file progress
             eventSourceRef.current = subscribeToUploadProgress(sessionId, async (data) => {
                 if (!data) return;
 
@@ -219,7 +214,6 @@ export default function CreateDropDownCom() {
                     );
 
                     setProgressText("Generating flipbooks...");
-                    setUploadComplete(true);
 
                     try {
                         const genRes = await GenerateFlipbookApi({
@@ -309,7 +303,6 @@ export default function CreateDropDownCom() {
                 </DropdownMenuItem>
             </DropdownMenuContent>
 
-            {/* Hidden input */}
             <input
                 type="file"
                 accept=".pdf,.pptx,.odp,.jpg,.jpeg,.png"
@@ -319,11 +312,10 @@ export default function CreateDropDownCom() {
                 multiple
             />
 
-            {/* Upload progress dialog */}
             <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-                <DialogContent hideClose>
+                <DialogContent className="sm:max-w-[540px] w-[90vw]">
                     <div className="flex flex-col items-center justify-center p-4 w-full space-y-6">
-                        <img src="/assets/Uploading_cloud.gif" className="w-20" alt="uploading" />
+                        <img src="/assets/Uploading_cloud.gif" className="w-20 scale-150" alt="uploading" />
 
                         <div className="text-lg font-semibold">
                             {progressText || "Uploading files..."}
@@ -332,10 +324,10 @@ export default function CreateDropDownCom() {
                         {fileProgressList.length > 0 ? (
                             <div className="w-full flex flex-col gap-4 max-h-[400px] overflow-y-auto">
                                 {fileProgressList.map((file, idx) => (
-                                    <div key={idx} className="w-full">
-                                        <div className="flex justify-between items-center mb-1">
-                                            <span className="text-sm text-gray-700 truncate w-[70%]">{file.name}</span>
-                                            <span className="text-xs text-gray-500">{file.percent}%</span>
+                                    <div key={idx} className="max-w-[476px]">
+                                        <div className="flex justify-between items-center mb-1 gap-2 overflow-hidden w-full">
+                                            <span className="text-sm text-gray-700 truncate min-w-0 flex-1">{file.name}</span>
+                                            <span className="text-xs text-gray-500 flex-shrink-0 whitespace-nowrap">{file.percent}%</span>
                                         </div>
 
                                         <div className="w-full bg-gray-200 rounded h-2 overflow-hidden">
@@ -347,12 +339,6 @@ export default function CreateDropDownCom() {
                                                 style={{ width: `${file.percent}%` }}
                                             />
                                         </div>
-
-                                        {file.status === "done" && (
-                                            <div className="text-xs text-green-600 mt-1 text-right">
-                                                ✅ Completed
-                                            </div>
-                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -366,20 +352,12 @@ export default function CreateDropDownCom() {
                                 </div>
                             </>
                         )}
-
-                        {uploadComplete && (
-                            <div className="text-green-600 font-medium pt-2">
-                                All files processed successfully 🎉
-                            </div>
-                        )}
                     </div>
                 </DialogContent>
             </Dialog>
 
-
-            {/* Multi-file options dialog */}
             <Dialog open={multiFileDialogOpen} onOpenChange={setMultiFileDialogOpen}>
-                <DialogContent hideClose>
+                <DialogContent className="sm:max-w-[540px] w-[90vw]">
                     <div className="flex flex-col items-center justify-center space-y-4">
                         <img src="/assets/box_lines.svg" />
                         <div className="space-y-2 text-center">

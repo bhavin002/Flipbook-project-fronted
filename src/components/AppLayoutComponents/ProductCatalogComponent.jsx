@@ -192,7 +192,7 @@ export default function ProductCatalog({ open, onOpenChange }) {
                 <DialogContent hideClose>
                     <div className="flex flex-col items-center justify-center p-4">
                         <img
-                            src="/assets/Uploading_cloud.gif"
+                            src="/assets/Uploading_cloud.gif" className="w-20 scale-150"
                         />
                         <div className="text-lg font-semibold mb-5">
                             Extracting data from CSV...

@@ -7,8 +7,6 @@ import {
   GripVertical,
   ArrowRight,
   Loader2,
-  CheckCircle,
-  BookOpenCheck,
 } from "lucide-react";
 import {
   DndContext,
@@ -38,7 +36,6 @@ import { useNavigate } from "react-router-dom";
 import { FlipbookUploadMode } from "@/utils/enum";
 import LoadingButton from "@/utils/LoadingButton";
 
-/* ---------- File Item ---------- */
 function SortableFileItem({
   file,
   index,
@@ -61,33 +58,23 @@ function SortableFileItem({
     if (status === "done") return "Completed";
     if (status === "rendering") return "Processing…";
     if (status === "uploading") return "Uploading…";
-    return "In queue";
-  };
-
-  const getStatusIcon = () => {
-    if (!showProgress) return null;
-    if (status === "done") return <CheckCircle className="w-4 h-4 text-green-500" />;
-    if (status === "uploading" || status === "rendering")
-      return <Loader2 className="w-4 h-4 animate-spin text-purple-500" />;
-    return null;
+    return "Processing…";
   };
 
   return (
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-white border border-gray-200 rounded-2xl py-2 px-3 transition-all ${
-        isDragging ? "opacity-50 scale-95" : "hover:border-gray-300 hover:shadow-sm"
-      } ${disableRemove ? "opacity-75 cursor-not-allowed" : ""}`}
+      className={`bg-white border border-gray-200 rounded-2xl py-2 px-3 transition-all ${isDragging ? "opacity-50 scale-95" : "hover:border-gray-300 hover:shadow-sm"
+        } ${disableRemove ? "opacity-75 cursor-not-allowed" : ""}`}
       {...attributes}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <div
             {...listeners}
-            className={`cursor-grab active:cursor-grabbing ${
-              showProgress ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`cursor-grab active:cursor-grabbing ${showProgress ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
             <GripVertical className="w-5 h-5 text-gray-400" />
           </div>
@@ -98,7 +85,6 @@ function SortableFileItem({
         </div>
 
         <div className="flex items-center gap-2">
-          {getStatusIcon()}
           <Button
             variant="ghost"
             size="icon"
@@ -119,9 +105,8 @@ function SortableFileItem({
           </div>
           <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
             <div
-              className={`h-full transition-all duration-300 ${
-                status === "done" ? "bg-green-500" : "bg-purple-600"
-              }`}
+              className={`h-full transition-all duration-300 ${status === "done" ? "bg-green-500" : "bg-purple-600"
+                }`}
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -131,7 +116,6 @@ function SortableFileItem({
   );
 }
 
-/* ---------- Main Component ---------- */
 export default function FileUploadReorder() {
   const { files, setFiles } = useFileUpload();
   const fileInputRef = useRef(null);
@@ -218,7 +202,7 @@ export default function FileUploadReorder() {
           const updated = [...prev];
           const idx = updated.findIndex((p) => p.name === file || p.name.includes(file));
           if (idx === -1) return prev;
-          if (updated[idx].status === "done") return prev; // lock done state
+          if (updated[idx].status === "done") return prev;
 
           const safePercent = Math.max(updated[idx].percent, computedPercent || 0);
           updated[idx] = {
@@ -242,7 +226,6 @@ export default function FileUploadReorder() {
             eventSourceRef.current = null;
           }
 
-          // Start flipbook generation
           setIsGenerating(true);
           setUploading(false);
 
@@ -284,16 +267,14 @@ export default function FileUploadReorder() {
     }
   };
 
-  /* ---------- Render ---------- */
   return (
-    <div className="flex items-center justify-center w-full">
+    <div className="flex items-center justify-center w-full px-2">
       <div className="w-full bg-white flex h-full overflow-auto flex-col">
         <div className="flex flex-col justify-center m-auto max-w-2xl w-full">
-          <h1 className="text-2xl font-semibold text-center mb-6">
+          <h1 className="text-2xl font-semibold text-center mb-6 max-md:mt-5">
             Reorder or add more files
           </h1>
 
-          {/* Upload Box */}
           <div
             className="flex flex-col items-center justify-center border-2 border-dashed border-purple-200 rounded-lg p-12 my-8 space-y-4 bg-purple-50/30 transition hover:border-purple-300 hover:bg-purple-50/50"
             onDrop={(e) => {
@@ -327,7 +308,6 @@ export default function FileUploadReorder() {
             />
           </div>
 
-          {/* File List */}
           {files.length > 0 && (
             <div className="mb-8">
               <div className="text-sm font-medium mb-4 text-gray-700">
@@ -368,7 +348,6 @@ export default function FileUploadReorder() {
           )}
         </div>
 
-        {/* Continue / Generating Section */}
         <div className="flex justify-center py-3">
           {isGenerating ? (
             <div className="flex items-center gap-2 text-purple-700 font-medium">
@@ -393,7 +372,6 @@ export default function FileUploadReorder() {
         </div>
       </div>
 
-      {/* Delete Confirmation */}
       <ConfirmationDialog
         isConfirmModalOpen={isConfirmModalOpen}
         setIsConfirmModalOpen={setIsConfirmModalOpen}
