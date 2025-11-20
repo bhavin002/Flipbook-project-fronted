@@ -1,0 +1,105 @@
+import { ChartBarBig, ChartNoAxesCombined, ChartPie, Image, ImagePlay, Shapes, Smile, Table, Video } from "lucide-react"
+import StockPhotosView from "./StockPhotosView"
+import StockVideosView from "./StockVideosView"
+import ShapesView from "./ShapesView"
+import GIFsView from "./GIFsView"
+import StickersView from "./StickersView"
+
+export default function ElementsSidebarPanel({ setIsEditorDrawerOpen, setMainStage, mainStage, selectedIndex, currentView, setCurrentView }) {
+    const elements = [
+        {
+            title: "Graphics",
+            widget: [
+                {
+                    text: 'Stock photos',
+                    icon: <Image />,
+                    component: StockPhotosView
+                },
+                {
+                    text: 'Stock videos',
+                    icon: <Video />,
+                    component: StockVideosView
+                },
+                {
+                    text: 'Shapes',
+                    icon: <Shapes />,
+                    component: ShapesView
+                },
+                {
+                    text: 'GIFs',
+                    icon: <ImagePlay />,
+                    component: GIFsView
+                },
+                {
+                    text: 'Stickers',
+                    icon: <Smile />,
+                    component: StickersView
+                }
+            ]
+        },
+        {
+            title: "Charts",
+            widget: [
+                {
+                    text: 'Line chart',
+                    icon: <ChartNoAxesCombined />
+                },
+                {
+                    text: 'Pie chart',
+                    icon: <ChartPie />
+                },
+                {
+                    text: 'Bar chart',
+                    icon: <ChartBarBig />
+                },
+                {
+                    text: 'Table',
+                    icon: <Table />
+                }
+            ]
+        }
+    ]
+
+    if (currentView) {
+        const ViewComponent = currentView.component;
+        return (
+            <ViewComponent 
+                setIsEditorDrawerOpen={setIsEditorDrawerOpen} 
+                setMainStage={setMainStage} 
+                mainStage={mainStage} 
+                selectedIndex={selectedIndex} 
+                onBackClick={() => setCurrentView(null)} 
+            />
+        );
+    }
+
+    return (
+        <div className="px-6 pt-6 pb-2 space-y-4 flex flex-col h-[100vh]">
+            <div className="h-0 overflow-y-auto flex-grow">
+                <div className="space-y-4">
+                    {elements.map((section, index) => (
+                        <div key={index}>
+                            <div className="mb-2 text-sm font-semibold">{section.title}</div>
+                            <div className="grid grid-cols-3 gap-4">
+                                {section.widget.map((item, itemIndex) => (
+                                    <div
+                                        key={itemIndex}
+                                        className="cursor-pointer flex flex-col items-center"
+                                        onClick={() => section.title === "Graphics" ? setCurrentView(item) : null}
+                                    >
+                                        <div className="rounded-lg h-14 w-full bg-primary hover:bg-violet-700 flex justify-center items-center">
+                                            <div className="w-10 h-8 relative flex justify-center items-center">
+                                                {item.icon}
+                                            </div>
+                                        </div>
+                                        <div className="text-center mt-2 text-xs">{item.text}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+}

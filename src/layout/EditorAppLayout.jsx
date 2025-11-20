@@ -1,0 +1,613 @@
+import { useEffect, useState, useRef } from "react";
+import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom";
+import { Outlet, useLocation, useNavigate, useParams, useBlocker } from "react-router-dom";
+import PublishFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/PublishFlipbookDialog";
+import { Button } from "@/components/ui/button";
+import { Download, Eye, Share2, SlidersHorizontal } from "lucide-react";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/utils/AppSidebar";
+import EditorSidebarNavigation from "@/components/EditorLayoutComponents/EditorSidebarNavigation";
+import BottomEditorPanel from "@/components/EditorLayoutComponents/BottomEditorPanel";
+import ShapeEditorLayout from "@/components/EditorLayoutComponents/Widget/ShapeEditorLayout";
+import BottomShapeEditorLayout from "@/components/EditorLayoutComponents/Widget/BottomShapeEditorLayout";
+import { GetFlipbookApi, UpdateFlipbookPageDataApi } from "@/service/flipbook.service";
+import { toast } from "sonner";
+import useWindowWidth from "@/hooks/use-window-width";
+import EditFlipbookName from "@/utils/EditFlipbookName";
+import PreviewDialog from "@/components/EditorLayoutComponents/Preview/PreviewDialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreVertical } from "lucide-react";
+import { flipbookType } from "@/utils/enum";
+import RenameFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/RenameFlipbookDialog";
+import { CreateFlipbookActiveEditor, ReplaceFlipbookActiveEditor, DeleteFlipbookActiveEditor } from "@/service/flipbookAciveEditors.service"; // Assuming the file path based on user input
+import SessionConflictDialog from "@/components/EditorLayoutComponents/SessionConflictDialog";
+import SaveConfirmationDialog from "@/components/EditorLayoutComponents/SaveConfirmationDialog";
+import dynamicFontManager from '@/utils/dynamicFontManager';
+
+export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
+    const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
+    const [isFormCustomize, setIsFormCustomize] = useState(false);
+    const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [selectedShape, setSelectedShape] = useState([]);
+    const [currentView, setCurrentView] = useState(null);
+    const [flipbookName, setFlipbookName] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [stageWidth, setStageWidth] = useState(0);
+    const [stageHeight, setStageHeight] = useState(0);
+    const windowInnerWidth = useWindowWidth();
+    const { id } = useParams();
+    const [mainStage, setMainStage] = useState([]);
+    const navigate = useNavigate();
+    const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+    const [isCustomizeLoading, setIsCustomizeLoading] = useState(false);
+    const location = useLocation();
+    const [publishing, setPublishing] = useState(false);
+    const [isTemplate, setIsTemplate] = useState(false);
+    const state = location.state;
+    const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
+    const [flipbookObj, setFlipbookObj] = useState(null);
+    const [isInitialLoad, setIsInitialLoad] = useState(false);
+    const [showSessionDialog, setShowSessionDialog] = useState(false);
+    const [isSessionTakeOverLoading, setIsSessionTakeOverLoading] = useState(false);
+    const [currentEditor, setCurrentEditor] = useState("");
+    const [pageCounter, setPageCounter] = useState(0);
+    const [imageLoadCounterPageWise, setImageLoadCounterPageWise] = useState({});
+    const [isAnyChangeMadeInStage, setIsAnyChangeMadeInStage] = useState(false);
+    const [showSaveDialog, setShowSaveDialog] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const pendingNavigationRef = useRef(null);
+
+    useEffect(() => {
+        const getFlipbook = async () => {
+            try {
+                const response = await GetFlipbookApi(id);
+                setIsTemplate(response.data.flipbookType === flipbookType.TEMPLATE)
+                setFlipbookName(response.data.name);
+                setStageWidth(response.data.width);
+                setStageHeight(response.data.height);
+                setFlipbookObj({
+                    _id: response.data._id || response.data.id,
+                    name: response.data.name,
+                    description: response.data.description || "",
+                    flipbookType: response.data.flipbookType
+                });
+                let validPageData = response.data.pages;
+                validPageData = validPageData.map(e => JSON.parse(e.pageData));
+                validPageData.forEach((page, index) => {
+                    page.shapes.forEach(async (shape) => {
+                        if (shape.type === 'text') {
+                            await dynamicFontManager.loadFontById(shape.fontId);
+                        }
+                    })
+                });
+                setMainStage(validPageData);
+                await initSession(); // Initialize session after flipbook data is loaded
+            } catch (error) {
+                toast.error(error?.message || "Error fetching page data");
+            }
+        };
+        if (id) {
+            getFlipbook();
+        }
+    }, [id]);
+
+    const initSession = async () => {
+        try {
+            await CreateFlipbookActiveEditor({ flipbookId: id, sessionId: sessionStorage.getItem('session_id') });
+            setIsInitialLoad(true);
+            return true;
+        } catch (error) {
+            if (error.status === 409) {
+                setShowSessionDialog(true);
+                setCurrentEditor(error.data.data.currentEditor)
+                return false;
+            } else {
+                toast.error(error.message || "Error initializing editing session");
+                navigate("/myflipbooks");
+                return false;
+            }
+        }
+    };
+
+    const handleTakeOver = async () => {
+        try {
+            setIsSessionTakeOverLoading(true);
+            await ReplaceFlipbookActiveEditor({ flipbookId: id, sessionId: sessionStorage.getItem('session_id') });
+            setShowSessionDialog(false);
+            setIsInitialLoad(true);
+        } catch (error) {
+            toast.error(error.message || "Error taking over session");
+        } finally {
+            setIsSessionTakeOverLoading(false);
+        }
+    };
+
+    const updatePageData = async () => {
+        try {
+            if (Object.values(imageLoadCounterPageWise).some((count) => count > 0)) {
+                return;
+            }
+            setIsLoading(true);
+            if (!showSessionDialog) {
+                if (!(await initSession())) {
+                    return false
+                }
+            }
+
+            mainStage.forEach((e, index) => {
+                e.temp = (index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1) && e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [] :
+                    (e.shapes || []);
+            });
+            const temp = JSON.parse(JSON.stringify(mainStage))
+            temp.forEach(e => {
+                e.selectedShapes = [];
+                e.shapes = e.temp;
+                delete e.temp;
+                e.stageref = null;
+            });
+            setIsAnyChangeMadeInStage(false);
+            return await UpdateFlipbookPageDataApi(id, {
+                width: stageWidth,
+                height: stageHeight,
+                pages: temp.map(e => ({
+                    pageData: JSON.stringify(e),
+                })),
+            });
+        } catch (error) {
+            toast.error("Failed to update page data", {
+                description: error.message || "Something went wrong"
+            })
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const interval = setInterval(async () => {
+            if (Object.values(imageLoadCounterPageWise).some((count) => count > 0)) {
+                return;
+            }
+            if (id && mainStage.length > 0 && !publishing && isInitialLoad && !showSessionDialog) {
+                updatePageData();
+            }
+        }, 10000);
+
+        return () => clearInterval(interval);
+    }, [mainStage, publishing]);
+
+    const blocker = useBlocker(
+        ({ nextLocation }) => {
+            const isLeavingEditor = !nextLocation.pathname.includes('/editor');
+            return isAnyChangeMadeInStage && isLeavingEditor && isInitialLoad;
+        }
+    );
+
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (isAnyChangeMadeInStage && isInitialLoad) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isAnyChangeMadeInStage, isInitialLoad]);
+
+    useEffect(() => {
+        if (blocker.state === 'blocked') {
+            pendingNavigationRef.current = blocker.proceed;
+            setShowSaveDialog(true);
+        }
+    }, [blocker]);
+
+    const handleSaveAndNavigate = async () => {
+        try {
+            setIsSaving(true);
+            await updatePageData();
+            setShowSaveDialog(false);
+            if (pendingNavigationRef.current) {
+                pendingNavigationRef.current();
+                pendingNavigationRef.current = null;
+            }
+        } catch (error) {
+            toast.error("Failed to save changes", {
+                description: error.message || "Something went wrong"
+            });
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleCancelNavigation = () => {
+        setShowSaveDialog(false);
+        if (blocker.state === 'blocked') {
+            blocker.reset();
+        }
+        pendingNavigationRef.current = null;
+    };
+
+    useEffect(() => {
+        return async () => {
+            const data = {
+                flipbookId: id,
+                sessionId: sessionStorage.getItem("session_id")
+            }
+            await DeleteFlipbookActiveEditor(data)
+        };
+    }, []);
+
+    const [selectedSubMenu, setSelectedSubMenu] = useState(null);
+    const [isShapeDrawerOpen, setIsShapeDrawerOpen] = useState(false);
+    const [isEditorDrawerOpen, setIsEditorDrawerOpen] = useState(false);
+
+    const handlePreviewClick = async () => {
+        try {
+            setIsPreviewLoading(true);
+            if (await updatePageData()) {
+                setIsPreviewOpen(true);
+            }
+        } catch (error) {
+            toast.error("Failed to update page data before preview", {
+                description: error.message || "Something went wrong"
+            });
+        } finally {
+            setIsPreviewLoading(false);
+        }
+    };
+
+    const handleCustomizeClick = async () => {
+        try {
+            setIsCustomizeLoading(true);
+            if (await updatePageData()) {
+                navigate(`/customize/${id}`);
+            }
+        } catch (error) {
+            toast.error("Failed to update page data before customize", {
+                description: error.message || "Something went wrong"
+            });
+        } finally {
+            setIsCustomizeLoading(false);
+        }
+    };
+
+    const shareFlipbook = async () => {
+        try {
+            if (await initSession()) {
+                setIsPublishModalOpen(true)
+            }
+        } catch (error) {
+            toast.error("Failed to update page data before customize", {
+                description: error.message || "Something went wrong"
+            });
+        }
+    }
+
+    useEffect(() => {
+        if (state?.publish) {
+            setIsFormCustomize(true);
+            setIsPublishModalOpen(true);
+            navigate(location.pathname, { replace: true });
+        }
+    }, [state]);
+
+    return (
+        <>
+            {/* Default drag mask for fallback cases */}
+            <div
+                id="all-other-drag-mask"
+                className="absolute top-0 left-0 right-0 bottom-0 z-[-1] bg-black opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            {/* Drag masks for Links and Tags */}
+            <div
+                id="go-to-button-link"
+                className="drag-mask bg-[url(/assets/icons/Link.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="square-caption"
+                className="drag-mask bg-[url(/assets/icons/Plus.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="embed-code"
+                className="drag-mask bg-[url(/assets/icons/Code.svg)] bg-[#ebf0fc] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="link-area"
+                className="drag-mask bg-[#7bc2ff] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="link-tag"
+                className="drag-mask bg-transparent absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="popup-frame"
+                className="drag-mask bg-[#7bc2ff] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            {/* Drag masks for Image */}
+            <div
+                id="spotlight"
+                className="drag-mask bg-[#7bc2ff] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="slideshow"
+                className="drag-mask bg-[url(/assets/icons/SlideShow.svg)] bg-[#ebf0fc] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="photo-slideshow"
+                className="drag-mask bg-[#7bc2ff] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            {/* Drag masks for Audio & Video */}
+            <div
+                id="video-embed"
+                className="drag-mask bg-[url(/assets/icons/Play.svg)] bg-[#000000] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="video-button"
+                className="drag-mask bg-[url(/assets/icons/VideoButton.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="audio-button"
+                className="drag-mask bg-[url(/assets/icons/AudioButton.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            {/* Drag masks for Shop */}
+            <div
+                id="shop-area"
+                className="drag-mask bg-[#7bc2ff] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="shop-button"
+                className="drag-mask bg-[url(/assets/icons/ShopButton.svg)] bg-[#000000] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="product-tag"
+                className="drag-mask bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            {/* Drag masks for Engagement */}
+            <div
+                id="quiz"
+                className="drag-mask bg-[#7bc2ff] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="question"
+                className="drag-mask bg-[#7bc2ff] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="contact-form"
+                className="drag-mask bg-[#7bc2ff] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            {/* Drag masks for Navigation */}
+            <div
+                id="go-to-previous-page"
+                className="drag-mask bg-[url(/assets/icons/PrevPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="go-to-next-page"
+                className="drag-mask bg-[url(/assets/icons/NextPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="go-to-page"
+                className="drag-mask bg-[url(/assets/icons/GoToPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="go-to-first-page"
+                className="drag-mask bg-[url(/assets/icons/GoToFirstPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="go-to-last-page"
+                className="drag-mask bg-[url(/assets/icons/GoToFirstPage.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            {/* Drag masks for Social (reusing go-to-button-link for most, but adding specific ones for clarity) */}
+            <div
+                id="tiktok-social"
+                className="drag-mask bg-[url(/assets/icons/social/TikTok.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="pinterest-social"
+                className="drag-mask bg-[url(/assets/icons/social/Pinterest.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="reddit-social"
+                className="drag-mask bg-[url(/assets/icons/social/Reddit.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="spotify-social"
+                className="drag-mask bg-[url(/assets/icons/social/Spotify.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="youtube-social"
+                className="drag-mask bg-[url(/assets/icons/social/Youtube.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="instagram-social"
+                className="drag-mask bg-[url(/assets/icons/social/Instagram.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="messenger-social"
+                className="drag-mask bg-[url(/assets/icons/social/Massenger.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="facebook-social"
+                className="drag-mask bg-[url(/assets/icons/social/Facebook.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="linkedin-social"
+                className="drag-mask bg-[url(/assets/icons/social/LinkedIn.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="twitter-social"
+                className="drag-mask bg-[url(/assets/icons/social/Twitter.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="snapchat-social"
+                className="drag-mask bg-[url(/assets/icons/social/Snapchat.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="whatsapp-social"
+                className="drag-mask bg-[url(/assets/icons/social/Whatsapp.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            {/* Drag masks for Other */}
+            <div
+                id="cart-other"
+                className="drag-mask bg-[url(/assets/icons/Cart.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="basket-other"
+                className="drag-mask bg-[url(/assets/icons/Basket.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+            <div
+                id="credit-card-other"
+                className="drag-mask bg-[url(/assets/icons/CreditCard.svg)] bg-[#41485d] absolute top-0 left-0 right-0 bottom-0 z-[-1] opacity-0 h-[80px] w-[16px] pointer-events-none"
+            ></div>
+
+            <div className="flex flex-col min-h-screen">
+                <header className="fixed top-0 left-0 right-0 z-10 bg-white">
+                    <div className="flex h-16 w-full justify-between shrink-0 items-center px-4 lg:px-6">
+                        <div className="flex items-center gap-2 sm:gap-3 px-3 pr-2 py-2">
+                            <div
+                                className="relative flex items-center cursor-pointer"
+                                onClick={() => navigate("/myflipbooks/flipbooks")}
+                            >
+                                <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
+                                <span className="absolute -right-6 top-3 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-[1px] rounded cursor-default">
+                                    BETA
+                                </span>
+                            </div>
+                        </div>
+                        <div className="relative lg:flex hidden">
+                            <div className="flex items-center gap-2">
+                                <EditFlipbookName isLoading={isLoading} isInitialLoad={isInitialLoad} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} updatePageData={updatePageData} isTemplate={isTemplate} />
+                            </div>
+                        </div>
+                        <div className="flex gap-2 items-center">
+                            <div className="flex gap-2">
+                                <div className="flex gap-2 max-md:hidden">
+                                    <Button variant="outline" onClick={handleCustomizeClick} disabled={isCustomizeLoading || !isInitialLoad}>
+                                        <SlidersHorizontal />
+                                    </Button>
+                                    <Button variant="outline" disabled={!isInitialLoad}>
+                                        <Download />
+                                    </Button>
+                                    <Button variant="outline" onClick={handlePreviewClick} disabled={isPreviewLoading || !isInitialLoad}>
+                                        <Eye /> Preview
+                                    </Button>
+                                </div>
+                                <div className="hidden max-md:block">
+                                    <DropdownMenu >
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="outline" size="icon" >
+                                                <MoreVertical />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="start">
+                                            <DropdownMenuItem onClick={handleCustomizeClick} disabled={isCustomizeLoading || !isInitialLoad}>
+                                                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                                                <span>Customize</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem disabled={!isInitialLoad}>
+                                                <Download className="mr-2 h-4 w-4" />
+                                                <span>Download</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={handlePreviewClick} disabled={isPreviewLoading || !isInitialLoad}>
+                                                <Eye className="mr-2 h-4 w-4" />
+                                                <span>Preview</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                                {/* Save Template/Share now button logic */}
+                                {isTemplate ? (
+                                    <Button className="hidden max-md:block" onClick={() => setIsRenameModalOpen(true)}>
+                                        Save template
+                                    </Button>
+                                ) : (
+                                    <Button disabled={!isInitialLoad} className="hidden max-md:block" onClick={shareFlipbook}>
+                                        <Share2 />
+                                    </Button>
+                                )}
+                                {isTemplate ? (
+                                    <Button className="max-md:hidden" onClick={() => setIsRenameModalOpen(true)}>
+                                        Save template
+                                    </Button>
+                                ) : (
+                                    <Button disabled={!isInitialLoad} className="max-md:hidden" onClick={shareFlipbook}>
+                                        Share now
+                                    </Button>
+                                )}
+                            </div>
+                            <ProfileDropDownCom />
+                        </div>
+                    </div>
+                    <div className="relative lg:flex px-4">
+                        <div className="hidden items-center gap-2 max-lg:flex">
+                            <EditFlipbookName isLoading={isLoading} isInitialLoad={isInitialLoad} flipbookId={id} flipbookName={flipbookName} setFlipbookName={setFlipbookName} updatePageData={updatePageData} />
+                        </div>
+                    </div>
+                </header>
+
+                {mainStage.length > 0 && <>
+                    <div className="flex-1 max-lg:flex lg:mt-[64px] max-lg:mt-[110px] max-lg:mb-[80px] overflow-y-auto">
+                        <div className="flex flex-1">
+                            <div className="max-lg:hidden relative lg:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
+                                <SidebarProvider value={{ selectedItem, setSelectedItem, width: "23rem" }}>
+                                    <EditorSidebarNavigation setIsShapeDrawerOpen={setIsShapeDrawerOpen} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} setSelectedShape={setSelectedShape} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedIndex={selectedIndex} setSelectedItem={setSelectedItem} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                                    <AppSidebar setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} selectedIndex={selectedIndex} stageWidth={stageWidth} stageHeight={stageHeight} />
+                                    <ShapeEditorLayout setIsShapeDrawerOpen={setIsShapeDrawerOpen} mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} setSelectedSubMenu={setSelectedSubMenu} flipbookId={id} />
+                                </SidebarProvider>
+                            </div>
+
+                            <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage }} />
+                            </div>
+                        </div>
+                    </div>
+                    <PublishFlipbookDialog
+                        isPublishModalOpen={isPublishModalOpen}
+                        setIsPublishModalOpen={setIsPublishModalOpen}
+                        flipbookId={id}
+                        mainStage={mainStage}
+                        stageWidth={stageWidth}
+                        stageHeight={stageHeight}
+                        publishing={publishing}
+                        setPublishing={setPublishing}
+                        pageCounter={pageCounter}
+                        imageLoadCounterPageWise={imageLoadCounterPageWise}
+                        setIsAnyChangeMadeInStage={setIsAnyChangeMadeInStage}
+                    />
+                    <PreviewDialog
+                        open={isPreviewOpen}
+                        onOpenChange={setIsPreviewOpen}
+                        flipbookId={id}
+                    />
+                    <BottomEditorPanel isEditorDrawerOpen={isEditorDrawerOpen} setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} stageWidth={stageWidth} stageHeight={stageHeight} />
+                    {
+                        windowInnerWidth <= 1024 && (
+                            <BottomShapeEditorLayout setIsEditorDrawerOpen={setIsEditorDrawerOpen} setSelectedSubMenu={setSelectedSubMenu} isShapeDrawerOpen={isShapeDrawerOpen} setIsShapeDrawerOpen={setIsShapeDrawerOpen} mainStage={mainStage} selectedIndex={selectedIndex} setMainStage={setMainStage} selectedSubMenu={selectedSubMenu} selectedShape={selectedShape} flipbookId={id} />
+                        )
+                    }
+                </>
+                }
+            </div>
+            <RenameFlipbookDialog isRenameModalOpen={isRenameModalOpen} setIsRenameModalOpen={setIsRenameModalOpen} flipbook={flipbookObj} redirectToTemplate={true} />
+            <SessionConflictDialog
+                isOpen={showSessionDialog}
+                onOpenChange={setShowSessionDialog}
+                onBack={() => {
+                    setShowSessionDialog(false);
+                    navigate("/myflipbooks");
+                }}
+                currentEditor={currentEditor}
+                onTakeOver={handleTakeOver}
+                isLoading={isSessionTakeOverLoading}
+            />
+            <SaveConfirmationDialog
+                isOpen={showSaveDialog}
+                onOpenChange={setShowSaveDialog}
+                onSave={handleSaveAndNavigate}
+                onCancel={handleCancelNavigation}
+                isLoading={isSaving}
+            />
+        </>
+    );
+}
