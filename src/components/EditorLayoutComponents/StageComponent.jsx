@@ -22,7 +22,7 @@ import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 
-export default function StageComponent({ imageLoadCounterPageWise, setImageLoadCounterPageWise, prevSelectedIndex, isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad, setIsAnyChangeMadeInStage }) {
+export default function StageComponent({ imageLoadCounterPageWise, setImageLoadCounterPageWise, prevSelectedIndex, isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad, setIsAnyChangeMadeInStage, isPublishModalOpenInternal }) {
     // Consistent Refs Initialization
     const stageRef = useRef(null);
     const demo = useRef(null);
@@ -540,7 +540,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             selectedShapes: selected,
         };
         setTimeout(() => {
-            
+
             setMainStage(nextMainStage);
             // setSelectedShapes(selected);
             setSelectionRect({ ...selectionRect, visible: false });
@@ -631,16 +631,85 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
         }
     };
 
+    // useEffect(() => {
+    //     const stage = stageRef.current;
+    //     if (stage) {
+    //         const layers = stage.getLayers();
+    //         if (layers.length > 0) {
+    //             setIsInitialLoad(true);
+    //             setPageCounter(pageCounter + 1);
+    //         }
+    //     }
+    // }, [stageRef.current]);
+
     useEffect(() => {
-        const stage = stageRef.current;
-        if (stage) {
-            const layers = stage.getLayers();
-            if (layers.length > 0) {
-                setIsInitialLoad(true);
-                setPageCounter(pageCounter + 1);
+        if (isPublishModalOpenInternal && !imageLoadCounterPageWise[pageCounter]) {
+            const stage = stageRef.current; if (stage) {
+                const layers = stage.getLayers();
+                if (layers.length > 0) {
+                    let a = async () => {
+                        setIsInitialLoad(true); mainStage[pageCounter].thumbnails = await generateThumbnails(stage); setMainStage(prevState => {
+                            const updatedState = [...prevState];
+                            updatedState[index] = { ...updatedState[index], thumbnails: mainStage[pageCounter].thumbnails }; return updatedState;
+                        });
+                        console.log("mainStage[pageCounter].thumbnails", mainStage[pageCounter].thumbnails); setPageCounter(pageCounter + 1);
+                    }
+                    a();
+                }
             }
         }
-    }, [stageRef.current]);
+    }, [isPublishModalOpenInternal, imageLoadCounterPageWise, pageCounter, stageRef.current]);
+
+    const cloneStageElements = (stage) => {
+        const layer = stage.children[0];
+        const bg = layer.children[0];
+        const target = layer.children[1];
+
+        const targetWidth = target.width() / target.scaleX();
+        const targetHeight = target.height() / target.scaleY();
+
+        const clonedNode = target.clone({ x: 0, y: 0, scaleX: 1, scaleY: 1 });
+        const clonedBg = bg.clone({
+            width: targetWidth,
+            height: targetHeight,
+            x: 0,
+            y: 0
+        });
+
+        // Create a new parent group cleanly
+        const group = new window.Konva.Group({
+            width: targetWidth,
+            height: targetHeight,
+            x: 0,
+            y: 0
+        });
+
+        group.add(clonedBg);
+        group.add(clonedNode);
+
+        return { group, targetWidth, targetHeight };
+    };
+
+
+    async function generateThumbnails(stage, isFirstPage = false) {
+        if (!stage) return null;
+
+        const { group, targetWidth, targetHeight } = cloneStageElements(stage);
+
+        const dataUrl = await group.toDataURL({
+            x: 0,
+            y: 0,
+            width: targetWidth,
+            height: targetHeight,
+            pixelRatio: 0.4,
+            mimeType: "image/jpeg",
+            quality: 0.1  // ⭐ 1st page = clear | others compressed
+        });
+
+        return await (await fetch(dataUrl)).blob();
+    }
+
+
 
     const handleClick = (e) => {
         if (isCropping) return;
