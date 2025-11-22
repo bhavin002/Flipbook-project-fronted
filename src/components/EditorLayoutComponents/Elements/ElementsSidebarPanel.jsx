@@ -37,38 +37,38 @@ export default function ElementsSidebarPanel({ setIsEditorDrawerOpen, setMainSta
                 }
             ]
         },
-        {
-            title: "Charts",
-            widget: [
-                {
-                    text: 'Line chart',
-                    icon: <ChartNoAxesCombined />
-                },
-                {
-                    text: 'Pie chart',
-                    icon: <ChartPie />
-                },
-                {
-                    text: 'Bar chart',
-                    icon: <ChartBarBig />
-                },
-                {
-                    text: 'Table',
-                    icon: <Table />
-                }
-            ]
-        }
+        // {
+        //     title: "Charts",
+        //     widget: [
+        //         {
+        //             text: 'Line chart',
+        //             icon: <ChartNoAxesCombined />
+        //         },
+        //         {
+        //             text: 'Pie chart',
+        //             icon: <ChartPie />
+        //         },
+        //         {
+        //             text: 'Bar chart',
+        //             icon: <ChartBarBig />
+        //         },
+        //         {
+        //             text: 'Table',
+        //             icon: <Table />
+        //         }
+        //     ]
+        // }
     ]
 
     if (currentView) {
         const ViewComponent = currentView.component;
         return (
-            <ViewComponent 
-                setIsEditorDrawerOpen={setIsEditorDrawerOpen} 
-                setMainStage={setMainStage} 
-                mainStage={mainStage} 
-                selectedIndex={selectedIndex} 
-                onBackClick={() => setCurrentView(null)} 
+            <ViewComponent
+                setIsEditorDrawerOpen={setIsEditorDrawerOpen}
+                setMainStage={setMainStage}
+                mainStage={mainStage}
+                selectedIndex={selectedIndex}
+                onBackClick={() => setCurrentView(null)}
             />
         );
     }
