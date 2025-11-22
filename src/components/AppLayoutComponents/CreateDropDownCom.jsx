@@ -117,6 +117,7 @@ export default function CreateDropDownCom() {
         try {
             const formData = new FormData();
             formData.append("files", file);
+            formData.append("mode", FlipbookUploadMode.COMBINE);
 
             const uploadRes = await UploadFilesNewApi(formData);
             const { sessionId, mainFolderId, files: uploadedFiles } = uploadRes;
@@ -170,6 +171,7 @@ export default function CreateDropDownCom() {
         try {
             const formData = new FormData();
             pendingFiles.forEach((file) => formData.append("files", file));
+            formData.append("mode", FlipbookUploadMode.SEPARATELY);
 
             const uploadRes = await UploadFilesNewApi(formData);
             const { sessionId, mainFolderId, files: uploadedFiles } = uploadRes;

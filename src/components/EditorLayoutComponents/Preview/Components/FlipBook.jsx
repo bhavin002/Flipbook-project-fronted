@@ -41,6 +41,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
     const [thumbnails, setThumbnails] = useState([]);
 
     const myRef = useRef(null);
+    const isTurning = useRef(false);
 
     const calculateNewDivSize = (screenWidth, screenHeight, divWidth, divHeight) => {
         pageType === "double" ? (divWidth *= 2) : (divWidth *= 1);
@@ -145,6 +146,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                 pageType === "double" && totalPages % 2 != 0 && page == totalPages - 1 && (page = totalPages);
                 page && setCurrentPage(page);
                 if (onPageChange) onPageChange(page, totalPages);
+                isTurning.current = false;
             };
             $(flipbookEL).on("turned", handleTurned);
             setTimeout(() => {
@@ -225,26 +227,33 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
     };
 
     const handlePrevPage = () => {
+        if (isTurning.current) return;
+        isTurning.current = true;
         transformRef.current?.resetTransform(200);
         setTimeout(() => {
             if (visibilitySettings.pageTransition === 0 && myRef.current && currentPage > 1) {
                 $(myRef.current).turn("previous");
             } else if (currentPage > 1) {
                 if (pageType === "double" && currentPage === 2) {
-                    setCurrentPage(1); // Go to page 1 (first slide)
+                    setCurrentPage(1);
                     onPageChange(1, totalPages);
                 } else if (pageType === "double") {
-                    setCurrentPage(currentPage - 2); // Move back two pages
+                    setCurrentPage(currentPage - 2);
                     onPageChange(currentPage - 2, totalPages);
                 } else {
-                    setCurrentPage(currentPage - 1); // Move back one page
+                    setCurrentPage(currentPage - 1);
                     onPageChange(currentPage - 1, totalPages);
                 }
+                isTurning.current = false;
+            } else {
+                isTurning.current = false;
             }
         }, 250);
     };
 
     const handleNextPage = () => {
+        if (isTurning.current) return;
+        isTurning.current = true;
         transformRef.current?.resetTransform(200);
         setTimeout(() => {
 
@@ -252,24 +261,27 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                 $(myRef.current).turn("next");
             } else if (currentPage < totalPages) {
                 if (pageType === "double" && currentPage === 1) {
-                    setCurrentPage(2); // Go to pages 2 and 3 (second slide)
+                    setCurrentPage(2);
                     onPageChange(2, totalPages);
                 } else if (pageType === "double") {
-                    // Prevent going past last spread
+
                     if (
                         (totalPages % 2 === 0 && currentPage + 2 > totalPages) ||
                         (totalPages % 2 !== 0 && currentPage + 1 >= totalPages)
                     ) {
-                        // Do nothing, already at last spread
+
                         return;
                     } else {
-                        setCurrentPage(currentPage + 2); // Move forward two pages
+                        setCurrentPage(currentPage + 2);
                         onPageChange(currentPage + 2, totalPages);
                     }
                 } else {
-                    setCurrentPage(currentPage + 1); // Move forward one page
+                    setCurrentPage(currentPage + 1);
                     onPageChange(currentPage + 1, totalPages);
                 }
+                isTurning.current = false;
+            } else {
+                isTurning.current = false;
             }
         }, 250);
 
@@ -314,7 +326,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                     ref={transformRef}
                     initialScale={1}
                     minScale={1}
-                    maxScale={2}
+                    maxScale={4}
                     centerOnInit={true}
                     smooth={true}
                     onTransformed={(e) => {
@@ -324,8 +336,8 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                     disablePadding={true}
                     disabled={zoomLevel == 1 && isMouseDown}
                     doubleClick={{ mode: "reset" }}
-                    wheel={{ smoothStep: 0.01, wheelDisabled: true }} // Enable wheel/touchpad zooming with smooth increments
-                    pinch={{ disabled: false, step: 0.05 }} // Keep pinch-to-zoom for touch devices
+                    wheel={{ smoothStep: 0.01, wheelDisabled: true }}
+                    pinch={{ disabled: false, step: 0.05 }}
                     style={{ width: '100%', height: '100%' }}
                 >
                     <TransformComponent>
@@ -403,7 +415,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                         {currentPage > 1 && (
                             <button
                                 onClick={handlePrevPage}
-                                className="absolute flex hover:bg-[#ffffff40] rounded-full p-2 items-center left-5 transition-all duration-300 ease-in-out"
+                                className="absolute flex hover:opacity-70 p-2 items-center left-5 transition-all duration-300 ease-in-out"
                                 aria-label="Previous page"
                             >
                                 <svg aria-hidden="true" width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
@@ -423,13 +435,11 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                                 </svg>
                             </button>
                         )}
-                        {/* && currentPage < (totalPages % 2 === 0 ? totalPages - 1 : totalPages - 1) */}
-                        {/* Fix: Only show Next arrow if not on last spread in double page mode */}
                         {((pageType !== "double" && currentPage < totalPages) ||
                             (pageType === "double" && currentPage < (totalPages % 2 == 0 ? totalPages : totalPages - 1))) && (
                                 <button
                                     onClick={handleNextPage}
-                                    className="absolute flex hover:bg-[#ffffff40] rounded-full p-2 items-center right-5 transition-all duration-300 ease-in-out"
+                                    className="absolute flex hover:opacity-70 p-2 items-center right-5 transition-all duration-300 ease-in-out"
                                     aria-label="Next page"
                                 >
                                     <svg aria-hidden="true" width="44" height="44" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
@@ -455,7 +465,6 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
             {visibilitySettings.showPageOverview && (
                 <PageOverviewModal
                     isOpen={isPageOverviewOpen}
-                    onClose={() => setIsPageOverviewOpen(false)}
                     width={divWidth}
                     height={divHeight}
                     currentPages={currentPages}

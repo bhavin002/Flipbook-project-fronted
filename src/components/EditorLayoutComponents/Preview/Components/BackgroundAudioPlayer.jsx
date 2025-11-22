@@ -2,15 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { VolumeX, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const BackgroundAudioPlayer = ({ visibilitySettings }) => {
+export const useBackgroundAudio = (visibilitySettings) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
 
   useEffect(() => {
     if (visibilitySettings.backgroundAudioLink) {
       audioRef.current = new Audio(visibilitySettings.backgroundAudioLink);
-      
-      // Set up audio event listeners
+
       audioRef.current.addEventListener('ended', () => {
         if (visibilitySettings.isAudioLoop) {
           audioRef.current.play();
@@ -19,7 +18,6 @@ const BackgroundAudioPlayer = ({ visibilitySettings }) => {
         }
       });
 
-      // Auto play if enabled
       if (visibilitySettings.isAutoPlay) {
         audioRef.current.play()
           .then(() => setIsPlaying(true))
@@ -31,13 +29,13 @@ const BackgroundAudioPlayer = ({ visibilitySettings }) => {
       return () => {
         if (audioRef.current) {
           audioRef.current.pause();
-          audioRef.current.removeEventListener('ended', () => {});
+          audioRef.current.removeEventListener('ended', () => { });
         }
       };
     }
   }, [visibilitySettings.backgroundAudioLink, visibilitySettings.isAudioLoop, visibilitySettings.isAutoPlay]);
 
-  const handlePlayPause = () => {
+  const toggleAudio = () => {
     if (!audioRef.current) return;
 
     if (isPlaying) {
@@ -52,16 +50,35 @@ const BackgroundAudioPlayer = ({ visibilitySettings }) => {
     }
   };
 
+  return { isPlaying, toggleAudio };
+};
+
+const BackgroundAudioPlayer = ({ isPlaying, toggleAudio, visibilitySettings, isMobile, onMobileClose, iconColor }) => {
   if (!visibilitySettings.backgroundAudioLink) return null;
+
+  if (isMobile) {
+    return (
+      <button
+        className="flex items-center gap-3 px-4 py-2 text-sm text-white hover:opacity-70 w-full text-left transition-colors"
+        onClick={() => {
+          toggleAudio();
+          if (onMobileClose) onMobileClose();
+        }}
+      >
+        {!isPlaying ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />} Sound {!isPlaying ? "On" : "Off"}
+      </button>
+    );
+  }
 
   return (
     <Button
       variant="ghost"
       size="icon"
-      className="text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground rounded-full transition-colors"
-      onClick={handlePlayPause}
+      className="hover:bg-transparent hover:opacity-70 transition-colors [&_svg]:size-5"
+      style={{ color: iconColor || 'black' }}
+      onClick={toggleAudio}
     >
-      {isPlaying ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+      {isPlaying ? <Volume2 /> : <VolumeX />}
     </Button>
   );
 };
