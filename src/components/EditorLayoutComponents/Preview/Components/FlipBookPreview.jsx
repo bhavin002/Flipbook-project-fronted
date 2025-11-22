@@ -302,9 +302,9 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         if (isMobileView) {
             return (
                 visibilitySettings.showControlBar && (
-                    <div className="w-full flex flex-col items-center justify-center relative bottom-0 left-0 right-0 z-50">
+                    <div className="w-full flex flex-col items-center justify-center relative bottom-0 left-0 right-0 z-[2000]">
                         <div className={`max-md:w-full w-full bg-transparent p-3 flex items-center justify-between gap-2 ${isPublicView ? "" : "max-w-[400px]"}`}>
-                            <span className="text-xs font-medium whitespace-nowrap min-w-[40px]" style={{ color: visibilitySettings.playerPanelColorHash || 'black' }}>
+                            <span className="text-xs font-medium whitespace-nowrap" style={{ color: visibilitySettings.playerPanelColorHash || 'black' }}>
                                 {pageDisplay}/{displayTotalPages}
                             </span>
 
@@ -357,7 +357,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                             animate={{ opacity: 1, scale: 1, y: 0 }}
                                             exit={{ opacity: 0, scale: 0.9, y: 15 }}
                                             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                                            className="absolute bottom-full right-0 mb-2 w-[160px] bg-[#333333]/80 backdrop-blur-sm rounded-lg shadow-xl py-1 flex flex-col z-[2000]"
+                                            className="absolute bottom-full right-0 mb-2 w-[160px] bg-[#333333]/80 backdrop-blur-sm rounded-lg shadow-xl py-1 flex flex-col z-[9999]"
                                         >
                                             <button
                                                 className="flex items-center gap-3 px-4 py-2 text-sm text-white hover:opacity-70 w-full text-left transition-colors"

@@ -12,7 +12,8 @@ const PageOverviewModal = ({
     pageType,
     flipbookRef,
     isPublicView,
-    thumbnails = []
+    thumbnails = [],
+    transformRef
 }) => {
     const scrollContainerRef = useRef(null);
     const aspectRatioString = width && height ? `1 / ${height / width}` : '1 / 1';
@@ -102,7 +103,10 @@ const PageOverviewModal = ({
     );
 
     const handleThumbnailClick = (pageNumber) => {
-        PageNavigationActions.goToPage(flipbookRef, pageNumber);
+        transformRef?.current?.resetTransform(200);
+        setTimeout(() => {
+            PageNavigationActions.goToPage(flipbookRef, pageNumber);
+        }, 250);
     };
 
     const renderThumbnails = () => {

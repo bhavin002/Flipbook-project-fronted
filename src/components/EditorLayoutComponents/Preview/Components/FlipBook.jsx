@@ -474,6 +474,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                     flipbookRef={myRef}
                     isPublicView={isPublicView}
                     thumbnails={thumbnails}
+                    transformRef={transformRef}
                 />
             )}
         </>
