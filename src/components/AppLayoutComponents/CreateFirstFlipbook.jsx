@@ -84,6 +84,7 @@ export default function CreateFirstFlipbook() {
         setUploadDialogOpen(true);
         const formData = new FormData();
         files.forEach(file => formData.append("files", file));
+        formData.append("mode", FlipbookUploadMode.COMBINE);
 
         try {
             // Step 1 — Upload to new API
