@@ -432,18 +432,8 @@ export default function Editor() {
         }
     }, [mainStage]);
     useEffect(() => {
-        if (isPublishModalOpen) {
-            if (!isFormCustomize && selectedIndex < 2) {
-                setTimeout(() => {
-                    setPageCounter(1);
-                }, 100);
-            }
-            setSelectedIndex(0);
-            setPageCounter(0);
-
-        } else {
-            setPageCounter(0);
-        }
+        setSelectedIndex(0);
+        setPageCounter(0);
         setTimeout(() => {
             setIsPublishModalOpenInternal(isPublishModalOpen)
         }, 0);
@@ -458,7 +448,7 @@ export default function Editor() {
                 // Auto-center the scroll position
                 container.scrollLeft = (contentWidth - containerWidth) / 2;
             }
-            autoScroll.current[selectedIndex].scrollIntoView({
+            autoScroll.current[selectedIndex]?.scrollIntoView({
                 behavior: 'smooth',
                 block: 'start',
                 inline: 'center'
@@ -524,7 +514,7 @@ export default function Editor() {
 
 
     useEffect(() => {
-        autoScroll.current[selectedIndex].scrollIntoView({
+        autoScroll.current[selectedIndex]?.scrollIntoView({
             behavior: 'smooth',
             block: 'start',
             inline: 'center'
@@ -813,7 +803,7 @@ export default function Editor() {
                 // End crop mode if it's active
                 if (imageNode.cropEnd) imageNode.cropEnd();
                 if (typeof (imageNode.attrs.cropImage) === 'string') {
-                     x.push(selectedShapeData.attrs);
+                    x.push(selectedShapeData.attrs);
                     return;
                 }
                 // Store the cropped image
@@ -885,7 +875,7 @@ export default function Editor() {
                 allowHtmlTypesForCrop.includes(selectedShapeData.attrs.htmlType) &&
                 selectedShapeData?.children?.length
             ) {
-                if(mainStage[selectedIndex].selectedShapes.length && mainStage[selectedIndex].selectedShapes[0].attrs.id !== selectedShapeData.attrs.id){
+                if (mainStage[selectedIndex].selectedShapes.length && mainStage[selectedIndex].selectedShapes[0].attrs.id !== selectedShapeData.attrs.id) {
                     x.push(selectedShapeData.attrs);
                     return;
                 }
@@ -971,7 +961,7 @@ export default function Editor() {
                                     if (((isPublishModalOpenInternal && index == pageCounter) || (!isPublishModalOpenInternal && (index == prevSelectedIndex || index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1)))) {
                                         return (
                                             <div key={index} ref={(el) => (autoScroll.current[index] = el)} style={{ height: "100%", width: "100%" }} className="relative">
-                                                <StageComponent imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} setIsAnyChangeMadeInStage={setIsAnyChangeMadeInStage} isPublishModalOpenInternal={isPublishModalOpenInternal}/>
+                                                <StageComponent imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} setIsAnyChangeMadeInStage={setIsAnyChangeMadeInStage} isPublishModalOpenInternal={isPublishModalOpenInternal} />
                                             </div>
                                         )
                                     } else return (<div key={index} style={{ height: "100%", width: "100%" }} className="relative" >

@@ -643,16 +643,18 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
     // }, [stageRef.current]);
 
     useEffect(() => {
-        if (isPublishModalOpenInternal && !imageLoadCounterPageWise[pageCounter]) {
+        if (isPublishModalOpenInternal && imageLoadCounterPageWise[pageCounter] != undefined && !imageLoadCounterPageWise[pageCounter]) {
             const stage = stageRef.current; if (stage) {
                 const layers = stage.getLayers();
                 if (layers.length > 0) {
                     let a = async () => {
-                        setIsInitialLoad(true); mainStage[pageCounter].thumbnails = await generateThumbnails(stage); setMainStage(prevState => {
+                        setIsInitialLoad(true); mainStage[pageCounter].thumbnails = await generateThumbnails(stage, pageCounter == 0); setMainStage(prevState => {
                             const updatedState = [...prevState];
                             updatedState[index] = { ...updatedState[index], thumbnails: mainStage[pageCounter].thumbnails }; return updatedState;
                         });
-                        console.log("mainStage[pageCounter].thumbnails", mainStage[pageCounter].thumbnails); setPageCounter(pageCounter + 1);
+                        console.log("mainStage[pageCounter].thumbnails", mainStage[pageCounter].thumbnails);
+                        setSelectedIndex(mainStage.length <= (pageCounter + 1) ? pageCounter : pageCounter + 1);
+                        setPageCounter(mainStage.length <= (pageCounter + 1) ? pageCounter : pageCounter + 1);
                     }
                     a();
                 }
@@ -701,9 +703,9 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             y: 0,
             width: targetWidth,
             height: targetHeight,
-            pixelRatio: 0.4,
+            pixelRatio: isFirstPage ? 1 : 0.4,
             mimeType: "image/jpeg",
-            quality: 0.1  // ⭐ 1st page = clear | others compressed
+            quality: isFirstPage ? 1 : 0.1  // ⭐ 1st page = clear | others compressed
         });
 
         return await (await fetch(dataUrl)).blob();
