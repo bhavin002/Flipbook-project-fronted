@@ -600,16 +600,20 @@ export default function PublishFlipbookDialog({
 
         try {
 
-            mainStage.forEach(e => {
-                e.temp = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
-            });
+            // mainStage.forEach(e => {
+            //     e.temp = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
+            // });
             const temp = JSON.parse(JSON.stringify(mainStage))
-            temp.forEach(e => {
+            temp.forEach((e, index) => {
                 e.selectedShapes = [];
-                e.shapes = e.temp;
-                delete e.temp;
+                e.shapes = e.shapes;
                 e.stageref = null;
+                e.thumbnails = mainStage[index].thumbnails;
             });
+            // const temp = mainStage.map(e => {
+            //     const shapes = e.shapes;
+            //     return { pageData: shapes };
+            // });
             await UpdateFlipbookPageDataApi(flipbookId, {
                 width: stageWidth,
                 height: stageHeight,
@@ -624,7 +628,7 @@ export default function PublishFlipbookDialog({
             if (isPublished) {
                 response = await UpdateFlipbookPublishDetailsOnlyApi(payload);
 
-                const thumbnails = await generateThumbnails(mainStage);
+                const thumbnails = mainStage.map(e => e.thumbnails);
                 const thumbnailFormData = new FormData();
                 thumbnailFormData.append('flipbookId', flipbookId);
                 thumbnails.forEach((thumb, idx) => {
@@ -635,7 +639,7 @@ export default function PublishFlipbookDialog({
                     console.error('Failed to update thumbnails:', err);
                 });
             } else {
-                const thumbnails = await generateThumbnails(mainStage);
+                const thumbnails = mainStage.map(e => e.thumbnails);
                 const formData = buildFormData(payload, thumbnails);
                 response = await PublishFlipbookApi(formData);
             }
@@ -707,7 +711,7 @@ export default function PublishFlipbookDialog({
                         Description
                     </DialogDescription>
                 </DialogHeader>
-                {pageCounter !== mainStage.length && <Progress value={100 * pageCounter / mainStage.length} className="w-full" />}
+                {pageCounter !== mainStage.length - 1 && <Progress value={100 * pageCounter / mainStage.length} className="w-full" />}
                 <div className="px-1 max-h-[calc(100vh-300px)] overflow-y-auto">
                     {loading && <LoadingOverlay />}
                     <div className="grid gap-4 py-4">
@@ -879,10 +883,10 @@ export default function PublishFlipbookDialog({
                             Close
                         </Button>
                         <Button
-                            disabled={isPublishDisabled || pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0)}
+                            disabled={isPublishDisabled || pageCounter !== (mainStage.length - 1) || Object.values(imageLoadCounterPageWise).some((count) => count > 0)}
                             onClick={handlePublish}
                         >
-                            {publishing ? <LoadingButton buttonLabel="Publishing" /> : pageCounter !== mainStage.length || Object.values(imageLoadCounterPageWise).some((count) => count > 0) ? <LoadingButton buttonLabel="Preparing" /> : 'Publish Now'}
+                            {publishing ? <LoadingButton buttonLabel="Publishing" /> : pageCounter !== (mainStage.length - 1) || Object.values(imageLoadCounterPageWise).some((count) => count > 0) ? <LoadingButton buttonLabel="Preparing" /> : 'Publish Now'}
                         </Button>
                     </div>
                     <div className="flex flex-col md:flex-row gap-2 md:gap-4 justify-end w-full mt-2 hidden">
