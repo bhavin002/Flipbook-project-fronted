@@ -866,7 +866,13 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
     };
     return (
         <div
-            style={{ width: "100%", height: "100%" }}
+            style={{ 
+                width: "100%", height: "100%",
+                transformOrigin: "top center",
+                // transformOrigin: "0 left",
+                transform: `scale(${50 / zoomper})`,
+                
+            }}
             className="relative"
             onDrop={async (e) => {
                 if (isCropping) return;
@@ -1148,9 +1154,10 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                     setIsPageModalOpen(false);
                 }}
             />
-            <div onClick={() => setSelectedIndex(index)}>
+            <div onClick={() => setSelectedIndex(index)} >
                 {width && height && <Stage
-
+                    // scaleX={zoomper / 50}
+                    // scaleY={zoomper / 50}
                     width={width}
                     height={height}
                     style={{ width: "100%", height: "100%" }}
