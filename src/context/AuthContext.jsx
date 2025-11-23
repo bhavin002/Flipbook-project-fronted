@@ -32,7 +32,7 @@ export function AuthProvider({ children }) {
     }, []);
 
     const checkWorkspaceExpiration = (user) => {
-        const currentWorkspaceId = localStorage.getItem('fn_workspace_id') || user.workspaceId;
+        const currentWorkspaceId = localStorage.getItem('fd_workspace_id') || user.workspaceId;
         const workspaceInfo = user.workspaceInfo?.find(ws => ws.workspaceId === currentWorkspaceId);
         return workspaceInfo?.isExpired || false;
     };
@@ -43,12 +43,12 @@ export function AuthProvider({ children }) {
             const response = await GetUserInfoApi(token);
             if (response.status !== 200) return false;
             setUserMeta(response.data.user);
-            const fn_workspace_id = localStorage.getItem('fn_workspace_id');
-            if (!fn_workspace_id) {
-                localStorage.setItem('fn_workspace_id', response.data.user.workspaceId);
+            const fd_workspace_id = localStorage.getItem('fd_workspace_id');
+            if (!fd_workspace_id) {
+                localStorage.setItem('fd_workspace_id', response.data.user.workspaceId);
             }
             const session_id = sessionStorage.getItem('session_id');
-            if(!session_id){
+            if (!session_id) {
                 sessionStorage.setItem('session_id', uuidv4());
             }
             const expired = checkWorkspaceExpiration(response.data.user);
@@ -118,19 +118,19 @@ export function AuthProvider({ children }) {
     const refreshUserInfo = async () => {
         const token = localStorage.getItem('fn_access_token');
         if (!token) return false;
-        
+
         try {
             const response = await GetUserInfoApi(token);
             if (response.status !== 200) return false;
-            
+
             setUserMeta(response.data.user);
             const expired = checkWorkspaceExpiration(response.data.user);
             setIsWorkspaceExpired(expired);
-            
+
             if (expired) {
                 navigate('/expire');
             }
-            
+
             return true;
         } catch (error) {
             return false;
@@ -138,14 +138,14 @@ export function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ 
-            isAuthenticated, 
-            isLoading, 
-            login, 
-            logout, 
-            checkAuth, 
-            userMeta, 
-            permissions, 
+        <AuthContext.Provider value={{
+            isAuthenticated,
+            isLoading,
+            login,
+            logout,
+            checkAuth,
+            userMeta,
+            permissions,
             updateUserMeta,
             setPermissions,
             isWorkspaceExpired,

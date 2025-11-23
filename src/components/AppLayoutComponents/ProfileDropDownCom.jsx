@@ -29,7 +29,7 @@ export default function ProfileDropDownCom() {
     };
 
     const switchWorkspace = async (workspaceId) => {
-        localStorage.setItem("fn_workspace_id", workspaceId);
+        localStorage.setItem("fd_workspace_id", workspaceId);
         setIsNeededRefetch(true);
         await refreshUserInfo();
         navigate("/auth/sign-in");
