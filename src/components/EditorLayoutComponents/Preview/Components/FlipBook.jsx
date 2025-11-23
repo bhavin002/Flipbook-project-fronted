@@ -47,7 +47,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
         pageType === "double" ? (divWidth *= 2) : (divWidth *= 1);
         const aspectRatio = divWidth / divHeight;
         const maxWidth = screenWidth * 0.9;
-        const maxHeight = screenHeight * 0.8;
+        const maxHeight = screenHeight * (isPageOverviewOpen ? 0.55 : 0.8);
         let newWidth, newHeight;
         if (divWidth > maxWidth) {
             newWidth = maxWidth;
@@ -89,7 +89,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
         return () => {
             window.removeEventListener("resize", debouncedResize);
         };
-    }, [pageType, divWidth, divHeight, isDrawerOpen, isFullscreen, visibilitySettings.layoutStyle, containerRefHeight]);
+    }, [pageType, divWidth, divHeight, isDrawerOpen, isFullscreen, visibilitySettings.layoutStyle, containerRefHeight, isPageOverviewOpen]);
 
     useEffect(() => {
         const getPageData = async () => {
@@ -289,7 +289,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
 
     return (
         <>
-            <div className="w-full relative">
+            <div className="w-full absolute top-0  left-0 z-[10]">
                 {visibilitySettings.brandLogo && (
                     <div className="flex justify-start p-4">
                         {visibilitySettings.logoLink ? (
@@ -321,7 +321,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                 </div>}
             </div>
 
-            <div className="wrapper flex flex-col items-center justify-center relative" onClick={handleFlipbookClick}>
+            <div className={`wrapper flex flex-col items-center justify-center relative ${isPageOverviewOpen ? "bottom-[45px]" : ""}`} id={previewId} onClick={handleFlipbookClick}>
                 <TransformWrapper
                     ref={transformRef}
                     initialScale={1}
@@ -341,7 +341,9 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                     style={{ width: '100%', height: '100%' }}
                 >
                     <TransformComponent>
-                        <div className="aspect" style={{ width, height }}>
+                        <div className={`aspect`} style={{
+                            width, height,
+                        }}>
                             <div className="aspect-inner">
                                 {visibilitySettings.pageTransition === 0 ? (
                                     <Turn

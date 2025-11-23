@@ -191,7 +191,7 @@ const PageOverviewModal = ({
                     animate={{ y: 0, x: "-50%", opacity: 1 }}
                     exit={{ y: 100, x: "-50%", opacity: 0 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                    className="absolute bottom-0 left-1/2 z-[1000] w-auto max-w-[90%]"
+                    className="absolute bottom-[45px] left-1/2 z-[1000] w-auto max-w-[90%]"
                 >
                     <div className="relative flex items-center gap-4 py-4">
                         <button

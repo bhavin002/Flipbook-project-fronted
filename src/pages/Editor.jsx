@@ -14,6 +14,7 @@ import { EffectEvent } from "@/utils/EffectEvent";
 import { deleteShape } from "@/utils/Helper";
 import { Loader } from "@/components/ui/loader";
 import { Progress } from "@/components/ui/progress";
+import { Slider } from "@/components/ui/slider";
 
 (function (Konva) {
     'use strict';
@@ -432,39 +433,39 @@ export default function Editor() {
         }
     }, [mainStage]);
     useEffect(() => {
-        if (isPublishModalOpen) {
-            if (!isFormCustomize && selectedIndex < 2) {
-                setTimeout(() => {
-                    setPageCounter(1);
-                }, 100);
-            }
-            setSelectedIndex(0);
-            setPageCounter(0);
-
-        } else {
-            setPageCounter(0);
-        }
+        setSelectedIndex(0);
+        setPageCounter(0);
         setTimeout(() => {
             setIsPublishModalOpenInternal(isPublishModalOpen)
         }, 0);
     }, [isPublishModalOpen]);
     useEffect(() => {
-        setTimeout(() => {
-            if (scrollRef.current) {
-                const container = scrollRef.current;
-                const containerWidth = container.offsetWidth;
-                const contentWidth = container.scrollWidth;
+        // ---- Debounce ----
+        // const handle = setTimeout(() => {
+        //     if (scrollRef.current) {
+        //         const container = scrollRef.current;
+        //         const containerWidth = container.offsetWidth;
+        //         const contentWidth = container.scrollWidth;
 
-                // Auto-center the scroll position
-                container.scrollLeft = (contentWidth - containerWidth) / 2;
-            }
-            autoScroll.current[selectedIndex].scrollIntoView({
-                behavior: 'smooth',
-                block: 'start',
-                inline: 'center'
-            });
-        }, 100);
-    }, [zoomper]); // Trigger whenever zoomper changes
+        //         // Smooth center scrolling
+        //         container.scrollTo({
+        //             left: (contentWidth - containerWidth) / 2,
+        //             behavior: "smooth"
+        //         });
+        //     }
+
+        //     // Smooth scroll to selected element
+        //     autoScroll.current[selectedIndex]?.scrollIntoView({
+        //         behavior: "smooth",
+        //         block: "nearest",
+        //         inline: "center"
+        //     });
+
+        // }, 200); // debounced 150ms for smoothness
+
+        // return () => clearTimeout(handle);
+    }, [zoomper, selectedIndex]);
+
 
     useEffect(() => {
         if (mainStageString == "") return;
@@ -524,7 +525,7 @@ export default function Editor() {
 
 
     useEffect(() => {
-        autoScroll.current[selectedIndex].scrollIntoView({
+        autoScroll.current[selectedIndex]?.scrollIntoView({
             behavior: 'smooth',
             block: 'start',
             inline: 'center'
@@ -762,6 +763,66 @@ export default function Editor() {
             document.removeEventListener('keydown', handleDeleteShape);
         };
     }, [mainStage, setMainStage, selectedIndex]);
+    // Add this useEffect hook after your other useEffect hooks (around line 770)
+    useEffect(() => {
+        let zoomTimeout = null;
+        let accumulatedDelta = 0;
+
+        const handleWheel = (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                e.preventDefault();
+                const delta = -e.deltaY * 0.15;
+                accumulatedDelta += delta;
+
+                clearTimeout(zoomTimeout);
+                zoomTimeout = setTimeout(() => {
+                    setZoomper((prevZoom) => {
+                        let newZoom = prevZoom + accumulatedDelta;
+                        newZoom = Math.min(200, Math.max(50, newZoom));
+                        return Math.floor(newZoom);
+                    });
+                    accumulatedDelta = 0;
+                }, 0);
+            }
+        };
+
+        const handleKey = (e) => {
+            if (!e.ctrlKey && !e.metaKey) return;
+
+            // Ctrl + 0 → Reset zoom
+            if (e.key === "0") {
+                e.preventDefault();
+                setZoomper(50);
+                return;
+            }
+
+            // Ctrl + +  or  Ctrl + =
+            if (e.key === "=" || e.key === "+") {
+                e.preventDefault();
+                setZoomper((z) => Math.min(200, z + 10));
+                return;
+            }
+
+            // Ctrl + -
+            if (e.key === "-") {
+                e.preventDefault();
+                setZoomper((z) => Math.max(50, z - 10));
+            }
+        };
+
+        const container = childRef.current;
+        if (container) {
+            container.addEventListener("wheel", handleWheel, { passive: false });
+            window.addEventListener("keydown", handleKey);
+        }
+
+        return () => {
+            if (container) container.removeEventListener("wheel", handleWheel);
+            window.removeEventListener("keydown", handleKey);
+            clearTimeout(zoomTimeout);
+        };
+    }, [childRef]);
+
 
     const handleCrop = () => {
         const stage = mainStage[selectedIndex];
@@ -813,7 +874,7 @@ export default function Editor() {
                 // End crop mode if it's active
                 if (imageNode.cropEnd) imageNode.cropEnd();
                 if (typeof (imageNode.attrs.cropImage) === 'string') {
-                     x.push(selectedShapeData.attrs);
+                    x.push(selectedShapeData.attrs);
                     return;
                 }
                 // Store the cropped image
@@ -885,7 +946,7 @@ export default function Editor() {
                 allowHtmlTypesForCrop.includes(selectedShapeData.attrs.htmlType) &&
                 selectedShapeData?.children?.length
             ) {
-                if(mainStage[selectedIndex].selectedShapes.length && mainStage[selectedIndex].selectedShapes[0].attrs.id !== selectedShapeData.attrs.id){
+                if (mainStage[selectedIndex].selectedShapes.length && mainStage[selectedIndex].selectedShapes[0].attrs.id !== selectedShapeData.attrs.id) {
                     x.push(selectedShapeData.attrs);
                     return;
                 }
@@ -948,7 +1009,7 @@ export default function Editor() {
                         />
                     </div>
                 </>}
-                <div style={{ userSelect: 'none' }} className="flex flex-col overflow-hidden relative flex-grow w-full" ref={parentRef} >
+                <div style={{ userSelect: 'none' }} className="flex flex-col overflow-hidden relative flex-grow w-full" >
                     <div style={{
                         position: 'absolute',
                         top: '0px',
@@ -958,20 +1019,25 @@ export default function Editor() {
                         overflow: "auto",
                     }} ref={childRef}>
                         {/* {mainStage.length !== pageCounter - 1 && <div className="h-full w-full fixed"><Loader /></div>} */}
-                        <div style={{
-                            width: "100%",
-                            height: "100%",
-                            transformOrigin: "0 0",
-                            transform: `scale(${zoomper / 50})`,
-                            // overflow: "auto",
-                        }} className="relative" >
+                        <div ref={parentRef}
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                transformOrigin: "top center",
+                                transform: `scale(${zoomper / 50})`,
+                                // transition: "transform 0.22s cubic-bezier(0.25, 0.1, 0.25, 1)",
+                                willChange: "transform"
+                            }}
+                            className="relative"
+                        >
                             {
 
                                 mainStage.map((stage, index) => {
                                     if (((isPublishModalOpenInternal && index == pageCounter) || (!isPublishModalOpenInternal && (index == prevSelectedIndex || index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1)))) {
                                         return (
                                             <div key={index} ref={(el) => (autoScroll.current[index] = el)} style={{ height: "100%", width: "100%" }} className="relative">
-                                                <StageComponent imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} setIsAnyChangeMadeInStage={setIsAnyChangeMadeInStage} isPublishModalOpenInternal={isPublishModalOpenInternal}/>
+                                                {/* onWheelZoom={(e) => zoomManager.current.handleWheel(e)}  */}
+                                                <StageComponent imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} setIsAnyChangeMadeInStage={setIsAnyChangeMadeInStage} isPublishModalOpenInternal={isPublishModalOpenInternal} />
                                             </div>
                                         )
                                     } else return (<div key={index} style={{ height: "100%", width: "100%" }} className="relative" >
@@ -1036,10 +1102,10 @@ export default function Editor() {
                             <Redo className="w-4 h-4" />
                         </Button>
                     </div>
-                    <div className="flex items-center bg-white rounded-sm border border-gray-200">
+                    {/* <div className="flex items-center bg-white rounded-sm border border-gray-200">
                         <Button size="xs" variant="ghost" onClick={() => {
-                            if (zoomper - 5 >= 50) {
-                                setZoomper((zoomper - 5) < 50 ? 50 : zoomper - 5);
+                            if (zoomper - 10 >= 50) {
+                                setZoomper((zoomper - 10) < 50 ? 50 : zoomper - 10);
                             }
                         }} disabled={zoomper === 50}>
                             <ZoomOut className="w-4 h-4" />
@@ -1048,12 +1114,29 @@ export default function Editor() {
                         <Label className="text-xs px-2">{zoomper}%</Label>
 
                         <Button size="xs" variant="ghost" onClick={() => {
-                            if (zoomper + 5 <= 100) {
-                                setZoomper(zoomper + 5 > 100 ? 100 : zoomper + 5);
+                            if (zoomper + 10 <= 200) {
+                                setZoomper(zoomper + 10 > 200 ? 200 : zoomper + 10);
                             }
-                        }} disabled={zoomper === 100}>
+                        }} disabled={zoomper === 200}>
                             <ZoomIn className="w-4 h-4" />
                         </Button>
+                    </div> */}
+                    <div className="flex items-center bg-white rounded-sm border border-gray-200 px-4 py-[6px] gap-2 w-[200px]">
+
+                        {/* Slider */}
+                        <Slider
+                            value={[zoomper]}
+                            min={50}
+                            max={200}
+                            step={1}
+                            onValueChange={(val) => setZoomper(val[0])}
+                            className="w-full cursor-pointer"
+                        />
+
+                        {/* Percentage */}
+                        <span className="text-black text-sm font-medium">
+                            {zoomper}%
+                        </span>
                     </div>
                 </div>}
             </div>
