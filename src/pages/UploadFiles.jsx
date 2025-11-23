@@ -189,6 +189,7 @@ export default function FileUploadReorder() {
 
     const formData = new FormData();
     files.forEach((f) => formData.append("files", f));
+    formData.append("mode", FlipbookUploadMode.COMBINE);
 
     try {
       const { sessionId, mainFolderId, files: uploadedFiles } = await UploadFilesNewApi(formData);
