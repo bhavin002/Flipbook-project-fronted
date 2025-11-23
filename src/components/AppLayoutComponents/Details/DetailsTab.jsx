@@ -251,7 +251,7 @@ export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, set
                         </CardContent>
                     </Card>
                 </div>
-                <Card className="shadow-sm flex-grow rounded-lg flex flex-col gap-4 p-4">
+                <Card className="shadow-sm flex-grow rounded-lg flex flex-col gap-4 p-4 relative">
                     <FlipBookPreview flipbookId={flipbookId} component={"detailsPage"} />
                     <div className="flex gap-5 items-center">
                         <Button
