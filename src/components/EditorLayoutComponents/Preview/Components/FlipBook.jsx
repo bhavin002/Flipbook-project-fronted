@@ -25,7 +25,7 @@ const debounce = (func, delay) => {
     };
 };
 
-const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, containerRefHeight, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, setIsPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef, setZoomLevel, isAutoFlipping }, ref) {
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, containerRefHeight, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef, setZoomLevel, isAutoFlipping }, ref) {
     const [width, setWidth] = useState(793);
     const [height, setHeight] = useState(793);
     const [divWidth, setDivWidth] = useState(793);
