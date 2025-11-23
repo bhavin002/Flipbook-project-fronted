@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 
 export const useBackgroundAudio = (visibilitySettings) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const audioRef = useRef(null);
 
   useEffect(() => {
@@ -50,25 +51,22 @@ export const useBackgroundAudio = (visibilitySettings) => {
     }
   };
 
-  return { isPlaying, toggleAudio };
+  const handleFirstClick = () => {
+    if (!hasInteracted && visibilitySettings.isAutoPlay && audioRef.current) {
+      setHasInteracted(true);
+      audioRef.current.play()
+        .then(() => setIsPlaying(true))
+        .catch(error => {
+          console.error('First click playback failed:', error);
+        });
+    }
+  };
+
+  return { isPlaying, toggleAudio, handleFirstClick, hasInteracted };
 };
 
-const BackgroundAudioPlayer = ({ isPlaying, toggleAudio, visibilitySettings, isMobile, onMobileClose, iconColor }) => {
+const BackgroundAudioPlayer = ({ isPlaying, toggleAudio, visibilitySettings, iconColor }) => {
   if (!visibilitySettings.backgroundAudioLink) return null;
-
-  if (isMobile) {
-    return (
-      <button
-        className="flex items-center gap-3 px-4 py-2 text-sm text-white hover:opacity-70 w-full text-left transition-colors"
-        onClick={() => {
-          toggleAudio();
-          if (onMobileClose) onMobileClose();
-        }}
-      >
-        {!isPlaying ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />} Sound {!isPlaying ? "On" : "Off"}
-      </button>
-    );
-  }
 
   return (
     <Button
