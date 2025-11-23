@@ -607,7 +607,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
 
     return (
         <>
-            <div className="w-full h-full flex items-center absolute bottom-0 bg-white overflow-hidden" ref={containerRef} onClick={handleFirstClick}>
+            <div className="w-full h-full flex items-center bg-white overflow-hidden" ref={containerRef} onClick={handleFirstClick}>
                 {visibilitySettings.showTableOfContent && <TableOfContentsDrawer
                     visibilitySettings={visibilitySettings}
                     open={isDrawerOpen}
