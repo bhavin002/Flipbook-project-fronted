@@ -302,7 +302,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         if (isMobileView) {
             return (
                 visibilitySettings.showControlBar && (
-                    <div className="w-full flex flex-col items-center justify-center relative bottom-0 left-0 right-0 z-[2000]">
+                    <div className="w-full flex flex-col items-center justify-center bottom-0 left-0 right-0 z-[2000] absolute  ">
                         <div className={`max-md:w-full w-full bg-transparent p-3 flex items-center justify-between gap-2 ${isPublicView ? "" : "max-w-[400px]"}`}>
                             <span className="text-xs font-medium whitespace-nowrap" style={{ color: visibilitySettings.playerPanelColorHash || 'black' }}>
                                 {pageDisplay}/{displayTotalPages}
@@ -435,7 +435,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
 
         return (
             visibilitySettings.showControlBar && (
-                <div className={`w-full bg-transparent p-4 flex flex-wrap items-center justify-between relative ${isMobileView ? "rounded-b-lg" : ""}`}>
+                <div className={`w-full bg-transparent p-4 flex flex-wrap items-center justify-between absolute bottom-0 ${isMobileView ? "rounded-b-lg" : ""}`}>
                     <div className="flex items-center justify-between w-full gap-4">
 
                         <div className="flex items-center gap-2">
@@ -566,7 +566,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
 
     return (
         <>
-            <div className="w-full h-full flex items-center relative bg-white overflow-hidden" ref={containerRef} >
+            <div className="w-full h-full flex items-center absolute bottom-0 bg-white overflow-hidden" ref={containerRef} >
                 {visibilitySettings.showTableOfContent && <TableOfContentsDrawer
                     visibilitySettings={visibilitySettings}
                     open={isDrawerOpen}
@@ -620,7 +620,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             >
                                 <div
                                     className={`w-full h-full flex items-center justify-center flex-col relative`}
-                                    id={id}
+                                    
                                 >
                                     <FlipBook
                                         isDrawerOpen={isDrawerOpen}
@@ -651,9 +651,10 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 <div
                                     className={`w-full h-full flex flex-col items-center justify-center overflow-hidden relative ${activeTab == 'Mobile' && !isPublicView ? "max-w-[400px]" : ""}`}
                                     style={{ backgroundColor: visibilitySettings.backgroundColorHash }}
-                                    id={id}
+                                  
                                 >
                                     <div className="w-full h-full flex items-center justify-center flex-col"
+                                    //   id={id}
                                         style={{
                                             backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
                                             backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
