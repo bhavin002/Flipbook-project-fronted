@@ -96,7 +96,7 @@ export default function Customize() {
             </div>
 
             {isLargeScreen && (
-                <Card className="shadow-sm flex-grow rounded-none">
+                <Card className="lg:w-[65%] md:w-[50%]  shadow-sm flex-grow rounded-none relative overflow-hidden">
                     <FlipBookPreview flipbookId={id} component={"customize"} />
                 </Card>
             )}

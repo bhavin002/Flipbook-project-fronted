@@ -101,7 +101,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
 
     return (
         <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
-            <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[90vh] overflow-y-auto z-[9999999]">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-semibold">Share Flipbook</DialogTitle>
                 </DialogHeader>

@@ -13,7 +13,9 @@ import {
     Maximize,
     MoreHorizontal,
     Plus,
-    Minus
+    Minus,
+    Play,
+    Pause
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import FlipBook from "./FlipBook.jsx";
@@ -41,11 +43,31 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
     const [isPageOverviewOpen, setIsPageOverviewOpen] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+    const [isAutoFlipping, setIsAutoFlipping] = useState(false);
+    const [pendingPageChange, setPendingPageChange] = useState(null);
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
     const { activeTab, setActiveTab } = useViewMode();
     const { shopSettings } = useShopSettings();
-    const { isPlaying, toggleAudio } = useBackgroundAudio(visibilitySettings);
+    const { isPlaying, toggleAudio, handleFirstClick } = useBackgroundAudio(visibilitySettings);
+
+    useEffect(() => {
+        if (visibilitySettings.automaticTransition) {
+            setIsAutoFlipping(true);
+        }
+    }, [visibilitySettings.automaticTransition]);
+
+    const toggleAutoFlip = () => {
+        setIsAutoFlipping(!isAutoFlipping);
+    };
+
+    useEffect(() => {
+        if (pendingPageChange && zoomLevel === 1) {
+            setCurrentPage(pendingPageChange);
+            setPage(pendingPageChange);
+            setPendingPageChange(null);
+        }
+    }, [zoomLevel, pendingPageChange]);
 
 
     useEffect(() => {
@@ -180,11 +202,15 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
             page = totalPages;
         }
 
-        console.log("page ???", page)
-
-
-        setCurrentPage(page);
-        setPage(page);
+        if (page !== currentPage) {
+            if (zoomLevel > 1) {
+                setPendingPageChange(page);
+                transformRef.current?.resetTransform(150, "easeOut");
+            } else {
+                setCurrentPage(page);
+                setPage(page);
+            }
+        }
     };
 
     const handleMouseDown = (e) => {
@@ -302,7 +328,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         if (isMobileView) {
             return (
                 visibilitySettings.showControlBar && (
-                    <div className="w-full flex flex-col items-center justify-center relative bottom-0 left-0 right-0 z-[2000]">
+                    <div className="w-full flex flex-col items-center justify-center bottom-0 left-0 right-0 z-[2000] absolute  ">
                         <div className={`max-md:w-full w-full bg-transparent p-3 flex items-center justify-between gap-2 ${isPublicView ? "" : "max-w-[400px]"}`}>
                             <span className="text-xs font-medium whitespace-nowrap" style={{ color: visibilitySettings.playerPanelColorHash || 'black' }}>
                                 {pageDisplay}/{displayTotalPages}
@@ -340,6 +366,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             )}
 
                             <div className="relative" ref={mobileMenuRef}>
+                                <BackgroundAudioPlayer visibilitySettings={visibilitySettings} isPlaying={isPlaying} toggleAudio={toggleAudio} iconColor={visibilitySettings.playerPanelColorHash} />
+
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -400,13 +428,14 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                                     <ReceiptText className="h-4 w-4" /> Lead Form
                                                 </button>
                                             )}
-                                            <BackgroundAudioPlayer
-                                                visibilitySettings={visibilitySettings}
-                                                isMobile={true}
-                                                isPlaying={isPlaying}
-                                                toggleAudio={toggleAudio}
-                                                onMobileClose={() => setShowMobileMenu(false)}
-                                            />
+                                            {visibilitySettings.automaticTransition && (
+                                                <button
+                                                    className="flex items-center gap-3 px-4 py-2 text-sm text-white hover:opacity-70 w-full text-left transition-colors"
+                                                    onClick={() => { toggleAutoFlip(); setShowMobileMenu(false); }}
+                                                >
+                                                    {isAutoFlipping ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />} {isAutoFlipping ? `Auto ${visibilitySettings.pageTransition === 0 ? 'flip' : 'slide'}` : `Auto ${visibilitySettings.pageTransition === 0 ? 'flip' : 'slide'}`}
+                                                </button>
+                                            )}
                                             {visibilitySettings.showShare && (
                                                 <button
                                                     className="flex items-center gap-3 px-4 py-2 text-sm text-white hover:opacity-70 w-full text-left transition-colors"
@@ -435,7 +464,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
 
         return (
             visibilitySettings.showControlBar && (
-                <div className={`w-full bg-transparent p-4 flex flex-wrap items-center justify-between relative ${isMobileView ? "rounded-b-lg" : ""}`}>
+                <div className={`w-full bg-transparent p-4 flex flex-wrap items-center justify-between absolute bottom-0 ${isMobileView ? "rounded-b-lg" : ""}`}>
                     <div className="flex items-center justify-between w-full gap-4">
 
                         <div className="flex items-center gap-2">
@@ -505,6 +534,18 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
 
                         <div className="flex items-center gap-2">
                             <BackgroundAudioPlayer visibilitySettings={visibilitySettings} isPlaying={isPlaying} toggleAudio={toggleAudio} iconColor={visibilitySettings.playerPanelColorHash} />
+                            {visibilitySettings.automaticTransition && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="hover:bg-transparent hover:opacity-70 transition-colors [&_svg]:size-5"
+                                    style={{ color: visibilitySettings.playerPanelColorHash || 'black' }}
+                                    onClick={toggleAutoFlip}
+                                    title={isAutoFlipping ? `Pause auto ${visibilitySettings.pageTransition === 0 ? 'flip' : 'slide'}` : `Play auto ${visibilitySettings.pageTransition === 0 ? 'flip' : 'slide'}`}
+                                >
+                                    {isAutoFlipping ? <Pause /> : <Play />}
+                                </Button>
+                            )}
                             {visibilitySettings.showShare && (
                                 <Button
                                     variant="ghost"
@@ -566,14 +607,15 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
 
     return (
         <>
-            <div className="w-full h-full flex items-center relative bg-white overflow-hidden" ref={containerRef} >
+            <div className="w-full h-full flex items-center bg-white overflow-hidden" ref={containerRef} onClick={handleFirstClick}>
                 {visibilitySettings.showTableOfContent && <TableOfContentsDrawer
                     visibilitySettings={visibilitySettings}
                     open={isDrawerOpen}
                     onClose={() => setIsDrawerOpen(false)}
                     navigateToPage={setPage}
+                    containerHeight={containerRef.current?.clientHeight}
                 />}
-                <div className={`h-full flex flex-col items-center relative bg-white overflow-hidden transition-all duration-150 ease-in-out ${isDrawerOpen && visibilitySettings.showTableOfContent ? "w-[calc(100%-24rem)]" : "w-full"}`}
+                <div className={`h-full flex flex-col items-center relative bg-white overflow-hidden transition-all duration-150 ease-in-out w-full`}
                     style={{
                         backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
                         backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
@@ -620,7 +662,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             >
                                 <div
                                     className={`w-full h-full flex items-center justify-center flex-col relative`}
-                                    id={id}
+
                                 >
                                     <FlipBook
                                         isDrawerOpen={isDrawerOpen}
@@ -638,9 +680,10 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         previewId={id}
                                         containerRefHeight={containerRef?.current?.clientHeight}
                                         isPageOverviewOpen={isPageOverviewOpen}
-                                        setIsPageOverviewOpen={setIsPageOverviewOpen}
                                         isPublicView={isPublicView}
                                         publicFlipbookData={publicFlipbookData}
+                                        isAutoFlipping={isAutoFlipping}
+                                        setIsAutoFlipping={setIsAutoFlipping}
                                     />
                                 </div>
                             </TabsContent>
@@ -651,9 +694,10 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 <div
                                     className={`w-full h-full flex flex-col items-center justify-center overflow-hidden relative ${activeTab == 'Mobile' && !isPublicView ? "max-w-[400px]" : ""}`}
                                     style={{ backgroundColor: visibilitySettings.backgroundColorHash }}
-                                    id={id}
+
                                 >
                                     <div className="w-full h-full flex items-center justify-center flex-col"
+                                        //   id={id}
                                         style={{
                                             backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
                                             backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
@@ -682,9 +726,10 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                             transformRef={transformRef}
                                             previewId={id}
                                             isPageOverviewOpen={isPageOverviewOpen}
-                                            setIsPageOverviewOpen={setIsPageOverviewOpen}
                                             isPublicView={isPublicView}
                                             publicFlipbookData={publicFlipbookData}
+                                            isAutoFlipping={isAutoFlipping}
+                                            setIsAutoFlipping={setIsAutoFlipping}
                                         />
                                     </div>
                                 </div>

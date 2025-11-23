@@ -11,7 +11,8 @@ function Turn({
   myRef,
   visibilitySettings,
   isDisabled = false,
-  setCurrentPages
+  setCurrentPages,
+  isAutoFlipping = false
 }) {
   const audio = new Audio(pageTurnSound);
 
@@ -84,7 +85,7 @@ function Turn({
     const flipbookEL = myRef.current;
     let autoPlayInterval = null;
 
-    if (flipbookEL && visibilitySettings?.automaticTransition) {
+    if (flipbookEL && visibilitySettings?.automaticTransition && isAutoFlipping) {
       autoPlayInterval = setInterval(function () {
         const $flipbook = $(flipbookEL);
         if ($flipbook.turn('page') == $flipbook.turn('pages')) {
@@ -100,7 +101,7 @@ function Turn({
         clearInterval(autoPlayInterval);
       }
     };
-  }, [visibilitySettings?.automaticTransition, visibilitySettings?.automaticTransitionDelay]);
+  }, [visibilitySettings?.automaticTransition, visibilitySettings?.automaticTransitionDelay, isAutoFlipping]);
 
   useEffect(() => {
     const flipbookEL = myRef.current;

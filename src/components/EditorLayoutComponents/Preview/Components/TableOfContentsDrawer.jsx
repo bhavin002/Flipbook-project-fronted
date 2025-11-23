@@ -1,31 +1,15 @@
-import { X, FileText, BookOpen } from "lucide-react";
+import { X, BookOpen } from "lucide-react";
 import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function TableOfContentsDrawer({ open, onClose, visibilitySettings, navigateToPage }) {
+export default function TableOfContentsDrawer({ open, onClose, visibilitySettings, navigateToPage, containerHeight }) {
 
-    const [shouldDisablePointerEvents, setShouldDisablePointerEvents] = useState(!open);
-
-    const accentColor = visibilitySettings.playerAccentColorHash || "#7c3aede6";
-
-    useEffect(() => {
-        let timeout;
-        if (open) {
-            setShouldDisablePointerEvents(false);
-        } else {
-            timeout = setTimeout(() => setShouldDisablePointerEvents(true), 300);
-        }
-        return () => clearTimeout(timeout);
-    }, [open]);
-
-    // Helper to generate a unique id
     const generateId = (chapter) => {
         return `${chapter.chapterName}-${chapter.pageNumber}-${chapter.sequence}`;
     };
 
-    // Memoized tocData with _id fields
     const tocWithIds = useMemo(() => {
         if (!visibilitySettings.tableOfContents) return [];
         return visibilitySettings.tableOfContents.map(section => ({
@@ -38,10 +22,8 @@ export default function TableOfContentsDrawer({ open, onClose, visibilitySetting
         }));
     }, [visibilitySettings.tableOfContents]);
 
-    // State for selected _id
     const [selectedPage, setSelectedPage] = useState(null);
 
-    // Reset selectedPage if not present in new tocWithIds
     useEffect(() => {
         if (!selectedPage) return;
         const exists = tocWithIds.some(section => section._id === selectedPage || section.subChapters.some(sub => sub._id === selectedPage));
@@ -55,174 +37,79 @@ export default function TableOfContentsDrawer({ open, onClose, visibilitySetting
         }
     };
 
-    // Handle case where tocData might be undefined or empty
-    if (!tocWithIds || tocWithIds.length === 0) {
-        return (
-            <div
-                className={` h-full w-96 bg-background border-r border-border text-foreground z-50 transition-transform duration-150 ease-in-out shadow-2xl
-                    ${open ? "block" : "hidden"}
-                    ${shouldDisablePointerEvents ? "pointer-events-none" : "pointer-events-auto"}
-                `}
-            >
-                <div className="flex items-center justify-between p-4 border-b border-border bg-muted/50">
-                    <div className="flex items-center space-x-2">
-                        <BookOpen className="w-5 h-5 text-primary" />
-                        <span className="font-bold text-lg text-foreground">Table of Contents</span>
-                    </div>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={onClose}
-                        className="h-8 w-8 hover:bg-muted"
-                    >
-                        <X className="w-4 h-4" />
-                    </Button>
-                </div>
-                <div className="p-4 text-muted-foreground">
-                    No table of contents available
-                </div>
-            </div>
-        );
-    }
-
     return (
-        <div
-            className={`h-full flex flex-col bg-background border-border text-foreground transition-all duration-150 ease-in-out shadow-2xl
-                ${shouldDisablePointerEvents ? "pointer-events-none" : "pointer-events-auto"}
-                ${open ? "w-96" : "w-0 overflow-hidden"}
-            `}
-        >
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border bg-muted/50">
-                <div className="flex items-center space-x-2">
-                    <BookOpen className="w-5 h-5 text-primary" />
-                    <span className="font-bold text-lg text-foreground">Table of Contents</span>
-                </div>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={onClose}
-                    className="h-8 w-8 hover:bg-muted"
+        <AnimatePresence>
+            {open && (
+                <motion.div
+                    initial={{ opacity: 0, x: -20, scale: 0.95 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: -20, scale: 0.95 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    style={{ maxHeight: containerHeight ? containerHeight - 32 : 'calc(100vh - 2rem)' }}
+                    className="absolute top-4 left-4 w-80 bg-[#333333]/80 backdrop-blur-sm rounded-lg shadow-xl z-50 flex flex-col border border-white/10"
                 >
-                    <X className="w-4 h-4" />
-                </Button>
-            </div>
-
-            {/* Content */}
-            <ScrollArea className="w-full flex-grow h-0 overflow-y-auto">
-                <div className="p-2">
-                    {tocWithIds.map((section) => (
-                        <div key={section._id} className="mb-2">
-                            {/* Main Section */}
-                            <div
-                                className={`group flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all duration-200 ${
-                                    selectedPage === section._id
-                                        ? 'text-primary-foreground shadow-lg'
-                                        : 'bg-card hover:text-primary-foreground hover:shadow-md'
-                                }`}
-                                style={{
-                                    backgroundColor: selectedPage === section._id ? accentColor : undefined
-                                }}
-                                onMouseEnter={(e) => {
-                                    if (selectedPage !== section._id) {
-                                        e.currentTarget.style.backgroundColor = accentColor;
-                                    }
-                                }}
-                                onMouseLeave={(e) => {
-                                    if (selectedPage !== section._id) {
-                                        e.currentTarget.style.backgroundColor = '';
-                                    }
-                                }}
-                                onClick={() => handlePageClick(section._id, section.pageNumber)}
-                            >
-                                <div className="flex items-center space-x-3 flex-1">
-                                    <FileText className={`w-4 h-4 transition-colors ${selectedPage === section._id
-                                            ? 'text-primary-foreground'
-                                            : 'text-muted-foreground group-hover:text-primary-foreground'
-                                        }`} />
-                                    <div className="flex flex-col">
-                                        <span className={`font-medium text-sm transition-colors ${selectedPage === section._id
-                                                ? 'text-primary-foreground'
-                                                : 'text-foreground group-hover:text-primary-foreground'
-                                            }`}>
-                                            {section.chapterName}
-                                        </span>
-                                        <span className={`text-xs transition-colors ${selectedPage === section._id
-                                                ? 'text-primary-foreground/70'
-                                                : 'text-muted-foreground group-hover:text-primary-foreground/80'
-                                            }`}>
-                                            Page {section.pageNumber}
-                                        </span>
-                                    </div>
+                    <div className="flex items-center justify-between p-4 border-b border-white/10">
+                        <div className="flex items-center space-x-2">
+                            <BookOpen className="w-5 h-5 text-white" />
+                            <span className="font-bold text-lg text-white">Table of Contents</span>
+                        </div>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={onClose}
+                            className="h-8 w-8 text-white hover:bg-white/10 hover:text-white"
+                        >
+                            <X className="w-4 h-4" />
+                        </Button>
+                    </div>
+                    <ScrollArea className="w-full flex-grow overflow-y-auto custom-scrollbar">
+                        <div className="p-2">
+                            {(!tocWithIds || tocWithIds.length === 0) ? (
+                                <div className="p-4 text-white/70 text-center">
+                                    No table of contents available
                                 </div>
-                                <Badge
-                                    variant={selectedPage === section._id ? "secondary" : "outline"}
-                                    className={`text-xs transition-colors ${selectedPage === section._id
-                                            ? ''
-                                            : 'group-hover:bg-primary-foreground'
-                                        }`}
-                                >
-                                    {section.pageNumber}
-                                </Badge>
-                            </div>
-
-                            {/* Sub Chapters */}
-                            {section.subChapters && section.subChapters.length > 0 && (
-                                <div className="ml-4 mt-1 space-y-1">
-                                    {section.subChapters.map((subChapter) => (
-                                        <div
-                                            key={subChapter._id}
-                                            className={`group flex items-center justify-between p-2 rounded-md cursor-pointer transition-all duration-200 ${
-                                                selectedPage === subChapter._id
-                                                    ? 'text-primary-foreground shadow-md'
-                                                    : 'bg-muted/50 hover:text-primary-foreground hover:shadow-sm'
-                                            }`}
-                                            style={{
-                                                backgroundColor: selectedPage === subChapter._id ? accentColor : undefined
-                                            }}
-                                            onMouseEnter={(e) => {
-                                                if (selectedPage !== subChapter._id) {
-                                                    e.currentTarget.style.backgroundColor = accentColor;
-                                                }
-                                            }}
-                                            onMouseLeave={(e) => {
-                                                if (selectedPage !== subChapter._id) {
-                                                    e.currentTarget.style.backgroundColor = '';
-                                                }
-                                            }}
-                                            onClick={() => handlePageClick(subChapter._id, subChapter.pageNumber)}
-                                        >
-                                            <div className="flex items-center space-x-2 flex-1">
-                                                <div className={`w-2 h-2 rounded-full transition-colors ${selectedPage === subChapter._id
-                                                        ? 'bg-primary-foreground'
-                                                        : 'bg-muted-foreground group-hover:bg-primary-foreground'
-                                                    }`}></div>
-                                                <div className="flex flex-col">
-                                                    <span className={`text-sm transition-colors ${selectedPage === subChapter._id
-                                                            ? 'text-primary-foreground'
-                                                            : 'text-foreground group-hover:text-primary-foreground'
-                                                        }`}>
-                                                        {subChapter.chapterName}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <Badge
-                                                variant={selectedPage === subChapter._id ? "secondary" : "outline"}
-                                                className={`text-xs transition-colors ${selectedPage === subChapter._id
-                                                        ? ''
-                                                        : 'group-hover:bg-primary-foreground'
-                                                    }`}
+                            ) : (
+                                tocWithIds.map((section) => {
+                                    const hasSubChapters = section.subChapters && section.subChapters.length > 0;
+                                    return (
+                                        <div key={section._id} className="mb-1">
+                                            <div
+                                                className={`group flex items-center justify-between px-3 py-2 rounded-md cursor-pointer transition-all duration-200 ${selectedPage === section._id ? 'text-white bg-white/10' : 'hover:bg-white/10 text-white/90 hover:text-white'}`}
+                                                onClick={() => handlePageClick(section._id, section.pageNumber)}
                                             >
-                                                {subChapter.pageNumber}
-                                            </Badge>
+                                                <span className="font-medium text-sm truncate pr-4">
+                                                    {section.chapterName}
+                                                </span>
+                                                <span className="text-sm opacity-70 whitespace-nowrap">
+                                                    {section.pageNumber}
+                                                </span>
+                                            </div>
+                                            {hasSubChapters && (
+                                                <div className="mt-1 space-y-1">
+                                                    {section.subChapters.map((subChapter) => (
+                                                        <div
+                                                            key={subChapter._id}
+                                                            className={`group flex items-center justify-between px-3 py-2 pl-8 rounded-md cursor-pointer transition-all duration-200 ${selectedPage === subChapter._id ? 'text-white bg-white/10' : 'hover:bg-white/10 text-white/80 hover:text-white'}`}
+                                                            onClick={() => handlePageClick(subChapter._id, subChapter.pageNumber)}
+                                                        >
+                                                            <span className="text-sm truncate pr-4">
+                                                                {subChapter.chapterName}
+                                                            </span>
+                                                            <span className="text-sm opacity-70 whitespace-nowrap">
+                                                                {subChapter.pageNumber}
+                                                            </span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
-                                    ))}
-                                </div>
+                                    );
+                                })
                             )}
                         </div>
-                    ))}
-                </div>
-            </ScrollArea>
-        </div>
+                    </ScrollArea>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 }
