@@ -600,16 +600,20 @@ export default function PublishFlipbookDialog({
 
         try {
 
-            mainStage.forEach(e => {
-                e.temp = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
-            });
+            // mainStage.forEach(e => {
+            //     e.temp = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
+            // });
             const temp = JSON.parse(JSON.stringify(mainStage))
-            temp.forEach(e => {
+            temp.forEach((e,index) => {
                 e.selectedShapes = [];
-                e.shapes = e.temp;
-                delete e.temp;
+                e.shapes = e.shapes;
                 e.stageref = null;
+                e.thumbnails = mainStage[index].thumbnails;
             });
+            // const temp = mainStage.map(e => {
+            //     const shapes = e.shapes;
+            //     return { pageData: shapes };
+            // });
             await UpdateFlipbookPageDataApi(flipbookId, {
                 width: stageWidth,
                 height: stageHeight,
@@ -624,7 +628,7 @@ export default function PublishFlipbookDialog({
             if (isPublished) {
                 response = await UpdateFlipbookPublishDetailsOnlyApi(payload);
 
-                const thumbnails = await generateThumbnails(mainStage);
+                const thumbnails = mainStage.map(e => e.thumbnails);
                 const thumbnailFormData = new FormData();
                 thumbnailFormData.append('flipbookId', flipbookId);
                 thumbnails.forEach((thumb, idx) => {
@@ -635,7 +639,7 @@ export default function PublishFlipbookDialog({
                     console.error('Failed to update thumbnails:', err);
                 });
             } else {
-                const thumbnails = await generateThumbnails(mainStage);
+                const thumbnails = mainStage.map(e => e.thumbnails);
                 const formData = buildFormData(payload, thumbnails);
                 response = await PublishFlipbookApi(formData);
             }
