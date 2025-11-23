@@ -366,7 +366,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             )}
 
                             <div className="relative" ref={mobileMenuRef}>
-                            <BackgroundAudioPlayer visibilitySettings={visibilitySettings} isPlaying={isPlaying} toggleAudio={toggleAudio} iconColor={visibilitySettings.playerPanelColorHash} />
+                                <BackgroundAudioPlayer visibilitySettings={visibilitySettings} isPlaying={isPlaying} toggleAudio={toggleAudio} iconColor={visibilitySettings.playerPanelColorHash} />
 
                                 <Button
                                     variant="ghost"
@@ -613,8 +613,9 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                     open={isDrawerOpen}
                     onClose={() => setIsDrawerOpen(false)}
                     navigateToPage={setPage}
+                    containerHeight={containerRef.current?.clientHeight}
                 />}
-                <div className={`h-full flex flex-col items-center relative bg-white overflow-hidden transition-all duration-150 ease-in-out ${isDrawerOpen && visibilitySettings.showTableOfContent ? "w-[calc(100%-24rem)]" : "w-full"}`}
+                <div className={`h-full flex flex-col items-center relative bg-white overflow-hidden transition-all duration-150 ease-in-out w-full`}
                     style={{
                         backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
                         backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
@@ -661,7 +662,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             >
                                 <div
                                     className={`w-full h-full flex items-center justify-center flex-col relative`}
-                                    
+
                                 >
                                     <FlipBook
                                         isDrawerOpen={isDrawerOpen}
@@ -693,10 +694,10 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 <div
                                     className={`w-full h-full flex flex-col items-center justify-center overflow-hidden relative ${activeTab == 'Mobile' && !isPublicView ? "max-w-[400px]" : ""}`}
                                     style={{ backgroundColor: visibilitySettings.backgroundColorHash }}
-                                  
+
                                 >
                                     <div className="w-full h-full flex items-center justify-center flex-col"
-                                    //   id={id}
+                                        //   id={id}
                                         style={{
                                             backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
                                             backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
