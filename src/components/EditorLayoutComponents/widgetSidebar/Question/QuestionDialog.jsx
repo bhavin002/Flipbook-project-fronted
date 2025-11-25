@@ -116,8 +116,8 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
         clearErrors("privacyPolicyLink");
         form.setValue("addPrivacyPolicy", checked);
         if (checked) {
-            form.setValue("companyName", "Flipnova");
-            form.setValue("privacyPolicyLink", "https://legal.flipnova.com/privacy-policy");
+            form.setValue("companyName", "FlipDrag");
+            form.setValue("privacyPolicyLink", "https://legal.flipdrag.com/privacy-policy");
         }
     };
 
@@ -285,7 +285,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                                                             type="text"
                                                             id="company-name"
                                                             {...form.register("companyName")}
-                                                            placeholder="Flipnova"
+                                                            placeholder="FlipDrag"
                                                             className={errors.companyName ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                                         />
                                                         {errors.companyName && <p className="text-red-500 text-xs">{errors.companyName.message}</p>}
@@ -298,7 +298,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                                                             type="text"
                                                             id="privacy-policy"
                                                             {...form.register("privacyPolicyLink")}
-                                                            placeholder="https://legal.flipnova.com/privacy-policy"
+                                                            placeholder="https://legal.flipdrag.com/privacy-policy"
                                                             className={errors.privacyPolicyLink ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                                         />
                                                         {errors.privacyPolicyLink && <p className="text-red-500 text-xs">{errors.privacyPolicyLink.message}</p>}

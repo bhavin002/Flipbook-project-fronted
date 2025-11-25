@@ -208,7 +208,7 @@ export default function SettingWorkspace() {
                             <CardHeader>
                                 <CardTitle>Logo your workspace</CardTitle>
                                 {/* <CardDescription>
-                                    Your previewBrandLogoId will be displayed in the top left corner of this workspace, replacing the Flipnova previewBrandLogoId.
+                                    Your previewBrandLogoId will be displayed in the top left corner of this workspace, replacing the FlipDrag previewBrandLogoId.
                                 </CardDescription> */}
                             </CardHeader>
 

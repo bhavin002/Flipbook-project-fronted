@@ -26,10 +26,10 @@ const debounce = (func, delay) => {
 };
 
 const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, containerRefHeight, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef, setZoomLevel, isAutoFlipping }, ref) {
-    const [width, setWidth] = useState(793);
-    const [height, setHeight] = useState(793);
-    const [divWidth, setDivWidth] = useState(793);
-    const [divHeight, setDivHeight] = useState(793);
+    const [width, setWidth] = useState(400);
+    const [height, setHeight] = useState(400);
+    const [divWidth, setDivWidth] = useState(400);
+    const [divHeight, setDivHeight] = useState(400);
     const [isMouseDown, setIsMouseDown] = useState(false);
     const [pageContent, setPageContent] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
@@ -87,7 +87,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
 
             // Mark flipbook as ready after dimensions are calculated
             // setIsFlipbookReady(false);
-            if (!isFlipbookReady && divWidth !== 793 && divHeight !== 793) {
+            if (!isFlipbookReady && divWidth !== 400 && divHeight !== 400) {
                 setTimeout(() => setIsFlipbookReady(true), 100);
             }
         };

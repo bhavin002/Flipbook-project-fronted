@@ -118,7 +118,7 @@ export default function VerifyReader() {
                                 ) : alreadyRegistered ? (
                                     "You have already accepted this invitation. Please sign in to continue."
                                 ) : error === "authentication" ? (
-                                    "You need to sign in or create an account with Flipnova to accept this invitation."
+                                    "You need to sign in or create an account with FlipDrag to accept this invitation."
                                 ) : (
                                     errorMessage || "We couldn't verify your invitation. The link may have expired or is invalid."
                                 )}

@@ -21,7 +21,7 @@ export default function QuizSettings({ form, clearErrors }) {
         clearErrors("settings.privacyPolicyLink");
         form.setValue("settings.addPrivacyPolicy", checked);
         if (checked) {
-            form.setValue("settings.companyName", "Flipnova");
+            form.setValue("settings.companyName", "FlipDrag");
             form.setValue("settings.privacyPolicyLink", "https://legal.flipsnack.com/privacy-policy");
         }
     };
@@ -291,7 +291,7 @@ export default function QuizSettings({ form, clearErrors }) {
                                         type="text"
                                         id="company-name"
                                         {...form.register("settings.companyName")}
-                                        placeholder="Flipnova"
+                                        placeholder="FlipDrag"
                                         className={errors.settings?.companyName ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                     />
                                     {errors.settings?.companyName && <p className="text-red-500 text-xs">{errors.settings.companyName.message}</p>}

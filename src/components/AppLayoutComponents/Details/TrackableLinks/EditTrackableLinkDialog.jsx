@@ -67,7 +67,7 @@ export default function EditTrackableLinkDialog() {
                         placeholder="Use a maximum of 256 characters"
                         defaultValue="10d43b21-f9c0-4d4b-9d76-d3072c949e4f"
                     />
-                    <p className="text-xs"> <span className="font-semibold">Preview: </span>https://www.flipnova.com/F9D7AD99E8C/10d43b21-f9c0-4d4b-9d76-d3072c949e4f</p>
+                    <p className="text-xs"> <span className="font-semibold">Preview: </span>https://www.flipdrag.com/F9D7AD99E8C/10d43b21-f9c0-4d4b-9d76-d3072c949e4f</p>
                 </div>
                 <div className="space-y-1">
                     <Label className="text-sm font-medium">

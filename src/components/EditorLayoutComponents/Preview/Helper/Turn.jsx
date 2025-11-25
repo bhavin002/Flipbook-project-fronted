@@ -69,8 +69,10 @@ function Turn({
       $(flipbookEL).turn("size", width, height);
       $(flipbookEL).turn("display", pageType);
       $(flipbookEL).turn("direction", visibilitySettings?.rightToLeftOrientation ? "rtl" : "ltr");
-
+      // $(flipbookEL).turn("peel", start 
+      // $(flipbookEL).turn("peel", "br", true);
       $(flipbookEL).off('turning').on('turning', function (e, page, view) {
+        $(flipbookEL).turn("peel", false, true); // stop peel
         if (visibilitySettings?.flipSound) {
           audio.currentTime = 0;
           audio.play().catch(error => {

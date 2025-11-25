@@ -767,6 +767,7 @@ export default function Editor() {
     useEffect(() => {
         let zoomTimeout = null;
         let accumulatedDelta = 0;
+        let gestureZoom = null;
 
         const handleWheel = (e) => {
             if (e.ctrlKey || e.metaKey) {
@@ -782,42 +783,70 @@ export default function Editor() {
                         return Math.floor(newZoom);
                     });
                     accumulatedDelta = 0;
-                }, 0);
+                }, 10);
             }
         };
 
         const handleKey = (e) => {
             if (!e.ctrlKey && !e.metaKey) return;
 
-            // Ctrl + 0 → Reset zoom
             if (e.key === "0") {
                 e.preventDefault();
                 setZoomper(50);
                 return;
             }
 
-            // Ctrl + +  or  Ctrl + =
             if (e.key === "=" || e.key === "+") {
                 e.preventDefault();
                 setZoomper((z) => Math.min(200, z + 10));
                 return;
             }
 
-            // Ctrl + -
             if (e.key === "-") {
                 e.preventDefault();
                 setZoomper((z) => Math.max(50, z - 10));
             }
         };
 
+        // 🔥 TOUCHPAD PINCH–ZOOM FIX
+        const handleGestureStart = (e) => {
+            e.preventDefault();
+            gestureZoom = zoomper;
+        };
+
+        const handleGestureChange = (e) => {
+            e.preventDefault();
+            if (gestureZoom == null) return;
+
+            // e.scale → >1 => zoom in, <1 => zoom out
+            const zoomValue = gestureZoom * e.scale;
+            const safeZoom = Math.min(200, Math.max(50, zoomValue));
+
+            setZoomper(Math.floor(safeZoom));
+        };
+
+        const handleGestureEnd = () => {
+            gestureZoom = null;
+        };
+
         const container = childRef.current;
         if (container) {
             container.addEventListener("wheel", handleWheel, { passive: false });
             window.addEventListener("keydown", handleKey);
+
+            // 🔥 ADD THESE
+            container.addEventListener("gesturestart", handleGestureStart, { passive: false });
+            container.addEventListener("gesturechange", handleGestureChange, { passive: false });
+            container.addEventListener("gestureend", handleGestureEnd, { passive: false });
         }
 
         return () => {
-            if (container) container.removeEventListener("wheel", handleWheel);
+            if (container) {
+                container.removeEventListener("wheel", handleWheel);
+                container.removeEventListener("gesturestart", handleGestureStart);
+                container.removeEventListener("gesturechange", handleGestureChange);
+                container.removeEventListener("gestureend", handleGestureEnd);
+            }
             window.removeEventListener("keydown", handleKey);
             clearTimeout(zoomTimeout);
         };

@@ -623,7 +623,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                         className="w-full h-full flex flex-col items-center h-[calc(100%-76px)]"
                     >
                         {component !== "customize" && !isPublicView && (
-                            <div className="w-full h-[10%] mt-5 flex items-center justify-center">
+                            <div className="w-full h-[10%] flex items-center justify-center">
                                 <TabsList className="grid grid-cols-2 bg-gray-100 rounded-lg">
                                     <TabsTrigger
                                         value="desktop"

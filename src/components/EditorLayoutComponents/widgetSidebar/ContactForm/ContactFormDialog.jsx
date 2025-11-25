@@ -30,8 +30,8 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
                 buttonLabel: "Submit",
                 thankYouMessage: "Your response has been submitted.",
                 addPrivacyPolicy: false,
-                companyName: "Flipnova",
-                privacyPolicyLink: "https://legal.flipnova.com/privacy-policy",
+                companyName: "FlipDrag",
+                privacyPolicyLink: "https://legal.flipdrag.com/privacy-policy",
                 addGDPRCompliance: false,
                 gdprMessage: "I agree to receive marketing materials."
             },
@@ -66,8 +66,8 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
                     buttonLabel: response.data.settings?.buttonLabel || "Submit",
                     thankYouMessage: response.data.settings?.thankYouMessage || "Your response has been submitted.",
                     addPrivacyPolicy: response.data.settings?.addPrivacyPolicy || false,
-                    companyName: response.data.settings?.companyName || "Flipnova",
-                    privacyPolicyLink: response.data.settings?.privacyPolicyLink || "https://legal.flipnova.com/privacy-policy",
+                    companyName: response.data.settings?.companyName || "FlipDrag",
+                    privacyPolicyLink: response.data.settings?.privacyPolicyLink || "https://legal.flipdrag.com/privacy-policy",
                     addGDPRCompliance: response.data.settings?.addGDPRCompliance || false,
                     gdprMessage: response.data.settings?.gdprMessage || "I agree to receive marketing materials."
                 },
