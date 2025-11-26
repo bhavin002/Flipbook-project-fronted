@@ -222,11 +222,24 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     };
 
     const handleCancelNavigation = () => {
+        setIsAnyChangeMadeInStage(false);
         setShowSaveDialog(false);
         if (blocker.state === 'blocked') {
             blocker.reset();
         }
         pendingNavigationRef.current = null;
+        setTimeout(() => {
+            navigate('/myflipbooks/flipbooks');
+        }, 0);
+    };
+
+    const handleDiscardAndNavigate = () => {
+        setIsAnyChangeMadeInStage(false);
+        setShowSaveDialog(false);
+        if (pendingNavigationRef.current) {
+            pendingNavigationRef.current();
+            pendingNavigationRef.current = null;
+        }
     };
 
     useEffect(() => {

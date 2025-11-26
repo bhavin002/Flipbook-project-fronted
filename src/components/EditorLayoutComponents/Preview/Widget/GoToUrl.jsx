@@ -65,9 +65,7 @@ const linkAreaActionHandlers = {
 
 const linkAreaModalHandlers = {
     'popup-frame': (htmlData) => {
-        if (htmlData?.url) {
-            showModal(PopupFrameModal, htmlData);
-        }
+        showModal(PopupFrameModal, htmlData);
     },
     'spotlight': (htmlData) => {
         showModal(SpotlightModal, htmlData);
