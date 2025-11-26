@@ -37,10 +37,7 @@ export default function KonvaGif({
 
             window.gifler(imgSrc).get((a) => {
                 anim = a;
-                setImageLoadCounterPageWise((prev) => ({
-                    ...prev,
-                    [index]: (prev[index] || 0) - 1,
-                }));
+
                 // Set canvas dimensions to match shape
                 canvas.width = shape.width || anim.frames[0].width;
                 canvas.height = shape.height || anim.frames[0].height;
@@ -51,6 +48,12 @@ export default function KonvaGif({
                         imageRef.current.getLayer().draw();
                     }
                 };
+                setTimeout(() => {
+                    setImageLoadCounterPageWise((prev) => ({
+                        ...prev,
+                        [index]: (prev[index] || 0) - 1,
+                    }));
+                }, 0);
             })
         } catch (error) {
             setImageLoadCounterPageWise((prev) => ({

@@ -643,8 +643,13 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
     // }, [stageRef.current]);
 
     useEffect(() => {
+        const nextPage = mainStage.length <= (pageCounter + 1) ? pageCounter : pageCounter + 1;
+        if (imageLoadCounterPageWise[pageCounter] === undefined) {
+            imageLoadCounterPageWise[pageCounter] = 0;
+        }
         if (isPublishModalOpenInternal && imageLoadCounterPageWise[pageCounter] != undefined && !imageLoadCounterPageWise[pageCounter]) {
-            const stage = stageRef.current; if (stage) {
+            const stage = stageRef.current;
+            if (stage) {
                 const layers = stage.getLayers();
                 if (layers.length > 0) {
                     let a = async () => {
@@ -653,8 +658,8 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                             updatedState[index] = { ...updatedState[index], thumbnails: mainStage[pageCounter].thumbnails }; return updatedState;
                         });
                         console.log("mainStage[pageCounter].thumbnails", mainStage[pageCounter].thumbnails);
-                        setSelectedIndex(mainStage.length <= (pageCounter + 1) ? pageCounter : pageCounter + 1);
-                        setPageCounter(mainStage.length <= (pageCounter + 1) ? pageCounter : pageCounter + 1);
+                        setSelectedIndex(nextPage);
+                        setPageCounter(nextPage);
                     }
                     a();
                 }
@@ -866,12 +871,12 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
     };
     return (
         <div
-            style={{ 
+            style={{
                 width: "100%", height: "100%",
                 transformOrigin: "top center",
                 // transformOrigin: "0 left",
                 transform: `scale(${50 / zoomper})`,
-                
+
             }}
             className="relative"
             onDrop={async (e) => {
