@@ -733,7 +733,12 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             leadFormData={visibilitySettings.leadForm}
                         />
                     )}
-                    <ShareFlipbookDialog isShareModalOpen={isShareModalOpen} setIsShareModalOpen={setIsShareModalOpen} flipbookId={flipbookId} />
+                    <ShareFlipbookDialog 
+                        isShareModalOpen={isShareModalOpen} 
+                        setIsShareModalOpen={setIsShareModalOpen} 
+                        flipbookId={flipbookId} 
+                        container={containerRef.current}
+                    />
                 </div>
 
             </div>

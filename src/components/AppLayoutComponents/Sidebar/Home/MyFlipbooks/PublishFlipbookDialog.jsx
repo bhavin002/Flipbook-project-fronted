@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import GenericSelection from "@/utils/GenericSelection";
 import { GetWorkspaceGroupsApi } from "@/service/workspace.group.service";
-import { GetFlipbookPublishInfoApi, UpdatePublishFlipbookApi, UpdateFlipbookPublishDetailsOnlyApi, UpdatePublishThumbnailsApi } from "@/service/flipbook.publish.service"; // Import the new API
+import { GetFlipbookPublishInfoApi, UpdateFlipbookPublishDetailsOnlyApi, UpdatePublishThumbnailsApi } from "@/service/flipbook.publish.service"; // Import the new API
 import { PublishFlipbookApi } from "@/service/flipbook.publish.service";
 import { flipbookVisibility } from "@/utils/enum";
 import { toast } from "sonner";
@@ -35,7 +35,6 @@ export default function PublishFlipbookDialog({
     isPublishModalOpen,
     setIsPublishModalOpen,
     flipbookId, // Add flipbookId prop
-    onPublishSuccess, // Optional callback for success handling
     setIsAnyChangeMadeInStage,
     mainStage,
     stageWidth,
@@ -595,14 +594,13 @@ export default function PublishFlipbookDialog({
             console.error('FlipbookId is required for publishing');
             return;
         }
-
+    
         setPublishing(true);
-
+    
         try {
-
-            // mainStage.forEach(e => {
-            //     e.temp = e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
-            // });
+            // ✅ RESET CHANGE FLAG FIRST - before any operations
+            setIsAnyChangeMadeInStage(false);
+    
             const temp = JSON.parse(JSON.stringify(mainStage))
             temp.forEach((e, index) => {
                 e.selectedShapes = [];
@@ -610,10 +608,7 @@ export default function PublishFlipbookDialog({
                 e.stageref = null;
                 e.thumbnails = mainStage[index].thumbnails;
             });
-            // const temp = mainStage.map(e => {
-            //     const shapes = e.shapes;
-            //     return { pageData: shapes };
-            // });
+    
             await UpdateFlipbookPageDataApi(flipbookId, {
                 width: stageWidth,
                 height: stageHeight,
@@ -621,20 +616,20 @@ export default function PublishFlipbookDialog({
                     pageData: JSON.stringify(e),
                 })),
             });
-
+    
             const payload = buildPayload();
-
+    
             let response;
             if (isPublished) {
                 response = await UpdateFlipbookPublishDetailsOnlyApi(payload);
-
+    
                 const thumbnails = mainStage.map(e => e.thumbnails);
                 const thumbnailFormData = new FormData();
                 thumbnailFormData.append('flipbookId', flipbookId);
                 thumbnails.forEach((thumb, idx) => {
                     thumbnailFormData.append('thumbnails', thumb, `thumbnail_${idx}.jpg`);
                 });
-
+    
                 UpdatePublishThumbnailsApi(thumbnailFormData).catch(err => {
                     console.error('Failed to update thumbnails:', err);
                 });
@@ -643,30 +638,22 @@ export default function PublishFlipbookDialog({
                 const formData = buildFormData(payload, thumbnails);
                 response = await PublishFlipbookApi(formData);
             }
-
-            // Call success callback if provided
-            if (onPublishSuccess) {
-                onPublishSuccess(response);
-            }
-
-            // Reset change state first to prevent save dialog
-            setIsAnyChangeMadeInStage(false);
-
-            // Close modal on success
+    
+            // Close modal
             setIsPublishModalOpen(false);
-
+    
             // Reset form state
             resetForm();
-
-            // Navigate after a brief delay to ensure state updates
-            setTimeout(() => {
-                navigate(`/details/${flipbookId}`);
-            }, 100);
-
+    
+            // Navigate immediately without setTimeout
+            navigate(`/details/${flipbookId}`, { replace: true });
+    
         } catch (err) {
             toast.error("Failed to publish flipbook", {
                 description: err.message || "Something went wrong while publishing."
             });
+            // ✅ Reset the flag on error too
+            setIsAnyChangeMadeInStage(false);
         } finally {
             setPublishing(false);
         }

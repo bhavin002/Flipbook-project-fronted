@@ -15,7 +15,7 @@ export default function SaveConfirmationDialog({
                 <DialogHeader>
                     <DialogTitle>Save Changes</DialogTitle>
                     <DialogDescription>
-                        You have unsaved changes. Do you want to save your latest changes before leaving?
+                        You have unsaved changes. Do you want to save your changes before leaving?
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="flex gap-2">

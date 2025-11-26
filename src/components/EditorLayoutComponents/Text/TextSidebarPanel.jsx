@@ -8,6 +8,7 @@ import { TextElementsListSkeleton } from "@/utils/Skeleton";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
+import dynamicFontManager from '@/utils/dynamicFontManager';
 
 export default function TextSidebarPanel({
     mainStage,
@@ -102,8 +103,13 @@ export default function TextSidebarPanel({
         return "";
     };
 
-    const handleTextElementAction = (element) => {
+    const handleTextElementAction = async (element) => {
         if (element.attrs) {
+            // Load font before adding to stage
+            if (element.attrs.fontId) {
+                await dynamicFontManager.loadFontById(element.attrs.fontId);
+            }
+
             let group = mainStage[selectedIndex].stageref.current.children[0].children[1];
             const groupWidth = group.width();
             const groupHeight = group.height();
@@ -160,7 +166,10 @@ export default function TextSidebarPanel({
                                 <div
                                     key={index}
                                     draggable
-                                    onDragStart={() => {
+                                    onDragStart={async () => {
+                                        if (element.attrs.fontId) {
+                                            await dynamicFontManager.loadFontById(element.attrs.fontId);
+                                        }
                                         mainStage[selectedIndex].dragRect.current = element.attrs;
                                     }}
                                     onClick={() => handleTextElementAction(element)}

@@ -16,7 +16,7 @@ import {
 } from "react-share"
 import QRCode from "qrcode"
 
-export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalOpen, flipbookId }) {
+export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalOpen, flipbookId, container }) {
     const [copied, setCopied] = useState(false)
     const [qrCodeDataURL, setQrCodeDataURL] = useState("")
     const canvasRef = useRef(null)
@@ -101,7 +101,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
 
     return (
         <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
-            <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[90vh] overflow-y-auto z-[9999999]">
+            <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[90vh] overflow-y-auto z-[9999999]" container={container}>
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-semibold">Share Flipbook</DialogTitle>
                 </DialogHeader>
