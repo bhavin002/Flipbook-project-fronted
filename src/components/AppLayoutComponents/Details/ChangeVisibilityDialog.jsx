@@ -241,7 +241,7 @@ export default function ChangeVisibilityDialog({ open, setOpen, flipbookId, setF
                         </TabsTrigger>
                     </TabsList>
                     <TabsContent value="public">
-                        <p className="text-sm font-medium text-gray-600 my-4">Your catalog will appear on your public Flipnova profile and it will be indexed by the search engines (Google, Bing, etc).</p>
+                        <p className="text-sm font-medium text-gray-600 my-4">Your catalog will appear on your public FlipDrag profile and it will be indexed by the search engines (Google, Bing, etc).</p>
                     </TabsContent>
                     <TabsContent value="unlisted">
                         <p className="text-sm font-medium text-gray-600 my-4">Your catalog will not appear anywhere on the web. Only people you personally share the direct link with will have access to your catalog.</p>

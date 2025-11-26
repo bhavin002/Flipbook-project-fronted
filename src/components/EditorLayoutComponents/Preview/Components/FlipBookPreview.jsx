@@ -616,26 +616,14 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                     containerHeight={containerRef.current?.clientHeight}
                 />}
                 <div className={`h-full flex flex-col items-center relative bg-white overflow-hidden transition-all duration-150 ease-in-out w-full`}
-                    style={{
-                        backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
-                        backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
-                        ...(visibilitySettings.backgroundImageType === BackgroundImageType.SCALE_CROP && {
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center'
-                        }),
-                        ...(visibilitySettings.backgroundImageType === BackgroundImageType.CENTER && {
-                            backgroundRepeat: 'no-repeat',
-                            backgroundPosition: 'center'
-                        })
-                    }}
-                >
+                 >
                     <Tabs
                         value={activeTab.toLowerCase()}
                         onValueChange={handleTabChange}
                         className="w-full h-full flex flex-col items-center h-[calc(100%-76px)]"
                     >
                         {component !== "customize" && !isPublicView && (
-                            <div className="w-full h-[10%] mt-5 flex items-center justify-center">
+                            <div className="w-full h-[10%] flex items-center justify-center">
                                 <TabsList className="grid grid-cols-2 bg-gray-100 rounded-lg">
                                     <TabsTrigger
                                         value="desktop"

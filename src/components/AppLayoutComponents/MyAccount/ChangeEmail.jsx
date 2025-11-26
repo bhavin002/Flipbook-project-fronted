@@ -27,7 +27,7 @@ export default function ChangeEmail() {
                 <Label>
                     Email
                 </Label>
-                <Input type="email" placeholder="Email" defaultValue="bhavin@flipnova.com" />
+                <Input type="email" placeholder="Email" defaultValue="bhavin@flipdrag.com" />
                 <DialogFooter>
                     <Button variant="outline">Cancle</Button>
                     <Button>Save</Button>

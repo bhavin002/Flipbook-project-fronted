@@ -152,7 +152,7 @@ export default function PublishShelfDailog({ isPublishShelfModalOpen, setIsPubli
 
                             <TabsContent value="public">
                                 <p className="text-sm font-medium text-gray-600 my-4">
-                                    Your catalog will appear on your public Flipnova profile and it will be indexed
+                                    Your catalog will appear on your public FlipDrag profile and it will be indexed
                                     by the search engines (Google, Bing, etc).
                                 </p>
                             </TabsContent>

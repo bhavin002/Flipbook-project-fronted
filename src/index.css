@@ -503,3 +503,30 @@ div:hover::-webkit-scrollbar-thumb {
 html , body, #root {
   height: 100%;
 }
+
+
+
+.flip-arrow {
+  position: absolute;
+  right: 25px;
+  bottom: 25px;
+  width: 100px;
+  height: 100px;
+  pointer-events: none;
+  opacity: 1;
+  animation: arrowBounce 1.2s infinite;
+}
+
+@keyframes arrowBounce {
+  0% {
+    transform: translateY(0) rotate(0);
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(0);
+  }
+
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+}

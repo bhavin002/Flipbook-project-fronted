@@ -46,7 +46,7 @@ export default function FlipbookVisibility() {
                     </TabsList>
 
                     <TabsContent value="public">
-                        <p className="text-sm font-medium text-gray-600">Your catalog will appear on your public Flipnova profile and it will be indexed
+                        <p className="text-sm font-medium text-gray-600">Your catalog will appear on your public FlipDrag profile and it will be indexed
                             by the search engines (Google, Bing, etc).</p>
                     </TabsContent>
 
