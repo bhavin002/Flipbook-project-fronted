@@ -315,7 +315,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                     })
                 }}>
 
-                <div className="w-full absolute top-0  left-0 z-[10]">
+                <div className="w-full absolute top-0  left-0 z-[10]" dir={visibilitySettings.rightToLeftOrientation ? "rtl" : "ltr"}>
                     {visibilitySettings.brandLogo && (
                         <div className="flex justify-start p-4">
                             {visibilitySettings.logoLink ? (
@@ -342,8 +342,8 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                             )}
                         </div>
                     )}
-                    {visibilitySettings.showShoppingList && <div className="absolute top-4 right-4 z-[12]">
-                        <ShoppingCartPopover flipbookId={flipbookId} isMobile={isMobile} />
+                    {visibilitySettings.showShoppingList && <div className={`absolute top-4 ${visibilitySettings.rightToLeftOrientation ? "left-4" : "right-4"} z-[12]`}>
+                        <ShoppingCartPopover flipbookId={flipbookId} isMobile={isMobile} visibilitySettings={visibilitySettings} />
                     </div>}
                 </div>
 
@@ -376,7 +376,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                         style={{ width: '100%', height: '100%' }}
                     >
                         <TransformComponent>
-                            <div className={`aspect ${isPageOverviewOpen ? "bottom-[45px]" : "bottom-[0]"}`} style={{
+                            <div className={`aspect ${isPageOverviewOpen && zoomLevel == 1 ? "bottom-[45px]" : "bottom-[0]"}`} style={{
                                 width, height,
                                 transition: 'bottom 0.3s ease-in',
                             }}>
@@ -497,6 +497,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                                             />
                                         </svg>
                                     </button>
+
                                 )}
                         </>
                     )}
@@ -514,6 +515,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                         isPublicView={isPublicView}
                         thumbnails={thumbnails}
                         transformRef={transformRef}
+                        visibilitySettings={visibilitySettings}
                     />
                 )}
             </div>

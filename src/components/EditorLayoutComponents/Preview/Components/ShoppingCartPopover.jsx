@@ -16,19 +16,16 @@ import { toast } from 'sonner';
 import { useShopSettings } from "@/context/ShopSettingsContext";
 import { ShopAppearance } from "@/utils/enum";
 import OrderForm from './OrderForm';
-import { useFlipbookSettings as useFlipbookSettingsContext } from "@/context/FlipbookSettingsProvider.jsx";
-import { useFlipbookSettings } from "@/hooks/useFlipbookSettings";
 
-const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
+const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { shopSettings, getCurrentCurrency } = useShopSettings();
     const [isOrderFormOpen, setIsOrderFormOpen] = useState(false);
-    const { latestJson } = useFlipbookSettingsContext();
-    const visibilitySettings = useFlipbookSettings(latestJson);
     const popoverRef = useRef(null);
+    const isRTL = visibilitySettings?.rightToLeftOrientation;
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -256,8 +253,9 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 15 }}
                             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                            className={`absolute right-0 mt-2 w-auto bg-background border rounded-md shadow-lg z-50 max-h-[600px] flex flex-col ${isMobile ? 'md:w-[23rem]' : 'md:w-[28rem]'}`}
+                            className={`absolute ${isRTL ? "left-0" : "right-0"} mt-2 w-auto bg-background border rounded-md shadow-lg z-50 max-h-[600px] flex flex-col ${isMobile ? 'md:w-[23rem]' : 'md:w-[28rem]'}`}
                             style={{ top: '100%' }}
+                            dir={isRTL ? "rtl" : "ltr"}
                         >
                             <div className="flex items-center justify-between p-4 border-b">
                                 <div className="flex items-center gap-2">
@@ -321,7 +319,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
                                                         <p className="text-xs text-gray-500">{item.instructionMessage}: {item.personalizationText}</p>
                                                     )}
                                                 </div>
-                                                <div className="flex flex-col items-end gap-2">
+                                                <div className={`flex flex-col gap-2 ${isRTL ? "items-start" : "items-end"}`}>
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
@@ -391,7 +389,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile }) => {
                     )}
                 </AnimatePresence>
             </div>
-            <OrderForm open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen} flipbookId={flipbookId} />
+            <OrderForm open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen} flipbookId={flipbookId} visibilitySettings={visibilitySettings} />
             <ConfirmationDialog
                 isConfirmModalOpen={isConfirmModalOpen}
                 setIsConfirmModalOpen={setIsConfirmModalOpen}

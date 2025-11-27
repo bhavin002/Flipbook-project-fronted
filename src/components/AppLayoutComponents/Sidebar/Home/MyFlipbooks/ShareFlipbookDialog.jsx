@@ -16,10 +16,11 @@ import {
 } from "react-share"
 import QRCode from "qrcode"
 
-export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalOpen, flipbookId }) {
+export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalOpen, flipbookId, visibilitySettings }) {
     const [copied, setCopied] = useState(false)
     const [qrCodeDataURL, setQrCodeDataURL] = useState("")
     const canvasRef = useRef(null)
+    const isRTL = visibilitySettings?.rightToLeftOrientation;
 
     const shareUrl = `${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`;
 
@@ -101,9 +102,9 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
 
     return (
         <Dialog open={isShareModalOpen} onOpenChange={setIsShareModalOpen}>
-            <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[90vh] overflow-y-auto z-[9999999]">
+            <DialogContent className="sm:max-w-[600px] w-[95vw] max-h-[90vh] overflow-y-auto z-[9999999]" dir={isRTL ? "rtl" : "ltr"}>
                 <DialogHeader>
-                    <DialogTitle className="text-2xl font-semibold">Share Flipbook</DialogTitle>
+                    <DialogTitle className={`text-2xl font-semibold ${isRTL ? "text-right" : "text-left"}`}>Share Flipbook</DialogTitle>
                 </DialogHeader>
 
                 <div className="py-4">
@@ -111,7 +112,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                     <div className="flex flex-col md:flex-row gap-6">
                         {/* Social Icons Section - Left on Desktop */}
                         <div className="flex-1 order-2 md:order-1">
-                            <h3 className="text-sm font-medium text-gray-700 mb-3">Share via Social Media</h3>
+                            <h3 className={`text-sm font-medium text-gray-700 mb-3 ${isRTL ? "text-right" : "text-left"}`}>Share via Social Media</h3>
                             <div className="flex flex-col gap-2">
                                 <FacebookShareButton url={shareUrl} quote="Check out this flipbook!" className="w-full">
                                     <Button variant="outline" className="w-full justify-start gap-3 h-11">
@@ -150,7 +151,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
 
                         {/* QR Code Section - Right on Desktop, Top on Mobile */}
                         <div className="flex-shrink-0 order-1 md:order-2">
-                            <h3 className="text-sm font-medium text-gray-700 mb-3 text-center md:text-left">Scan QR Code</h3>
+                            <h3 className={`text-sm font-medium text-gray-700 mb-3 text-center ${isRTL ? "md:text-right" : "md:text-left"}`}>Scan QR Code</h3>
                             <div className="flex flex-col items-center gap-3">
                                 <div className="border rounded-xl p-2.5 bg-white shadow-sm">
                                     {qrCodeDataURL ? (
@@ -188,6 +189,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                                 value={shareUrl}
                                 readOnly
                                 className="flex-1 text-sm bg-gray-50"
+                                dir="ltr"
                             />
                             <Button
                                 variant="outline"

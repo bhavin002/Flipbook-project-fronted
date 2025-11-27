@@ -106,12 +106,13 @@ const createOrderFormSchema = (customerFields, shopSettings) => {
     return z.object(baseSchema);
 };
 
-const OrderForm = ({ open, onOpenChange, flipbookId }) => {
+const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings }) => {
     const { shopSettings, isLoading } = useShopSettings();
     const [currentView, setCurrentView] = useState('form');
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
     const [selectedLocation, setSelectedLocation] = useState('');
     const [submitting, setSubmitting] = useState(false);
+    const isRTL = visibilitySettings?.rightToLeftOrientation;
 
     const {
         register,
@@ -293,7 +294,7 @@ const OrderForm = ({ open, onOpenChange, flipbookId }) => {
                             </div>
                         ))}
                         <div className="space-y-2">
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center gap-2">
                                 <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
                                 <div className="h-4 w-64 bg-gray-200 rounded animate-pulse"></div>
                             </div>
@@ -364,7 +365,7 @@ const OrderForm = ({ open, onOpenChange, flipbookId }) => {
             })}
             {shopSettings.showPrivacyPolicy && (
                 <div className="space-y-3 pt-4 border-t">
-                    <div className="flex items-start space-x-2">
+                    <div className="flex items-start gap-2">
                         <Checkbox
                             id="privacy"
                             checked={privacyAccepted}
@@ -411,7 +412,7 @@ const OrderForm = ({ open, onOpenChange, flipbookId }) => {
 
     return (
         <Dialog open={open} onOpenChange={handleCloseModal}>
-            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogContent className={`max-w-lg max-h-[90vh] overflow-y-auto ${isRTL ? "text-right" : "text-left"}`} dir={isRTL ? "rtl" : "ltr"}>
                 {currentView === 'form' && renderFormView()}
                 {currentView === 'success' && renderSuccessView()}
             </DialogContent>
