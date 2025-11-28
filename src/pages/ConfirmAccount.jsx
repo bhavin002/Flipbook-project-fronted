@@ -32,7 +32,7 @@ export default function ConfirmAccount() {
     const confirmAccount = async () => {
       try {
         setIsLoading(true);
-        const confirmToken = localStorage.getItem("fn_confirm_token");
+        const confirmToken = localStorage.getItem("fd_confirm_token");
         if (!confirmToken) {
           navigate("/auth/sign-up");
           return;
@@ -56,7 +56,7 @@ export default function ConfirmAccount() {
   const handleVerify = async () => {
     try {
       setIsVerifyLoading(true);
-      const confirmToken = localStorage.getItem("fn_confirm_token");
+      const confirmToken = localStorage.getItem("fd_confirm_token");
       const payload = {
         token: confirmToken,
         otp,
@@ -65,7 +65,7 @@ export default function ConfirmAccount() {
         payload.teammateToken = location.state.teammateToken;
       }
       const response = await VerifyAccountApi(payload);
-      localStorage.removeItem("fn_confirm_token");
+      localStorage.removeItem("fd_confirm_token");
       await login(response.data);
     } catch (error) {
       toast.error("Account Confirmation failed", {

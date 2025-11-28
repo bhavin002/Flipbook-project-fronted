@@ -8,7 +8,7 @@ export const useApiCounterStore = create((set) => ({
 }));
 
 export default function ApiClient() {
-    const token = localStorage.getItem('fn_access_token');
+    const token = localStorage.getItem('fd_access_token');
     const workspaceid = localStorage.getItem('fd_workspace_id');
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 

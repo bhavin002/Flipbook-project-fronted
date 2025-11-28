@@ -1,4 +1,18 @@
-export default function GoToButtonLink({ shape, visibilitySettings }) {
+import React, { useState, useEffect } from 'react';
+
+export default function GoToButtonLink({ shape, visibilitySettings, currentPages }) {
+    const [animationClass, setAnimationClass] = useState('');
+
+    useEffect(() => {
+        if (visibilitySettings.showAnimateInteraction) {
+            setAnimationClass('ping-initial');
+            const timer = setTimeout(() => {
+                setAnimationClass('ping-hover');
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+
     const handleClick = () => {
         const { url, openIn } = shape.htmlData || {};
         if (url) {
@@ -14,7 +28,7 @@ export default function GoToButtonLink({ shape, visibilitySettings }) {
         <a 
             onClick={handleClick}
             title={shape.htmlData?.tooltip}
-            className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
+            className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
             style={{
                 width: `${shape.width}px`,
                 height: `${shape.height}px`,
@@ -33,6 +47,8 @@ export default function GoToButtonLink({ shape, visibilitySettings }) {
                 display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                 borderRadius: shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
                 cursor: "pointer",
+                '--ping-color': shape.fill || '#ff0000',
+                '--ping-radius': shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
             }}            >
             <img
                 src={shape.src}

@@ -43,13 +43,13 @@ export default function EmbedFlipbook() {
                 } else if (flipbookVisibilityConfig.visibility === flipbookVisibility.PASSWORD) {
                     setShowUnlockDialog(true);
                 } else if (flipbookVisibilityConfig.visibility === flipbookVisibility.PRIVATE || flipbookVisibilityConfig.visibility === flipbookVisibility.READERS_ONLY) {
-                    const fn_access_token = localStorage.getItem("fn_access_token");
-                    if (!fn_access_token) {
+                    const fd_access_token = localStorage.getItem("fd_access_token");
+                    if (!fd_access_token) {
                         setPrivateState({ status: "no_token", loading: false });
                     } else {
                         setPrivateState({ status: null, loading: true });
                         try {
-                            const response = await GetPublishFlipbookApi(id, fn_access_token);
+                            const response = await GetPublishFlipbookApi(id, fd_access_token);
                             setPublicData(response.data);
                             setPrivateState({ status: "access_granted", loading: false });
                         } catch (err) {

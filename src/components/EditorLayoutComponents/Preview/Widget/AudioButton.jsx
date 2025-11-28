@@ -1,8 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-export default function AudioButton({ shape, visibilitySettings }) {
+export default function AudioButton({ shape, visibilitySettings, currentPages }) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [animationClass, setAnimationClass] = useState('');
   const audioRef = useRef(null);
+
+  useEffect(() => {
+    if (visibilitySettings.showAnimateInteraction) {
+      setAnimationClass('ping-initial');
+      const timer = setTimeout(() => {
+        setAnimationClass('ping-hover');
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [visibilitySettings.showAnimateInteraction, currentPages]);
   
   useEffect(() => {
     if (shape.htmlData?.audioFile?.url) {
@@ -71,35 +82,57 @@ export default function AudioButton({ shape, visibilitySettings }) {
   
   return (
     <div 
-      className="cursor-pointer" 
+      className={`cursor-pointer ${visibilitySettings.showAnimateInteraction ? animationClass : ""}`}
       title={shape.htmlData?.tooltip}
       onClick={handleClick}
+      style={{
+        width: `${shape.width}px`,
+        height: `${shape.height}px`,
+        position: "absolute",
+        left: `${shape.x}px`,
+        top: `${shape.y}px`,
+        transformOrigin: "0 0",
+        transform: `rotate(${shape.rotation || 0}deg)
+          scaleX(${shape.scaleX})
+          scaleY(${shape.scaleY})
+          skewX(${shape.skewX || 0}deg)
+          skewY(${shape.skewY || 0}deg)
+          translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
+        display: shape.visible ? "block" : "none",
+        '--ping-color': shape.fill || '#ff0000',
+        '--ping-radius': shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
+      }}
     >
       <div
         style={{
-          ...commonStyle,
+          width: "100%",
+          height: "100%",
           backgroundColor: shape.fill,
-          opacity: shape.opacity
+          opacity: shape.opacity,
+          position: "absolute",
+          borderRadius: shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
         }}
       />
       
       <img
         src="/assets/icons/AudioButton.svg"
         alt={shape.title}
-        className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
         style={{
-          ...commonStyle,
-          display: shape.visible && !isPlaying ? "block" : "none"
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          display: !isPlaying ? "block" : "none",
         }}
       />
       
       <img
         src="/assets/icons/PauseAudioButton.svg"
         alt={`${shape.title}-pause`}
-        className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
         style={{
-          ...commonStyle,
-          display: shape.visible && isPlaying ? "block" : "none"
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          display: isPlaying ? "block" : "none",
         }}
       />
     </div>

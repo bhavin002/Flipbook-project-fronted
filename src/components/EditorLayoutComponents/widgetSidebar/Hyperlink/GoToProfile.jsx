@@ -15,10 +15,12 @@ export default function GoToProfile({ mainStage, setMainStage, selectedShape, se
     }, [selectedShape]);
 
     const updateMainStage = (value) => {
+        const workspaceId = localStorage.getItem("fd_workspace_id")
         const output = {
             data: {
                 action: "go-to-profile",
-                tooltip: value
+                tooltip: value,
+                url:`/profile/${workspaceId}/`
             }
         };
         addIntercationDataToMainStage(mainStage, setMainStage, selectedShape, selectedIndex, output);

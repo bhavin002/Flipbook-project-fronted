@@ -1,7 +1,20 @@
+import React, { useState, useEffect } from 'react';
 import LinkModal from "./LinkModal";
 import { showModal } from "@/utils/ShowModal";
 
-export default function Tag({ shape, visibilitySettings }) {
+export default function Tag({ shape, visibilitySettings, currentPages }) {
+    const [animationClass, setAnimationClass] = useState('');
+
+    useEffect(() => {
+        if (visibilitySettings.showAnimateInteraction) {
+            setAnimationClass('ping-circle-initial');
+            const timer = setTimeout(() => {
+                setAnimationClass('ping-circle-hover');
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+
     const handleClick = () => {
         if (shape.htmlType === 'link-tag' && shape.htmlData?.url) {
             showModal(LinkModal, shape.htmlData);
@@ -11,7 +24,7 @@ export default function Tag({ shape, visibilitySettings }) {
     return (
         <a
             onClick={handleClick}
-            className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
+            className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
             style={{
                 width: `${shape.outerRadius * 2}px`,
                 height: `${shape.outerRadius * 2}px`,
@@ -32,6 +45,7 @@ export default function Tag({ shape, visibilitySettings }) {
                 translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                 display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                 cursor: "pointer",
+                '--ping-color': shape.fill || '#ff0000',
             }}
         >
         </a>

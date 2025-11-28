@@ -59,7 +59,7 @@ export default function VerifyReader() {
 
     const handleSignIn = () => {
         if (error === "authentication") {
-            localStorage.setItem("fn_invite_token", token);
+            localStorage.setItem("fd_invite_token", token);
         }
         navigate("/auth/sign-in");
     };

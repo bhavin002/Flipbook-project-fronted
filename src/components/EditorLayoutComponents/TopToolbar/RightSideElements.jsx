@@ -31,11 +31,13 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
 
     useEffect(() => {
         if (selectedShape && selectedShape.length) {
-            const shape = mainStage[selectedIndex].shapes.find(e => e.id === selectedShape[0].attrs.id);
-            if (shape?.opacity == undefined) {
-                setOpacity(Math.floor((1 * 100)));
+            const shape = mainStage[selectedIndex].shapes.find(
+                e => e.id === selectedShape[0].attrs.id
+            );
+            if (shape?.opacity === undefined) {
+                setOpacity(100);
             } else {
-                shape?.opacity && setOpacity(Math.floor(((shape?.opacity || 1) * 100)));
+                setOpacity(Math.floor(shape.opacity * 100));
             }
         }
     }, [mainStage, selectedShape]);
@@ -146,7 +148,7 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
         }
     }, []);
 
-    
+
 
     return (
         <div className="flex items-center">
@@ -171,7 +173,7 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
                     </Select>
                 )
             )}
-            
+
 
             {selectedShape && selectedShape.length == 1 && ["shape-widget", "stock-photo", "stock-sticker", "stock-gif", "upload-photo"].includes(selectedShape[0].attrs.title) && <Button variant="ghost" size="sm" onClick={() => setSelectedSubMenu(selectedShape[0].attrs.sidebar)}>
                 Action
