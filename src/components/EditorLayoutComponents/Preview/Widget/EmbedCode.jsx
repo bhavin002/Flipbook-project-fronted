@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function EmbedCode({ shape }) {
+export default function EmbedCode({ shape, isVisible }) {
     if (shape?.htmlData?.embedCode) {
         return (
             <div style={{
@@ -21,10 +21,12 @@ export default function EmbedCode({ shape }) {
                 translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                 overflow: "hidden"
             }}>
-                <div
-                    className="embed-code-1"
-                    dangerouslySetInnerHTML={{ __html: shape.htmlData.embedCode }}
-                />
+                {isVisible && (
+                    <div
+                        className="embed-code-1"
+                        dangerouslySetInnerHTML={{ __html: shape.htmlData.embedCode }}
+                    />
+                )}
             </div>
         )
     } else {
@@ -69,4 +71,4 @@ export default function EmbedCode({ shape }) {
             </div>
         );
     }
-} 
+}

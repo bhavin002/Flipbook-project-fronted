@@ -13,10 +13,12 @@ const PageOverviewModal = ({
     flipbookRef,
     isPublicView,
     thumbnails = [],
-    transformRef
+    transformRef,
+    visibilitySettings
 }) => {
     const scrollContainerRef = useRef(null);
     const aspectRatioString = width && height ? `1 / ${height / width}` : '1 / 1';
+    const isRTL = visibilitySettings?.rightToLeftOrientation;
 
     const getImageSrc = (pageNumber) => {
         if (isPublicView) {
@@ -29,6 +31,9 @@ const PageOverviewModal = ({
     const scroll = (direction) => {
         if (scrollContainerRef.current) {
             const scrollAmount = 300;
+            // In RTL, scrolling "left" (visually right) usually means decreasing scrollLeft (negative) or increasing if 0 is right.
+            // But scrollBy({ left: -300 }) moves view to the left, which is what we want for "Left Arrow".
+            // So we keep the logic same: 'left' moves view left, 'right' moves view right.
             scrollContainerRef.current.scrollBy({
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
                 behavior: 'smooth'
@@ -65,13 +70,14 @@ const PageOverviewModal = ({
     const PairedThumbnailCard = ({ leftPageNumber, rightPageNumber, isCurrentLeft, isCurrentRight, onClick }) => (
         <div className="relative group flex-shrink-0 flex flex-col items-center" onClick={() => onClick(leftPageNumber)} style={{ cursor: 'pointer' }}>
             <div
+                dir={isRTL ? "rtl" : "ltr"}
                 className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg h-[100px] flex transition-all duration-300 ${isCurrentLeft || isCurrentRight
                     ? 'border-2 border-primary ring-2 ring-primary/50'
                     : 'border-2 border-transparent hover:border-primary/50'
                     } rounded-md`}
             >
                 <div
-                    className="relative flex-1 flex items-center justify-center h-full border-r border-gray-300/20"
+                    className={`relative flex-1 flex items-center justify-center h-full ${isRTL ? "border-l" : "border-r"} border-gray-300/20`}
                     style={{ aspectRatio: aspectRatioString }}
                 >
                     <img
@@ -219,6 +225,7 @@ const PageOverviewModal = ({
 
 
                         <div
+                            dir={isRTL ? "rtl" : "ltr"}
                             ref={scrollContainerRef}
                             className="flex items-center gap-4 overflow-x-auto scrollbar-hide py-2 px-2"
                             style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}

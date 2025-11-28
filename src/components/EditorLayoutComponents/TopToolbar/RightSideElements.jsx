@@ -148,7 +148,7 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
         }
     }, []);
 
-    
+
 
     return (
         <div className="flex items-center">
@@ -173,7 +173,7 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
                     </Select>
                 )
             )}
-            
+
 
             {selectedShape && selectedShape.length == 1 && ["shape-widget", "stock-photo", "stock-sticker", "stock-gif", "upload-photo"].includes(selectedShape[0].attrs.title) && <Button variant="ghost" size="sm" onClick={() => setSelectedSubMenu(selectedShape[0].attrs.sidebar)}>
                 Action

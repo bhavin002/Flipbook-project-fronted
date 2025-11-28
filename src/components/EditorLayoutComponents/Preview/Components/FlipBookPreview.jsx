@@ -307,6 +307,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     }, []);
 
     const renderProgressBar = (isMobile = false) => {
+        const isRTL = visibilitySettings.rightToLeftOrientation;
         let displayCurrentPage = isNaN(currentPage) ? 1 : currentPage % 2 === 0 ? currentPage : currentPage - 1;
         let displayTotalPages = isNaN(totalPages) ? 1 : totalPages;
         displayCurrentPage == 0 && displayCurrentPage++;
@@ -328,7 +329,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         if (isMobileView) {
             return (
                 visibilitySettings.showControlBar && (
-                    <div className="w-full flex flex-col items-center justify-center bottom-0 left-0 right-0 z-[2000] absolute  ">
+                    <div dir={isRTL ? "rtl" : "ltr"} className="w-full flex flex-col items-center justify-center bottom-0 left-0 right-0 z-[2000] absolute  ">
                         <div className={`max-md:w-full w-full bg-transparent p-3 flex items-center justify-between gap-2 ${isPublicView ? "" : "max-w-[400px]"}`}>
                             <span className="text-xs font-medium whitespace-nowrap" style={{ color: visibilitySettings.playerPanelColorHash || 'black' }}>
                                 {pageDisplay}/{displayTotalPages}
@@ -346,7 +347,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         }}
                                     >
                                         <div
-                                            className="h-[2px] rounded-full absolute left-0 top-0 transition-all duration-300"
+                                            className={`h-[2px] rounded-full absolute top-0 transition-all duration-300 ${isRTL ? "right-0" : "left-0"}`}
                                             style={{
                                                 width: `${isNaN(progress) ? 0 : progress}%`,
                                                 backgroundColor: visibilitySettings.playerPanelColorHash || 'black'
@@ -354,7 +355,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         />
                                         <div
                                             className="absolute top-1/2 -translate-y-1/2"
-                                            style={{ left: `calc(${isNaN(progress) ? 0 : progress}% - 8px)` }}
+                                            style={{ [isRTL ? "right" : "left"]: `calc(${isNaN(progress) ? 0 : progress}% - 8px)` }}
                                         >
                                             <div
                                                 className="w-3 h-3 text-primary rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform"
@@ -464,7 +465,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
 
         return (
             visibilitySettings.showControlBar && (
-                <div className={`w-full bg-transparent p-4 flex flex-wrap items-center justify-between absolute bottom-0 ${isMobileView ? "rounded-b-lg" : ""}`}>
+                <div dir={isRTL ? "rtl" : "ltr"} className={`w-full bg-transparent p-4 flex flex-wrap items-center justify-between absolute bottom-0 ${isMobileView ? "rounded-b-lg" : ""}`}>
                     <div className="flex items-center justify-between w-full gap-4">
 
                         <div className="flex items-center gap-2">
@@ -512,7 +513,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         }}
                                     >
                                         <div
-                                            className="h-[2px] rounded-full absolute left-0 top-0 transition-all duration-300"
+                                            className={`h-[2px] rounded-full absolute top-0 transition-all duration-300 ${isRTL ? "right-0" : "left-0"}`}
                                             style={{
                                                 width: `${isNaN(progress) ? 0 : progress}%`,
                                                 backgroundColor: visibilitySettings.playerPanelColorHash || 'black'
@@ -520,7 +521,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         />
                                         <div
                                             className="absolute top-1/2 -translate-y-1/2"
-                                            style={{ left: `calc(${isNaN(progress) ? 0 : progress}% - 8px)` }}
+                                            style={{ [isRTL ? "right" : "left"]: `calc(${isNaN(progress) ? 0 : progress}% - 8px)` }}
                                         >
                                             <div
                                                 className="w-3 h-3 text-primary rounded-full shadow-lg cursor-pointer hover:scale-110 transition-transform"
@@ -616,7 +617,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                     containerHeight={containerRef.current?.clientHeight}
                 />}
                 <div className={`h-full flex flex-col items-center relative bg-white overflow-hidden transition-all duration-150 ease-in-out w-full`}
-                 >
+                >
                     <Tabs
                         value={activeTab.toLowerCase()}
                         onValueChange={handleTabChange}
@@ -641,7 +642,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                     </TabsTrigger>
                                 </TabsList>
                             </div>
-                        )}
+                        )
+                        }
 
                         <div className="w-full h-full flex-grow flex items-center justify-center">
                             <TabsContent
@@ -723,25 +725,27 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 </div>
                             </TabsContent>
                         </div>
-                    </Tabs>
+                    </Tabs >
                     {renderProgressBar(activeTab.toLowerCase() === "mobile" && !isFullscreen)}
 
-                    {visibilitySettings.showLeadForm && (
-                        <LeadFormModel
-                            open={isLeadFormOpen}
-                            onOpenChange={setIsLeadFormOpen}
-                            leadFormData={visibilitySettings.leadForm}
-                        />
-                    )}
+                    {
+                        visibilitySettings.showLeadForm && (
+                            <LeadFormModel
+                                open={isLeadFormOpen}
+                                onOpenChange={setIsLeadFormOpen}
+                                leadFormData={visibilitySettings.leadForm}
+                            />
+                        )
+                    }
                     <ShareFlipbookDialog 
                         isShareModalOpen={isShareModalOpen} 
                         setIsShareModalOpen={setIsShareModalOpen} 
-                        flipbookId={flipbookId} 
+                        flipbookId={flipbookId} visibilitySettings={visibilitySettings} 
                         container={containerRef.current}
                     />
-                </div>
+                </div >
 
-            </div>
+            </div >
         </>
     );
 }
