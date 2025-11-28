@@ -10,6 +10,7 @@ import { Loader } from "@/components/ui/loader";
 import { useFlipbookSettings as useFlipbookSettingsContext } from "@/context/FlipbookSettingsProvider.jsx";
 import { useFlipbookSettings } from "@/hooks/useFlipbookSettings";
 import PageContentRenderer from "./PageContentRenderer";
+import PageWrapper from "./PageWrapper";
 import { BackgroundColorType, BackgroundImageType, LayoutStyle } from "@/utils/enum.js";
 import Slider from "../Helper/Slider.jsx";
 import PageOverviewModal from "./PageOverviewModal.jsx";
@@ -40,6 +41,8 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
     const [currentPages, setCurrentPages] = useState([0, 1]);
     const [thumbnails, setThumbnails] = useState([]);
     const [isFlipbookReady, setIsFlipbookReady] = useState(false);
+    const [loadedPages, setLoadedPages] = useState([]);
+    const [renderedPages, setRenderedPages] = useState([]);
 
     const myRef = useRef(null);
     const isTurning = useRef(false);
@@ -196,6 +199,51 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
             }
         }
     }, [pageType, currentPage, totalPages]);
+
+    useEffect(() => {
+        // Priority: Always render current visible pages
+        setRenderedPages((prev) => {
+            const newRendered = [...prev];
+            let changed = false;
+            currentPages.forEach((page) => {
+                if (!newRendered.includes(page)) {
+                    newRendered.push(page);
+                    changed = true;
+                }
+            });
+            return changed ? newRendered : prev;
+        });
+    }, [currentPages]);
+
+    useEffect(() => {
+        // Sequential Background Loading
+        if (totalPages === 0) return;
+
+        const loadNextPage = () => {
+            for (let i = 1; i <= totalPages; i++) {
+                if (loadedPages.includes(i)) continue; // Already loaded
+
+                if (renderedPages.includes(i)) {
+                    return;
+                }
+
+                setRenderedPages((prev) => [...prev, i]);
+                return; // Only start one at a time
+            }
+        };
+
+        const timeout = setTimeout(loadNextPage, 100); // Small delay to allow state updates
+        return () => clearTimeout(timeout);
+    }, [loadedPages, renderedPages, totalPages]);
+
+    const handlePageLoad = (pageNumber) => {
+        setLoadedPages((prev) => {
+            if (!prev.includes(pageNumber)) {
+                return [...prev, pageNumber];
+            }
+            return prev;
+        });
+    };
 
     useImperativeHandle(ref, () => ({
         setPage: (page) => {
@@ -395,38 +443,60 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                                             setCurrentPages={setCurrentPages}
                                             isAutoFlipping={isAutoFlipping}
                                         >
-                                            {pageContent.map((page, index) => (
-                                                <div
-                                                    key={index}
-                                                    className="page"
-                                                    style={{ cursor: zoomLevel > 1 ? (isMouseDown ? 'grabbing' : 'grab') : 'default' }}
-                                                    onMouseDown={() => setIsMouseDown(true)}
-                                                    onMouseUp={() => setIsMouseDown(false)}
-                                                >
+                                            {pageContent.map((page, index) => {
+                                                const pageNumber = index + 1;
+                                                const isVisible = currentPages.includes(pageNumber);
+                                                const isRendered = renderedPages.includes(pageNumber);
+                                                const isLoaded = loadedPages.includes(pageNumber);
+
+                                                return (
                                                     <div
-                                                        style={{
-                                                            transformOrigin: "left top",
-                                                            transform: `scale(${width / (pageType === "double" ? divWidth * 2 : divWidth)}, ${height / divHeight})`,
-                                                            width: `${pageType === "double" ? divWidth : divWidth}px`,
-                                                            height: `${divHeight}px`,
-                                                            backgroundColor: page?.background || visibilitySettings.backgroundColor || "white",
-                                                            position: "relative",
-                                                            overflow: "hidden",
-                                                        }}
+                                                        key={index}
+                                                        className="page"
+                                                        style={{ cursor: zoomLevel > 1 ? (isMouseDown ? 'grabbing' : 'grab') : 'default' }}
+                                                        onMouseDown={() => setIsMouseDown(true)}
+                                                        onMouseUp={() => setIsMouseDown(false)}
                                                     >
-                                                        {page.pageData.map((data, idx) => (
-                                                            <PageContentRenderer
-                                                                key={idx}
-                                                                data={data}
-                                                                index={idx}
-                                                                visibilitySettings={visibilitySettings}
-                                                                flipbookRef={myRef}
-                                                                flipbookId={flipbookId}
-                                                            />
-                                                        ))}
+                                                        <div
+                                                            style={{
+                                                                transformOrigin: "left top",
+                                                                transform: `scale(${width / (pageType === "double" ? divWidth * 2 : divWidth)}, ${height / divHeight})`,
+                                                                width: `${pageType === "double" ? divWidth : divWidth}px`,
+                                                                height: `${divHeight}px`,
+                                                                backgroundColor: page?.background || visibilitySettings.backgroundColor || "white",
+                                                                position: "relative",
+                                                                overflow: "hidden",
+                                                            }}
+                                                        >
+                                                            {isRendered && (
+                                                                <PageWrapper
+                                                                    pageNumber={pageNumber}
+                                                                    onPageLoad={handlePageLoad}
+                                                                    isVisible={isVisible}
+                                                                >
+                                                                    {page.pageData.map((data, idx) => (
+                                                                        <PageContentRenderer
+                                                                            key={idx}
+                                                                            data={data}
+                                                                            index={idx}
+                                                                            visibilitySettings={visibilitySettings}
+                                                                            flipbookRef={myRef}
+                                                                            flipbookId={flipbookId}
+                                                                            isVisible={isVisible}
+                                                                        />
+                                                                    ))}
+                                                                </PageWrapper>
+                                                            )}
+
+                                                            {(!isLoaded && isVisible) && (
+                                                                <div className="absolute inset-0 flex items-center justify-center bg-white z-50">
+                                                                    <Loader />
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </Turn>
                                     ) : (
                                         <Slider

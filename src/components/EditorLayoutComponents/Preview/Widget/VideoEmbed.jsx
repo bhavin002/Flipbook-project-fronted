@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function VideoEmbed({ shape }) {
+export default function VideoEmbed({ shape, isVisible }) {
     let embedUrl = null;
 
     if (shape.htmlData?.url) {
@@ -37,7 +37,7 @@ export default function VideoEmbed({ shape }) {
             }}>
             {
                 embedUrl ?
-                    <iframe
+                    (isVisible ? <iframe
                         src={embedUrl}
                         allowFullScreen
                         frameBorder="0"
@@ -46,7 +46,7 @@ export default function VideoEmbed({ shape }) {
                         title={shape.title || "Embedded Video"}
                         width="100%"
                         height="100%"
-                    /> :
+                    /> : <div style={{ width: '100%', height: '100%', background: 'black' }} />) :
                     <>
                         <div
                             style={{
@@ -71,4 +71,4 @@ export default function VideoEmbed({ shape }) {
             }
         </div>
     );
-} 
+}

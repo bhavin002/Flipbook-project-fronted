@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 
-export default function StockVideo({ shape }) {
-    
+export default function StockVideo({ shape, isVisible }) {
+
     const videoRef = useRef(null);
 
     const {
@@ -10,6 +10,14 @@ export default function StockVideo({ shape }) {
         mute = false,
         loop = false
     } = shape.htmlData || {};
+
+    useEffect(() => {
+        if (isVisible && autoPlay) {
+            videoRef.current?.play().catch(() => { });
+        } else if (!isVisible) {
+            videoRef.current?.pause();
+        }
+    }, [isVisible, autoPlay]);
 
     const handleVideoClick = () => {
         if (!showControls && videoRef.current) {
