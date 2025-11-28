@@ -465,20 +465,63 @@ div:hover::-webkit-scrollbar-thumb {
   max-width: unset;
 }
 
-.ping {
-  animation: ping-pulse 1.5s ease-in-out infinite;
-  transform-origin: center center;
+.ping-initial {
+  opacity: 0.35 !important;
+  animation: ping-pulse 1.5s ease-in-out 1;
+  transition: opacity 0.5s ease-out;
 }
 
-@keyframes ping-pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
+.ping-hover {
+  transition: opacity 0.5s ease-out;
+}
+
+.ping-initial::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: var(--ping-color);
+  filter: blur(10px);
+  animation: ping-blur 2.4s ease-in-out 0s 1 normal none running;
+  border-radius: var(--ping-radius, 0px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.ping-hover:hover {
+  transition: 0.25s ease-in;
+  opacity: 0.35 !important;
+  cursor: pointer;
+}
+
+.ping-hover:hover::before {
+  content: '';
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: var(--ping-color);
+  filter: blur(10px);
+  animation: ping-blur 2.4s ease-in-out 0s infinite normal none running;
+  border-radius: var(--ping-radius, 0px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes ping-fade {
+  0%, 100% {
+    opacity: 0;
   }
   50% {
-    box-shadow: 0 0 30px 15px rgba(0, 0, 0, 0.3);
+    opacity: 1;
   }
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
+}
+
+@keyframes ping-blur {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
   }
 }
 
@@ -528,5 +571,111 @@ html , body, #root {
 
   100% {
     transform: translateY(0) rotate(0);
+  }
+}
+
+
+.ping-circle-initial {
+  opacity: 0.35 !important;
+  animation: ping-circle-pulse 1.5s ease-in-out 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.ping-circle-initial::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  animation: ping-circle-pulse 1.5s ease-in-out 1;
+  pointer-events: none;
+}
+
+.ping-circle-hover {
+  transition: opacity 0.5s ease-out;
+}
+
+.ping-circle-hover:hover {
+  opacity: 0.35 !important;
+}
+
+.ping-circle-hover:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  animation: ping-circle-pulse 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.ping-circle-active {
+  transition: opacity 0.5s ease-out;
+}
+
+.ping-circle-active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  animation: ping-circle-pulse 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.ping-product-initial {
+  opacity: 0.35 !important;
+  border-radius: 50%;
+  animation: ping-product-pulse 1.5s ease-in-out 1;
+  transition: opacity 0.5s ease-out;
+}
+
+.ping-product-hover {
+  transition: opacity 0.5s ease-out;
+}
+
+.ping-product-hover:hover {
+  opacity: 0.35 !important;
+}
+
+.ping-product-hover:hover::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  animation: ping-product-pulse 1.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes ping-circle-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--ping-color);
+  }
+  50% {
+    box-shadow: 0 0 8px 4px var(--ping-color);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--ping-color);
+  }
+}
+
+@keyframes ping-product-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--ping-color);
+  }
+  50% {
+    box-shadow: 0 0 8px 4px var(--ping-color);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--ping-color);
   }
 }

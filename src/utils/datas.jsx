@@ -619,7 +619,7 @@ const templatesData = [
 
 const hyperlinks = [
     { value: "send-email", label: "Send email" },
-    { value: "download-pdf", label: "Download PDF" },
+    // { value: "download-pdf", label: "Download PDF" },
     { value: "go-to-profile", label: "Go to profile" },
     { value: "go-to-url", label: "Go to URL" },
     { value: "go-to-previous-page", label: "Go to previous page" },
@@ -631,9 +631,9 @@ const hyperlinks = [
     { value: "spotlight", label: "Spotlight" },
     { value: "phone-number", label: "Phone number" },
     { value: "photo-slideshow", label: "Photo slideshow" },
-    { value: "line-chart", label: "Line chart" },
-    { value: "bar-chart", label: "Bar chart" },
-    { value: "pie-chart", label: "Pie chart" },
+    // { value: "line-chart", label: "Line chart" },
+    // { value: "bar-chart", label: "Bar chart" },
+    // { value: "pie-chart", label: "Pie chart" },
 ]
 
 const imageActions = [
@@ -1578,7 +1578,7 @@ const interactions = [
                     title: "hyperlink",
                     visible: true,
                     layer: "Link",
-                    htmlType: "photo-slideshow",
+                    htmlType: "link-area",
                     htmlData: {
                         action: "photo-slideshow"
                     }

@@ -422,6 +422,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                                                                 visibilitySettings={visibilitySettings}
                                                                 flipbookRef={myRef}
                                                                 flipbookId={flipbookId}
+                                                                currentPages={currentPages}
                                                             />
                                                         ))}
                                                     </div>

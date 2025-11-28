@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductTagModal from './ProductTagModal';
 import { showModal } from '@/utils/ShowModal';
 
-export default function ProductTag({ shape, visibilitySettings }) {
+export default function ProductTag({ shape, visibilitySettings, currentPages }) {
+    const [animationClass, setAnimationClass] = useState('');
+
+    useEffect(() => {
+        if (visibilitySettings.showAnimateInteraction) {
+            setAnimationClass('ping-product-initial');
+            const timer = setTimeout(() => {
+                setAnimationClass('ping-product-hover');
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+
     const handleClick = () => {
         if (shape.htmlType === 'product-tag') {
             showModal(ProductTagModal, shape.htmlData);
@@ -14,7 +26,7 @@ export default function ProductTag({ shape, visibilitySettings }) {
             preserveAspectRatio="none"
             fill={shape.fill}
             onClick={handleClick}
-            className={visibilitySettings.showAnimateInteraction ? "ping rounded-full" : ""}
+            className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
             style={{
                 height: "51px",
                 width: "51px",
@@ -29,7 +41,8 @@ export default function ProductTag({ shape, visibilitySettings }) {
                     skewY(${shape.skewY || 0}deg)
                     translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                 display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
-                cursor: 'pointer'
+                cursor: 'pointer',
+                '--ping-color': shape.fill || '#ff0000',
             }}
         >
             {shape.data.map((element, index) => {

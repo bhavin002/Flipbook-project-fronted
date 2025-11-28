@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import PopupFrameModal from "./PopupFrameModal";
 import SpotlightModal from "./SpotlightModal";
@@ -25,13 +25,13 @@ const linkAreaActionHandlers = {
     },
 
     'go-to-profile': (htmlData) => {
-        const url = import.meta.env.VITE_APP_URL + "/account/details";
+        const url = import.meta.env.VITE_APP_URL + htmlData.url;
         window.open(url, "_blank");
     },
 
-    'download-pdf': (htmlData) => {
-        console.log('Download PDF action triggered');
-    },
+    // 'download-pdf': (htmlData) => {
+    //     console.log('Download PDF action triggered');
+    // },
 
     'go-to-next-page': (htmlData, flipbookRef) => {
         PageNavigationActions.goToNextPage(flipbookRef);
@@ -65,13 +65,17 @@ const linkAreaActionHandlers = {
 
 const linkAreaModalHandlers = {
     'popup-frame': (htmlData) => {
-        showModal(PopupFrameModal, htmlData);
+        if(htmlData?.embedCode){
+            showModal(PopupFrameModal, htmlData);
+        }
     },
     'spotlight': (htmlData) => {
         showModal(SpotlightModal, htmlData);
     },
     'photo-slideshow': (htmlData) => {
-        showModal(PhotoSlideShow, htmlData);
+        if(htmlData?.images){
+            showModal(PhotoSlideShow, htmlData);
+        }
     },
 };
 
@@ -100,7 +104,19 @@ function showModal(ModalComponent, htmlData) {
     );
 }
 
-export default function GoToUrl({ shape, visibilitySettings, flipbookRef }) {
+export default function GoToUrl({ shape, visibilitySettings, flipbookRef, currentPages }) {
+    const [animationClass, setAnimationClass] = useState('');
+
+    useEffect(() => {
+        if (visibilitySettings.showAnimateInteraction) {
+            setAnimationClass('ping-initial');
+            const timer = setTimeout(() => {
+                setAnimationClass('ping-hover');
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+
     const handleClick = () => {
         if (shape.htmlType === 'link-area') {
             if (shape.htmlData?.action && linkAreaActionHandlers[shape.htmlData.action]) {
@@ -117,7 +133,7 @@ export default function GoToUrl({ shape, visibilitySettings, flipbookRef }) {
     return (
         <a
             onClick={handleClick}
-            className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
+            className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
             style={{
                 width: `${shape.width}px`,
                 height: `${shape.height}px`,
@@ -135,6 +151,7 @@ export default function GoToUrl({ shape, visibilitySettings, flipbookRef }) {
                 translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                 display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                 cursor: "pointer",
+                '--ping-color': shape.fill || '#ff0000',
             }}
         />
     )

@@ -62,7 +62,7 @@ const COMPONENT_MAP = {
     'masked-sticker': MaskedImageWidget,
 };
 
-const PageContentRenderer = ({ data, index, visibilitySettings, flipbookRef, flipbookId }) => {
+const PageContentRenderer = ({ data, index, visibilitySettings, flipbookRef, flipbookId, currentPages }) => {
     const htmlType = data?.shape?.htmlType;
     const Component = COMPONENT_MAP[htmlType];
 
@@ -72,7 +72,8 @@ const PageContentRenderer = ({ data, index, visibilitySettings, flipbookRef, fli
             visibilitySettings,
             ...(flipbookRef && { flipbookRef }),
             ...(data.shape?.id && { key: data.shape.id }),
-            ...(flipbookId && { flipbookId })
+            ...(flipbookId && { flipbookId }),
+            ...(currentPages && { currentPages })
         };
         return <div style={{ 'cursor': 'pointer' }}> <Component {...props} /> </div>;
     }

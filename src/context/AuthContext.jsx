@@ -70,7 +70,7 @@ export function AuthProvider({ children }) {
     };
 
     const checkAuth = async () => {
-        const token = localStorage.getItem('fn_access_token');
+        const token = localStorage.getItem('fd_access_token');
         if (!token) {
             setIsAuthenticated(false);
             setPermissions(null);
@@ -87,15 +87,15 @@ export function AuthProvider({ children }) {
     };
 
     const login = async (data) => {
-        localStorage.setItem('fn_access_token', data.token);
-        localStorage.removeItem('fn_confirm_token');
+        localStorage.setItem('fd_access_token', data.token);
+        localStorage.removeItem('fd_confirm_token');
         const isValid = await isTokenVerified(data.token);
         if (isValid) {
             await fetchPermissions();
             setIsAuthenticated(true);
             return true;
         } else {
-            localStorage.removeItem('fn_access_token');
+            localStorage.removeItem('fd_access_token');
             return false;
         }
     };
@@ -116,7 +116,7 @@ export function AuthProvider({ children }) {
     };
 
     const refreshUserInfo = async () => {
-        const token = localStorage.getItem('fn_access_token');
+        const token = localStorage.getItem('fd_access_token');
         if (!token) return false;
 
         try {

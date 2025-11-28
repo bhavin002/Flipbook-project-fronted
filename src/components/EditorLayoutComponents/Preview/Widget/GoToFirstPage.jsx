@@ -1,7 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageNavigationActions } from '../Helper/PageNavigationActions';
 
-export default function GoToFirstPage({ shape, visibilitySettings, flipbookRef }) {
+export default function GoToFirstPage({ shape, visibilitySettings, flipbookRef, currentPages }) {
+    const [animationClass, setAnimationClass] = useState('');
+
+    useEffect(() => {
+        if (visibilitySettings.showAnimateInteraction) {
+            setAnimationClass('ping-initial');
+            const timer = setTimeout(() => {
+                setAnimationClass('ping-hover');
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+
     const handleClick = () => {
         PageNavigationActions.goToFirstPage(flipbookRef);
     };
@@ -10,7 +22,7 @@ export default function GoToFirstPage({ shape, visibilitySettings, flipbookRef }
         <>
             <div
                 onClick={handleClick}
-                className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
+                className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
                 style={{
                     width: `${shape.width}px`,
                     height: `${shape.height}px`,
@@ -28,6 +40,8 @@ export default function GoToFirstPage({ shape, visibilitySettings, flipbookRef }
                         translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                     borderRadius: shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
+                    '--ping-color': shape.fill || '#ff0000',
+                    '--ping-radius': shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
                 }}
             />
             <img

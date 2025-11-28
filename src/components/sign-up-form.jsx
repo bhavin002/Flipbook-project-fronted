@@ -96,7 +96,7 @@ export function SignUpForm({ className, defaultEmail = "", emailReadOnly = false
       setIsLoading(true);
       const payload = data;
       const response = await SignUpApi(payload);
-      localStorage.setItem("fn_confirm_token", response.data.token);
+      localStorage.setItem("fd_confirm_token", response.data.token);
       navigate("/account/confirm-account", { state: { teammateToken } });
     } catch (error) {
       toast.error("Sign Up failed", {

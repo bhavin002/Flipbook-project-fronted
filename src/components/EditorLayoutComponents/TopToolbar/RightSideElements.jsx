@@ -31,11 +31,13 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
 
     useEffect(() => {
         if (selectedShape && selectedShape.length) {
-            const shape = mainStage[selectedIndex].shapes.find(e => e.id === selectedShape[0].attrs.id);
-            if (shape?.opacity == undefined) {
-                setOpacity(Math.floor((1 * 100)));
+            const shape = mainStage[selectedIndex].shapes.find(
+                e => e.id === selectedShape[0].attrs.id
+            );
+            if (shape?.opacity === undefined) {
+                setOpacity(100);
             } else {
-                shape?.opacity && setOpacity(Math.floor(((shape?.opacity || 1) * 100)));
+                setOpacity(Math.floor(shape.opacity * 100));
             }
         }
     }, [mainStage, selectedShape]);

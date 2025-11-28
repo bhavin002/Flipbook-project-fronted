@@ -1,7 +1,20 @@
+import React, { useState, useEffect } from 'react';
 import { showModal } from "@/utils/ShowModal";
 import LinkModal from "./LinkModal";
 
-export default function SquareCaption({ shape, visibilitySettings }) {
+export default function SquareCaption({ shape, visibilitySettings, currentPages }) {
+    const [animationClass, setAnimationClass] = useState('');
+
+    useEffect(() => {
+        if (visibilitySettings.showAnimateInteraction) {
+            setAnimationClass('ping-initial');
+            const timer = setTimeout(() => {
+                setAnimationClass('ping-hover');
+            }, 1500);
+            return () => clearTimeout(timer);
+        }
+    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+
     const handleClick = () => {
         if (shape.htmlType === 'square-caption' && shape.htmlData?.url) {
             showModal(LinkModal, shape.htmlData);
@@ -11,7 +24,7 @@ export default function SquareCaption({ shape, visibilitySettings }) {
     return (
         <a
             onClick={handleClick}
-            className={visibilitySettings.showAnimateInteraction ? "ping" : ""}
+            className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
             style={{
                 width: `${shape.width}px`,
                 height: `${shape.height}px`,
@@ -30,6 +43,8 @@ export default function SquareCaption({ shape, visibilitySettings }) {
                 display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                 borderRadius: shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
                 cursor: "pointer",
+                '--ping-color': shape.fill || '#ff0000',
+                '--ping-radius': shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
             }}>
             <img
                 src={shape.src}
