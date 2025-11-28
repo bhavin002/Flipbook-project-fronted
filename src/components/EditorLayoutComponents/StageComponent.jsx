@@ -1324,7 +1324,6 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                             <Transformer
                                 ref={transformerRef}
                                 rotationSnaps={[0, 45, 90, 135, 180, 225, 270, 315]}
-                                // visual styles to match custom UI (image 2)
                                 borderStroke="#8B5CF6"
                                 borderStrokeWidth={2}
                                 anchorFill="#ffffff"
@@ -1336,29 +1335,28 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                 rotateAnchorCursor="grab"
                                 onTransformEnd={handleDrag}
                                 onDragMove={(event) => handleDragMove(event, 'transform')}
+
+                                enabledAnchors={
+                                    stage.selectedShapes[0]?.attrs.htmlType === 'upload-photo'
+                                        ? ['top-left', 'top-right', 'bottom-left', 'bottom-right'] // stock-photo & upload-photo
+                                        : stage.selectedShapes[0]?.attrs.type === 'text'
+                                            ? ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'middle-left', 'middle-right']
+                                            : undefined
+                                }
+
+                                keepRatio={stage.selectedShapes[0]?.attrs.htmlType === 'upload-photo' ? true : false}
+
+                                rotationSnapTolerance={stage.selectedShapes[0]?.attrs.htmlType === 'tag' ? false : undefined}
+                                flipEnabled={false}
+
                                 boundBoxFunc={(oldBox, newBox) => {
-                                    if (newBox.rotation == oldBox.rotation && stage.selectedShapes[0]?.attrs.type === 'text') {
-                                        if (newBox.width != oldBox.width) {
-                                            if (newBox.width < 30) {
-                                                return oldBox;
-                                            }
-                                        } if (newBox.height != oldBox.height) {
-                                            if (newBox.height < 30) {
-                                                return oldBox;
-                                            }
-                                        }
+                                    if (stage.selectedShapes[0]?.attrs.type === 'text') {
+                                        if (newBox.width < 30 || newBox.height < 30) return oldBox;
                                     }
                                     return newBox;
                                 }}
-                                enabledAnchors={
-                                    stage.selectedShapes[0]?.attrs.type === 'text'
-                                        ? ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'middle-left', 'middle-right']
-                                        : undefined
-                                }
-                                rotationSnapTolerance={stage.selectedShapes[0]?.attrs.htmlType === 'tag' ? false : undefined}
-                                keepRatio={false}
-                                flipEnabled={false}
                             />
+
                         )}
                     </Layer>
                 </Stage>}
