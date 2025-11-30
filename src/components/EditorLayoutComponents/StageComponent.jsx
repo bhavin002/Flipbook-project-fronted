@@ -1081,14 +1081,14 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             <div ref={demo}></div>
             {!((index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1) && width && height) &&
                 <>
-                    <Loader />
-                    <div className='absolute flex justify-between z-[111] border border-primary' style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y) }}></div>
+
+                    <div className='absolute flex justify-between z-[111] border-2 border-primary' style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y) }}><Loader /></div>
                 </>
             }
             {!!(imageLoadCounterPageWise[index]) &&
                 <>
-                    <Loader />
-                    <div className='absolute flex justify-between z-[111] border border-primary' style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y) }}></div>
+
+                    <div className='absolute flex justify-between z-[111] border-2 border-primary' style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y) }}><Loader /> </div>
                 </>
 
             }
@@ -1160,7 +1160,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                 }}
             />
             <div onClick={() => setSelectedIndex(index)} >
-                {width && height && <Stage
+                {(width && height )? <Stage
                     // scaleX={zoomper / 50}
                     // scaleY={zoomper / 50}
                     width={width}
@@ -1360,7 +1360,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
 
                         )}
                     </Layer>
-                </Stage>}
+                </Stage>: ''}
             </div>
         </div >
 

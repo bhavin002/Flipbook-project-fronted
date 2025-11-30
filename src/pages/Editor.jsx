@@ -1069,10 +1069,14 @@ export default function Editor() {
                                                 <StageComponent imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} setIsAnyChangeMadeInStage={setIsAnyChangeMadeInStage} isPublishModalOpenInternal={isPublishModalOpenInternal} />
                                             </div>
                                         )
-                                    } else return (<div key={index} style={{ height: "100%", width: "100%" }} className="relative" >
-                                        <Loader />
+                                    } else return (<div key={index} style={{
+                                        height: "100%", width: "100%", transformOrigin: "top center",
+                                        transform: `scale(${50 / zoomper})`,
+                                    }} className="relative" >
+
+
                                         <div className="absolute flex justify-between z-[111] text-primary font-[500] text-[14px]" style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y - 30) }}><span>Page {index + 1} / {mainStage.length}</span></div>
-                                        <div className='absolute flex justify-between z-[111] border border-primary' style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y) }}></div>
+                                        <div className='absolute flex justify-between z-[111] border-2 border-primary' style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y) }}>   <Loader /></div>
 
                                     </div>)
                                 })
