@@ -1320,7 +1320,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                 strokeWidth={1}
                             />
                         )}
-                        {stage.selectedShapes.length > 0 && (
+                        {stage.selectedShapes.length > 0 && !isCropping && (
                             <Transformer
                                 ref={transformerRef}
                                 rotationSnaps={[0, 45, 90, 135, 180, 225, 270, 315]}
@@ -1337,14 +1337,15 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                 onDragMove={(event) => handleDragMove(event, 'transform')}
 
                                 enabledAnchors={
-                                    stage.selectedShapes[0]?.attrs.htmlType === 'upload-photo'
+                                    // stage.selectedShapes[0]?.attrs.htmlType === 'upload-photo'
+                                    ['upload-photo', 'stock-photo', 'stock-gif'].includes(stage.selectedShapes[0]?.attrs.htmlType)
                                         ? ['top-left', 'top-right', 'bottom-left', 'bottom-right'] // stock-photo & upload-photo
                                         : stage.selectedShapes[0]?.attrs.type === 'text'
                                             ? ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'middle-left', 'middle-right']
                                             : undefined
                                 }
 
-                                keepRatio={stage.selectedShapes[0]?.attrs.htmlType === 'upload-photo' ? true : false}
+                                keepRatio={['upload-photo', 'stock-photo', 'stock-gif'].includes(stage.selectedShapes[0]?.attrs.htmlType) ? true : false}
 
                                 rotationSnapTolerance={stage.selectedShapes[0]?.attrs.htmlType === 'tag' ? false : undefined}
                                 flipEnabled={false}
