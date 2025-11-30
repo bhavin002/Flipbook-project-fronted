@@ -65,8 +65,10 @@ export default function StockPhoto({ shape, flipbookRef }) {
         if (shape.htmlData?.action) {
             const action = shape.htmlData.action;
 
+
             if (actionHandlers[action]) {
                 const shouldShowModal = actionHandlers[action](shape.htmlData, flipbookRef);
+
 
                 // If action handler returns true, show modal
                 if (shouldShowModal && modalHandlers[action]) {
@@ -168,8 +170,8 @@ export default function StockPhoto({ shape, flipbookRef }) {
         effectStyles.opacity = shape.opacity;
     }
 
-    // Common transform for both container and image
-    const transform = `rotate(${shape.rotation || 0}deg)
+    // Transform for outer container (without flip)
+    const outerTransform = `rotate(${shape.rotation || 0}deg)
         scaleX(${shape.scaleX || 1})
         scaleY(${shape.scaleY || 1})
         skewX(${shape.skewX || 0}deg)
@@ -210,50 +212,58 @@ export default function StockPhoto({ shape, flipbookRef }) {
                     left: `${shape.x + ((crop.width && crop.height ? crop.x || 0 : 0) * (shape.scaleX || 1))}px`,
                     top: `${shape.y + ((crop.width && crop.height ? crop.y || 0 : 0) * (shape.scaleY || 1))}px`,
                     transformOrigin: "0 0",
-                    transform,
+                    transform: outerTransform,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                     cursor: cursorStyle,
                 }}
             >
                 <div style={{
-                    width: `calc(100% - ${crop.x * -1 || 0}px - ${(crop.width - shape.width - crop.x * -1) || 0}px)`,
-                    height: `calc(100% - ${crop.y * -1 || 0}px - ${(crop.height - shape.height - crop.y * -1) || 0}px)`,
-                    left: `${crop.x * -1 || 0}px`,
-                    top: `${crop.y * -1 || 0}px`,
-                    position: "absolute",
-                    backgroundColor: effectStyles.backgroundColor || 'white',
-                    overflow: "hidden",
-                    boxShadow: effectStyles.boxShadow || 'none',
-                    borderRadius: effectStyles.borderRadius || '0px',
-                    borderTopLeftRadius: effectStyles.borderTopLeftRadius || '0px',
-                    borderTopRightRadius: effectStyles.borderTopRightRadius || '0px',
-                    borderBottomRightRadius: effectStyles.borderBottomRightRadius || '0px',
-                    borderBottomLeftRadius: effectStyles.borderBottomLeftRadius || '0px',
+                    width: `100%`,
+                    height: `100%`,
+                    position: "relative",
+                    transform: `scaleX(${shape.flipX ? -1 : 1}) scaleY(${shape.flipY ? -1 : 1})`,
+                    transformOrigin: "center center",
                 }}>
-                    <img
-                        className="stock-photo"
-                        src={directUrl}
-                        alt={shape.title}
-                        style={{
-                            position: "absolute",
-                            left: `${crop.x || 0}px`,
-                            top: `${crop.y || 0}px`,
-                            height: `${displayHeight}px`,
-                            width: `${displayWidth}px`,
-                            transformOrigin: "0 0",
-                            display: "block",
-                            clipPath: crop.width && crop.height && crop.x && crop.y
-                                ? `inset(${crop.y * -1}px ${crop.width - shape.width - crop.x * -1}px ${crop.height - shape.height - crop.y * -1}px ${crop.x * -1}px)`
-                                : 'none',
-                            ...effectStyles,
-                            boxShadow: 'none',
-                            borderRadius: '0px',
-                        }}
-                    />
-                    {/* Hover overlay for open-overlay action */}
-                    {isHovered && shape.htmlData?.action === 'open-overlay' && (
-                        <div style={hoverOverlayStyles} />
-                    )}
+                    <div style={{
+                        width: `calc(100% - ${crop.x * -1 || 0}px - ${(crop.width - shape.width - crop.x * -1) || 0}px)`,
+                        height: `calc(100% - ${crop.y * -1 || 0}px - ${(crop.height - shape.height - crop.y * -1) || 0}px)`,
+                        left: `${crop.x * -1 || 0}px`,
+                        top: `${crop.y * -1 || 0}px`,
+                        position: "absolute",
+                        backgroundColor: effectStyles.backgroundColor || 'white',
+                        overflow: "hidden",
+                        boxShadow: effectStyles.boxShadow || 'none',
+                        borderRadius: effectStyles.borderRadius || '0px',
+                        borderTopLeftRadius: effectStyles.borderTopLeftRadius || '0px',
+                        borderTopRightRadius: effectStyles.borderTopRightRadius || '0px',
+                        borderBottomRightRadius: effectStyles.borderBottomRightRadius || '0px',
+                        borderBottomLeftRadius: effectStyles.borderBottomLeftRadius || '0px',
+                    }}>
+                        <img
+                            className="stock-photo"
+                            src={directUrl}
+                            alt={shape.title}
+                            style={{
+                                position: "absolute",
+                                left: `${crop.x || 0}px`,
+                                top: `${crop.y || 0}px`,
+                                height: `${displayHeight}px`,
+                                width: `${displayWidth}px`,
+                                transformOrigin: "0 0",
+                                display: "block",
+                                clipPath: crop.width && crop.height && crop.x && crop.y
+                                    ? `inset(${crop.y * -1}px ${crop.width - shape.width - crop.x * -1}px ${crop.height - shape.height - crop.y * -1}px ${crop.x * -1}px)`
+                                    : 'none',
+                                ...effectStyles,
+                                boxShadow: 'none',
+                                borderRadius: '0px',
+                            }}
+                        />
+                        {/* Hover overlay for open-overlay action */}
+                        {isHovered && shape.htmlData?.action === 'open-overlay' && (
+                            <div style={hoverOverlayStyles} />
+                        )}
+                    </div>
                 </div>
             </div>
             {shape.htmlData?.tooltip && tooltipPos.visible && createPortal(
