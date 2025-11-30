@@ -230,7 +230,7 @@ export default function StockPhoto({ shape, flipbookRef }) {
                         left: `${crop.x * -1 || 0}px`,
                         top: `${crop.y * -1 || 0}px`,
                         position: "absolute",
-                        backgroundColor: effectStyles.backgroundColor || 'white',
+                        backgroundColor: shape.fill || 'white',
                         overflow: "hidden",
                         boxShadow: effectStyles.boxShadow || 'none',
                         borderRadius: effectStyles.borderRadius || '0px',
