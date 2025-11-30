@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import PopupFrameModal from "./PopupFrameModal";
 import SpotlightModal from "./SpotlightModal";
 import OverlayModal from "./OverlayModal";
@@ -57,14 +58,17 @@ const modalHandlers = {
 export default function StockPhoto({ shape, flipbookRef }) {
 
     const [isHovered, setIsHovered] = useState(false);
+    const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
     // Handle click actions
     const handleClick = () => {
         if (shape.htmlData?.action) {
             const action = shape.htmlData.action;
 
+
             if (actionHandlers[action]) {
                 const shouldShowModal = actionHandlers[action](shape.htmlData, flipbookRef);
+
 
                 // If action handler returns true, show modal
                 if (shouldShowModal && modalHandlers[action]) {
@@ -85,6 +89,16 @@ export default function StockPhoto({ shape, flipbookRef }) {
         if (shape.htmlData?.action === 'open-overlay') {
             setIsHovered(false);
         }
+        setTooltipPos(prev => ({ ...prev, visible: false }));
+    };
+
+    const handleMouseMove = (e) => {
+        if (!shape.htmlData?.tooltip) return;
+        setTooltipPos({
+            x: e.clientX + 15,
+            y: e.clientY + 5,
+            visible: true
+        });
     };
 
     let crop = {};
@@ -138,7 +152,7 @@ export default function StockPhoto({ shape, flipbookRef }) {
         const shadowOpacity = (effect.shadowOpacity || 0) / 100;
         const shadowColor = effect.shadowColor || '#000000';
         effectStyles.boxShadow = `${effect.shadowOffsetX || 0}px ${effect.shadowOffsetY || 0}px ${effect.shadowBlur || 0}px rgba(${parseHexToRgb(shadowColor)}, ${shadowOpacity})`;
-        // effectStyles.backgroundColor = `rgba(${parseHexToRgb(shadowColor)}, ${shadowOpacity})`;
+        effectStyles.backgroundColor = `rgba(${parseHexToRgb(shadowColor)}, ${shadowOpacity})`;
     }
     // Filters (applied to image)
     const filters = [];
@@ -185,71 +199,87 @@ export default function StockPhoto({ shape, flipbookRef }) {
     }
 
     return (
-        <div
-            title={shape.htmlData?.tooltip}
-            onClick={handleClick}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            style={{
-                height: `${displayHeight}px`,
-                width: `${displayWidth}px`,
-                position: "absolute",
-                left: `${shape.x + ((crop.width && crop.height ? crop.x || 0 : 0) * (shape.scaleX || 1))}px`,
-                top: `${shape.y + ((crop.width && crop.height ? crop.y || 0 : 0) * (shape.scaleY || 1))}px`,
-                transformOrigin: "0 0",
-                transform: outerTransform,
-                display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
-                cursor: cursorStyle,
-            }}
-        >
-            <div style={{
-                width: `100%`,
-                height: `100%`,
-                position: "relative",
-                transform: `scaleX(${shape.flipX ? -1 : 1}) scaleY(${shape.flipY ? -1 : 1})`,
-                transformOrigin: "center center",
-            }}>
-                <div style={{
-                    width: `calc(100% - ${crop.x * -1 || 0}px - ${(crop.width - shape.width - crop.x * -1) || 0}px)`,
-                    height: `calc(100% - ${crop.y * -1 || 0}px - ${(crop.height - shape.height - crop.y * -1) || 0}px)`,
-                    left: `${crop.x * -1 || 0}px`,
-                    top: `${crop.y * -1 || 0}px`,
+        <>
+            <div
+                onClick={handleClick}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                onMouseMove={handleMouseMove}
+                style={{
+                    height: `${displayHeight}px`,
+                    width: `${displayWidth}px`,
                     position: "absolute",
-                    backgroundColor: shape.fill || 'white',
-                    overflow: "hidden",
-                    boxShadow: effectStyles.boxShadow || 'none',
-                    borderRadius: effectStyles.borderRadius || '0px',
-                    borderTopLeftRadius: effectStyles.borderTopLeftRadius || '0px',
-                    borderTopRightRadius: effectStyles.borderTopRightRadius || '0px',
-                    borderBottomRightRadius: effectStyles.borderBottomRightRadius || '0px',
-                    borderBottomLeftRadius: effectStyles.borderBottomLeftRadius || '0px',
+                    left: `${shape.x + ((crop.width && crop.height ? crop.x || 0 : 0) * (shape.scaleX || 1))}px`,
+                    top: `${shape.y + ((crop.width && crop.height ? crop.y || 0 : 0) * (shape.scaleY || 1))}px`,
+                    transformOrigin: "0 0",
+                    transform: outerTransform,
+                    display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                    cursor: cursorStyle,
+                }}
+            >
+                <div style={{
+                    width: `100%`,
+                    height: `100%`,
+                    position: "relative",
+                    transform: `scaleX(${shape.flipX ? -1 : 1}) scaleY(${shape.flipY ? -1 : 1})`,
+                    transformOrigin: "center center",
                 }}>
-                    <img
-                        className="stock-photo"
-                        src={directUrl}
-                        alt={shape.title}
-                        style={{
-                            position: "absolute",
-                            left: `${crop.x || 0}px`,
-                            top: `${crop.y || 0}px`,
-                            height: `${displayHeight}px`,
-                            width: `${displayWidth}px`,
-                            transformOrigin: "0 0",
-                            display: "block",
-                            clipPath: crop.width && crop.height && crop.x && crop.y
-                                ? `inset(${crop.y * -1}px ${crop.width - shape.width - crop.x * -1}px ${crop.height - shape.height - crop.y * -1}px ${crop.x * -1}px)`
-                                : 'none',
-                            ...effectStyles,
-                            boxShadow: 'none',
-                            borderRadius: '0px',
-                        }}
-                    />
-                    {/* Hover overlay for open-overlay action */}
-                    {isHovered && shape.htmlData?.action === 'open-overlay' && (
-                        <div style={hoverOverlayStyles} />
-                    )}
+                    <div style={{
+                        width: `calc(100% - ${crop.x * -1 || 0}px - ${(crop.width - shape.width - crop.x * -1) || 0}px)`,
+                        height: `calc(100% - ${crop.y * -1 || 0}px - ${(crop.height - shape.height - crop.y * -1) || 0}px)`,
+                        left: `${crop.x * -1 || 0}px`,
+                        top: `${crop.y * -1 || 0}px`,
+                        position: "absolute",
+                        backgroundColor: effectStyles.backgroundColor || 'white',
+                        overflow: "hidden",
+                        boxShadow: effectStyles.boxShadow || 'none',
+                        borderRadius: effectStyles.borderRadius || '0px',
+                        borderTopLeftRadius: effectStyles.borderTopLeftRadius || '0px',
+                        borderTopRightRadius: effectStyles.borderTopRightRadius || '0px',
+                        borderBottomRightRadius: effectStyles.borderBottomRightRadius || '0px',
+                        borderBottomLeftRadius: effectStyles.borderBottomLeftRadius || '0px',
+                    }}>
+                        <img
+                            className="stock-photo"
+                            src={directUrl}
+                            alt={shape.title}
+                            style={{
+                                position: "absolute",
+                                left: `${crop.x || 0}px`,
+                                top: `${crop.y || 0}px`,
+                                height: `${displayHeight}px`,
+                                width: `${displayWidth}px`,
+                                transformOrigin: "0 0",
+                                display: "block",
+                                clipPath: crop.width && crop.height && crop.x && crop.y
+                                    ? `inset(${crop.y * -1}px ${crop.width - shape.width - crop.x * -1}px ${crop.height - shape.height - crop.y * -1}px ${crop.x * -1}px)`
+                                    : 'none',
+                                ...effectStyles,
+                                boxShadow: 'none',
+                                borderRadius: '0px',
+                            }}
+                        />
+                        {/* Hover overlay for open-overlay action */}
+                        {isHovered && shape.htmlData?.action === 'open-overlay' && (
+                            <div style={hoverOverlayStyles} />
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
+            {shape.htmlData?.tooltip && tooltipPos.visible && createPortal(
+                <div
+                    className="bg-white text-black text-sm px-2 py-1 rounded-lg shadow-md border-none font-medium z-[9999]"
+                    style={{
+                        position: 'fixed',
+                        left: tooltipPos.x,
+                        top: tooltipPos.y,
+                        pointerEvents: 'none',
+                    }}
+                >
+                    <p>{shape.htmlData.tooltip}</p>
+                </div>,
+                document.body
+            )}
+        </>
     );
-} 
+}

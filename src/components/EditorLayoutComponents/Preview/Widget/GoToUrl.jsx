@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
+import { createPortal } from 'react-dom';
 import PopupFrameModal from "./PopupFrameModal";
 import SpotlightModal from "./SpotlightModal";
 import PhotoSlideShow from "./PhotoSlideShow";
@@ -65,7 +66,7 @@ const linkAreaActionHandlers = {
 
 const linkAreaModalHandlers = {
     'popup-frame': (htmlData) => {
-        if(htmlData?.embedCode){
+        if (htmlData?.embedCode) {
             showModal(PopupFrameModal, htmlData);
         }
     },
@@ -73,7 +74,8 @@ const linkAreaModalHandlers = {
         showModal(SpotlightModal, htmlData);
     },
     'photo-slideshow': (htmlData) => {
-        if(htmlData?.images){
+        console.log("htmlData ??", htmlData)
+        if (htmlData?.images) {
             showModal(PhotoSlideShow, htmlData);
         }
     },
@@ -106,6 +108,7 @@ function showModal(ModalComponent, htmlData) {
 
 export default function GoToUrl({ shape, visibilitySettings, flipbookRef, currentPages }) {
     const [animationClass, setAnimationClass] = useState('');
+    const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
     useEffect(() => {
         if (visibilitySettings.showAnimateInteraction) {
@@ -130,29 +133,60 @@ export default function GoToUrl({ shape, visibilitySettings, flipbookRef, curren
         }
     };
 
+    const handleMouseMove = (e) => {
+        if (!shape.htmlData?.tooltip) return;
+        setTooltipPos({
+            x: e.clientX + 15,
+            y: e.clientY + 5,
+            visible: true
+        });
+    };
+
+    const handleMouseLeave = () => {
+        setTooltipPos(prev => ({ ...prev, visible: false }));
+    };
+
     return (
-        <a
-            onClick={handleClick}
-            className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
-            style={{
-                width: `${shape.width}px`,
-                height: `${shape.height}px`,
-                backgroundColor: shape.fill,
-                opacity: shape.opacity,
-                position: "absolute",
-                left: `${shape.x}px`,
-                top: `${shape.y}px`,
-                transformOrigin: "0 0",
-                transform: `rotate(${shape.rotation || 0}deg)
+        <>
+            <a
+                onClick={handleClick}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
+                className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
+                style={{
+                    width: `${shape.width}px`,
+                    height: `${shape.height}px`,
+                    backgroundColor: shape.fill,
+                    opacity: shape.opacity,
+                    position: "absolute",
+                    left: `${shape.x}px`,
+                    top: `${shape.y}px`,
+                    transformOrigin: "0 0",
+                    transform: `rotate(${shape.rotation || 0}deg)
                 scaleX(${shape.scaleX || 1})
                 scaleY(${shape.scaleY || 1})
                 skewX(${shape.skewX || 0}deg)
                 skewY(${shape.skewY || 0}deg)
                 translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
-                display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
-                cursor: "pointer",
-                '--ping-color': shape.fill || '#ff0000',
-            }}
-        />
+                    display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                    cursor: "pointer",
+                    '--ping-color': shape.fill || '#ff0000',
+                }}
+            />
+            {shape.htmlData?.tooltip && tooltipPos.visible && createPortal(
+                <div
+                    className="bg-white text-black text-sm px-2 py-1 rounded-lg shadow-md border-none font-medium z-[9999]"
+                    style={{
+                        position: 'fixed',
+                        left: tooltipPos.x,
+                        top: tooltipPos.y,
+                        pointerEvents: 'none',
+                    }}
+                >
+                    <p>{shape.htmlData.tooltip}</p>
+                </div>,
+                document.body
+            )}
+        </>
     )
 } 

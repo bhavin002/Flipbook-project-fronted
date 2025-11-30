@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { PageNavigationActions } from '../Helper/PageNavigationActions';
 
 export default function GoToFirstPage({ shape, visibilitySettings, flipbookRef, currentPages }) {
     const [animationClass, setAnimationClass] = useState('');
+    const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
     useEffect(() => {
         if (visibilitySettings.showAnimateInteraction) {
@@ -18,10 +20,26 @@ export default function GoToFirstPage({ shape, visibilitySettings, flipbookRef, 
         PageNavigationActions.goToFirstPage(flipbookRef);
     };
 
+    const handleMouseMove = (e) => {
+        setTooltipPos({
+            x: e.clientX + 15,
+            y: e.clientY + 5,
+            visible: true
+        });
+    };
+
+    const handleMouseLeave = () => {
+        setTooltipPos(prev => ({ ...prev, visible: false }));
+    };
+
+    const tooltipText = shape.htmlData?.tooltip || "Go to first page";
+
     return (
         <>
             <div
                 onClick={handleClick}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
                 className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
                 style={{
                     width: `${shape.width}px`,
@@ -45,7 +63,9 @@ export default function GoToFirstPage({ shape, visibilitySettings, flipbookRef, 
                 }}
             />
             <img
-                title={shape.htmlData?.tooltip || "Go to first page"}
+                onClick={handleClick}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
                 src={shape.src}
                 alt={shape.title}
                 style={{
@@ -65,6 +85,20 @@ export default function GoToFirstPage({ shape, visibilitySettings, flipbookRef, 
                     cursor: "pointer",
                 }}
             />
+            {tooltipPos.visible && createPortal(
+                <div
+                    className="bg-white text-black text-sm px-2 py-1 rounded-lg shadow-md border-none font-medium z-[9999]"
+                    style={{
+                        position: 'fixed',
+                        left: tooltipPos.x,
+                        top: tooltipPos.y,
+                        pointerEvents: 'none',
+                    }}
+                >
+                    <p>{tooltipText}</p>
+                </div>,
+                document.body
+            )}
         </>
     );
 } 

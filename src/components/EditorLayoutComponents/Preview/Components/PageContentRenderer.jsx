@@ -84,7 +84,6 @@ const PageContentRenderer = ({ data, index, visibilitySettings, flipbookRef, fli
         <div
             key={index}
             style={{ 'cursor': 'pointer' }}
-            title={data.shape?.htmlData?.tooltip || ''}
             dangerouslySetInnerHTML={{ __html: data.html }}
         />
     );

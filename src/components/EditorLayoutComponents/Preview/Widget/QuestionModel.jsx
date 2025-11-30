@@ -3,7 +3,6 @@ import {
     Dialog,
     DialogContent,
     DialogHeader,
-    DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -141,7 +140,7 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
 
     const handleCloseModal = () => {
         setCurrentView('question');
-        setPrivacyAccepted(false);  
+        setPrivacyAccepted(false);
         setGdprAccepted(false);
         reset();
         onOpenChange(false);
