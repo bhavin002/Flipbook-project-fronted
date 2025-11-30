@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { PageNavigationActions } from '../Helper/PageNavigationActions';
 
 export default function GoToLastPage({ shape, visibilitySettings, flipbookRef, currentPages }) {
     const [animationClass, setAnimationClass] = useState('');
+    const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
     useEffect(() => {
         if (visibilitySettings.showAnimateInteraction) {
@@ -18,10 +20,26 @@ export default function GoToLastPage({ shape, visibilitySettings, flipbookRef, c
         PageNavigationActions.goToLastPage(flipbookRef);
     };
 
+    const handleMouseMove = (e) => {
+        setTooltipPos({
+            x: e.clientX + 15,
+            y: e.clientY + 5,
+            visible: true
+        });
+    };
+
+    const handleMouseLeave = () => {
+        setTooltipPos(prev => ({ ...prev, visible: false }));
+    };
+
+    const tooltipText = shape.htmlData?.tooltip || "Go to last page";
+
     return (
         <>
             <div
                 onClick={handleClick}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
                 className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
                 style={{
                     width: `${shape.width}px`,
@@ -44,8 +62,10 @@ export default function GoToLastPage({ shape, visibilitySettings, flipbookRef, c
                     '--ping-radius': shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
                 }}
             />
-            <img    
-                title={shape.htmlData?.tooltip || "Go to last page"}
+            <img
+                onClick={handleClick}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseLeave}
                 src={shape.src}
                 alt={shape.title}
                 style={{
@@ -65,6 +85,20 @@ export default function GoToLastPage({ shape, visibilitySettings, flipbookRef, c
                     cursor: "pointer",
                 }}
             />
+            {tooltipPos.visible && createPortal(
+                <div
+                    className="bg-white text-black text-sm px-2 py-1 rounded-lg shadow-md border-none font-medium z-[9999]"
+                    style={{
+                        position: 'fixed',
+                        left: tooltipPos.x,
+                        top: tooltipPos.y,
+                        pointerEvents: 'none',
+                    }}
+                >
+                    <p>{tooltipText}</p>
+                </div>,
+                document.body
+            )}
         </>
     );
 } 

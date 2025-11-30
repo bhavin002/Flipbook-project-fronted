@@ -1446,7 +1446,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Link",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Click to link button",
+                    }
                 }
             },
             {
@@ -1516,7 +1519,8 @@ const interactions = [
                     layer: "Link",
                     htmlType: "link-area",
                     htmlData: {
-                        action: "popup-frame"
+                        action: "popup-frame",
+                        tooltip: "Click to view"
                     }
                 }
             },
@@ -1542,7 +1546,8 @@ const interactions = [
                     layer: "Link",
                     htmlType: "link-area",
                     htmlData: {
-                        action: "spotlight"
+                        action: "spotlight",
+                        tooltip: "Click to view"
                     }
                 }
             },
@@ -1580,7 +1585,8 @@ const interactions = [
                     layer: "Link",
                     htmlType: "link-area",
                     htmlData: {
-                        action: "photo-slideshow"
+                        action: "photo-slideshow",
+                        tooltip: "Click to view"
                     }
                 }
             }
@@ -1620,6 +1626,9 @@ const interactions = [
                     visible: true,
                     layer: "Video",
                     htmlType: "video-button",
+                    htmlData: {
+                        tooltip: "Click to video button",
+                    }
                 }
             },
             {
@@ -1636,6 +1645,9 @@ const interactions = [
                     visible: true,
                     layer: "Audio",
                     htmlType: "audio-button",
+                    htmlData: {
+                        tooltip: "Click to play"
+                    }
                 }
             }
         ]
@@ -1724,7 +1736,10 @@ const interactions = [
                     title: "quiz",
                     visible: true,
                     layer: "Quiz",
-                    htmlType: "quiz"
+                    htmlType: "quiz",
+                    htmlData: {
+                        tooltip: "Click to view quiz"
+                    }
                 }
             },
             {
@@ -1740,7 +1755,10 @@ const interactions = [
                     title: "question",
                     visible: true,
                     layer: "Question",
-                    htmlType: "question"
+                    htmlType: "question",
+                    htmlData: {
+                        tooltip: "Click to answer question"
+                    }
                 }
             },
             {
@@ -1756,7 +1774,10 @@ const interactions = [
                     title: "contact-form",
                     visible: true,
                     layer: "Contact form",
-                    htmlType: "contact-form"
+                    htmlType: "contact-form",
+                    htmlData: {
+                        tooltip: "Click to view contact form"
+                    }
                 }
             }
         ]
@@ -1865,7 +1886,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "TikTok",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "TikTok"
+                    }
                 }
             },
             {
@@ -1880,7 +1904,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Pinterest",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Pinterest"
+                    }
                 }
             },
             {
@@ -1895,11 +1922,15 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Reddit",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Reddit"
+                    }
+
                 }
             },
             {
-                icon: `<svg width="100%" height="100%" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin: auto"><path d="M10 0C4.48625 0 0 4.48625 0 10s4.48625 10 10 10 10-4.48625 10-10S15.51375 0 10 0zm4.5875 14.435c-.1225.17375-.315.26625-.51125.26625-.125 0-.25-.03625-.35875-.11375-2.34375-1.6475-6.2425-1.73875-8.875-1.125-.33375.07875-.6725-.13125-.75-.4675-.0775-.33625.13-.6725.4675-.75125 2.89375-.67 7.21875-.5475 9.875 1.32125.2825.19875.35.5875.1525.87zm1.22-2.43875c-.1225.17-.31375.26-.5075.26-.1275 0-.25375-.0375-.365-.1175C12.21625 10.1875 8.87625 9.7025 4.41875 10.6125c-.33625.06625-.66875-.14875-.7375-.4875-.07-.3375.14875-.66875.48625-.7375 4.82125-.98375 8.47375-.43375 11.49625 1.735.28.2025.345.5925.14375.87375zm1.2325-3.275c-.12125.17875-.31875.27375-.5175.27375-.12125 0-.24375-.035-.35125-.1075-3.44625-2.33875-8.685-2.35-12.07625-1.15-.325.1125-.6825-.05625-.7975-.3825-.115-.325.055-.6825.38125-.7975 3.68875-1.30375 9.405-1.27625 13.19625 1.295.285.19375.3575.5825.165.86875z" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
+                icon: `<svg width="100%" height="100%" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="margin: auto"><path d="M10 0C4.48625 0 0 4.48625 0 10s4.48625 10 10 10 10-4.48625 10-10S15.51375 0 10 0zm4.5875 14.435c-.1225.17375-.315.26625-.51125.26625-.125 0-.25-.03625-.35875-.11375-2.34375-1.6475-6.2425-1.73875-8.875-1.125-.33375.07875-.6725-.13125-.75-.4675-.0775-.33625.13-.6725.4675-.75125 2.89375-.67 7.21875-.5475 9.875 1.32125.2825.19875.35.5875.1525.87zm1.22-2.43875c-.1225.17-.31375.26-.5075.26-.1275 0-.25375-.0375-.365-.1075-3.44625-2.33875-8.685-2.35-12.07625-1.15-.325.1125-.6825-.05625-.7975-.3825-.115-.325.055-.6825.38125-.7975 3.68875-1.30375 9.405-1.27625 13.19625 1.295.285.19375.3575.5825.165.86875z" fill="#ffffff" fill-rule="nonzero"></path></svg>`,
                 isUpgrade: false,
                 attrs: {
                     width: 150,
@@ -1910,7 +1941,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Spotify",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Spotify"
+                    }
                 }
             },
             {
@@ -1925,7 +1959,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Youtube",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Youtube"
+                    }
                 }
             },
             {
@@ -1940,7 +1977,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Instagram",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Instagram"
+                    }
                 }
             },
             {
@@ -1955,7 +1995,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Massenger",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Massenger"
+                    }
                 }
             },
             {
@@ -1970,7 +2013,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Facebook",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Facebook"
+                    }
                 }
             },
             {
@@ -1985,7 +2031,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "LinkedIn",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "LinkedIn"
+                    }
                 }
             },
             {
@@ -2000,7 +2049,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Twitter",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Twitter"
+                    }
                 }
             },
             {
@@ -2015,7 +2067,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Snapchat",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Snapchat"
+                    }
                 }
             },
             {
@@ -2030,7 +2085,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Whatsapp",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Whatsapp"
+                    }
                 }
             }
         ]
@@ -2051,7 +2109,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Cart",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Click to cart button",
+                    }
                 }
             },
             {
@@ -2066,7 +2127,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Basket",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Click to basket button",
+                    }
                 }
             },
             {
@@ -2081,7 +2145,10 @@ const interactions = [
                     title: "link-button",
                     visible: true,
                     layer: "Credit card",
-                    htmlType: "go-to-button-link"
+                    htmlType: "go-to-button-link",
+                    htmlData: {
+                        tooltip: "Click to credit card button",
+                    }
                 }
             }
         ]

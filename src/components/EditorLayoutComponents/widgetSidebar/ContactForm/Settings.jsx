@@ -37,20 +37,6 @@ export default function Settings({ form, clearErrors }) {
     return (
         <>
             <div className="px-1 py-2">
-                <div>
-                    <Label htmlFor="question-tooltip" className={`text-xs ${errors.settings?.tooltip ? "text-red-500" : ""}`}>
-                        Tooltip
-                    </Label>
-                    <Input
-                        type="text"
-                        id="question-tooltip"
-                        {...form.register("settings.tooltip")}
-                        placeholder="Click to answer question"
-                        className={errors.settings?.tooltip ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
-                    />
-                    {errors.settings?.tooltip && <p className="text-red-500 text-xs">{errors.settings.tooltip.message}</p>}
-                </div>
-                <Separator className="my-4" />
                 <div className="space-y-2">
                     <div>
                         <Label htmlFor="question-tooltip">Button</Label>

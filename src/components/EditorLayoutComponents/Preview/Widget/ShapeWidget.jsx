@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import PopupFrameModal from "./PopupFrameModal";
 import SpotlightModal from "./SpotlightModal";
 import OverlayModal from "./OverlayModal";
@@ -59,6 +60,7 @@ export default function ShapeWidget({ shape, flipbookRef }) {
     console.log("shape ShapeWidget", shape)
 
     const [isHovered, setIsHovered] = useState(false);
+    const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
     // Handle click actions
     const handleClick = () => {
@@ -87,6 +89,16 @@ export default function ShapeWidget({ shape, flipbookRef }) {
         if (shape.htmlData?.action === 'open-overlay') {
             setIsHovered(false);
         }
+        setTooltipPos(prev => ({ ...prev, visible: false }));
+    };
+
+    const handleMouseMove = (e) => {
+        if (!shape.htmlData?.tooltip) return;
+        setTooltipPos({
+            x: e.clientX + 15,
+            y: e.clientY + 5,
+            visible: true
+        });
     };
 
     // Add cursor pointer if action exists
@@ -110,96 +122,112 @@ export default function ShapeWidget({ shape, flipbookRef }) {
     }
 
     return (
-        <div
-            title={shape.htmlData?.tooltip}
-            onClick={handleClick}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            style={{
-                width: `${shape.width}px`,
-                height: `${shape.height}px`,
-                position: "absolute",
-                left: `${shape.x}px`,
-                top: `${shape.y}px`,
-                transformOrigin: "0 0",
-                transform: `rotate(${shape.rotation || 0}deg)
+        <>
+            <div
+                onClick={handleClick}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                onMouseMove={handleMouseMove}
+                style={{
+                    width: `${shape.width}px`,
+                    height: `${shape.height}px`,
+                    position: "absolute",
+                    left: `${shape.x}px`,
+                    top: `${shape.y}px`,
+                    transformOrigin: "0 0",
+                    transform: `rotate(${shape.rotation || 0}deg)
           scaleX(${shape.scaleX || 1})
           scaleY(${shape.scaleY || 1})
           skewX(${shape.skewX || 0}deg)
           skewY(${shape.skewY || 0}deg)
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
-                display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
-                cursor: cursorStyle,
-            }}
-        >
-            <svg
-                height={shape.height}
-                width={shape.width}
-                xmlns="http://www.w3.org/2000/svg"
-                style={{
-                    width: `${shape.width}px`,
-                    height: `${shape.height}px`,
-                    position: "relative",
-                    zIndex: 0,
+                    display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                    cursor: cursorStyle,
                 }}
             >
-                {shape.data.map((element, index) => {
-                    if (element.type === 'path') {
-                        return <path
-                            key={`path-${index}`}
-                            d={element.data}
-                            stroke={shape.stroke ? shape.fill : shape.stroke}
-                            fill={shape.stroke ? shape.stroke : shape.fill}
-                            strokeWidth={shape.strokeWidth || 0}
-                        />;
-                    }
-                    else if (element.type === 'rect') {
-                        return <rect
-                            key={`rect-${index}`}
-                            x={Number(element.x) || 0}
-                            y={Number(element.y) || 0}
-                            width={Number(element.width)}
-                            height={Number(element.height)}
-                            stroke={shape.stroke ? shape.fill : shape.stroke}
-                            fill={shape.stroke ? shape.stroke : shape.fill}
-                            strokeWidth={shape.strokeWidth || 0}
-                        />;
-                    } else if (element.type === 'polygon') {
-                        return <polygon
-                            key={`polygon-${index}`}
-                            points={element.points}
-                            stroke={shape.stroke ? shape.fill : shape.stroke}
-                            fill={shape.stroke ? shape.stroke : shape.fill}
-                            strokeWidth={shape.strokeWidth || 0}
-                        />;
-                    } else if (element.type === 'circle') {
-                        return <circle
-                            key={`circle-${index}`}
-                            cx={Number(element.cx) || 0}
-                            cy={Number(element.cy) || 0}
-                            r={Number(element.r) || 0}
-                            stroke={shape.stroke ? shape.fill : shape.stroke}
-                            fill={shape.stroke ? shape.stroke : shape.fill}
-                            strokeWidth={shape.strokeWidth || 0}
-                        />;
-                    } else if (element.type === 'ellipse') {
-                        return <ellipse
-                            key={`ellipse-${index}`}
-                            cx={Number(element.cx) || 0}
-                            cy={Number(element.cy) || 0}
-                            rx={Number(element.rx) || 0}
-                            ry={Number(element.ry) || 0}
-                            stroke={shape.stroke ? shape.fill : shape.stroke}
-                            fill={shape.stroke ? shape.stroke : shape.fill}
-                            strokeWidth={shape.strokeWidth || 0}
-                        />;
-                    }
-                })}
-            </svg>
-            {/* Hover overlay for open-overlay action */}
-            {isHovered && shape.htmlData?.action === 'open-overlay' && (
-                <div style={hoverOverlayStyles} />
+                <svg
+                    height={shape.height}
+                    width={shape.width}
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                        width: `${shape.width}px`,
+                        height: `${shape.height}px`,
+                        position: "relative",
+                        zIndex: 0,
+                    }}
+                >
+                    {shape.data.map((element, index) => {
+                        if (element.type === 'path') {
+                            return <path
+                                key={`path-${index}`}
+                                d={element.data}
+                                stroke={shape.stroke ? shape.fill : shape.stroke}
+                                fill={shape.stroke ? shape.stroke : shape.fill}
+                                strokeWidth={shape.strokeWidth || 0}
+                            />;
+                        }
+                        else if (element.type === 'rect') {
+                            return <rect
+                                key={`rect-${index}`}
+                                x={Number(element.x) || 0}
+                                y={Number(element.y) || 0}
+                                width={Number(element.width)}
+                                height={Number(element.height)}
+                                stroke={shape.stroke ? shape.fill : shape.stroke}
+                                fill={shape.stroke ? shape.stroke : shape.fill}
+                                strokeWidth={shape.strokeWidth || 0}
+                            />;
+                        } else if (element.type === 'polygon') {
+                            return <polygon
+                                key={`polygon-${index}`}
+                                points={element.points}
+                                stroke={shape.stroke ? shape.fill : shape.stroke}
+                                fill={shape.stroke ? shape.stroke : shape.fill}
+                                strokeWidth={shape.strokeWidth || 0}
+                            />;
+                        } else if (element.type === 'circle') {
+                            return <circle
+                                key={`circle-${index}`}
+                                cx={Number(element.cx) || 0}
+                                cy={Number(element.cy) || 0}
+                                r={Number(element.r) || 0}
+                                stroke={shape.stroke ? shape.fill : shape.stroke}
+                                fill={shape.stroke ? shape.stroke : shape.fill}
+                                strokeWidth={shape.strokeWidth || 0}
+                            />;
+                        } else if (element.type === 'ellipse') {
+                            return <ellipse
+                                key={`ellipse-${index}`}
+                                cx={Number(element.cx) || 0}
+                                cy={Number(element.cy) || 0}
+                                rx={Number(element.rx) || 0}
+                                ry={Number(element.ry) || 0}
+                                stroke={shape.stroke ? shape.fill : shape.stroke}
+                                fill={shape.stroke ? shape.stroke : shape.fill}
+                                strokeWidth={shape.strokeWidth || 0}
+                            />;
+                        }
+                    })}
+                </svg>
+                {/* Hover overlay for open-overlay action */}
+                {isHovered && shape.htmlData?.action === 'open-overlay' && (
+                    <div style={hoverOverlayStyles} />
+                )}
+            </div>
+            {shape.htmlData?.tooltip && tooltipPos.visible && createPortal(
+                <div
+                    className="bg-white text-black text-sm px-2 py-1 rounded-lg shadow-md border-none font-medium z-[9999]"
+                    style={{
+                        position: 'fixed',
+                        left: tooltipPos.x,
+                        top: tooltipPos.y,
+                        pointerEvents: 'none',
+                    }}
+                >
+                    <p>{shape.htmlData.tooltip}</p>
+                </div>,
+                document.body
             )}
-        </div>
+        </>
     );
 } 

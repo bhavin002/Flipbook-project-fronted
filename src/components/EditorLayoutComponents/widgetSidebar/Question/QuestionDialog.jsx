@@ -172,20 +172,6 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                                     </div>
                                 </div>
                                 <Separator className="my-4" />
-                                <div>
-                                    <Label htmlFor="question-tooltip" className={`text-xs ${errors.tooltip ? "text-red-500" : ""}`}>
-                                        Tooltip
-                                    </Label>
-                                    <Input
-                                        type="text"
-                                        id="question-tooltip"
-                                        {...form.register("tooltip")}
-                                        placeholder="Click to answer question"
-                                        className={errors.tooltip ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
-                                    />
-                                    {errors.tooltip && <p className="text-red-500 text-xs">{errors.tooltip.message}</p>}
-                                </div>
-                                <Separator className="my-4" />
                                 <div className="space-y-2">
                                     <div>
                                         <Label htmlFor="question-tooltip">Button</Label>
