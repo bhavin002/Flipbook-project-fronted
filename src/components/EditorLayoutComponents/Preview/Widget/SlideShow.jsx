@@ -27,7 +27,7 @@ export default function SlideShow({ shape }) {
         }, slideDuration * 1000);
 
         return () => clearInterval(intervalRef.current);
-    }, [autoplaySlideshow, slideDuration, images.length, currentIndex]);
+    }, [autoplaySlideshow, slideDuration, images.length]);
 
     const goToNextSlide = () => {
         if (isTransitioning || images.length <= 1) return;
