@@ -683,3 +683,39 @@ html , body, #root {
 .flipbook{
   filter: drop-shadow(rgba(0, 0, 0, 0.2) 0px 2px 5px);
 }
+
+.slideshow-image-wrapper {
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: both;
+}
+
+.slide-in-right {
+  animation-name: slideInRight;
+}
+
+.slide-in-left {
+  animation-name: slideInLeft;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
