@@ -12,7 +12,7 @@ export default function SlideShow({ shape }) {
     const slideDuration = htmlData?.slideDuration?.[0] || 6;
     const imageProperties = htmlData?.imageProperties || "fit-to-frame";
 
-    const slidesWithClones = images.length > 1 
+    const slidesWithClones = images.length > 1
         ? [images[images.length - 1], ...images, images[0]]
         : images;
 
@@ -44,45 +44,47 @@ export default function SlideShow({ shape }) {
     const goToSlide = (index) => {
         if (isTransitioning || images.length <= 1) return;
         setIsTransitioning(true);
-        setCurrentIndex(index + 1); 
+        setCurrentIndex(index + 1);
     };
 
-    
+
     useEffect(() => {
         if (!isTransitioning || images.length <= 1) return;
 
         const transitionEndTimeout = setTimeout(() => {
-            
+
             if (currentIndex === slidesWithClones.length - 1) {
                 setIsTransitioning(false);
-                setCurrentIndex(1);
+                // Use setTimeout to ensure browser repaints before next transition
+                setTimeout(() => setCurrentIndex(1), 50);
             }
-            
+
             else if (currentIndex === 0) {
                 setIsTransitioning(false);
-                setCurrentIndex(images.length);
+                // Use setTimeout to ensure browser repaints before next transition
+                setTimeout(() => setCurrentIndex(images.length), 50);
             } else {
                 setIsTransitioning(false);
             }
-        }, 300); 
+        }, 300);
 
         return () => clearTimeout(transitionEndTimeout);
     }, [currentIndex, isTransitioning, images.length, slidesWithClones.length]);
 
     const getImageFitClass = () =>
-        ({
-            "fit-to-frame": "object-contain",
-            "scale-to-fill": "object-cover",
-        }[imageProperties] || "object-contain");
+    ({
+        "fit-to-frame": "object-contain",
+        "scale-to-fill": "object-cover",
+    }[imageProperties] || "object-contain");
 
-    
+
     const getActualIndex = () => {
         if (currentIndex === 0) return images.length - 1;
         if (currentIndex === slidesWithClones.length - 1) return 0;
         return currentIndex - 1;
     };
 
-    
+
     const shapeStyles = {
         position: "absolute",
         left: `${shape?.x || 0}px`,
@@ -161,7 +163,7 @@ export default function SlideShow({ shape }) {
 
                 <div
                     className="flex"
-                    style={{ 
+                    style={{
                         transform: `translateX(-${currentIndex * 100}%)`,
                         transition: isTransitioning ? 'transform 300ms ease-in-out' : 'none'
                     }}
@@ -194,11 +196,10 @@ export default function SlideShow({ shape }) {
                                 key={images[index]?.fileId || index}
                                 onClick={() => goToSlide(index)}
                                 disabled={isTransitioning}
-                                className={`w-5 h-5 rounded-full transition-all duration-300 ${
-                                    getActualIndex() === index
+                                className={`w-5 h-5 rounded-full transition-all duration-300 ${getActualIndex() === index
                                         ? "bg-primary scale-125"
                                         : "bg-white bg-opacity-50 hover:bg-opacity-75"
-                                }`}
+                                    }`}
                                 aria-label={`Go to slide ${index + 1}`}
                                 style={{ cursor: 'pointer' }}
                             />
