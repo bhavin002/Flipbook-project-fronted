@@ -719,3 +719,9 @@ html , body, #root {
     opacity: 1;
   }
 }
+
+
+.embed-code-1>iframe{
+  height: 100%;
+  width: 100%;
+}
