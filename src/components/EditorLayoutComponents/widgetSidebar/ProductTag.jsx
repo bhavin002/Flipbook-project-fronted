@@ -285,11 +285,18 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
         const value = e.target.value;
         setRawUrlValue(value);
 
+        let finalUrl;
         if (!value.startsWith('http://') && !value.startsWith('https://') && DOMAIN_PATTERN.test(value)) {
-            form.setValue("productUrl", `https://${value}`, { shouldValidate: true });
+            finalUrl = `https://${value}`;
         } else {
-            form.setValue("productUrl", value, { shouldValidate: true });
+            finalUrl = value;
         }
+        
+        form.setValue("productUrl", finalUrl, { shouldValidate: true });
+        
+        setTimeout(() => {
+            updateMainStage({...form.getValues(), productUrl: finalUrl}, true);
+        }, 0);
     };
 
     const handleInputChange = (field, value) => {
