@@ -17,17 +17,20 @@ export default function GoToPage({ shape, visibilitySettings, flipbookRef, curre
     }, [visibilitySettings.showAnimateInteraction, currentPages]);
 
     const handleClick = () => {
+        setTooltipPos(prev => ({ ...prev, visible: false }));
         if (shape.htmlData?.pageNumber) {
             PageNavigationActions.goToPage(flipbookRef, shape.htmlData.pageNumber);
         }
     };
 
     const handleMouseMove = (e) => {
-        setTooltipPos({
-            x: e.clientX + 15,
-            y: e.clientY + 5,
-            visible: true
-        });
+        if (e.pointerType === 'mouse') {
+            setTooltipPos({
+                x: e.clientX + 15,
+                y: e.clientY + 5,
+                visible: true
+            });
+        }
     };
 
     const handleMouseLeave = () => {
@@ -40,8 +43,8 @@ export default function GoToPage({ shape, visibilitySettings, flipbookRef, curre
         <>
             <div
                 onClick={handleClick}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
+                onPointerMove={handleMouseMove}
+                onPointerLeave={handleMouseLeave}
                 className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
                 style={{
                     width: `${shape.width}px`,
@@ -66,8 +69,8 @@ export default function GoToPage({ shape, visibilitySettings, flipbookRef, curre
             />
             <img
                 onClick={handleClick}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
+                onPointerMove={handleMouseMove}
+                onPointerLeave={handleMouseLeave}
                 src={shape.src}
                 alt={shape.title}
                 style={{

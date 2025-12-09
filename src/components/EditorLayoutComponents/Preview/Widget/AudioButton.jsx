@@ -67,11 +67,13 @@ export default function AudioButton({ shape, visibilitySettings, currentPages })
 
   const handleMouseMove = (e) => {
     if (!shape.htmlData?.tooltip) return;
-    setTooltipPos({
-      x: e.clientX + 15,
-      y: e.clientY + 5,
-      visible: true
-    });
+    if (e.pointerType === 'mouse') {
+      setTooltipPos({
+        x: e.clientX + 15,
+        y: e.clientY + 5,
+        visible: true
+      });
+    }
   };
 
   const handleMouseLeave = () => {
@@ -100,8 +102,8 @@ export default function AudioButton({ shape, visibilitySettings, currentPages })
       <div
         className={`cursor-pointer ${visibilitySettings.showAnimateInteraction ? animationClass : ""}`}
         onClick={handleClick}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
+        onPointerMove={handleMouseMove}
+        onPointerLeave={handleMouseLeave}
         style={{
           width: `${shape.width}px`,
           height: `${shape.height}px`,
