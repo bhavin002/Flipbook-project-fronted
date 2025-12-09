@@ -18,6 +18,7 @@ export default function VideoButton({ shape, visibilitySettings, currentPages })
     }, [visibilitySettings.showAnimateInteraction, currentPages]);
 
     const handleClick = () => {
+        setTooltipPos(prev => ({ ...prev, visible: false }));
         if (shape.htmlType === 'video-button' && shape.htmlData?.url) {
             showModal(VideoButtonModal, shape.htmlData);
         }
@@ -25,11 +26,13 @@ export default function VideoButton({ shape, visibilitySettings, currentPages })
 
     const handleMouseMove = (e) => {
         if (!shape.htmlData?.tooltip) return;
-        setTooltipPos({
-            x: e.clientX + 15,
-            y: e.clientY + 5,
-            visible: true
-        });
+        if (e.pointerType === 'mouse') {
+            setTooltipPos({
+                x: e.clientX + 15,
+                y: e.clientY + 5,
+                visible: true
+            });
+        }
     };
 
     const handleMouseLeave = () => {
@@ -41,8 +44,8 @@ export default function VideoButton({ shape, visibilitySettings, currentPages })
             <div
                 id={shape.id}
                 onClick={handleClick}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
+                onPointerMove={handleMouseMove}
+                onPointerLeave={handleMouseLeave}
                 className="cursor-pointer"
             >
                 <div

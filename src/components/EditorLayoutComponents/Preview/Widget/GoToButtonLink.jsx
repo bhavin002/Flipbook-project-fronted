@@ -16,6 +16,7 @@ export default function GoToButtonLink({ shape, visibilitySettings, currentPages
     }, [visibilitySettings.showAnimateInteraction, currentPages]);
 
     const handleClick = () => {
+        setTooltipPos(prev => ({ ...prev, visible: false }));
         const { url, openIn } = shape.htmlData || {};
         if (url) {
             if (openIn === "new-tab") {
@@ -28,11 +29,13 @@ export default function GoToButtonLink({ shape, visibilitySettings, currentPages
 
     const handleMouseMove = (e) => {
         if (!shape.htmlData?.tooltip) return;
-        setTooltipPos({
-            x: e.clientX + 15,
-            y: e.clientY + 5,
-            visible: true
-        });
+        if (e.pointerType === 'mouse') {
+            setTooltipPos({
+                x: e.clientX + 15,
+                y: e.clientY + 5,
+                visible: true
+            });
+        }
     };
 
     const handleMouseLeave = () => {
@@ -43,8 +46,8 @@ export default function GoToButtonLink({ shape, visibilitySettings, currentPages
         <>
             <a
                 onClick={handleClick}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
+                onPointerMove={handleMouseMove}
+                onPointerLeave={handleMouseLeave}
                 className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
                 style={{
                     width: `${shape.width}px`,
