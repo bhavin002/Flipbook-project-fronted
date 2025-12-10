@@ -3,8 +3,7 @@ import { ArrowLeft, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { v4 as uuid } from "uuid";
-
-const API_KEY = `${import.meta.env.VITE_APP_PEXELS_API}`;
+import { GetPexelsImages } from '@/service/pexel.service';
 
 const INITIAL_CATEGORIES = [
     "God",
@@ -34,13 +33,7 @@ const StockPhotosView = ({ setIsEditorDrawerOpen, setMainStage, mainStage, selec
 
     const fetchImages = async (query, isCategory = false, pageNum = 1) => {
         try {
-            const response = await fetch(
-                `https://api.pexels.com/v1/search?query=${query}&per_page=9&page=${pageNum}`,
-                {
-                    headers: { Authorization: API_KEY },
-                }
-            );
-            const data = await response.json();
+            const { data } = await GetPexelsImages(query, pageNum);
 
             if (data.photos.length === 0) {
                 setHasMore(false);
