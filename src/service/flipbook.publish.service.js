@@ -110,3 +110,18 @@ export const UpdatePublishThumbnailsApi = async (data) => {
     });
     return response.data;
 }
+
+export const PublishFlipbookDetailsOnlyApi = async (data) => {
+    const response = await ApiClient().post(`/flipbook-publish/publish-details-only`, data);
+    return response.data;
+}
+
+export const PublishFlipbookThumbnailsApi = async (data) => {
+    const response = await ApiClient().post(`/flipbook-publish/publish-thumbnails`, data, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+    return response.data;
+}
+
