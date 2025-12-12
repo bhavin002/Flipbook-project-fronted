@@ -643,10 +643,14 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
     // }, [stageRef.current]);
 
     useEffect(() => {
-        const nextPage = mainStage.length <= (pageCounter + 1) ? pageCounter : pageCounter + 1;
-        if (imageLoadCounterPageWise[pageCounter] === undefined) {
-            imageLoadCounterPageWise[pageCounter] = 0;
+        if (isPublishModalOpenInternal) {
+            if (imageLoadCounterPageWise[pageCounter] === undefined) {
+                imageLoadCounterPageWise[pageCounter] = 0;
+            }
         }
+    }, [isPublishModalOpenInternal]);
+
+    useEffect(() => {
         if (isPublishModalOpenInternal && imageLoadCounterPageWise[pageCounter] != undefined && !imageLoadCounterPageWise[pageCounter]) {
             const stage = stageRef.current;
             if (stage) {
@@ -660,8 +664,12 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                             updatedState[index] = { ...updatedState[index], thumbnails: mainStage[pageCounter].thumbnails }; return updatedState;
                         });
                         console.log("mainStage[pageCounter].thumbnails", mainStage[pageCounter].thumbnails);
+                        const nextPage = mainStage.length <= (pageCounter + 1) ? pageCounter : pageCounter + 1;
                         setSelectedIndex(nextPage);
                         setPageCounter(nextPage);
+                        if (imageLoadCounterPageWise[nextPage] === undefined) {
+                            imageLoadCounterPageWise[nextPage] = 0;
+                        }
                     }
                     setTimeout(() => {
                         a();
@@ -669,7 +677,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                 }
             }
         }
-    }, [isPublishModalOpenInternal, imageLoadCounterPageWise, pageCounter, stageRef.current]);
+    }, [isPublishModalOpenInternal, imageLoadCounterPageWise, stageRef.current]);
 
     const cloneStageElements = (stage) => {
         const layer = stage.children[0];
@@ -1339,7 +1347,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                 rotateAnchorCursor="grab"
                                 onTransformEnd={handleDrag}
                                 onDragMove={(event) => handleDragMove(event, 'transform')}
-                                keepRatio={['link-area','shop-area','quiz','question','contact-form'].includes(stage.selectedShapes[0]?.attrs.htmlType) ? false : true}
+                                keepRatio={['link-area', 'shop-area', 'quiz', 'question', 'contact-form'].includes(stage.selectedShapes[0]?.attrs.htmlType) ? false : true}
                                 rotationSnapTolerance={stage.selectedShapes[0]?.attrs.htmlType === 'tag' ? false : undefined}
                                 flipEnabled={false}
                                 boundBoxFunc={(oldBox, newBox) => {

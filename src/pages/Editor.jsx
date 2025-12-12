@@ -433,11 +433,11 @@ export default function Editor() {
         }
     }, [mainStage]);
     useEffect(() => {
-        setSelectedIndex(0);
-        setPageCounter(0);
         setTimeout(() => {
+            setSelectedIndex(0);
+            setPageCounter(0);
             setIsPublishModalOpenInternal(isPublishModalOpen)
-        }, 0);
+        }, isFormCustomize ? 500 : 0);
     }, [isPublishModalOpen]);
     useEffect(() => {
         // ---- Debounce ----
