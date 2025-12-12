@@ -1335,7 +1335,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                 rotateAnchorCursor="grab"
                                 onTransformEnd={handleDrag}
                                 onDragMove={(event) => handleDragMove(event, 'transform')}
-                                keepRatio={true}
+                                keepRatio={['link-area','shop-area','quiz','question','contact-form'].includes(stage.selectedShapes[0]?.attrs.htmlType) ? false : true}
                                 rotationSnapTolerance={stage.selectedShapes[0]?.attrs.htmlType === 'tag' ? false : undefined}
                                 flipEnabled={false}
                                 boundBoxFunc={(oldBox, newBox) => {
