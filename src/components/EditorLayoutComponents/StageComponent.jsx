@@ -1160,7 +1160,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                 }}
             />
             <div onClick={() => setSelectedIndex(index)} >
-                {(width && height )? <Stage
+                {(width && height) ? <Stage
                     // scaleX={zoomper / 50}
                     // scaleY={zoomper / 50}
                     width={width}
@@ -1335,21 +1335,9 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                 rotateAnchorCursor="grab"
                                 onTransformEnd={handleDrag}
                                 onDragMove={(event) => handleDragMove(event, 'transform')}
-
-                                enabledAnchors={
-                                    // stage.selectedShapes[0]?.attrs.htmlType === 'upload-photo'
-                                    ['upload-photo', 'stock-photo', 'stock-gif','go-to-button-link'].includes(stage.selectedShapes[0]?.attrs.htmlType)
-                                        ? ['top-left', 'top-right', 'bottom-left', 'bottom-right'] // stock-photo & upload-photo
-                                        : stage.selectedShapes[0]?.attrs.type === 'text'
-                                            ? ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'middle-left', 'middle-right']
-                                            : undefined
-                                }
-
-                                keepRatio={['upload-photo', 'stock-photo', 'stock-gif' , 'go-to-button-link'].includes(stage.selectedShapes[0]?.attrs.htmlType) ? true : false}
-
+                                keepRatio={true}
                                 rotationSnapTolerance={stage.selectedShapes[0]?.attrs.htmlType === 'tag' ? false : undefined}
                                 flipEnabled={false}
-
                                 boundBoxFunc={(oldBox, newBox) => {
                                     if (stage.selectedShapes[0]?.attrs.type === 'text') {
                                         if (newBox.width < 10 || newBox.height < 10) return oldBox;
@@ -1360,7 +1348,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
 
                         )}
                     </Layer>
-                </Stage>: ''}
+                </Stage> : ''}
             </div>
         </div >
 
