@@ -132,21 +132,31 @@ export default function StockPhoto({ shape, flipbookRef }) {
     const displayWidth = crop.width && crop.height ? crop.width : shape.width;
     const displayHeight = crop.height && crop.width ? crop.height : shape.height;
 
+    const shapeWidth = shape.width || 0;
+    const shapeHeight = shape.height || 0;
+    const maxRadius = Math.min(shapeWidth / 2, shapeHeight / 2);
+    const getRadius = (r) => Math.min(r || 0, maxRadius);
+
     // Build effect-related styles
     const effectStyles = {};
     // Corner radius
     if (effect.individualCorners) {
-        effectStyles.borderTopLeftRadius = `${effect.topLeftRadius || 0}px`;
-        effectStyles.borderTopRightRadius = `${effect.topRightRadius || 0}px`;
-        effectStyles.borderBottomRightRadius = `${effect.bottomRightRadius || 0}px`;
-        effectStyles.borderBottomLeftRadius = `${effect.bottomLeftRadius || 0}px`;
+        effectStyles.borderTopLeftRadius = `${getRadius(effect.topLeftRadius)}px`;
+        effectStyles.borderTopRightRadius = `${getRadius(effect.topRightRadius)}px`;
+        effectStyles.borderBottomRightRadius = `${getRadius(effect.bottomRightRadius)}px`;
+        effectStyles.borderBottomLeftRadius = `${getRadius(effect.bottomLeftRadius)}px`;
     } else {
-        effectStyles.borderRadius = `${effect.cornerRadius || 0}px`;
-        effectStyles.borderTopLeftRadius = `none`;
-        effectStyles.borderTopRightRadius = `none`;
-        effectStyles.borderBottomRightRadius = `none`;
-        effectStyles.borderBottomLeftRadius = `none`;
+        const r = getRadius(effect.cornerRadius);
+        effectStyles.borderRadius = `${r}px`;
+        effectStyles.borderTopLeftRadius = `${r}px`;
+        effectStyles.borderTopRightRadius = `${r}px`;
+        effectStyles.borderBottomRightRadius = `${r}px`;
+        effectStyles.borderBottomLeftRadius = `${r}px`;
     }
+    // Border styles
+    const borderWidth = effect.isBorderEnabled ? (effect.borderWidth || 0) : 0;
+    const borderColor = effect.isBorderEnabled ? (effect.borderColor || 'black') : 'transparent';
+
     // Shadow (applied to image)
     if (effect.isShadowEnabled) {
         const shadowOpacity = (effect.shadowOpacity || 0) / 100;
@@ -238,6 +248,10 @@ export default function StockPhoto({ shape, flipbookRef }) {
                         borderTopRightRadius: effectStyles.borderTopRightRadius || '0px',
                         borderBottomRightRadius: effectStyles.borderBottomRightRadius || '0px',
                         borderBottomLeftRadius: effectStyles.borderBottomLeftRadius || '0px',
+                        borderWidth: `${borderWidth}px`,
+                        borderStyle: 'solid',
+                        borderColor: borderColor,
+                        boxSizing: 'border-box',
                     }}>
                         <img
                             className="stock-photo"
@@ -245,8 +259,8 @@ export default function StockPhoto({ shape, flipbookRef }) {
                             alt={shape.title}
                             style={{
                                 position: "absolute",
-                                left: `${crop.x || 0}px`,
-                                top: `${crop.y || 0}px`,
+                                left: `${(crop.x || 0) - borderWidth}px`,
+                                top: `${(crop.y || 0) - borderWidth}px`,
                                 height: `${displayHeight}px`,
                                 width: `${displayWidth}px`,
                                 transformOrigin: "0 0",

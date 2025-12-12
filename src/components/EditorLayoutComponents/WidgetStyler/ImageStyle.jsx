@@ -1,8 +1,21 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useRef, useState, useEffect } from "react";
+import { Slider } from "@/components/ui/slider";
+import { useRef, useState, useEffect, useMemo } from "react";
 import CornerRadiusControl from "@/utils/CornerRadiusControl";
+
+// Utility function to check if image is PNG
+const isPngImage = (src) => {
+  if (!src) return false;
+  // Check file extension
+  if (src.toLowerCase().endsWith('.png')) return true;
+  // Check data URL
+  if (src.startsWith('data:image/png')) return true;
+  // Check if URL contains .png extension (with or without query parameters)
+  if (src.toLowerCase().includes('.png')) return true;
+  return false;
+};
 
 export default function ImageStyle({
   selectedShape,
@@ -13,44 +26,61 @@ export default function ImageStyle({
   const [useIndividualCorners, setUseIndividualCorners] = useState(
     selectedShape[0].attrs?.effect?.individualCorners || false
   );
-  
+
+  // Check if the selected image is PNG
+  const isPng = useMemo(() => {
+    if (selectedShape.length && selectedShape[0].attrs?.src) {
+      return isPngImage(selectedShape[0].attrs.src);
+    }
+    return false;
+  }, [selectedShape]);
+
   const defaultCornerRadius = selectedShape[0].attrs?.effect?.cornerRadius || 0;
   const [cornerRadius, setCornerRadius] = useState(defaultCornerRadius);
-  
+
   const [topLeftRadius, setTopLeftRadius] = useState(
-    useIndividualCorners ? 
-      selectedShape[0].attrs?.effect?.topLeftRadius || 0 : 
-      defaultCornerRadius
-  );
-  
-  const [topRightRadius, setTopRightRadius] = useState(
-    useIndividualCorners ? 
-      selectedShape[0].attrs?.effect?.topRightRadius || 0 : 
-      defaultCornerRadius
-  );
-  
-  const [bottomRightRadius, setBottomRightRadius] = useState(
-    useIndividualCorners ? 
-      selectedShape[0].attrs?.effect?.bottomRightRadius || 0 : 
-      defaultCornerRadius
-  );
-  
-  const [bottomLeftRadius, setBottomLeftRadius] = useState(
-    useIndividualCorners ? 
-      selectedShape[0].attrs?.effect?.bottomLeftRadius || 0 : 
+    useIndividualCorners ?
+      selectedShape[0].attrs?.effect?.topLeftRadius || 0 :
       defaultCornerRadius
   );
 
-  const [styles, setStyles] = useState({
-    isShadowEnabled: selectedShape[0].attrs?.effect?.isShadowEnabled || false,
-    shadowColor: selectedShape[0].attrs.effect?.shadowColor || "#000000",
-    shadowOpacity: selectedShape[0].attrs.effect?.shadowOpacity || 60,
-    shadowOffsetX: selectedShape[0].attrs.effect?.shadowOffsetX || 0,
-    shadowOffsetY: selectedShape[0].attrs.effect?.shadowOffsetY || 0,
-    shadowBlur: selectedShape[0].attrs.effect?.shadowBlur || 10,
-    isBorderEnabled: selectedShape[0].attrs?.effect?.isBorderEnabled || false,
-    borderColor: selectedShape[0].attrs.effect?.borderColor || "#000000",
-    borderWidth: selectedShape[0].attrs.effect?.borderWidth || 10,
+  const [topRightRadius, setTopRightRadius] = useState(
+    useIndividualCorners ?
+      selectedShape[0].attrs?.effect?.topRightRadius || 0 :
+      defaultCornerRadius
+  );
+
+  const [bottomRightRadius, setBottomRightRadius] = useState(
+    useIndividualCorners ?
+      selectedShape[0].attrs?.effect?.bottomRightRadius || 0 :
+      defaultCornerRadius
+  );
+
+  const [bottomLeftRadius, setBottomLeftRadius] = useState(
+    useIndividualCorners ?
+      selectedShape[0].attrs?.effect?.bottomLeftRadius || 0 :
+      defaultCornerRadius
+  );
+
+  const [styles, setStyles] = useState(() => {
+    const effect = selectedShape[0].attrs?.effect || {};
+    const imageSrc = selectedShape[0].attrs?.src;
+    const isImagePng = isPngImage(imageSrc);
+
+    return {
+      // Force shadow to be disabled for PNG images
+      isShadowEnabled: isImagePng ? false : (effect.isShadowEnabled || false),
+      shadowColor: effect.shadowColor || "#000000",
+      shadowOpacity: effect.shadowOpacity || 60,
+      shadowOffsetX: effect.shadowOffsetX || 0,
+      shadowOffsetY: effect.shadowOffsetY || 0,
+      shadowBlur: effect.shadowBlur || 10,
+      isBorderEnabled: effect.isBorderEnabled || false,
+      borderColor: effect.borderColor || "#000000",
+      borderWidth: effect.borderWidth || 5,
+      borderStyle: effect.borderStyle || "solid",
+      borderRoundedCorners: effect.borderRoundedCorners || false,
+    };
   });
 
   const shadowColorInputRef = useRef(null);
@@ -79,16 +109,23 @@ export default function ImageStyle({
         setBottomLeftRadius(uniformRadius);
       }
 
+      // Check if current image is PNG
+      const imageSrc = selectedShape[0].attrs?.src;
+      const isImagePng = isPngImage(imageSrc);
+
       setStyles({
-        isShadowEnabled: effect.isShadowEnabled !== undefined ? effect.isShadowEnabled : false,
+        // Force shadow to be disabled for PNG images
+        isShadowEnabled: isImagePng ? false : (effect.isShadowEnabled !== undefined ? effect.isShadowEnabled : false),
         shadowColor: effect.shadowColor || "#000000",
         shadowOpacity: effect.shadowOpacity !== undefined ? effect.shadowOpacity : 60,
         shadowOffsetX: effect.shadowOffsetX !== undefined ? effect.shadowOffsetX : 0,
         shadowOffsetY: effect.shadowOffsetY !== undefined ? effect.shadowOffsetY : 0,
         shadowBlur: effect.shadowBlur !== undefined ? effect.shadowBlur : 30,
-        isBorderEnabled: effect.isBorderEnabled !== undefined ? effect.isBorderEnabled : true,
+        isBorderEnabled: effect.isBorderEnabled !== undefined ? effect.isBorderEnabled : false,
         borderColor: effect.borderColor || "#000000",
-        borderWidth: effect.borderWidth !== undefined ? effect.borderWidth : 10,
+        borderWidth: effect.borderWidth !== undefined ? effect.borderWidth : 5,
+        borderStyle: effect.borderStyle || "solid",
+        borderRoundedCorners: effect.borderRoundedCorners !== undefined ? effect.borderRoundedCorners : false,
       });
     }
   }, [selectedShape]);
@@ -104,6 +141,9 @@ export default function ImageStyle({
           (selShape) => selShape.attrs.id === element.id
         );
         if (matchingShape) {
+          // Check if this element's image is PNG
+          const isElementPng = isPngImage(element.src);
+
           return {
             ...element,
             effect: {
@@ -115,6 +155,8 @@ export default function ImageStyle({
               bottomRightRadius: useIndividualCorners ? bottomRightRadius : cornerRadius,
               bottomLeftRadius: useIndividualCorners ? bottomLeftRadius : cornerRadius,
               ...styles,
+              // Force shadow to be disabled for PNG images
+              isShadowEnabled: isElementPng ? false : styles.isShadowEnabled,
             },
           };
         }
@@ -129,6 +171,11 @@ export default function ImageStyle({
   ]);
 
   const handleStyleChange = (key, value) => {
+    // Prevent enabling shadow for PNG images
+    if (key === 'isShadowEnabled' && isPng && value === true) {
+      return; // Don't allow enabling shadow for PNG
+    }
+
     setStyles((prev) => ({
       ...prev,
       [key]: value,
@@ -136,7 +183,7 @@ export default function ImageStyle({
   };
 
   const handleShadowColorClick = () => {
-    if (!styles.isShadowEnabled) return;
+    if (!styles.isShadowEnabled || isPng) return;
     setIsShadowColorPickerOpen(true);
     setTimeout(() => shadowColorInputRef.current?.click(), 10);
   };
@@ -150,7 +197,7 @@ export default function ImageStyle({
   return (
     <div className="p-6 space-y-4 w-full overflow-y-auto">
       <Label className="text-lg">Image style</Label>
-      
+
       <CornerRadiusControl
         useIndividualCorners={useIndividualCorners}
         setUseIndividualCorners={setUseIndividualCorners}
@@ -173,9 +220,10 @@ export default function ImageStyle({
             className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
             checked={styles.isShadowEnabled}
             onCheckedChange={(checked) => handleStyleChange("isShadowEnabled", checked)}
+            disabled={isPng}
           />
-          <Label htmlFor="shadow" className="text-sm font-medium leading-none">
-            Shadow
+          <Label htmlFor="shadow" className={`text-sm font-medium leading-none ${isPng ? 'opacity-50 cursor-not-allowed' : ''}`}>
+            Shadow {isPng && '(Not available for PNG images)'}
           </Label>
         </div>
         <div className="space-y-2">
@@ -187,15 +235,15 @@ export default function ImageStyle({
                 value={styles.shadowColor}
                 onChange={(e) => handleStyleChange("shadowColor", e.target.value)}
                 className="pr-12"
-                disabled={!styles.isShadowEnabled}
+                disabled={!styles.isShadowEnabled || isPng}
               />
               <div
-                className={`absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded ${styles.isShadowEnabled ? "cursor-pointer" : "cursor-not-allowed"
+                className={`absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded ${(styles.isShadowEnabled && !isPng) ? "cursor-pointer" : "cursor-not-allowed"
                   }`}
                 style={{ backgroundColor: styles.shadowColor }}
                 onClick={handleShadowColorClick}
               />
-              {isShadowColorPickerOpen && styles.isShadowEnabled && (
+              {isShadowColorPickerOpen && styles.isShadowEnabled && !isPng && (
                 <input
                   ref={shadowColorInputRef}
                   type="color"
@@ -216,7 +264,7 @@ export default function ImageStyle({
                 onChange={(e) => handleStyleChange("shadowOpacity", parseInt(e.target.value) || 0)}
                 min={0}
                 max={100}
-                disabled={!styles.isShadowEnabled}
+                disabled={!styles.isShadowEnabled || isPng}
               />
             </div>
             <div>
@@ -227,7 +275,7 @@ export default function ImageStyle({
                 onChange={(e) => handleStyleChange("shadowOffsetX", parseInt(e.target.value) || 0)}
                 min={-100}
                 max={100}
-                disabled={!styles.isShadowEnabled}
+                disabled={!styles.isShadowEnabled || isPng}
               />
             </div>
             <div>
@@ -238,7 +286,7 @@ export default function ImageStyle({
                 onChange={(e) => handleStyleChange("shadowOffsetY", parseInt(e.target.value) || 0)}
                 min={-100}
                 max={100}
-                disabled={!styles.isShadowEnabled}
+                disabled={!styles.isShadowEnabled || isPng}
               />
             </div>
           </div>
@@ -251,11 +299,13 @@ export default function ImageStyle({
               min={0}
               max={100}
               className="w-24"
-              disabled={!styles.isShadowEnabled}
+              disabled={!styles.isShadowEnabled || isPng}
             />
           </div>
         </div>
-        {/* <div className="flex items-center gap-1">
+
+        {/* Border Section */}
+        <div className="flex items-center gap-1">
           <Checkbox
             id="border"
             className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
@@ -266,49 +316,81 @@ export default function ImageStyle({
             Border
           </Label>
         </div>
-        <div className="space-y-2">
-          <div>
-            <Label className="text-xs">Color</Label>
-            <div className="relative">
-              <Input
-                type="text"
-                value={styles.borderColor}
-                onChange={(e) => handleStyleChange("borderColor", e.target.value)}
-                className="pr-12"
-                disabled={!styles.isBorderEnabled}
-              />
-              <div
-                className={`absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded ${styles.isBorderEnabled ? "cursor-pointer" : "cursor-not-allowed"
-                  }`}
-                style={{ backgroundColor: styles.borderColor }}
-                onClick={handleBorderColorClick}
-              />
-              {isBorderColorPickerOpen && styles.isBorderEnabled && (
-                <input
-                  ref={borderColorInputRef}
-                  type="color"
-                  value={styles.borderColor}
-                  onChange={(e) => handleStyleChange("borderColor", e.target.value)}
-                  onBlur={() => setIsBorderColorPickerOpen(false)}
-                  className="opacity-0 absolute w-1 h-1 right-3 top-1/2 -translate-y-1/2"
+
+        {
+          styles.isBorderEnabled && (
+            <div className="space-y-3 pl-5">
+              {/* Border Weight */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-xs">Stroke Weight</Label>
+                  <Input
+                    type="number"
+                    value={styles.borderWidth}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value) || 0;
+                      handleStyleChange("borderWidth", Math.max(0, Math.min(50, val)));
+                    }}
+                    min={0}
+                    max={50}
+                    className="w-16 h-7 text-xs"
+                  />
+                </div>
+                <Slider
+                  value={[styles.borderWidth]}
+                  onValueChange={(value) => handleStyleChange("borderWidth", value[0])}
+                  min={0}
+                  max={50}
+                  step={1}
+                  className="w-full"
                 />
-              )}
+              </div>
+
+              {/* Border Color */}
+              <div>
+                <Label className="text-xs mb-2 block">Stroke Color</Label>
+                <div className="relative">
+                  <Input
+                    type="text"
+                    value={styles.borderColor}
+                    onChange={(e) => handleStyleChange("borderColor", e.target.value)}
+                    placeholder="#000000"
+                    className="pr-12"
+                  />
+                  <div
+                    className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded cursor-pointer border border-gray-300"
+                    style={{ backgroundColor: styles.borderColor }}
+                    onClick={handleBorderColorClick}
+                  />
+                  {isBorderColorPickerOpen && (
+                    <input
+                      ref={borderColorInputRef}
+                      type="color"
+                      value={styles.borderColor}
+                      onChange={(e) => handleStyleChange("borderColor", e.target.value)}
+                      onBlur={() => setIsBorderColorPickerOpen(false)}
+                      className="opacity-0 absolute w-1 h-1 right-3 top-1/2 -translate-y-1/2"
+                    />
+                  )}
+                </div>
+              </div>
+
+              {/* Rounded Corners Toggle */}
+              <div className="flex items-center gap-2">
+                <Checkbox
+                  id="borderRounded"
+                  className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
+                  checked={styles.borderRoundedCorners}
+                  onCheckedChange={(checked) => handleStyleChange("borderRoundedCorners", checked)}
+                />
+                <Label htmlFor="borderRounded" className="text-xs">
+                  Rounded ends
+                </Label>
+              </div>
             </div>
-          </div>
-          <div>
-            <Label className="text-xs">Width:</Label>
-            <Input
-              type="number"
-              value={styles.borderWidth}
-              onChange={(e) => handleStyleChange("borderWidth", parseInt(e.target.value) || 0)}
-              min={0}
-              max={100}
-              className="w-24"
-              disabled={!styles.isBorderEnabled}
-            />
-          </div>
-        </div> */}
-      </div>
-    </div>
+          )
+        }
+      </div >
+    </div >
   );
 }

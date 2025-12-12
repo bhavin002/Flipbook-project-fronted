@@ -95,6 +95,11 @@ export default function KonvaGif({
         isCropping,
         shape,
         shape?.fill,
+        shape?.effect?.brightness,
+        shape?.effect?.contrast,
+        shape?.effect?.saturation,
+        shape?.effect?.blur,
+        shape?.effect?.grayscale,
         shape?.effect?.opacity,
         shape?.effect?.shadowColor,
         shape?.effect?.shadowBlur,
@@ -105,7 +110,14 @@ export default function KonvaGif({
         shape?.effect?.borderColor,
         shape?.effect?.borderWidth,
         shape?.effect?.isBorderEnabled,
+        shape?.effect?.borderStyle,
+        shape?.effect?.borderRoundedCorners,
         shape?.effect?.cornerRadius,
+        shape?.effect?.individualCorners,
+        shape?.effect?.topLeftRadius,
+        shape?.effect?.topRightRadius,
+        shape?.effect?.bottomRightRadius,
+        shape?.effect?.bottomLeftRadius,
     ]);
 
     const handleGroupClick = (e) => {
@@ -115,22 +127,36 @@ export default function KonvaGif({
         }
     };
 
-    const shapeEffect = shape?.effect || {};
-    const shapeCornerRadius = shapeEffect.cornerRadius || 0;
-    const topLeftRadius = shapeEffect.individualCorners
-        ? shapeEffect.topLeftRadius || 0
-        : shapeCornerRadius;
-    const topRightRadius = shapeEffect.individualCorners
-        ? shapeEffect.topRightRadius || 0
-        : shapeCornerRadius;
-    const bottomRightRadius = shapeEffect.individualCorners
-        ? shapeEffect.bottomRightRadius || 0
-        : shapeCornerRadius;
-    const bottomLeftRadius = shapeEffect.individualCorners
-        ? shapeEffect.bottomLeftRadius || 0
-        : shapeCornerRadius;
     const shapeWidth = shape?.width || canvas.width || 0;
     const shapeHeight = shape?.height || canvas.height || 0;
+    const shapeEffect = shape?.effect || {};
+    const shapeCornerRadius = shapeEffect.cornerRadius || 0;
+    const maxRadius = Math.min(shapeWidth / 2, shapeHeight / 2); // Cap radius to half the smallest dimension
+
+    // Limit each corner radius to prevent overextension
+    const getRadius = (r) => Math.min(r || 0, maxRadius);
+
+    const topLeftRadius = shapeEffect.individualCorners ? getRadius(shapeEffect.topLeftRadius) : getRadius(shapeCornerRadius);
+    const topRightRadius = shapeEffect.individualCorners ? getRadius(shapeEffect.topRightRadius) : getRadius(shapeCornerRadius);
+    const bottomRightRadius = shapeEffect.individualCorners ? getRadius(shapeEffect.bottomRightRadius) : getRadius(shapeCornerRadius);
+    const bottomLeftRadius = shapeEffect.individualCorners ? getRadius(shapeEffect.bottomLeftRadius) : getRadius(shapeCornerRadius);
+    const borderWidth = shapeEffect.isBorderEnabled ? (shapeEffect.borderWidth || 0) : 0;
+    const borderColor = shapeEffect.isBorderEnabled ? (shapeEffect.borderColor || 'black') : 'transparent';
+    const lineCap = shapeEffect.borderRoundedCorners ? 'round' : 'butt';
+
+    // Calculate border radii for the border Rect so its outer edge matches the clip path.
+    // The border is drawn centered on the path.
+    // Outer edge radius = Path Radius + BorderWidth / 2.
+    // We want Outer Edge Radius = Clip Radius.
+    // So Path Radius = Clip Radius - BorderWidth / 2.
+    const getBorderRectRadius = (clipRadius) => Math.max(0, clipRadius - borderWidth / 2);
+
+    const borderRadii = [
+        getBorderRectRadius(topLeftRadius),
+        getBorderRectRadius(topRightRadius),
+        getBorderRectRadius(bottomRightRadius),
+        getBorderRectRadius(bottomLeftRadius)
+    ];
 
     return (
         <Group
@@ -160,54 +186,60 @@ export default function KonvaGif({
                 fill={'transparent'}
             />
 
-            {/* Nested Group with clipping */}
+            {/* Content Group (Handles Flip) */}
             <Group
-                x={0}
-                y={0}
                 width={shapeWidth}
                 height={shapeHeight}
-                ref={clipGroupRef}
-                // fill={"#00000000"}
-                clipFunc={(ctx) => {
-                    ctx.beginPath();
-                    ctx.moveTo(topLeftRadius, 0);
-                    ctx.lineTo(shapeWidth - topRightRadius, 0);
-                    ctx.quadraticCurveTo(shapeWidth, 0, shapeWidth, topRightRadius);
-                    ctx.lineTo(shapeWidth, shapeHeight - bottomRightRadius);
-                    ctx.quadraticCurveTo(
-                        shapeWidth,
-                        shapeHeight,
-                        shapeWidth - bottomRightRadius,
-                        shapeHeight
-                    );
-                    ctx.lineTo(bottomLeftRadius, shapeHeight);
-                    ctx.quadraticCurveTo(0, shapeHeight, 0, shapeHeight - bottomLeftRadius);
-                    ctx.lineTo(0, topLeftRadius);
-                    ctx.quadraticCurveTo(0, 0, topLeftRadius, 0);
-                    ctx.closePath();
-                }}
+                x={shape.flipX ? shapeWidth : 0}
+                y={shape.flipY ? shapeHeight : 0}
+                scaleX={shape.flipX ? -1 : 1}
+                scaleY={shape.flipY ? -1 : 1}
             >
-                <Rect
-                    width={shapeWidth}
-                    height={shapeHeight}
-                    // fill={shape.fill || "#00000000"}
-                    zIndex={0}
-                    x={shape.flipX ? shapeWidth : 0}
-                    y={shape.flipY ? shapeHeight : 0}
-                    scaleX={shape.flipX ? -1 : 1}
-                    scaleY={shape.flipY ? -1 : 1}
-                />
-                <Image
-                    image={canvas}
-                    x={0}
-                    y={0}
-                    scaleX={1}
-                    scaleY={1}
-                    width={shapeWidth}
-                    height={shapeHeight}
-                    ref={imageRef}
-                    zIndex={1}
-                />
+                {/* Clipped Image Group */}
+                <Group
+                    clipFunc={(ctx) => {
+                        ctx.beginPath();
+                        ctx.moveTo(topLeftRadius, 0);
+                        ctx.lineTo(shapeWidth - topRightRadius, 0);
+                        ctx.arcTo(shapeWidth, 0, shapeWidth, topRightRadius, topRightRadius);
+                        ctx.lineTo(shapeWidth, shapeHeight - bottomRightRadius);
+                        ctx.arcTo(shapeWidth, shapeHeight, shapeWidth - bottomRightRadius, shapeHeight, bottomRightRadius);
+                        ctx.lineTo(bottomLeftRadius, shapeHeight);
+                        ctx.arcTo(0, shapeHeight, 0, shapeHeight - bottomLeftRadius, bottomLeftRadius);
+                        ctx.lineTo(0, topLeftRadius);
+                        ctx.arcTo(0, 0, topLeftRadius, 0, topLeftRadius);
+                        ctx.closePath();
+                    }}
+                >
+                    <Rect
+                        x={0}
+                        y={0}
+                        width={shapeWidth}
+                        height={shapeHeight}
+                        fill={shape.fill || 'white'}
+                    />
+                    <Image
+                        image={canvas}
+                        x={0}
+                        y={0}
+                        width={shapeWidth}
+                        height={shapeHeight}
+                        ref={imageRef}
+                    />
+                    {shapeEffect.isBorderEnabled && borderWidth > 0 && (
+                        <Rect
+                            x={borderWidth / 2}
+                            y={borderWidth / 2}
+                            width={shapeWidth - borderWidth}
+                            height={shapeHeight - borderWidth}
+                            cornerRadius={borderRadii}
+                            stroke={borderColor}
+                            strokeWidth={borderWidth}
+                            lineCap={lineCap}
+                            listening={false}
+                        />
+                    )}
+                </Group>
             </Group>
         </Group>
     );

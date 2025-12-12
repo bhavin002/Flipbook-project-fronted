@@ -1,6 +1,10 @@
 import { EffectEvent } from '@/utils/EffectEvent';
+import { isPngImage } from '@/utils/Helper';
 import React, { useEffect, useState, useRef } from 'react';
 import { Group, Image, Rect } from 'react-konva';
+
+// Utility function to check if image is PNG
+
 
 export default function UploadPhoto({
     shape,
@@ -15,7 +19,6 @@ export default function UploadPhoto({
     const imageRef = useRef(null);
     const ractRef = useRef(null);
     const groupRef = useRef();
-    const clipGroupRef = useRef();
 
     useEffect(() => {
         if (shape && shape.src) {
@@ -26,7 +29,6 @@ export default function UploadPhoto({
                 [index]: (prev[index] || 0) + 1,
             }));
             img.crossOrigin = 'Anonymous';
-
             img.onload = () => {
                 setImageLoadCounterPageWise((prev) => ({
                     ...prev,
@@ -34,7 +36,6 @@ export default function UploadPhoto({
                 }));
                 setLoadedImage(img);
             };
-
             img.onerror = () => {
                 setImageLoadCounterPageWise((prev) => ({
                     ...prev,
@@ -82,7 +83,14 @@ export default function UploadPhoto({
         shape?.effect?.borderColor,
         shape?.effect?.borderWidth,
         shape?.effect?.isBorderEnabled,
+        shape?.effect?.borderStyle,
+        shape?.effect?.borderRoundedCorners,
         shape?.effect?.cornerRadius,
+        shape?.effect?.individualCorners,
+        shape?.effect?.topLeftRadius,
+        shape?.effect?.topRightRadius,
+        shape?.effect?.bottomRightRadius,
+        shape?.effect?.bottomLeftRadius,
     ]);
 
     const handleGroupClick = (e) => {
@@ -100,25 +108,36 @@ export default function UploadPhoto({
     const maxRadius = Math.min(shapeWidth / 2, shapeHeight / 2); // Cap radius to half the smallest dimension
 
     // Limit each corner radius to prevent overextension
-    const topLeftRadius = Math.min(
-        shapeEffect.individualCorners ? (shapeEffect.topLeftRadius || 0) : shapeCornerRadius,
-        maxRadius
-    );
-    const topRightRadius = Math.min(
-        shapeEffect.individualCorners ? (shapeEffect.topRightRadius || 0) : shapeCornerRadius,
-        maxRadius
-    );
-    const bottomRightRadius = Math.min(
-        shapeEffect.individualCorners ? (shapeEffect.bottomRightRadius || 0) : shapeCornerRadius,
-        maxRadius
-    );
-    const bottomLeftRadius = Math.min(
-        shapeEffect.individualCorners ? (shapeEffect.bottomLeftRadius || 0) : shapeCornerRadius,
-        maxRadius
-    );
+    const getRadius = (r) => Math.min(r || 0, maxRadius);
+
+    const topLeftRadius = shapeEffect.individualCorners ? getRadius(shapeEffect.topLeftRadius) : getRadius(shapeCornerRadius);
+    const topRightRadius = shapeEffect.individualCorners ? getRadius(shapeEffect.topRightRadius) : getRadius(shapeCornerRadius);
+    const bottomRightRadius = shapeEffect.individualCorners ? getRadius(shapeEffect.bottomRightRadius) : getRadius(shapeCornerRadius);
+    const bottomLeftRadius = shapeEffect.individualCorners ? getRadius(shapeEffect.bottomLeftRadius) : getRadius(shapeCornerRadius);
 
     if (!loadedImage) return null;
-console.log("re-rendering UploadPhoto",shape.fill);
+
+    // Check if this is a PNG image - use transparent fill to preserve transparency
+    const isPng = isPngImage(shape.src);
+    const shadowRectFill = isPng ? 'transparent' : '#000000';
+
+    const borderWidth = shapeEffect.isBorderEnabled ? (shapeEffect.borderWidth || 0) : 0;
+    const borderColor = shapeEffect.isBorderEnabled ? (shapeEffect.borderColor || 'black') : 'transparent';
+    const lineCap = shapeEffect.borderRoundedCorners ? 'round' : 'butt';
+
+    // Calculate border radii for the border Rect so its outer edge matches the clip path.
+    // The border is drawn centered on the path.
+    // Outer edge radius = Path Radius + BorderWidth / 2.
+    // We want Outer Edge Radius = Clip Radius.
+    // So Path Radius = Clip Radius - BorderWidth / 2.
+    const getBorderRectRadius = (clipRadius) => Math.max(0, clipRadius - borderWidth / 2);
+
+    const borderRadii = [
+        getBorderRectRadius(topLeftRadius),
+        getBorderRectRadius(topRightRadius),
+        getBorderRectRadius(bottomRightRadius),
+        getBorderRectRadius(bottomLeftRadius)
+    ];
 
     return (
         <Group
@@ -132,64 +151,75 @@ console.log("re-rendering UploadPhoto",shape.fill);
             {...shape}
             name="shape"
         >
-            {/* Rectangle with shadow */}
+            {/* Rectangle with shadow (Background) - Transparent for PNG to preserve transparency */}
             <Rect
                 ref={ractRef}
-                x={0 + 2}
-                y={0 + 2}
+                x={2}
+                y={2}
                 width={shapeWidth - 4}
                 height={shapeHeight - 4}
-                cornerRadius={shapeCornerRadius || [topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
-                fill={shape.fill || 'white'}
+                cornerRadius={[topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
+                fill={shadowRectFill}
+                listening={false}
             />
 
-            {/* Nested Group with clipping */}
+            {/* Content Group (Handles Flip) */}
             <Group
                 width={shapeWidth}
                 height={shapeHeight}
-                ref={clipGroupRef}
                 fill={'z'}
-                clipFunc={(ctx) => {
-                    ctx.beginPath();
-                    ctx.moveTo(topLeftRadius, 0);
-                    ctx.lineTo(shapeWidth - topRightRadius, 0);
-                    ctx.quadraticCurveTo(shapeWidth, 0, shapeWidth, topRightRadius);
-                    ctx.lineTo(shapeWidth, shapeHeight - bottomRightRadius);
-                    ctx.quadraticCurveTo(shapeWidth, shapeHeight, shapeWidth - bottomRightRadius, shapeHeight);
-                    ctx.lineTo(bottomLeftRadius, shapeHeight);
-                    ctx.quadraticCurveTo(0, shapeHeight, 0, shapeHeight - bottomLeftRadius);
-                    ctx.lineTo(0, topLeftRadius);
-                    ctx.quadraticCurveTo(0, 0, topLeftRadius, 0);
-                    ctx.closePath();
-                }}
                 x={shape.flipX ? shapeWidth : 0}
                 y={shape.flipY ? shapeHeight : 0}
                 scaleX={shape.flipX ? -1 : 1}
                 scaleY={shape.flipY ? -1 : 1}
-
-
             >
-                <Rect
-                    x={0}
-                    y={0}
-                    width={shapeWidth}
-                    height={shapeHeight}
-                    fill={shape.fill || 'white'}
-                    zIndex={0}
-                />
-                <Image
-                    image={loadedImage}
-                    width={shapeWidth}
-                    height={shapeHeight}
-                    ref={imageRef}
-                    zIndex={1}
-                    x={0}
-                    y={0}
-                    scaleX={1}
-                    scaleY={1}
-                />
+                {/* Clipped Image Group */}
+                <Group
+                    clipFunc={(ctx) => {
+                        ctx.beginPath();
+                        ctx.moveTo(topLeftRadius, 0);
+                        ctx.lineTo(shapeWidth - topRightRadius, 0);
+                        ctx.arcTo(shapeWidth, 0, shapeWidth, topRightRadius, topRightRadius);
+                        ctx.lineTo(shapeWidth, shapeHeight - bottomRightRadius);
+                        ctx.arcTo(shapeWidth, shapeHeight, shapeWidth - bottomRightRadius, shapeHeight, bottomRightRadius);
+                        ctx.lineTo(bottomLeftRadius, shapeHeight);
+                        ctx.arcTo(0, shapeHeight, 0, shapeHeight - bottomLeftRadius, bottomLeftRadius);
+                        ctx.lineTo(0, topLeftRadius);
+                        ctx.arcTo(0, 0, topLeftRadius, 0, topLeftRadius);
+                        ctx.closePath();
+                    }}
+                >
+                    <Rect
+                        x={0}
+                        y={0}
+                        width={shapeWidth}
+                        height={shapeHeight}
+                        fill={shape.fill || 'white'}
+                    />
+                    <Image
+                        image={loadedImage}
+                        x={0}
+                        y={0}
+                        width={shapeWidth}
+                        height={shapeHeight}
+                        ref={imageRef}
+                    />
+                    {shapeEffect.isBorderEnabled && borderWidth > 0 && (
+                        <Rect
+                            x={borderWidth / 2}
+                            y={borderWidth / 2}
+                            width={shapeWidth - borderWidth}
+                            height={shapeHeight - borderWidth}
+                            cornerRadius={borderRadii}
+                            stroke={borderColor}
+                            strokeWidth={borderWidth}
+                            lineCap={lineCap}
+                            listening={false}
+                        />
+                    )}
+                </Group>
 
-
+                {/* Border Rect (Overlay - Always on top) */}
             </Group>
         </Group>
     );

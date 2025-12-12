@@ -1,7 +1,22 @@
 import Konva from 'konva';
 
+// Utility function to check if image is PNG
+const isPngImage = (src) => {
+    if (!src) return false;
+    // Check file extension
+    if (src.toLowerCase().endsWith('.png')) return true;
+    // Check data URL
+    if (src.startsWith('data:image/png')) return true;
+    // Check if URL contains .png extension (with or without query parameters)
+    if (src.toLowerCase().includes('.png')) return true;
+    return false;
+};
+
 export const EffectEvent = (shape, ractnode, imgNode) => {
     const effect = shape.effect || {};
+    
+    // Check if the image is PNG
+    const isPng = isPngImage(shape.src);
 
     if (!imgNode || !ractnode) return;
 
@@ -49,7 +64,8 @@ export const EffectEvent = (shape, ractnode, imgNode) => {
     }
 
     // ractnode.fill('rgba(0, 0, 0, 0)');
-    if (effect.isShadowEnabled) {
+    // CRITICAL: Never apply shadow to PNG images, even if shadow settings exist
+    if (effect.isShadowEnabled && !isPng) {
         ractnode.opacity(effect.shadowOpacity / 100 || 0);
         ractnode.shadowColor(effect.shadowColor || 'rgba(0, 0, 0, 0)');
         ractnode.shadowBlur(effect.shadowBlur || 0);
@@ -59,6 +75,7 @@ export const EffectEvent = (shape, ractnode, imgNode) => {
         ractnode.shadowBlur(0);
         ractnode.shadowOffset({ x: 0, y: 0 });
     }
+    
     if (filterArray.length > 0) {
         imgNode.cache();
         imgNode.filters(filterArray);
@@ -66,5 +83,6 @@ export const EffectEvent = (shape, ractnode, imgNode) => {
         imgNode.filters([]);
     }
 
+    imgNode.cornerRadius([0, 10, 20, 30]);
     imgNode.getLayer()?.batchDraw();
 };

@@ -241,3 +241,12 @@ export const detectDeviceType = () => {
         return DeviceType.DESKTOP
     }
 }
+
+
+export const isPngImage = (src) => {
+    if (!src) return false;
+    if (src.toLowerCase().endsWith('.png')) return true;
+    if (src.startsWith('data:image/png')) return true;
+    if (src.toLowerCase().includes('.png')) return true;
+    return false;
+};

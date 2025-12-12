@@ -862,7 +862,11 @@ export default function Editor() {
                 if (selectedShape?.children?.length) {
                     // Save pre-crop snapshot to allow perfect cancel/restore
                     const container = selectedShape.children[1];
-                    const imageNode = container.children[1];
+                    let imageNode = container.children[1];
+                    // Support for nested structure in StockPhoto (Container -> ClipGroup -> Image)
+                    if (imageNode?.getClassName() !== 'Image' && container.children[0]?.children?.[1]?.getClassName() === 'Image') {
+                        imageNode = container.children[0].children[1];
+                    }
                     try {
                         selectedShape._preCropSnapshot = {
                             selectedAttrs: JSON.parse(JSON.stringify(selectedShape.attrs)),
@@ -881,9 +885,9 @@ export default function Editor() {
                             labelVisible: selectedShape.children[0]?.visible ? selectedShape.children[0].visible() : true,
                         };
                     }
-                    selectedShape.children[1].children[1].cropStart();
+                    selectedShape.children[1].children[0].children[1].cropStart();
                     selectedShape.children[0].visible(false);
-                    selectedShape.children[1]?.children[1].visible(false);
+                    selectedShape.children[1]?.children[0]?.children[1].visible(false);
                 }
                 setIsCropping(true);
             }
@@ -898,7 +902,11 @@ export default function Editor() {
                 selectedShapeData?.children?.length
             ) {
                 const container = selectedShapeData.children[1];
-                const imageNode = container.children[1];
+                let imageNode = container.children[1];
+                // Support for nested structure in StockPhoto (Container -> ClipGroup -> Image)
+                if (imageNode?.getClassName() !== 'Image' && container.children[0]?.children?.[1]?.getClassName() === 'Image') {
+                    imageNode = container.children[0].children[1];
+                }
 
                 // End crop mode if it's active
                 if (imageNode.cropEnd) imageNode.cropEnd();
@@ -980,7 +988,11 @@ export default function Editor() {
                     return;
                 }
                 const container = selectedShapeData.children[1];
-                const imageNode = container.children[1];
+                let imageNode = container.children[1];
+                // Support for nested structure in StockPhoto (Container -> ClipGroup -> Image)
+                if (imageNode?.getClassName() !== 'Image' && container.children[0]?.children?.[1]?.getClassName() === 'Image') {
+                    imageNode = container.children[0].children[1];
+                }
 
                 // End crop mode if it's active
                 if (imageNode.cropEnd) imageNode.cropEnd();

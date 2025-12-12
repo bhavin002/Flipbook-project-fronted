@@ -56,6 +56,7 @@ const modalHandlers = {
 };
 
 export default function StockSticker({ shape, flipbookRef }) {
+
     const [isHovered, setIsHovered] = useState(false);
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
@@ -64,8 +65,10 @@ export default function StockSticker({ shape, flipbookRef }) {
         if (shape.htmlData?.action) {
             const action = shape.htmlData.action;
 
+
             if (actionHandlers[action]) {
                 const shouldShowModal = actionHandlers[action](shape.htmlData, flipbookRef);
+
 
                 // If action handler returns true, show modal
                 if (shouldShowModal && modalHandlers[action]) {
@@ -129,21 +132,31 @@ export default function StockSticker({ shape, flipbookRef }) {
     const displayWidth = crop.width && crop.height ? crop.width : shape.width;
     const displayHeight = crop.height && crop.width ? crop.height : shape.height;
 
+    const shapeWidth = shape.width || 0;
+    const shapeHeight = shape.height || 0;
+    const maxRadius = Math.min(shapeWidth / 2, shapeHeight / 2);
+    const getRadius = (r) => Math.min(r || 0, maxRadius);
+
     // Build effect-related styles
     const effectStyles = {};
     // Corner radius
     if (effect.individualCorners) {
-        effectStyles.borderTopLeftRadius = `${effect.topLeftRadius || 0}px`;
-        effectStyles.borderTopRightRadius = `${effect.topRightRadius || 0}px`;
-        effectStyles.borderBottomRightRadius = `${effect.bottomRightRadius || 0}px`;
-        effectStyles.borderBottomLeftRadius = `${effect.bottomLeftRadius || 0}px`;
+        effectStyles.borderTopLeftRadius = `${getRadius(effect.topLeftRadius)}px`;
+        effectStyles.borderTopRightRadius = `${getRadius(effect.topRightRadius)}px`;
+        effectStyles.borderBottomRightRadius = `${getRadius(effect.bottomRightRadius)}px`;
+        effectStyles.borderBottomLeftRadius = `${getRadius(effect.bottomLeftRadius)}px`;
     } else {
-        effectStyles.borderRadius = `${effect.cornerRadius || 0}px`;
-        effectStyles.borderTopLeftRadius = `none`;
-        effectStyles.borderTopRightRadius = `none`;
-        effectStyles.borderBottomRightRadius = `none`;
-        effectStyles.borderBottomLeftRadius = `none`;
+        const r = getRadius(effect.cornerRadius);
+        effectStyles.borderRadius = `${r}px`;
+        effectStyles.borderTopLeftRadius = `${r}px`;
+        effectStyles.borderTopRightRadius = `${r}px`;
+        effectStyles.borderBottomRightRadius = `${r}px`;
+        effectStyles.borderBottomLeftRadius = `${r}px`;
     }
+    // Border styles
+    const borderWidth = effect.isBorderEnabled ? (effect.borderWidth || 0) : 0;
+    const borderColor = effect.isBorderEnabled ? (effect.borderColor || 'black') : 'transparent';
+
     // Shadow (applied to image)
     if (effect.isShadowEnabled) {
         const shadowOpacity = (effect.shadowOpacity || 0) / 100;
@@ -167,8 +180,8 @@ export default function StockSticker({ shape, flipbookRef }) {
         effectStyles.opacity = shape.opacity;
     }
 
-    // Common transform for both container and image
-    const transform = `rotate(${shape.rotation || 0}deg)
+    // Transform for outer container (without flip)
+    const outerTransform = `rotate(${shape.rotation || 0}deg)
         scaleX(${shape.scaleX || 1})
         scaleY(${shape.scaleY || 1})
         skewX(${shape.skewX || 0}deg)
@@ -209,50 +222,62 @@ export default function StockSticker({ shape, flipbookRef }) {
                     left: `${shape.x + ((crop.width && crop.height ? crop.x || 0 : 0) * (shape.scaleX || 1))}px`,
                     top: `${shape.y + ((crop.width && crop.height ? crop.y || 0 : 0) * (shape.scaleY || 1))}px`,
                     transformOrigin: "0 0",
-                    transform,
+                    transform: outerTransform,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                     cursor: cursorStyle,
                 }}
             >
                 <div style={{
-                    width: `calc(100% - ${crop.x * -1 || 0}px - ${(crop.width - shape.width - crop.x * -1) || 0}px)`,
-                    height: `calc(100% - ${crop.y * -1 || 0}px - ${(crop.height - shape.height - crop.y * -1) || 0}px)`,
-                    left: `${crop.x * -1 || 0}px`,
-                    top: `${crop.y * -1 || 0}px`,
-                    position: "absolute",
-                    backgroundColor: effectStyles.backgroundColor || 'white',
-                    overflow: "hidden",
-                    boxShadow: effectStyles.boxShadow || 'none',
-                    borderRadius: effectStyles.borderRadius || '0px',
-                    borderTopLeftRadius: effectStyles.borderTopLeftRadius || '0px',
-                    borderTopRightRadius: effectStyles.borderTopRightRadius || '0px',
-                    borderBottomRightRadius: effectStyles.borderBottomRightRadius || '0px',
-                    borderBottomLeftRadius: effectStyles.borderBottomLeftRadius || '0px',
+                    width: `100%`,
+                    height: `100%`,
+                    position: "relative",
+                    transform: `scaleX(${shape.flipX ? -1 : 1}) scaleY(${shape.flipY ? -1 : 1})`,
+                    transformOrigin: "center center",
                 }}>
-                    <img
-                        className="stock-photo"
-                        src={directUrl}
-                        alt={shape.title}
-                        style={{
-                            position: "absolute",
-                            left: `${crop.x || 0}px`,
-                            top: `${crop.y || 0}px`,
-                            height: `${displayHeight}px`,
-                            width: `${displayWidth}px`,
-                            transformOrigin: "0 0",
-                            display: "block",
-                            clipPath: crop.width && crop.height && crop.x && crop.y
-                                ? `inset(${crop.y * -1}px ${crop.width - shape.width - crop.x * -1}px ${crop.height - shape.height - crop.y * -1}px ${crop.x * -1}px)`
-                                : 'none',
-                            ...effectStyles,
-                            boxShadow: 'none',
-                            borderRadius: '0px',
-                        }}
-                    />
-                    {/* Hover overlay for open-overlay action */}
-                    {isHovered && shape.htmlData?.action === 'open-overlay' && (
-                        <div style={hoverOverlayStyles} />
-                    )}
+                    <div style={{
+                        width: `calc(100% - ${crop.x * -1 || 0}px - ${(crop.width - shape.width - crop.x * -1) || 0}px)`,
+                        height: `calc(100% - ${crop.y * -1 || 0}px - ${(crop.height - shape.height - crop.y * -1) || 0}px)`,
+                        left: `${crop.x * -1 || 0}px`,
+                        top: `${crop.y * -1 || 0}px`,
+                        position: "absolute",
+                        backgroundColor: shape.fill || 'white',
+                        overflow: "hidden",
+                        boxShadow: effectStyles.boxShadow || 'none',
+                        borderRadius: effectStyles.borderRadius || '0px',
+                        borderTopLeftRadius: effectStyles.borderTopLeftRadius || '0px',
+                        borderTopRightRadius: effectStyles.borderTopRightRadius || '0px',
+                        borderBottomRightRadius: effectStyles.borderBottomRightRadius || '0px',
+                        borderBottomLeftRadius: effectStyles.borderBottomLeftRadius || '0px',
+                        borderWidth: `${borderWidth}px`,
+                        borderStyle: 'solid',
+                        borderColor: borderColor,
+                        boxSizing: 'border-box',
+                    }}>
+                        <img
+                            className="stock-photo"
+                            src={directUrl}
+                            alt={shape.title}
+                            style={{
+                                position: "absolute",
+                                left: `${(crop.x || 0) - borderWidth}px`,
+                                top: `${(crop.y || 0) - borderWidth}px`,
+                                height: `${displayHeight}px`,
+                                width: `${displayWidth}px`,
+                                transformOrigin: "0 0",
+                                display: "block",
+                                clipPath: crop.width && crop.height && crop.x && crop.y
+                                    ? `inset(${crop.y * -1}px ${crop.width - shape.width - crop.x * -1}px ${crop.height - shape.height - crop.y * -1}px ${crop.x * -1}px)`
+                                    : 'none',
+                                ...effectStyles,
+                                boxShadow: 'none',
+                                borderRadius: '0px',
+                            }}
+                        />
+                        {/* Hover overlay for open-overlay action */}
+                        {isHovered && shape.htmlData?.action === 'open-overlay' && (
+                            <div style={hoverOverlayStyles} />
+                        )}
+                    </div>
                 </div>
             </div>
             {shape.htmlData?.tooltip && tooltipPos.visible && createPortal(
