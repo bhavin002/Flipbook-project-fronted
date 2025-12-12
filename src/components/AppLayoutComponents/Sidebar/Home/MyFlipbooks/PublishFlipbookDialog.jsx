@@ -620,20 +620,20 @@ export default function PublishFlipbookDialog({
             const payload = buildPayload();
     
             let response;
-            if (isPublished) {
-                response = await UpdateFlipbookPublishDetailsOnlyApi(payload);
+            // if (isPublished) {
+            //     response = await UpdateFlipbookPublishDetailsOnlyApi(payload);
     
-                const thumbnails = mainStage.map(e => e.thumbnails);
-                const thumbnailFormData = new FormData();
-                thumbnailFormData.append('flipbookId', flipbookId);
-                thumbnails.forEach((thumb, idx) => {
-                    thumbnailFormData.append('thumbnails', thumb, `thumbnail_${idx}.jpg`);
-                });
+            //     const thumbnails = mainStage.map(e => e.thumbnails);
+            //     const thumbnailFormData = new FormData();
+            //     thumbnailFormData.append('flipbookId', flipbookId);
+            //     thumbnails.forEach((thumb, idx) => {
+            //         thumbnailFormData.append('thumbnails', thumb, `thumbnail_${idx}.jpg`);
+            //     });
     
-                UpdatePublishThumbnailsApi(thumbnailFormData).catch(err => {
-                    console.error('Failed to update thumbnails:', err);
-                });
-            } else {
+            //     UpdatePublishThumbnailsApi(thumbnailFormData).catch(err => {
+            //         console.error('Failed to update thumbnails:', err);
+            //     });
+            // } else {
                 response = await PublishFlipbookDetailsOnlyApi(payload);
     
                 const thumbnails = mainStage.map(e => e.thumbnails);
@@ -646,7 +646,7 @@ export default function PublishFlipbookDialog({
                 PublishFlipbookThumbnailsApi(thumbnailFormData).catch(err => {
                     console.error('Failed to update thumbnails:', err);
                 });
-            }
+            // }
     
             // Close modal
             setIsPublishModalOpen(false);

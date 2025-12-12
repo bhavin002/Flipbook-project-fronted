@@ -1,6 +1,8 @@
 import { createRoot } from 'react-dom/client';
 
-export function showModal(ModalComponent, htmlData, flipbookId,currentCurrency) {
+export function showModal(ModalComponent, htmlData, flipbookId, currentCurrency) {
+    const fullscreenElement = document.fullscreenElement;
+
     const modalRoot = document.createElement('div');
     modalRoot.id = 'dynamic-modal-root';
     modalRoot.style.position = 'relative';
@@ -11,7 +13,9 @@ export function showModal(ModalComponent, htmlData, flipbookId,currentCurrency) 
 
     const handleClose = () => {
         root.unmount();
-        document.body.removeChild(modalRoot);
+        if (modalRoot.parentNode) {
+            modalRoot.parentNode.removeChild(modalRoot);
+        }
     };
 
     root.render(
@@ -23,6 +27,7 @@ export function showModal(ModalComponent, htmlData, flipbookId,currentCurrency) 
             htmlData={htmlData}
             flipbookId={flipbookId}
             currentCurrency={currentCurrency}
+            container={fullscreenElement}
         />
     );
 }

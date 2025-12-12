@@ -94,7 +94,7 @@ const createContactFormSchema = (customerFields, settings) => {
     return z.object(baseSchema);
 };
 
-const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
+const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [contactFormInfo, setContactFormInfo] = useState(null);
     const [currentView, setCurrentView] = useState('form');
@@ -276,7 +276,7 @@ const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
     if (isLoading) {
         return (
             <Dialog open={open} onOpenChange={handleCloseModal}>
-                <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto">
+                <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto z-[10000]" container={container}>
                     <DialogHeader>
                         <div className="h-6 w-3/4 bg-gray-200 rounded animate-pulse"></div>
                     </DialogHeader>
@@ -390,7 +390,7 @@ const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
 
     return (
         <Dialog open={open} onOpenChange={handleCloseModal}>
-            <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto z-[10000]" container={container}>
                 <DialogHeader>
                     <DialogTitle className="text-lg text-gray-800">
                         {contactFormInfo.formTitle}

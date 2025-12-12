@@ -31,7 +31,7 @@ const createQuestionSchema = (formData) => {
     return z.object(baseSchema);
 };
 
-const QuestionModel = ({ open, onOpenChange, htmlData }) => {
+const QuestionModel = ({ open, onOpenChange, htmlData, container }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(null);
     const [currentView, setCurrentView] = useState('question');
@@ -158,7 +158,7 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
     if (isLoading) {
         return (
             <Dialog open={open} onOpenChange={handleCloseModal}>
-                <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto">
+                <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto z-[10000]" container={container}>
                     <DialogHeader>
                         <div className="h-6 w-3/4 bg-gray-200 rounded animate-pulse"></div>
                     </DialogHeader>
@@ -291,7 +291,7 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
 
     return (
         <Dialog open={open} onOpenChange={handleCloseModal}>
-            <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto z-[10000]" container={container}>
                 {currentView === 'question' && renderQuestionView()}
                 {currentView === 'success' && renderSuccessView()}
             </DialogContent>

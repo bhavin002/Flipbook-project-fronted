@@ -4,7 +4,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 
-const PopupFrameModal = ({ open, onOpenChange, htmlData }) => {
+const PopupFrameModal = ({ open, onOpenChange, htmlData, container }) => {
 
   const { embedCode } = htmlData;
 
@@ -23,7 +23,7 @@ const PopupFrameModal = ({ open, onOpenChange, htmlData }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="h-[60vh] max-w-[80vw] z-[100] overflow-y-scroll">
+      <DialogContent className="h-[60vh] max-w-[80vw] z-[10000] overflow-y-scroll" container={container}>
         <div className="flex justify-center w-full mt-4">
           {embedCode && (
             <div className='embed-code-1 flex justify-center items-center'

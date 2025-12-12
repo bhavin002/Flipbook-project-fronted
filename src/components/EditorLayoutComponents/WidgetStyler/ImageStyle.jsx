@@ -5,14 +5,10 @@ import { Slider } from "@/components/ui/slider";
 import { useRef, useState, useEffect, useMemo } from "react";
 import CornerRadiusControl from "@/utils/CornerRadiusControl";
 
-// Utility function to check if image is PNG
 const isPngImage = (src) => {
   if (!src) return false;
-  // Check file extension
   if (src.toLowerCase().endsWith('.png')) return true;
-  // Check data URL
   if (src.startsWith('data:image/png')) return true;
-  // Check if URL contains .png extension (with or without query parameters)
   if (src.toLowerCase().includes('.png')) return true;
   return false;
 };
@@ -27,7 +23,6 @@ export default function ImageStyle({
     selectedShape[0].attrs?.effect?.individualCorners || false
   );
 
-  // Check if the selected image is PNG
   const isPng = useMemo(() => {
     if (selectedShape.length && selectedShape[0].attrs?.src) {
       return isPngImage(selectedShape[0].attrs.src);
@@ -68,7 +63,6 @@ export default function ImageStyle({
     const isImagePng = isPngImage(imageSrc);
 
     return {
-      // Force shadow to be disabled for PNG images
       isShadowEnabled: isImagePng ? false : (effect.isShadowEnabled || false),
       shadowColor: effect.shadowColor || "#000000",
       shadowOpacity: effect.shadowOpacity || 60,
@@ -88,7 +82,6 @@ export default function ImageStyle({
   const [isShadowColorPickerOpen, setIsShadowColorPickerOpen] = useState(false);
   const [isBorderColorPickerOpen, setIsBorderColorPickerOpen] = useState(false);
 
-  // Load style settings from selected shape
   useEffect(() => {
     if (selectedShape.length && selectedShape[0]) {
       const effect = selectedShape[0].attrs.effect || {};
@@ -109,12 +102,10 @@ export default function ImageStyle({
         setBottomLeftRadius(uniformRadius);
       }
 
-      // Check if current image is PNG
       const imageSrc = selectedShape[0].attrs?.src;
       const isImagePng = isPngImage(imageSrc);
 
       setStyles({
-        // Force shadow to be disabled for PNG images
         isShadowEnabled: isImagePng ? false : (effect.isShadowEnabled !== undefined ? effect.isShadowEnabled : false),
         shadowColor: effect.shadowColor || "#000000",
         shadowOpacity: effect.shadowOpacity !== undefined ? effect.shadowOpacity : 60,
@@ -130,7 +121,6 @@ export default function ImageStyle({
     }
   }, [selectedShape]);
 
-  // Update mainStage with style settings
   useEffect(() => {
     if (!selectedShape.length || !mainStage[selectedIndex]?.shapes) return;
 
@@ -141,13 +131,11 @@ export default function ImageStyle({
           (selShape) => selShape.attrs.id === element.id
         );
         if (matchingShape) {
-          // Check if this element's image is PNG
           const isElementPng = isPngImage(element.src);
 
           return {
             ...element,
             effect: {
-              ...element.effect, // Preserve existing filter effects
               cornerRadius: cornerRadius,
               individualCorners: useIndividualCorners,
               topLeftRadius: useIndividualCorners ? topLeftRadius : cornerRadius,
@@ -155,7 +143,6 @@ export default function ImageStyle({
               bottomRightRadius: useIndividualCorners ? bottomRightRadius : cornerRadius,
               bottomLeftRadius: useIndividualCorners ? bottomLeftRadius : cornerRadius,
               ...styles,
-              // Force shadow to be disabled for PNG images
               isShadowEnabled: isElementPng ? false : styles.isShadowEnabled,
             },
           };
@@ -171,9 +158,7 @@ export default function ImageStyle({
   ]);
 
   const handleStyleChange = (key, value) => {
-    // Prevent enabling shadow for PNG images
     if (key === 'isShadowEnabled' && isPng && value === true) {
-      return; // Don't allow enabling shadow for PNG
     }
 
     setStyles((prev) => ({
@@ -304,7 +289,6 @@ export default function ImageStyle({
           </div>
         </div>
 
-        {/* Border Section */}
         <div className="flex items-center gap-1">
           <Checkbox
             id="border"
@@ -316,80 +300,65 @@ export default function ImageStyle({
             Border
           </Label>
         </div>
-
-        {
-          styles.isBorderEnabled && (
-            <div className="space-y-3 pl-5">
-              {/* Border Weight */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <Label className="text-xs">Stroke Weight</Label>
-                  <Input
-                    type="number"
-                    value={styles.borderWidth}
-                    onChange={(e) => {
-                      const val = parseInt(e.target.value) || 0;
-                      handleStyleChange("borderWidth", Math.max(0, Math.min(50, val)));
-                    }}
-                    min={0}
-                    max={50}
-                    className="w-16 h-7 text-xs"
-                  />
-                </div>
-                <Slider
-                  value={[styles.borderWidth]}
-                  onValueChange={(value) => handleStyleChange("borderWidth", value[0])}
-                  min={0}
-                  max={50}
-                  step={1}
-                  className="w-full"
-                />
-              </div>
-
-              {/* Border Color */}
-              <div>
-                <Label className="text-xs mb-2 block">Stroke Color</Label>
-                <div className="relative">
-                  <Input
-                    type="text"
-                    value={styles.borderColor}
-                    onChange={(e) => handleStyleChange("borderColor", e.target.value)}
-                    placeholder="#000000"
-                    className="pr-12"
-                  />
-                  <div
-                    className="absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded cursor-pointer border border-gray-300"
-                    style={{ backgroundColor: styles.borderColor }}
-                    onClick={handleBorderColorClick}
-                  />
-                  {isBorderColorPickerOpen && (
-                    <input
-                      ref={borderColorInputRef}
-                      type="color"
-                      value={styles.borderColor}
-                      onChange={(e) => handleStyleChange("borderColor", e.target.value)}
-                      onBlur={() => setIsBorderColorPickerOpen(false)}
-                      className="opacity-0 absolute w-1 h-1 right-3 top-1/2 -translate-y-1/2"
-                    />
-                  )}
-                </div>
-              </div>
-
-              {/* Rounded Corners Toggle */}
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  id="borderRounded"
-                  className="bg-white data-[state=checked]:bg-white data-[state=checked]:text-primary w-4 h-4"
-                  checked={styles.borderRoundedCorners}
-                  onCheckedChange={(checked) => handleStyleChange("borderRoundedCorners", checked)}
-                />
-                <Label htmlFor="borderRounded" className="text-xs">
-                  Rounded ends
-                </Label>
-              </div>
+        <div className="space-y-2">
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <Label className="text-xs">Stroke Weight</Label>
+              <Input
+                type="number"
+                value={styles.borderWidth}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value) || 0;
+                  handleStyleChange("borderWidth", Math.max(0, Math.min(50, val)));
+                }}
+                min={0}
+                max={50}
+                className="w-16 h-7 text-xs"
+                disabled={!styles.isBorderEnabled}
+              />
             </div>
-          )
-        }
+            <Slider
+              value={[styles.borderWidth]}
+              onValueChange={(value) => handleStyleChange("borderWidth", value[0])}
+              min={0}
+              max={50}
+              step={1}
+              className="w-full"
+              disabled={!styles.isBorderEnabled}
+            />
+          </div>
+
+          <div>
+            <Label className="text-xs mb-2 block">Stroke Color</Label>
+            <div className="relative">
+              <Input
+                type="text"
+                value={styles.borderColor}
+                onChange={(e) => handleStyleChange("borderColor", e.target.value)}
+                placeholder="#000000"
+                className="pr-12"
+                disabled={!styles.isBorderEnabled}
+              />
+              <div
+                className={`absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded border border-gray-300 ${
+                  styles.isBorderEnabled ? "cursor-pointer" : "cursor-not-allowed"
+                }`}
+                style={{ backgroundColor: styles.borderColor }}
+                onClick={handleBorderColorClick}
+              />
+              {isBorderColorPickerOpen && styles.isBorderEnabled && (
+                <input
+                  ref={borderColorInputRef}
+                  type="color"
+                  value={styles.borderColor}
+                  onChange={(e) => handleStyleChange("borderColor", e.target.value)}
+                  onBlur={() => setIsBorderColorPickerOpen(false)}
+                  className="opacity-0 absolute w-1 h-1 right-3 top-1/2 -translate-y-1/2"
+                />
+              )}
+            </div>
+          </div>
+        </div>
       </div >
     </div >
   );

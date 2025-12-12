@@ -181,23 +181,26 @@ const MaskedImage = ({
         scaleX={shape.flipX ? -1 : 1}
         scaleY={shape.flipY ? -1 : 1}
       >
-        <Rect
-          draggable={false}
-          x={0}
-          y={0}
-          width={shapeWidth}
-          height={shapeHeight}
-          fill={shape.fill || 'transparent'}
-        />
-        <Image
-          draggable={false}
-          ref={imageRef}
-          image={image}
-          x={0}
-          y={0}
-          width={shapeWidth}
-          height={shapeHeight}
-        />
+        <Group>
+          <Rect
+            draggable={false}
+            x={0}
+            y={0}
+            width={shapeWidth}
+            height={shapeHeight}
+            fill={shape.fill || 'transparent'}
+          />
+          <Image
+            draggable={false}
+            ref={imageRef}
+            image={image}
+            x={0}
+            y={0}
+            width={shapeWidth}
+            height={shapeHeight}
+          />
+        </Group>
+
       </Group>
 
     </Group>

@@ -82,17 +82,19 @@ const linkAreaModalHandlers = {
 };
 
 function showModal(ModalComponent, htmlData) {
+    const fullscreenElement = document.fullscreenElement;
+
     const modalRoot = document.createElement('div');
     modalRoot.id = 'dynamic-modal-root';
-    modalRoot.style.position = 'relative';
-    modalRoot.style.zIndex = '100';
     document.body.appendChild(modalRoot);
 
     const root = createRoot(modalRoot);
 
     const handleClose = () => {
         root.unmount();
-        document.body.removeChild(modalRoot);
+        if (modalRoot.parentNode) {
+            modalRoot.parentNode.removeChild(modalRoot);
+        }
     };
 
     root.render(
@@ -102,6 +104,7 @@ function showModal(ModalComponent, htmlData) {
                 if (!open) handleClose();
             }}
             htmlData={htmlData}
+            container={fullscreenElement}
         />
     );
 }

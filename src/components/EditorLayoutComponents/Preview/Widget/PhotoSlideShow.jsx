@@ -26,7 +26,7 @@ const getImageFitClass = (properties) => {
     }
 };
 
-const PhotoSlideShow = ({ open, onOpenChange, htmlData }) => {
+const PhotoSlideShow = ({ open, onOpenChange, htmlData, container }) => {
     const [currentIndex, setCurrentIndex] = useState(1);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const intervalRef = useRef(null);
@@ -121,7 +121,7 @@ const PhotoSlideShow = ({ open, onOpenChange, htmlData }) => {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className={`max-h-[80vh] max-w-[80vw] z-[100] overflow-hidden rounded-lg ${backgroundClass}`}>
+            <DialogContent className={`max-h-[80vh] max-w-[80vw] z-[10000] overflow-hidden rounded-lg ${backgroundClass}`} container={container}>
                 {images.length > 0 && (
                     <div className="relative w-full h-full flex items-center justify-center p-2">
                         <div

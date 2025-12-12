@@ -4,8 +4,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 
-const VideoButtonModal = ({ open, onOpenChange, htmlData }) => {
-    const flipbookContainer = document.getElementById('flipbook-modal-container');
+const VideoButtonModal = ({ open, onOpenChange, htmlData, container }) => {
     const getDimensions = () => {
         const size = htmlData?.size || "853-480";
         const [width, height] = size.split('-').map(Number);
@@ -31,9 +30,9 @@ const VideoButtonModal = ({ open, onOpenChange, htmlData }) => {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange} >
-            <DialogContent 
-                className="max-w-[90vw] z-[100]" 
-                container={flipbookContainer}
+            <DialogContent
+                className="max-w-[90vw] z-[10000]"
+                container={container}
             >
                 <div className="flex justify-center w-full overflow-hidden">
                     {embedUrl ? (

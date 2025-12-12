@@ -195,21 +195,24 @@ export default function MaskedKonvaGif({
                 offsetX={shape.flipX ? shapeWidth : 0}
                 offsetY={shape.flipY ? shapeHeight : 0}
             >
-                <Rect
-                    x={0}
-                    y={0}
-                    width={shapeWidth}
-                    height={shapeHeight}
-                    fill={shape.fill || 'white'}
-                />
-                <Image
-                    ref={imageRef}
-                    image={canvas}
-                    x={0}
-                    y={0}
-                    width={shapeWidth}
-                    height={shapeHeight}
-                />
+                <Group>
+                    <Rect
+                        x={0}
+                        y={0}
+                        width={shapeWidth}
+                        height={shapeHeight}
+                        fill={shape.fill || 'white'}
+                    />
+                    <Image
+                        ref={imageRef}
+                        image={canvas}
+                        x={0}
+                        y={0}
+                        width={shapeWidth}
+                        height={shapeHeight}
+                    />
+                </Group>
+
             </Group>
         </Group>
     );

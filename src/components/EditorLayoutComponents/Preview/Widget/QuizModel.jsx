@@ -35,7 +35,7 @@ const createQuizSchema = (collectEmail, questions) => {
     return z.object(baseSchema);
 };
 
-const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
+const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [quizInfo, setQuizInfo] = useState(null);
     const [currentView, setCurrentView] = useState('quiz');
@@ -210,7 +210,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
     if (isLoading || submitLoading || resultLoading) {
         return (
             <Dialog open={open} onOpenChange={handleCloseModal}>
-                <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto">
+                <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto z-[10000]" container={container}>
                     <DialogHeader>
                         <div className="h-8 w-3/4 bg-gray-200 rounded animate-pulse"></div>
                     </DialogHeader>
@@ -468,7 +468,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
 
     return (
         <Dialog open={open} onOpenChange={handleCloseModal}>
-            <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto z-[10000]" container={container}>
                 <DialogHeader>
                     <DialogTitle className="text-xl text-gray-800">
                         {quizInfo.settings.quizName}

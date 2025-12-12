@@ -6,7 +6,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const ProductTagModal = ({ open, onOpenChange, htmlData }) => {
+const ProductTagModal = ({ open, onOpenChange, htmlData, container }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const defaultTitle = "My product title";
@@ -54,7 +54,7 @@ const ProductTagModal = ({ open, onOpenChange, htmlData }) => {
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-6xl overflow-y-auto">
+            <DialogContent className="max-h-[80vh] max-w-[90vw] lg:max-w-6xl overflow-y-auto z-[10000]" container={container}>
                 <div className={`grid ${hasImages ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'} gap-6 overflow-y-auto max-h-[calc(80vh-48px)]`}>
                     {hasImages && (
                         <div className="space-y-4">

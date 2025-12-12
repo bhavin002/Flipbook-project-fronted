@@ -22,7 +22,7 @@ import { getProductApi, getPublishedProductApi } from '@/service/product.service
 import cartService from '@/service/IndexedDBCart.service';
 import { IsPublished } from '@/utils/Helper';
 
-const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurrency }) => {
+const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurrency, container }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [productInfo, setProductInfo] = useState(null);
     const [selectedVariant, setSelectedVariant] = useState({});
@@ -280,7 +280,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurren
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-6xl overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-6xl overflow-y-auto z-[10000]" container={container}>
                 {isLoading ? (
                     <LoadingSkeleton />
                 ) : productInfo ? (

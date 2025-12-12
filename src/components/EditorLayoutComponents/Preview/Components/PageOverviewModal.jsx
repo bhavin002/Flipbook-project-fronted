@@ -1,7 +1,77 @@
-import React, { useRef } from 'react';
+import React, { useRef, useMemo, useCallback } from 'react';
 import bookLogo from '/assets/book_thumbnail.jpg';
 import { PageNavigationActions } from '@/components/EditorLayoutComponents/Preview/Helper/PageNavigationActions.js';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Memoized thumbnail card components to prevent unnecessary re-renders
+const SingleThumbnailCard = React.memo(({ pageNumber, isCurrent, onClick, getImageSrc, aspectRatioString }) => (
+    <div
+        className="relative group flex-shrink-0 flex flex-col items-center"
+        onClick={() => onClick(pageNumber)}
+        style={{ cursor: 'pointer' }}
+    >
+        <div
+            className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg h-[100px] flex items-center justify-center transition-all duration-300 ${isCurrent
+                ? 'border-2 border-primary ring-2 ring-primary/50'
+                : 'border-2 border-transparent hover:border-primary/50'
+                } rounded-md`}
+            style={{ aspectRatio: aspectRatioString }}
+        >
+            <img
+                src={getImageSrc(pageNumber)}
+                alt={`Page ${pageNumber}`}
+                className="w-full h-full object-contain"
+                loading="lazy"
+            />
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/40">
+                <span className="text-white font-bold text-sm">{pageNumber}</span>
+            </div>
+        </div>
+    </div>
+));
+SingleThumbnailCard.displayName = 'SingleThumbnailCard';
+
+const PairedThumbnailCard = React.memo(({ leftPageNumber, rightPageNumber, isCurrentLeft, isCurrentRight, onClick, getImageSrc, aspectRatioString, isRTL }) => (
+    <div className="relative group flex-shrink-0 flex flex-col items-center" onClick={() => onClick(leftPageNumber)} style={{ cursor: 'pointer' }}>
+        <div
+            dir={isRTL ? "rtl" : "ltr"}
+            className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg h-[100px] flex transition-all duration-300 ${isCurrentLeft || isCurrentRight
+                ? 'border-2 border-primary ring-2 ring-primary/50'
+                : 'border-2 border-transparent hover:border-primary/50'
+                } rounded-md`}
+        >
+            <div
+                className={`relative flex-1 flex items-center justify-center h-full ${isRTL ? "border-l" : "border-r"} border-gray-300/20`}
+                style={{ aspectRatio: aspectRatioString }}
+            >
+                <img
+                    src={getImageSrc(leftPageNumber)}
+                    alt={`Page ${leftPageNumber}`}
+                    className="w-full h-full object-contain"
+                    loading="lazy"
+                />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/40">
+                    <span className="text-white font-bold text-sm">{leftPageNumber}</span>
+                </div>
+            </div>
+            <div
+                className="relative flex-1 flex items-center justify-center h-full"
+                style={{ aspectRatio: aspectRatioString }}
+            >
+                <img
+                    src={getImageSrc(rightPageNumber)}
+                    alt={`Page ${rightPageNumber}`}
+                    className="w-full h-full object-contain"
+                    loading="lazy"
+                />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/40">
+                    <span className="text-white font-bold text-sm">{rightPageNumber}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+));
+PairedThumbnailCard.displayName = 'PairedThumbnailCard';
 
 const PageOverviewModal = ({
     isOpen,
@@ -17,23 +87,20 @@ const PageOverviewModal = ({
     visibilitySettings
 }) => {
     const scrollContainerRef = useRef(null);
-    const aspectRatioString = width && height ? `1 / ${height / width}` : '1 / 1';
-    const isRTL = visibilitySettings?.rightToLeftOrientation;
+    const aspectRatioString = useMemo(() => width && height ? `1 / ${height / width}` : '1 / 1', [width, height]);
+    const isRTL = useMemo(() => visibilitySettings?.rightToLeftOrientation, [visibilitySettings]);
 
-    const getImageSrc = (pageNumber) => {
+    const getImageSrc = useCallback((pageNumber) => {
         if (isPublicView) {
             return thumbnails[pageNumber - 1] || bookLogo;
         } else {
             return bookLogo;
         }
-    };
+    }, [isPublicView, thumbnails]);
 
     const scroll = (direction) => {
         if (scrollContainerRef.current) {
             const scrollAmount = 300;
-            // In RTL, scrolling "left" (visually right) usually means decreasing scrollLeft (negative) or increasing if 0 is right.
-            // But scrollBy({ left: -300 }) moves view to the left, which is what we want for "Left Arrow".
-            // So we keep the logic same: 'left' moves view left, 'right' moves view right.
             scrollContainerRef.current.scrollBy({
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
                 behavior: 'smooth'
@@ -41,81 +108,14 @@ const PageOverviewModal = ({
         }
     };
 
-    const SingleThumbnailCard = ({ pageNumber, justify = 'center', isCurrent, onClick }) => (
-        <div
-            className="relative group flex-shrink-0 flex flex-col items-center"
-            onClick={() => onClick(pageNumber)}
-            style={{ cursor: 'pointer' }}
-        >
-            <div
-                className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg h-[100px] flex items-center justify-center transition-all duration-300 ${isCurrent
-                    ? 'border-2 border-primary ring-2 ring-primary/50'
-                    : 'border-2 border-transparent hover:border-primary/50'
-                    } rounded-md`}
-                style={{ aspectRatio: aspectRatioString }}
-            >
-                <img
-                    src={getImageSrc(pageNumber)}
-                    alt={`Page ${pageNumber}`}
-                    className="w-full h-full object-contain"
-                    loading="lazy"
-                />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/40">
-                    <span className="text-white font-bold text-sm">{pageNumber}</span>
-                </div>
-            </div>
-        </div>
-    );
-
-    const PairedThumbnailCard = ({ leftPageNumber, rightPageNumber, isCurrentLeft, isCurrentRight, onClick }) => (
-        <div className="relative group flex-shrink-0 flex flex-col items-center" onClick={() => onClick(leftPageNumber)} style={{ cursor: 'pointer' }}>
-            <div
-                dir={isRTL ? "rtl" : "ltr"}
-                className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg h-[100px] flex transition-all duration-300 ${isCurrentLeft || isCurrentRight
-                    ? 'border-2 border-primary ring-2 ring-primary/50'
-                    : 'border-2 border-transparent hover:border-primary/50'
-                    } rounded-md`}
-            >
-                <div
-                    className={`relative flex-1 flex items-center justify-center h-full ${isRTL ? "border-l" : "border-r"} border-gray-300/20`}
-                    style={{ aspectRatio: aspectRatioString }}
-                >
-                    <img
-                        src={getImageSrc(leftPageNumber)}
-                        alt={`Page ${leftPageNumber}`}
-                        className="w-full h-full object-contain"
-                        loading="lazy"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/40">
-                        <span className="text-white font-bold text-sm">{leftPageNumber}</span>
-                    </div>
-                </div>
-                <div
-                    className="relative flex-1 flex items-center justify-center h-full"
-                    style={{ aspectRatio: aspectRatioString }}
-                >
-                    <img
-                        src={getImageSrc(rightPageNumber)}
-                        alt={`Page ${rightPageNumber}`}
-                        className="w-full h-full object-contain"
-                        loading="lazy"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/40">
-                        <span className="text-white font-bold text-sm">{rightPageNumber}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-
-    const handleThumbnailClick = (pageNumber) => {
+    const handleThumbnailClick = useCallback((pageNumber) => {
         transformRef?.current?.resetTransform(200);
         setTimeout(() => {
             PageNavigationActions.goToPage(flipbookRef, pageNumber);
         }, 250);
-    };
+    }, [transformRef, flipbookRef]);
 
-    const renderThumbnails = () => {
+    const thumbnailsLayout = useMemo(() => {
         const layout = [];
         if (pageType === 'single') {
             for (let i = 0; i < totalPages; i++) {
@@ -127,6 +127,8 @@ const PageOverviewModal = ({
                         pageNumber={pageNumber}
                         isCurrent={isCurrent}
                         onClick={handleThumbnailClick}
+                        getImageSrc={getImageSrc}
+                        aspectRatioString={aspectRatioString}
                     />
                 );
             }
@@ -137,6 +139,8 @@ const PageOverviewModal = ({
                     pageNumber={1}
                     isCurrent={currentPages.includes(1)}
                     onClick={handleThumbnailClick}
+                    getImageSrc={getImageSrc}
+                    aspectRatioString={aspectRatioString}
                 />
             );
             let i = 1;
@@ -156,6 +160,9 @@ const PageOverviewModal = ({
                         isCurrentLeft={isCurrentLeft}
                         isCurrentRight={isCurrentRight}
                         onClick={handleThumbnailClick}
+                        getImageSrc={getImageSrc}
+                        aspectRatioString={aspectRatioString}
+                        isRTL={isRTL}
                     />
                 );
             }
@@ -167,6 +174,8 @@ const PageOverviewModal = ({
                         pageNumber={pageNumber}
                         isCurrent={currentPages.includes(pageNumber)}
                         onClick={handleThumbnailClick}
+                        getImageSrc={getImageSrc}
+                        aspectRatioString={aspectRatioString}
                     />
                 );
             } else if (i < totalPages) {
@@ -182,12 +191,15 @@ const PageOverviewModal = ({
                         isCurrentLeft={isCurrentLeft}
                         isCurrentRight={isCurrentRight}
                         onClick={handleThumbnailClick}
+                        getImageSrc={getImageSrc}
+                        aspectRatioString={aspectRatioString}
+                        isRTL={isRTL}
                     />
                 );
             }
         }
         return layout;
-    };
+    }, [totalPages, pageType, currentPages, aspectRatioString, isRTL, handleThumbnailClick, getImageSrc]);
 
     return (
         <AnimatePresence>
@@ -230,7 +242,7 @@ const PageOverviewModal = ({
                             className="flex items-center gap-4 overflow-x-auto scrollbar-hide py-2 px-2"
                             style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                         >
-                            {renderThumbnails()}
+                            {thumbnailsLayout}
                         </div>
 
                         <button
@@ -262,4 +274,4 @@ const PageOverviewModal = ({
     );
 };
 
-export default PageOverviewModal;
+export default React.memo(PageOverviewModal);
