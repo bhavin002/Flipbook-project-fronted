@@ -158,7 +158,7 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
     if (isLoading) {
         return (
             <Dialog open={open} onOpenChange={handleCloseModal}>
-                <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto">
                     <DialogHeader>
                         <div className="h-6 w-3/4 bg-gray-200 rounded animate-pulse"></div>
                     </DialogHeader>
@@ -291,7 +291,7 @@ const QuestionModel = ({ open, onOpenChange, htmlData }) => {
 
     return (
         <Dialog open={open} onOpenChange={handleCloseModal}>
-            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto">
                 {currentView === 'question' && renderQuestionView()}
                 {currentView === 'success' && renderSuccessView()}
             </DialogContent>

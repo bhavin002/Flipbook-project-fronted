@@ -18,7 +18,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import GenericSelection from "@/utils/GenericSelection";
 import { GetWorkspaceGroupsApi } from "@/service/workspace.group.service";
-import { GetFlipbookPublishInfoApi, UpdateFlipbookPublishDetailsOnlyApi, UpdatePublishThumbnailsApi } from "@/service/flipbook.publish.service"; // Import the new API
+import { GetFlipbookPublishInfoApi, PublishFlipbookDetailsOnlyApi, PublishFlipbookThumbnailsApi, UpdateFlipbookPublishDetailsOnlyApi, UpdatePublishThumbnailsApi } from "@/service/flipbook.publish.service"; // Import the new API
 import { PublishFlipbookApi } from "@/service/flipbook.publish.service";
 import { flipbookVisibility } from "@/utils/enum";
 import { toast } from "sonner";
@@ -634,9 +634,18 @@ export default function PublishFlipbookDialog({
                     console.error('Failed to update thumbnails:', err);
                 });
             } else {
+                response = await PublishFlipbookDetailsOnlyApi(payload);
+    
                 const thumbnails = mainStage.map(e => e.thumbnails);
-                const formData = buildFormData(payload, thumbnails);
-                response = await PublishFlipbookApi(formData);
+                const thumbnailFormData = new FormData();
+                thumbnailFormData.append('flipbookId', flipbookId);
+                thumbnails.forEach((thumb, idx) => {
+                    thumbnailFormData.append('thumbnails', thumb, `thumbnail_${idx}.jpg`);
+                });
+    
+                PublishFlipbookThumbnailsApi(thumbnailFormData).catch(err => {
+                    console.error('Failed to update thumbnails:', err);
+                });
             }
     
             // Close modal

@@ -20,6 +20,7 @@ export default function Quiz({ shape, visibilitySettings, flipbookId, currentPag
     }, [visibilitySettings.showAnimateInteraction, currentPages]);
 
     const handleClick = () => {
+        setTooltipPos(prev => ({ ...prev, visible: false }));
         if (shape.htmlType === 'quiz') {
             showModal(QuizModel, shape.htmlData, flipbookId);
         }
@@ -27,11 +28,13 @@ export default function Quiz({ shape, visibilitySettings, flipbookId, currentPag
 
     const handleMouseMove = (e) => {
         if (!shape.htmlData?.tooltip) return;
-        setTooltipPos({
-            x: e.clientX + 15,
-            y: e.clientY + 5,
-            visible: true
-        });
+        if (e.pointerType === 'mouse') {
+            setTooltipPos({
+                x: e.clientX + 15,
+                y: e.clientY + 5,
+                visible: true
+            });
+        }
     };
 
     const handleMouseLeave = () => {
@@ -42,8 +45,8 @@ export default function Quiz({ shape, visibilitySettings, flipbookId, currentPag
         <>
             <div
                 onClick={handleClick}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
+                onPointerMove={handleMouseMove}
+                onPointerLeave={handleMouseLeave}
                 className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
                 style={{
                     width: `${shape.width}px`,

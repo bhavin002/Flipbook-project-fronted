@@ -18,6 +18,7 @@ export default function ContactForm({ shape, visibilitySettings, flipbookId, cur
     }, [visibilitySettings.showAnimateInteraction, currentPages]);
 
     const handleClick = () => {
+        setTooltipPos(prev => ({ ...prev, visible: false }));
         if (shape.htmlType === 'contact-form') {
             showModal(ContactFormModel, shape.htmlData, flipbookId);
         }
@@ -25,11 +26,13 @@ export default function ContactForm({ shape, visibilitySettings, flipbookId, cur
 
     const handleMouseMove = (e) => {
         if (!shape.htmlData?.tooltip) return;
-        setTooltipPos({
-            x: e.clientX + 15,
-            y: e.clientY + 5,
-            visible: true
-        });
+        if (e.pointerType === 'mouse') {
+            setTooltipPos({
+                x: e.clientX + 15,
+                y: e.clientY + 5,
+                visible: true
+            });
+        }
     };
 
     const handleMouseLeave = () => {
@@ -40,8 +43,8 @@ export default function ContactForm({ shape, visibilitySettings, flipbookId, cur
         <>
             <div
                 onClick={handleClick}
-                onMouseMove={handleMouseMove}
-                onMouseLeave={handleMouseLeave}
+                onPointerMove={handleMouseMove}
+                onPointerLeave={handleMouseLeave}
                 className={visibilitySettings.showAnimateInteraction ? animationClass : ""}
                 style={{
                     width: `${shape.width}px`,

@@ -210,7 +210,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
     if (isLoading || submitLoading || resultLoading) {
         return (
             <Dialog open={open} onOpenChange={handleCloseModal}>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto">
                     <DialogHeader>
                         <div className="h-8 w-3/4 bg-gray-200 rounded animate-pulse"></div>
                     </DialogHeader>
@@ -468,7 +468,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId }) => {
 
     return (
         <Dialog open={open} onOpenChange={handleCloseModal}>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-h-[90vh] max-w-[90vw] lg:max-w-2xl overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="text-xl text-gray-800">
                         {quizInfo.settings.quizName}

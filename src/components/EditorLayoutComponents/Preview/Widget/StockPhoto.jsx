@@ -62,6 +62,7 @@ export default function StockPhoto({ shape, flipbookRef }) {
 
     // Handle click actions
     const handleClick = () => {
+        setTooltipPos(prev => ({ ...prev, visible: false }));
         if (shape.htmlData?.action) {
             const action = shape.htmlData.action;
 
@@ -94,11 +95,13 @@ export default function StockPhoto({ shape, flipbookRef }) {
 
     const handleMouseMove = (e) => {
         if (!shape.htmlData?.tooltip) return;
-        setTooltipPos({
-            x: e.clientX + 15,
-            y: e.clientY + 5,
-            visible: true
-        });
+        if (e.pointerType === 'mouse') {
+            setTooltipPos({
+                x: e.clientX + 15,
+                y: e.clientY + 5,
+                visible: true
+            });
+        }
     };
 
     let crop = {};
@@ -214,7 +217,7 @@ export default function StockPhoto({ shape, flipbookRef }) {
                 onClick={handleClick}
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave}
-                onMouseMove={handleMouseMove}
+                onPointerMove={handleMouseMove}
                 style={{
                     height: `${displayHeight}px`,
                     width: `${displayWidth}px`,

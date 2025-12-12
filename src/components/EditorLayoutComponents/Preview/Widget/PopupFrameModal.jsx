@@ -26,7 +26,11 @@ const PopupFrameModal = ({ open, onOpenChange, htmlData }) => {
       <DialogContent className="h-[60vh] max-w-[80vw] z-[100] overflow-y-scroll">
         <div className="flex justify-center w-full mt-4">
           {embedCode && (
-            <div className='w-full h-full flex justify-center items-center'
+            <div className='embed-code-1 flex justify-center items-center'
+              style={{
+                width: '100%',
+                height: '100%',
+              }}
               dangerouslySetInnerHTML={{ __html: embedCode }}
             />
           )}
