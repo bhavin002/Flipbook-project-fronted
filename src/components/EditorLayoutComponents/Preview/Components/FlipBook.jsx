@@ -266,10 +266,6 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
         );
     }
 
-    const handleBookLoad = () => {
-
-    };
-
     const handleFlipbookClick = async () => {
         if (isPublicView && !viewCountUpdated) {
             try {
@@ -438,7 +434,6 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                                             height={height}
                                             pageType={pageType}
                                             myRef={myRef}
-                                            onLoad={handleBookLoad}
                                             visibilitySettings={visibilitySettings}
                                             setCurrentPages={setCurrentPages}
                                             isAutoFlipping={isAutoFlipping}
@@ -488,13 +483,12 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                                                                     ))}
                                                                 </PageWrapper>
                                                             )}
-
-                                                            {(!isLoaded && isVisible) && (
+                                                        </div>
+                                                        {(!isLoaded && isVisible) && (
                                                                 <div className="absolute inset-0 flex items-center justify-center bg-white z-50">
                                                                     <Loader />
                                                                 </div>
                                                             )}
-                                                        </div>
                                                     </div>
                                                 );
                                             })}
@@ -512,7 +506,6 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                                             divWidth={divWidth}
                                             divHeight={divHeight}
                                             visibilitySettings={visibilitySettings}
-                                            onLoad={handleBookLoad}
                                             flipbookId={flipbookId}
                                         />
                                     )}
