@@ -653,7 +653,9 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                 const layers = stage.getLayers();
                 if (layers.length > 0) {
                     let a = async () => {
-                        setIsInitialLoad(true); mainStage[pageCounter].thumbnails = await generateThumbnails(stage, pageCounter == 0); setMainStage(prevState => {
+                        setIsInitialLoad(true);
+                        mainStage[pageCounter].thumbnails = await generateThumbnails(stage, pageCounter == 0);
+                        setMainStage(prevState => {
                             const updatedState = [...prevState];
                             updatedState[index] = { ...updatedState[index], thumbnails: mainStage[pageCounter].thumbnails }; return updatedState;
                         });
@@ -661,7 +663,9 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                         setSelectedIndex(nextPage);
                         setPageCounter(nextPage);
                     }
-                    a();
+                    setTimeout(() => {
+                        a();
+                    }, 100);
                 }
             }
         }
@@ -1160,7 +1164,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                 }}
             />
             <div onClick={() => setSelectedIndex(index)} >
-                {(width && height )? <Stage
+                {(width && height) ? <Stage
                     // scaleX={zoomper / 50}
                     // scaleY={zoomper / 50}
                     width={width}
@@ -1338,14 +1342,14 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
 
                                 enabledAnchors={
                                     // stage.selectedShapes[0]?.attrs.htmlType === 'upload-photo'
-                                    ['upload-photo', 'stock-photo', 'stock-gif','go-to-button-link'].includes(stage.selectedShapes[0]?.attrs.htmlType)
+                                    ['upload-photo', 'stock-photo', 'stock-gif', 'go-to-button-link'].includes(stage.selectedShapes[0]?.attrs.htmlType)
                                         ? ['top-left', 'top-right', 'bottom-left', 'bottom-right'] // stock-photo & upload-photo
                                         : stage.selectedShapes[0]?.attrs.type === 'text'
                                             ? ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'middle-left', 'middle-right']
                                             : undefined
                                 }
 
-                                keepRatio={['upload-photo', 'stock-photo', 'stock-gif' , 'go-to-button-link'].includes(stage.selectedShapes[0]?.attrs.htmlType) ? true : false}
+                                keepRatio={['upload-photo', 'stock-photo', 'stock-gif', 'go-to-button-link'].includes(stage.selectedShapes[0]?.attrs.htmlType) ? true : false}
 
                                 rotationSnapTolerance={stage.selectedShapes[0]?.attrs.htmlType === 'tag' ? false : undefined}
                                 flipEnabled={false}
@@ -1360,7 +1364,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
 
                         )}
                     </Layer>
-                </Stage>: ''}
+                </Stage> : ''}
             </div>
         </div >
 
