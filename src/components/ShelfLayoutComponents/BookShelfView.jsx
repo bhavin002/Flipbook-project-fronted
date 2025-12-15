@@ -20,6 +20,11 @@ export default function BookShelfView({ id, isPublicView = false }) {
     const containerRef = useRef(null);
     const [viewCountUpdated, setViewCountUpdated] = useState(false);
 
+    const isThrottled = useRef(false);
+    const touchStartX = useRef(null);
+    const touchEndX = useRef(null);
+    const minSwipeDistance = 50;
+
     useEffect(() => {
         const updateItemsPerView = () => {
             if (containerRef.current) {
@@ -153,6 +158,46 @@ export default function BookShelfView({ id, isPublicView = false }) {
         }
     };
 
+    const handleWheel = (e) => {
+        if (isThrottled.current) return;
+        const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+        if (Math.abs(delta) < 20) return;
+        if (delta > 0 && canGoNext) {
+            goToNext();
+            isThrottled.current = true;
+            setTimeout(() => { isThrottled.current = false; }, 800);
+        } else if (delta < 0 && canGoPrevious) {
+            goToPrevious();
+            isThrottled.current = true;
+            setTimeout(() => { isThrottled.current = false; }, 800);
+        }
+    };
+
+    const handleTouchStart = (e) => {
+        touchEndX.current = null;
+        touchStartX.current = e.targetTouches[0].clientX;
+    };
+
+    const handleTouchMove = (e) => {
+        touchEndX.current = e.targetTouches[0].clientX;
+    };
+
+    const handleTouchEnd = () => {
+        if (!touchStartX.current || !touchEndX.current) return;
+
+        const distance = touchStartX.current - touchEndX.current;
+        const isLeftSwipe = distance > minSwipeDistance;
+        const isRightSwipe = distance < -minSwipeDistance;
+
+        if (isLeftSwipe && canGoNext) {
+            goToNext();
+        }
+
+        if (isRightSwipe && canGoPrevious) {
+            goToPrevious();
+        }
+    };
+
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
     };
@@ -164,6 +209,10 @@ export default function BookShelfView({ id, isPublicView = false }) {
             ref={containerRef}
             style={bookshelfStyles}
             onClick={handleFlipbookClick}
+            onWheel={handleWheel}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
         >
             {bookshelfSettings.selectedLogo && (
                 <div className="absolute top-4 left-4 z-20">
