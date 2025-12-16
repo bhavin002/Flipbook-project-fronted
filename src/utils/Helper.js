@@ -248,6 +248,9 @@ export const isPngImage = async src => {
   // Base64 PNG
   if (src.startsWith('data:image/png')) return true
 
+  // Check if extension is .png
+  if (src.split('?')[0].toLowerCase().endsWith('.png')) return true
+
   try {
     const response = await fetch(src, { method: 'HEAD' })
     const contentType = response.headers.get('content-type')
