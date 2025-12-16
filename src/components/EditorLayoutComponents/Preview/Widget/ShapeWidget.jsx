@@ -57,8 +57,6 @@ const modalHandlers = {
 
 export default function ShapeWidget({ shape, flipbookRef }) {
 
-    console.log("shape ShapeWidget", shape)
-
     const [isHovered, setIsHovered] = useState(false);
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 

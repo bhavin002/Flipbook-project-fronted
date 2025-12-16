@@ -896,11 +896,12 @@ export default function Editor() {
 
     const handleCropEnd = () => {
         let x = [];
-        mainStage[selectedIndex]?.stageref?.current?.children[0]?.children[1]?.children.forEach((selectedShapeData) => {
-            if (
-                allowHtmlTypesForCrop.includes(selectedShapeData.attrs.htmlType) &&
-                selectedShapeData?.children?.length
-            ) {
+        const currentStageShapes = mainStage[selectedIndex]?.stageref?.current?.children[0]?.children[1]?.children || [];
+
+        currentStageShapes.forEach((selectedShapeData) => {
+            const isSelectedShape = selectedShapeData.attrs.id === mainStage[selectedIndex]?.selectedShapes[0]?.attrs?.id;
+
+            if (isSelectedShape && allowHtmlTypesForCrop.includes(selectedShapeData.attrs.htmlType) && selectedShapeData?.children?.length) {
                 const container = selectedShapeData.children[1];
                 let imageNode = container.children[1];
                 // Support for nested structure in StockPhoto (Container -> ClipGroup -> Image)
@@ -911,9 +912,11 @@ export default function Editor() {
                 // End crop mode if it's active
                 if (imageNode.cropEnd) imageNode.cropEnd();
                 if (typeof (imageNode.attrs.cropImage) === 'string') {
+                    // If cropImage is string (invalid state?), just push original attrs
                     x.push(selectedShapeData.attrs);
                     return;
                 }
+
                 // Store the cropped image
                 selectedShapeData.attrs.cropImage = imageNode.attrs.cropImage;
 
@@ -966,9 +969,9 @@ export default function Editor() {
                 EffectEvent(selectedShapeData.attrs, imageNode);
             }
 
-
             x.push(selectedShapeData.attrs);
         });
+
         mainStage[selectedIndex].shapes = x;
 
         mainStage.forEach(e => (e.selectedShapes = []));
