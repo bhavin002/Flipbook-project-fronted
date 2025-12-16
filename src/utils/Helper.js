@@ -248,8 +248,14 @@ export const isPngImage = async src => {
   // Base64 PNG
   if (src.startsWith('data:image/png')) return true
 
-  // Check if extension is .png
-  if (src.split('?')[0].toLowerCase().endsWith('.png')) return true
+  // Check for any extension in the filename
+  const cleanSrc = src.split('?')[0]
+  const filename = cleanSrc.split('/').pop() || ''
+
+  // If it has an extension (contains a dot), trust the extension
+  if (filename.includes('.')) {
+    return filename.toLowerCase().endsWith('.png')
+  }
 
   try {
     const response = await fetch(src, { method: 'HEAD' })
