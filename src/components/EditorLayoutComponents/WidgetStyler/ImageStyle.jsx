@@ -5,13 +5,8 @@ import { Slider } from "@/components/ui/slider";
 import { useRef, useState, useEffect, useMemo } from "react";
 import CornerRadiusControl from "@/utils/CornerRadiusControl";
 
-const isPngImage = (src) => {
-  if (!src) return false;
-  if (src.toLowerCase().endsWith('.png')) return true;
-  if (src.startsWith('data:image/png')) return true;
-  if (src.toLowerCase().includes('.png')) return true;
-  return false;
-};
+import { isPngImage } from "@/utils/Helper";
+
 
 export default function ImageStyle({
   selectedShape,
@@ -340,9 +335,8 @@ export default function ImageStyle({
                 disabled={!styles.isBorderEnabled}
               />
               <div
-                className={`absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded border border-gray-300 ${
-                  styles.isBorderEnabled ? "cursor-pointer" : "cursor-not-allowed"
-                }`}
+                className={`absolute right-1 top-1/2 -translate-y-1/2 w-8 h-8 rounded border border-gray-300 ${styles.isBorderEnabled ? "cursor-pointer" : "cursor-not-allowed"
+                  }`}
                 style={{ backgroundColor: styles.borderColor }}
                 onClick={handleBorderColorClick}
               />

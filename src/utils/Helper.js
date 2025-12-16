@@ -242,11 +242,18 @@ export const detectDeviceType = () => {
     }
 }
 
+export const isPngImage = async src => {
+  if (!src) return false
 
-export const isPngImage = (src) => {
-    if (!src) return false;
-    if (src.toLowerCase().endsWith('.png')) return true;
-    if (src.startsWith('data:image/png')) return true;
-    if (src.toLowerCase().includes('.png')) return true;
-    return false;
-};
+  // Base64 PNG
+  if (src.startsWith('data:image/png')) return true
+
+  try {
+    const response = await fetch(src, { method: 'HEAD' })
+    const contentType = response.headers.get('content-type')
+    return contentType === 'image/png'
+  } catch (err) {
+    console.error('PNG check failed:', err)
+    return false
+  }
+}

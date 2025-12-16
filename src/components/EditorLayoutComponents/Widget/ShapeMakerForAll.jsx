@@ -11,7 +11,6 @@ export default function ShapeMakerForAll({ shape, handleDragStart, handleDrag, o
         }
     };
 
-    console.log(shape);
     
 
     return (

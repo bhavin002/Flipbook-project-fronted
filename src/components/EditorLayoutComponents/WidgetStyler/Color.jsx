@@ -4,27 +4,38 @@ import { Switch } from "@/components/ui/switch";
 import useWindowWidth from "@/hooks/use-window-width";
 import BrandColors from "@/utils/BrandColors";
 import { Plus } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { isPngImage } from "@/utils/Helper";
 
 export default function Color({ setIsShapeDrawerOpen, setSelectedSubMenu, selectedShape, mainStage, selectedIndex, setMainStage }) {
     const [isNewColorAdded, setIsNewColorAdded] = useState(false);
     const [currentColor, setCurrentColor] = useState(selectedShape.length ? selectedShape[0].attrs.fill : mainStage[selectedIndex]?.background || '#FFFFFF');
     const [isTransparent, setIsTransparent] = useState(currentColor === "transparent" ? true : false);
     const colorInputRef = useRef(null);
-    
-    // Check if transparent toggle should be shown
-    const shouldShowTransparent = () => {
-        if (!selectedShape.length) return false; // No shape selected
-        
-        const shape = selectedShape[0].attrs;
-        const isUploadPhoto = shape.htmlType === "upload-photo";
-        const hasPngSrc = shape.src && shape.src.includes('.png');
-        
-        return isUploadPhoto && hasPngSrc;
-    };
 
-    const showTransparentToggle = shouldShowTransparent();
-    
+    const [showTransparentToggle, setShowTransparentToggle] = useState(false);
+
+    useEffect(() => {
+        const checkPng = async () => {
+            if (!selectedShape.length) {
+                setShowTransparentToggle(false);
+                return;
+            }
+
+            const shape = selectedShape[0].attrs;
+            const isUploadPhoto = shape.htmlType === "upload-photo";
+
+            if (isUploadPhoto) {
+                const isPng = await isPngImage(shape.src);
+                setShowTransparentToggle(isPng);
+            } else {
+                setShowTransparentToggle(false);
+            }
+        };
+
+        checkPng();
+    }, [selectedShape]);
+
     const handleAddColor = () => {
         setIsNewColorAdded(true);
         setTimeout(() => colorInputRef.current?.click(), 10);
