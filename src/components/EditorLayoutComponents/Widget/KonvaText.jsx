@@ -25,7 +25,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     textarea.style.width = (textNode.width() - textNode.padding() * 2) + 'px';
     textarea.style.height = textNode.height() + 'px';
     textarea.style.fontSize = textNode.fontSize() + 'px';
-    textarea.style.transform = "scale(" + scale.scaleX + "," + scale.scaleY + ")";
+    textarea.style.transform = `scale(${scale.scaleX}, ${scale.scaleY}) rotate(${shape.rotation || 0}deg) scaleX(${shape.scaleX || 1}) scaleY(${shape.scaleY || 1}) skewX(${shape.skewX || 0}deg) skewY(${shape.skewY || 0}deg) translate(-${shape.offsetX || 0}px, -${shape.offsetY || 0}px)`;
     textarea.style.border = 'none';
     textarea.style.padding = '0px';
     textarea.style.margin = '0px';
@@ -40,7 +40,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
     textarea.style.textAlign = textNode.align();
     textarea.style.fontWeight = textNode.attrs?.fontStyle?.split(" ").includes("bold") ? "bold" : "normal";
     textarea.style.fontStyle = textNode.attrs?.fontStyle?.split(" ").includes("italic") ? "italic" : "normal";
-    textarea.style.letterSpacing = textNode.attrs.letterSpacing  + "px";
+    textarea.style.letterSpacing = textNode.attrs.letterSpacing + "px";
     textarea.style.lineHeight = textNode.attrs.lineHeight;
     textarea.style.textDecoration = textNode.attrs.textDecoration;
     textarea.style.color = textNode.fill();
@@ -100,7 +100,7 @@ export default function KonvaText({ demo, shape, onChange, handleDragStart, hand
   };
 
   if (shape.type !== 'text') return null;
-  
+
 
   return (
     <Text
