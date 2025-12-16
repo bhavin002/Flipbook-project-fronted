@@ -34,7 +34,6 @@ export const GetConfigApi = async (flipbookId) => {
 }
 
 export const GetPublishFlipbookApi = async (flipbookId, token, loader = true) => {
-    console.log("document.referrer in GetPublishFlipbookApi:", document.referrer);
     const url = token ? `/flipbook-publish/get-book/${flipbookId}?token=${token}` : `/flipbook-publish/get-book/${flipbookId}`;
     const response = await ApiClient().get(url, {
         showLoader: loader
