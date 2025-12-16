@@ -1,9 +1,5 @@
 {
-  "redirects": [
-    {
-      "source": "/:path*",
-      "destination": "https://app.flipdrag.com/:path*",
-      "permanent": true
-    }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
   ]
 }
