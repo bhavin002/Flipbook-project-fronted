@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import ProductTagModal from './ProductTagModal';
 import { showModal } from '@/utils/ShowModal';
 
-export default function ProductTag({ shape, visibilitySettings, currentPages }) {
+export default function ProductTag({ shape, visibilitySettings, currentPages, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
 
     useEffect(() => {
-        if (visibilitySettings.showAnimateInteraction) {
+        if (visibilitySettings.showAnimateInteraction && isVisible) {
             setAnimationClass('ping-product-initial');
             const timer = setTimeout(() => {
                 setAnimationClass('ping-product-hover');
             }, 1500);
             return () => clearTimeout(timer);
+        } else {
+            setAnimationClass('');
         }
-    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+    }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
     const handleClick = () => {
         if (shape.htmlType === 'product-tag') {

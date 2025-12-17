@@ -3,19 +3,21 @@ import { createPortal } from 'react-dom';
 import { showModal } from "@/utils/ShowModal";
 import VideoButtonModal from "./VideoButtonModal";
 
-export default function VideoButton({ shape, visibilitySettings, currentPages }) {
+export default function VideoButton({ shape, visibilitySettings, currentPages, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
     useEffect(() => {
-        if (visibilitySettings.showAnimateInteraction) {
+        if (visibilitySettings.showAnimateInteraction && isVisible) {
             setAnimationClass('ping-initial');
             const timer = setTimeout(() => {
                 setAnimationClass('ping-hover');
             }, 1500);
             return () => clearTimeout(timer);
+        } else {
+            setAnimationClass('');
         }
-    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+    }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
     const handleClick = () => {
         setTooltipPos(prev => ({ ...prev, visible: false }));
