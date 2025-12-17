@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import LinkModal from "./LinkModal";
 import { showModal } from "@/utils/ShowModal";
 
-export default function Tag({ shape, visibilitySettings, currentPages }) {
+export default function Tag({ shape, visibilitySettings, currentPages, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
 
     useEffect(() => {
-        if (visibilitySettings.showAnimateInteraction) {
+        if (visibilitySettings.showAnimateInteraction && isVisible) {
             setAnimationClass('ping-circle-initial');
             const timer = setTimeout(() => {
                 setAnimationClass('ping-circle-hover');
             }, 1500);
             return () => clearTimeout(timer);
+        } else {
+            setAnimationClass('');
         }
-    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+    }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
     const handleClick = () => {
         if (shape.htmlType === 'link-tag' && shape.htmlData?.url) {
