@@ -2,19 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { PageNavigationActions } from '../Helper/PageNavigationActions';
 
-export default function GoToNextPage({ shape, visibilitySettings, flipbookRef, currentPages }) {
+export default function GoToNextPage({ shape, visibilitySettings, flipbookRef, currentPages, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
     useEffect(() => {
-        if (visibilitySettings.showAnimateInteraction) {
+        if (visibilitySettings.showAnimateInteraction && isVisible) {
             setAnimationClass('ping-initial');
             const timer = setTimeout(() => {
                 setAnimationClass('ping-hover');
             }, 1500);
             return () => clearTimeout(timer);
+        } else {
+            setAnimationClass('');
         }
-    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+    }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
     const handleClick = () => {
         setTooltipPos(prev => ({ ...prev, visible: false }));

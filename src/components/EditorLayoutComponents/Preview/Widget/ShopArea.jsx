@@ -3,19 +3,21 @@ import ShopAreaModal from './ShopAreaModal';
 import { showModal } from '@/utils/ShowModal';
 import { useShopSettings } from '@/context/ShopSettingsContext';
 
-export default function ShopArea({ shape, visibilitySettings, flipbookId, currentPages }) {
+export default function ShopArea({ shape, visibilitySettings, flipbookId, currentPages, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
     const { getCurrentCurrency } = useShopSettings();
 
     useEffect(() => {
-        if (visibilitySettings.showAnimateInteraction) {
+        if (visibilitySettings.showAnimateInteraction && isVisible) {
             setAnimationClass('ping-initial');
             const timer = setTimeout(() => {
                 setAnimationClass('ping-hover');
             }, 1500);
             return () => clearTimeout(timer);
+        } else {
+            setAnimationClass('');
         }
-    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+    }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
     const handleClick = () => {
         if (shape.htmlType === 'shop-area' && shape.htmlData?.variantId) {

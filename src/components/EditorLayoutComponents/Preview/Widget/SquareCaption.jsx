@@ -2,18 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { showModal } from "@/utils/ShowModal";
 import LinkModal from "./LinkModal";
 
-export default function SquareCaption({ shape, visibilitySettings, currentPages }) {
+export default function SquareCaption({ shape, visibilitySettings, currentPages, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
 
     useEffect(() => {
-        if (visibilitySettings.showAnimateInteraction) {
+        if (visibilitySettings.showAnimateInteraction && isVisible) {
             setAnimationClass('ping-initial');
             const timer = setTimeout(() => {
                 setAnimationClass('ping-hover');
             }, 1500);
             return () => clearTimeout(timer);
+        } else {
+            setAnimationClass('');
         }
-    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+    }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
     const handleClick = () => {
         if (shape.htmlType === 'square-caption' && shape.htmlData?.url) {

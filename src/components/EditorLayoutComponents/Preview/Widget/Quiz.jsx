@@ -3,21 +3,23 @@ import { createPortal } from 'react-dom';
 import { showModal } from '@/utils/ShowModal';
 import QuizModel from './QuizModel';
 
-export default function Quiz({ shape, visibilitySettings, flipbookId, currentPages }) {
+export default function Quiz({ shape, visibilitySettings, flipbookId, currentPages, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
     console.log("shape quiz", shape);
 
     useEffect(() => {
-        if (visibilitySettings.showAnimateInteraction) {
+        if (visibilitySettings.showAnimateInteraction && isVisible) {
             setAnimationClass('ping-initial');
             const timer = setTimeout(() => {
                 setAnimationClass('ping-hover');
             }, 1500);
             return () => clearTimeout(timer);
+        } else {
+            setAnimationClass('');
         }
-    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+    }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
     const handleClick = () => {
         setTooltipPos(prev => ({ ...prev, visible: false }));

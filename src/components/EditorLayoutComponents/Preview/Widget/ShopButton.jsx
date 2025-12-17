@@ -2,24 +2,26 @@ import React, { useState, useEffect } from 'react';
 import { showModal } from '@/utils/ShowModal';
 import ShopAreaModal from './ShopAreaModal';
 
-export default function ShopButton({ shape, visibilitySettings, flipbookId, currentPages }) {
+export default function ShopButton({ shape, visibilitySettings, flipbookId, currentPages, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
 
     useEffect(() => {
-        if (visibilitySettings.showAnimateInteraction) {
+        if (visibilitySettings.showAnimateInteraction && isVisible) {
             setAnimationClass('ping-initial');
             const timer = setTimeout(() => {
                 setAnimationClass('ping-hover');
             }, 1500);
             return () => clearTimeout(timer);
+        } else {
+            setAnimationClass('');
         }
-    }, [visibilitySettings.showAnimateInteraction, currentPages]);
+    }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
     const handleClick = () => {
         if (shape.htmlType === 'shop-button' && shape.htmlData?.variantId) {
             showModal(ShopAreaModal, shape.htmlData, flipbookId);
-        }   
-    };  
+        }
+    };
     return (
         <div onClick={handleClick} className={visibilitySettings.showAnimateInteraction ? animationClass : ""} style={{
             display: "flex",
@@ -40,7 +42,7 @@ export default function ShopButton({ shape, visibilitySettings, flipbookId, curr
             cursor: "pointer",
             '--ping-color': shape.fill || '#ff0000',
             '--ping-radius': shape.effect?.individualCorners ? `${shape.effect?.topLeftRadius / 1.5 || 0}px ${shape.effect?.topRightRadius / 1.5 || 0}px ${shape.effect?.bottomRightRadius / 1.5 || 0}px ${shape.effect?.bottomLeftRadius / 1.5 || 0}px` : `${shape.effect?.cornerRadius / 1.5 || 0}px`,
-            }}>
+        }}>
             <div
                 style={{
                     width: `100%`,
