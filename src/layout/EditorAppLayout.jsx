@@ -477,7 +477,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
             <div className="flex flex-col min-h-screen">
                 <header className="fixed top-0 left-0 right-0 z-10 bg-white">
                     <div className="flex h-16 w-full justify-between shrink-0 items-center px-4 lg:px-6">
-                        <div className="flex items-center gap-2 sm:gap-3 px-3 pr-2 py-2">
+                        <div className="flex items-center gap-2 sm:gap-3">
                             <div
                                 className="relative flex items-center cursor-pointer"
                                 onClick={() => navigate("/myflipbooks/flipbooks")}

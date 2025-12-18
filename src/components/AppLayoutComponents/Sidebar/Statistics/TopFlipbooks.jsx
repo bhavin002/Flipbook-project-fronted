@@ -19,9 +19,14 @@ export default function TopFlipbooks({ topFlipbooks = null, loading = false }) {
             <div className="md:hidden">
               {Array.from({ length: 3 }).map((_, idx) => (
                 <div key={idx} className="mb-4 pb-4 border-b last:border-b-0 last:mb-0 last:pb-0">
-                  <Skeleton className="h-4 w-24 mb-1" />
-                  <Skeleton className="h-5 w-32 mb-1" />
-                  <Skeleton className="h-4 w-20" />
+                  <div className="flex justify-between items-center mb-2">
+                    <div className="flex gap-2 items-center">
+                      <Skeleton className="h-4 w-4" />
+                      <Skeleton className="h-5 w-32" />
+                    </div>
+                    <Skeleton className="h-4 w-12" />
+                  </div>
+                  <Skeleton className="h-4 w-20 ml-6" />
                 </div>
               ))}
             </div>
@@ -55,14 +60,18 @@ export default function TopFlipbooks({ topFlipbooks = null, loading = false }) {
           <div className="md:hidden">
             {displayData.map((flipbook, index) => (
               <div key={flipbook.flipbookId || flipbook.id} className="mb-4 pb-4 border-b last:border-b-0 last:mb-0 last:pb-0">
-                <div className="flex justify-between mb-1">
-                  <span className="text-gray-500">{index + 1}.</span>
-                  <span className="text-right">{flipbook.percentage?.toFixed(2)}%</span>
+                <div className="flex justify-between items-start mb-1">
+                  <div className="flex gap-2">
+                    <span className="text-gray-500 whitespace-nowrap">{index + 1}.</span>
+                    <span className="font-medium text-purple-600 break-words">
+                      {flipbook.name}
+                    </span>
+                  </div>
+                  <span className="text-right text-sm ml-2 flex-shrink-0">
+                    {flipbook.percentage?.toFixed(2)}%
+                  </span>
                 </div>
-                <div className="font-medium text-purple-600">
-                  {flipbook.name}
-                </div>
-                <div className="text-sm text-gray-600 mt-1">
+                <div className="text-sm text-gray-600 mt-1 ml-6">
                   {flipbook.impressions} impressions
                 </div>
               </div>

@@ -57,13 +57,13 @@ export default function BrandingColors() {
         debounceTimerRef.current = setTimeout(async () => {
             try {
                 await updateBrandColorApi(colorId, { name: newColor });
-        
+
             } catch (error) {
                 toast.error('Failed to update color', { description: error.message || 'Oops! Something went wrong.' });
-        
+
                 setColors(prevColors => {
                     const updatedColors = [...prevColors];
-            
+
                     return updatedColors;
                 });
             }
@@ -79,7 +79,7 @@ export default function BrandingColors() {
             const newIndex = colors.length;
             setSelectedIndex(newIndex);
             setIsNewColorAdded(true);
-    
+
             setTimeout(() => {
                 if (colorInputRef.current) {
                     colorInputRef.current.click();
@@ -144,11 +144,11 @@ export default function BrandingColors() {
             const colorObj = colors[index];
             if (!colorObj) return;
 
-    
+
             const updatedColors = [...colors];
             updatedColors[index] = { ...colorObj, name: value };
             setColors(updatedColors);
-    
+
             debouncedUpdateColor(colorObj.id, value, index);
         }
     };
@@ -163,7 +163,7 @@ export default function BrandingColors() {
 
     return (
         <>
-            <div className="p-6 max-w-[100vw] overflow-auto space-y-4 pt-0 flex-1 flex flex-col max-md:max-h-[calc(100vh-156px-80px)]" ref={containerRef}>
+            <div className="md:p-6 p-3 max-w-[100vw] overflow-auto space-y-4 pt-0 flex-1 flex flex-col max-md:max-h-[calc(100vh-68px-80px)]" ref={containerRef}>
                 <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                     <h1 className="text-2xl font-bold mb-2">Colors</h1>
                     <p className="text-gray-500">Set your default brand colors for the Design Studio and flipbook backgrounds.</p>

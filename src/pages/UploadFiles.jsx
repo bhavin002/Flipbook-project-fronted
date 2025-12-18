@@ -15,6 +15,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  TouchSensor,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -73,6 +74,7 @@ function SortableFileItem({
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <div
             {...listeners}
+            style={{ touchAction: "none" }}
             className={`cursor-grab active:cursor-grabbing ${showProgress ? "opacity-50 cursor-not-allowed" : ""
               }`}
           >
@@ -130,6 +132,7 @@ export default function FileUploadReorder() {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
+    useSensor(TouchSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 

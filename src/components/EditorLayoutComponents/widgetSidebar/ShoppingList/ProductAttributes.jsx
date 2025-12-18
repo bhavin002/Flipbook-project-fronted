@@ -10,6 +10,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  TouchSensor,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -51,6 +52,7 @@ function SortableAttributeItem({ attribute, onDelete, onAttributeChange, onOptio
         className="cursor-grab focus:outline-none"
         {...attributes}
         {...listeners}
+        style={{ touchAction: 'none' }}
       >
         <GripVertical className="h-4 w-4 text-gray-400" />
       </button>
@@ -152,6 +154,7 @@ export default function ProductAttributes({ setValue, errors, watch }) {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
+    useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -174,7 +177,7 @@ export default function ProductAttributes({ setValue, errors, watch }) {
     }
   }
 
-  
+
   const variants = useMemo(() => {
     if (attributes.length === 0) return [];
 
@@ -183,7 +186,7 @@ export default function ProductAttributes({ setValue, errors, watch }) {
 
     // Get existing product variants to preserve visibility settings
     const existingVariants = watch("productVariants") || [];
-    
+
     // Generate all possible combinations first
     let combinations = validAttributes[0].options.map(option => ({
       variant: option,

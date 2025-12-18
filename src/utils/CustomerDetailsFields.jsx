@@ -15,6 +15,7 @@ import {
     PointerSensor,
     useSensor,
     useSensors,
+    TouchSensor,
 } from '@dnd-kit/core';
 import {
     arrayMove,
@@ -30,7 +31,7 @@ import { useWatch } from "react-hook-form";
 // Field type mapping
 const FIELD_TYPE_MAP = {
     "Full name": "custom_input",
-    "Email address": "email", 
+    "Email address": "email",
     "Phone number": "phone_number",
     "Country/region": "custom_input",
     "Website": "website",
@@ -103,6 +104,7 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
                 type="button"
                 {...attributes}
                 {...listeners}
+                style={{ touchAction: 'none' }}
                 disabled={field.isLocked}
             >
                 <GripVertical className="h-4 w-4 text-gray-400" />
@@ -130,7 +132,7 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
             >
                 <Star className={field.required ? 'fill-current' : ''} />
             </Button>
-            
+
             <Button
                 variant="ghost"
                 type="button"
@@ -145,7 +147,7 @@ function SortableFieldItem({ field, onDelete, onFieldChange, onValidationChange,
 }
 
 export default function CustomerDetailsFields({ form, isEmailFieldRequired = false }) {
-    if(!form){
+    if (!form) {
         return null;
     }
     // Watch the customerFields from the form
@@ -245,6 +247,7 @@ export default function CustomerDetailsFields({ form, isEmailFieldRequired = fal
     // DnD setup
     const sensors = useSensors(
         useSensor(PointerSensor),
+        useSensor(TouchSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })
@@ -257,7 +260,7 @@ export default function CustomerDetailsFields({ form, isEmailFieldRequired = fal
             const newFields = [...fields];
             const oldIndex = newFields.findIndex(item => item.id === active.id);
             const newIndex = newFields.findIndex(item => item.id === over.id);
-            
+
             const reorderedFields = arrayMove(newFields, oldIndex, newIndex);
             setFields(reorderedFields);
             updateFormFields(reorderedFields);

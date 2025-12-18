@@ -23,6 +23,7 @@ import {
     PointerSensor,
     useSensor,
     useSensors,
+    TouchSensor,
 } from '@dnd-kit/core';
 import {
     SortableContext,
@@ -65,6 +66,7 @@ function SortableEmailField({ field, index, form, onDelete }) {
                 className="cursor-grab focus:outline-none"
                 {...attributes}
                 {...listeners}
+                style={{ touchAction: 'none' }}
             >
                 <GripVertical className="h-4 w-4 text-gray-400 mt-2" />
             </button>
@@ -108,6 +110,7 @@ export default function GeneralSettings({ form, clearErrors }) {
     const { formState: { errors } } = form;
     const sensors = useSensors(
         useSensor(PointerSensor),
+        useSensor(TouchSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })

@@ -20,6 +20,7 @@ import {
     PointerSensor,
     useSensor,
     useSensors,
+    TouchSensor,
 } from '@dnd-kit/core';
 import {
     arrayMove,
@@ -86,6 +87,7 @@ function SortableImageItem({ image, onDelete, isLoading }) {
                     className="cursor-grab focus:outline-none"
                     {...attributes}
                     {...listeners}
+                    style={{ touchAction: 'none' }}
                 >
                     <GripVertical className="h-4 w-4 text-gray-400" />
                 </button>
@@ -108,7 +110,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
     const [deleteImageId, setDeleteImageId] = useState(null);
     const [isDeleteImageLoading, setIsDeleteImageLoading] = useState(false);
     const fileInputRef = useRef(null);
-    
+
     const form = useForm({
         resolver: zodResolver(productTagSchema),
         defaultValues: {
@@ -129,7 +131,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
     useEffect(() => {
         if (selectedShape.length && selectedShape[0]?.attrs?.htmlData) {
             const htmlData = selectedShape[0]?.attrs?.htmlData;
-            
+
             const newTitle = htmlData?.title || "My product title";
             const newDescription = htmlData?.description || "My product description";
             const newPrice = htmlData?.price || "";
@@ -145,15 +147,15 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
             form.setValue("productUrl", newProductUrl);
             form.setValue("buttonLabel", newButtonLabel);
             form.setValue("images", newImages);
-            
+
             setRawUrlValue(newProductUrl);
-            
+
             if (URL_PATTERN.test(newProductUrl)) {
                 setIsUrlValid(true);
             } else {
                 setIsUrlValid(false);
             }
-            
+
             setIsTouched(false);
         } else {
             form.setValue("title", "My product title");
@@ -163,7 +165,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
             form.setValue("productUrl", "http://www.mywebsite.com");
             form.setValue("buttonLabel", "Shop this item");
             form.setValue("images", []);
-            
+
             setRawUrlValue("http://www.mywebsite.com");
             setIsUrlValid(true);
             setIsTouched(false);
@@ -176,7 +178,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
 
     const updateMainStage = (data, skipUrlValidation = false) => {
         if (!skipUrlValidation && !isUrlValid) return;
-        
+
         const output = {
             data: {
                 title: data.title,
@@ -188,7 +190,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
                 images: data.images
             }
         };
-        
+
         addIntercationDataToMainStage(mainStage, setMainStage, selectedShape, selectedIndex, output);
     };
 
@@ -223,7 +225,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
                 const newImages = [...currentImages, ...imageResponseData];
 
                 form.setValue("images", newImages);
-                updateMainStage({...form.getValues(), images: newImages}, true);
+                updateMainStage({ ...form.getValues(), images: newImages }, true);
 
                 if (fileInputRef.current) {
                     fileInputRef.current.value = "";
@@ -264,7 +266,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
             const updatedImages = currentImages.filter(image => image.fileId !== deleteImageId);
 
             form.setValue("images", updatedImages);
-            updateMainStage({...form.getValues(), images: updatedImages}, true);
+            updateMainStage({ ...form.getValues(), images: updatedImages }, true);
 
             setIsConfirmModalOpen(false);
         } catch (error) {
@@ -291,11 +293,11 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
         } else {
             finalUrl = value;
         }
-        
+
         form.setValue("productUrl", finalUrl, { shouldValidate: true });
-        
+
         setTimeout(() => {
-            updateMainStage({...form.getValues(), productUrl: finalUrl}, true);
+            updateMainStage({ ...form.getValues(), productUrl: finalUrl }, true);
         }, 0);
     };
 
@@ -308,6 +310,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
 
     const sensors = useSensors(
         useSensor(PointerSensor),
+        useSensor(TouchSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })
@@ -320,10 +323,10 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
             const currentImages = form.getValues("images") || [];
             const oldIndex = currentImages.findIndex(item => item.fileId === active.id);
             const newIndex = currentImages.findIndex(item => item.fileId === over.id);
-            
+
             const reorderedImages = arrayMove(currentImages, oldIndex, newIndex);
             form.setValue("images", reorderedImages);
-            updateMainStage({...form.getValues(), images: reorderedImages}, true);
+            updateMainStage({ ...form.getValues(), images: reorderedImages }, true);
         }
     }
 
@@ -353,7 +356,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
                             </FormItem>
                         )}
                     />
-                    
+
                     <FormField
                         control={form.control}
                         name="description"
@@ -373,7 +376,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
                             </FormItem>
                         )}
                     />
-                    
+
                     <div className="flex justify-between">
                         <FormField
                             control={form.control}
@@ -394,7 +397,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
                                 </FormItem>
                             )}
                         />
-                        
+
                         <FormField
                             control={form.control}
                             name="discountPrice"
@@ -415,7 +418,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
                             )}
                         />
                     </div>
-                    
+
                     <FormField
                         control={form.control}
                         name="productUrl"
@@ -445,7 +448,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
                             </FormItem>
                         )}
                     />
-                    
+
                     <FormField
                         control={form.control}
                         name="buttonLabel"
@@ -467,7 +470,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
                     />
                 </div>
             </Form>
-            
+
             {form.getValues("images").length > 0 && (
                 <div className="space-y-1">
                     <Label className="text-xs">
@@ -497,7 +500,7 @@ export default function ProductTag({ mainStage, setMainStage, selectedShape, sel
                     </div>
                 </div>
             )}
-            
+
             <div className="pt-2">
                 <input
                     type="file"

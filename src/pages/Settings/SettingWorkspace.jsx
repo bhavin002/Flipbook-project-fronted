@@ -137,7 +137,7 @@ export default function SettingWorkspace() {
         }
     };
     return (
-        <div className="p-6 max-w-[100vw] overflow-auto space-y-4 pt-0">
+        <div className="md:p-6 p-3 max-w-[100vw] overflow-auto space-y-4 pt-0">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Workspace</h1>
                 <p className="text-gray-500">Each workspace is a completely separate entity,
@@ -152,7 +152,7 @@ export default function SettingWorkspace() {
                             </CardHeader>
                             <CardContent>
                                 <div className="space-y-4">
-                                    <Skeleton className="h-10 w-96 max-w-md" />
+                                    <Skeleton className="h-10 w-full max-w-md" />
                                     <Skeleton className="h-10 w-32" />
                                 </div>
                             </CardContent>
@@ -165,9 +165,10 @@ export default function SettingWorkspace() {
                             <CardContent>
                                 <div className="space-y-4">
                                     <Skeleton className="h-4 w-64" />
-                                    <div className="flex items-center gap-4 w-[26%]">
+                                    <div className="flex flex-wrap items-center gap-4 w-full md:w-[26%]">
                                         <Skeleton className="w-16 h-12 rounded" />
-                                        <Skeleton className="h-10 w-32" />
+                                        <Skeleton className="h-10 w-24" />
+                                        <Skeleton className="h-8 w-8 rounded" />
                                     </div>
                                 </div>
                             </CardContent>
@@ -218,7 +219,7 @@ export default function SettingWorkspace() {
                                         <p className="text-xs text-gray-500">Recommended: 5:1 ratio, 2MB size.</p>
 
                                         {selectedLogo || workspaceData?.previewBrandLogoId ? (
-                                            <div className="flex items-center gap-4 w-[26%]">
+                                            <div className="flex flex-wrap items-center gap-4 w-full md:w-[26%]">
                                                 <div className="relative w-16 h-12 bg-white border rounded overflow-hidden">
                                                     <div
                                                         className="absolute inset-0 bg-center bg-repeat opacity-20"

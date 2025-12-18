@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, ChevronLeft, ChevronRight, Eye, EyeOff, GripVertical, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { DndContext, closestCenter, useSensor, useSensors, PointerSensor, KeyboardSensor } from "@dnd-kit/core";
+import { DndContext, closestCenter, useSensor, useSensors, PointerSensor, KeyboardSensor, TouchSensor } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy, useSortable, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { CSS } from "@dnd-kit/utilities";
@@ -42,6 +42,7 @@ function SortableImageItem({ image, onDelete }) {
                     className="cursor-grab focus:outline-none flex-shrink-0"
                     {...attributes}
                     {...listeners}
+                    style={{ touchAction: 'none' }}
                 >
                     <GripVertical className="h-4 w-4 text-gray-400" />
                 </button>
@@ -264,6 +265,7 @@ export default function ManageVariantImages({ attributes, variants, setValue, wa
                 distance: 8,
             },
         }),
+        useSensor(TouchSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })

@@ -1,17 +1,18 @@
 import React from 'react';
 import {
-    DndContext,
-    closestCenter,
-    PointerSensor,
-    useSensor,
-    useSensors,
-    KeyboardSensor,
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  KeyboardSensor,
+  TouchSensor,
 } from '@dnd-kit/core';
 import {
-    arrayMove,
-    SortableContext,
-    useSortable,
-    verticalListSortingStrategy,
+  arrayMove,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { CSS } from '@dnd-kit/utilities';
@@ -20,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -29,13 +30,13 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { useFieldArray } from "react-hook-form";
 
-const SortableOption = ({ 
-  id, 
-  optionIndex, 
-  questionIndex, 
-  form, 
-  removeOption, 
-  totalOptions 
+const SortableOption = ({
+  id,
+  optionIndex,
+  questionIndex,
+  form,
+  removeOption,
+  totalOptions
 }) => {
   const {
     attributes,
@@ -69,7 +70,7 @@ const SortableOption = ({
 
   return (
     <div ref={setNodeRef} style={style} className="flex items-center gap-3">
-      <div {...attributes} {...listeners} className="cursor-move">
+      <div {...attributes} {...listeners} className="cursor-move" style={{ touchAction: 'none' }}>
         <GripVertical className="text-gray-400" size={16} />
       </div>
       <div className="flex flex-shrink-0">
@@ -79,7 +80,7 @@ const SortableOption = ({
             onValueChange={() => handleOptionSelect()}
             className="flex"
           >
-            <RadioGroupItem 
+            <RadioGroupItem
               value={optionIndex.toString()}
               id={`q${questionIndex}-${optionIndex}`}
               checked={form.watch(`questions.${questionIndex}.options.${optionIndex}.isCorrect`)}
@@ -112,12 +113,12 @@ const SortableOption = ({
   );
 };
 
-const SortableQuestion = ({ 
-  id, 
-  questionIndex, 
-  form, 
-  removeQuestion, 
-  totalQuestions 
+const SortableQuestion = ({
+  id,
+  questionIndex,
+  form,
+  removeQuestion,
+  totalQuestions
 }) => {
   const {
     attributes,
@@ -139,16 +140,17 @@ const SortableQuestion = ({
 
   const optionSensors = useSensors(
     useSensor(PointerSensor),
+    useSensor(TouchSensor),
     useSensor(KeyboardSensor)
   );
 
   const handleOptionDragEnd = (event) => {
     const { active, over } = event;
-    
+
     if (active.id !== over?.id) {
       const oldIndex = options.findIndex((option) => option.id === active.id);
       const newIndex = options.findIndex((option) => option.id === over?.id);
-      
+
       if (oldIndex !== -1 && newIndex !== -1) {
         move(oldIndex, newIndex);
       }
@@ -187,7 +189,7 @@ const SortableQuestion = ({
     if (currentType) {
       const options = form.getValues(`questions.${questionIndex}.options`);
       const firstCorrectIndex = options.findIndex(opt => opt.isCorrect);
-      
+
       // If we found a selected option, keep only the first one selected
       if (firstCorrectIndex !== -1) {
         options.forEach((_, optIndex) => {
@@ -208,7 +210,7 @@ const SortableQuestion = ({
       <Card className="bg-white shadow-sm">
         <CardContent className="p-4">
           <div className="flex items-center gap-4 mb-4">
-            <div {...attributes} {...listeners} className="cursor-move">
+            <div {...attributes} {...listeners} className="cursor-move" style={{ touchAction: 'none' }}>
               <GripVertical className="text-gray-400" size={20} />
             </div>
             <span className="text-sm text-gray-500">{questionIndex + 1}.</span>
@@ -232,9 +234,9 @@ const SortableQuestion = ({
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={() => removeQuestion(questionIndex)}
                 disabled={totalQuestions <= 1}
               >
@@ -296,6 +298,7 @@ export default function QuizQuestions({ form }) {
 
   const sensors = useSensors(
     useSensor(PointerSensor),
+    useSensor(TouchSensor),
     useSensor(KeyboardSensor)
   );
 
@@ -320,11 +323,11 @@ export default function QuizQuestions({ form }) {
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
-    
+
     if (active.id !== over?.id) {
       const oldIndex = fields.findIndex((field) => field.id === active.id);
       const newIndex = fields.findIndex((field) => field.id === over?.id);
-      
+
       if (oldIndex !== -1 && newIndex !== -1) {
         move(oldIndex, newIndex);
       }

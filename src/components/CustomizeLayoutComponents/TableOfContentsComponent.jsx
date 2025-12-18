@@ -6,6 +6,7 @@ import {
     useSensor,
     useSensors,
     KeyboardSensor,
+    TouchSensor,
 } from '@dnd-kit/core';
 import {
     arrayMove,
@@ -25,90 +26,90 @@ import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
 import { useDebounce } from "@/hooks/useDebounce";
 
 const SortableItem = ({
-  id,
-  type,
-  title,
-  depth,
-  onDelete,
-  onTitleChange,
-  onAddChild,
-  canAddChild,
-  hasChildren,
-  isCollapsed,
-  onToggleCollapse,
-  number,
-  onNumberChange,
+    id,
+    type,
+    title,
+    depth,
+    onDelete,
+    onTitleChange,
+    onAddChild,
+    canAddChild,
+    hasChildren,
+    isCollapsed,
+    onToggleCollapse,
+    number,
+    onNumberChange,
 }) => {
-  const {
-      attributes,
-      listeners,
-      setNodeRef,
-      transform,
-      transition,
-  } = useSortable({ id });
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+    } = useSortable({ id });
 
-  const style = {
-      transform: CSS.Transform.toString(transform),
-      transition,
-      marginLeft: `${depth * 20}px`,
-  };
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        marginLeft: `${depth * 20}px`,
+    };
 
-  // Handler to ensure only valid floating-point numbers or empty string are accepted
-  const handleNumberChange = (e) => {
-      const value = e.target.value;
-      // Allow digits, a single decimal point, or empty string
-      if (value === '' || /^\d*\.?\d*$/.test(value)) {
-          onNumberChange(value);
-      }
-  };
+    // Handler to ensure only valid floating-point numbers or empty string are accepted
+    const handleNumberChange = (e) => {
+        const value = e.target.value;
+        // Allow digits, a single decimal point, or empty string
+        if (value === '' || /^\d*\.?\d*$/.test(value)) {
+            onNumberChange(value);
+        }
+    };
 
-  return (
-      <div ref={setNodeRef} style={style} className="flex items-center gap-2 mb-2 group text-white">
-          {hasChildren && (
-              <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onToggleCollapse}
-                  className="hover:bg-sidebar hover:text-white"
-              >
-                  <ChevronRight className={`w-4 h-4 transition-transform ${!isCollapsed ? 'rotate-90' : ''}`} />
-              </Button>
-          )}
-          {!hasChildren && <div className="w-9" />} {/* Placeholder for alignment */}
-          <div {...attributes} {...listeners} className="cursor-move">
-              <GripVertical className="w-4 h-4" />
-          </div>
-          <Input
-              type="text"
-              value={number}
-              onChange={handleNumberChange}
-              className="w-14 mr-2"
-              placeholder="0"
-              pattern="\d*\.?\d*"
-              inputMode="decimal"
-          />
-          <Input
-              placeholder={type === 'chapter' ? 'Chapter title' : 'Subchapter title'}
-              value={title}
-              onChange={(e) => onTitleChange(e.target.value)}
-              className="md:w-[300px] placeholder:text-[#d8dce3]"
-          />
-          {canAddChild && (
-              <Button
-                  variant="ghost"
-                  size="icon"
-                  type="button"
-                  className="h-8 w-8 hover:bg-sidebar hover:text-white"
-                  onClick={() => onAddChild(id)}
-              >
-                  <Plus className="w-4 h-4" />
-              </Button>
-          )}
-          <Button variant="ghost" className="hover:text-red-500 hover:bg-sidebar" onClick={onDelete}>
-              <Trash2 />
-          </Button>
-      </div>
-  );
+    return (
+        <div ref={setNodeRef} style={style} className="flex items-center gap-2 mb-2 group text-white">
+            {hasChildren && (
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onToggleCollapse}
+                    className="hover:bg-sidebar hover:text-white"
+                >
+                    <ChevronRight className={`w-4 h-4 transition-transform ${!isCollapsed ? 'rotate-90' : ''}`} />
+                </Button>
+            )}
+            {!hasChildren && <div className="w-9" />} {/* Placeholder for alignment */}
+            <div {...attributes} {...listeners} className="cursor-move" style={{ touchAction: 'none' }}>
+                <GripVertical className="w-4 h-4" />
+            </div>
+            <Input
+                type="text"
+                value={number}
+                onChange={handleNumberChange}
+                className="w-14 mr-2"
+                placeholder="0"
+                pattern="\d*\.?\d*"
+                inputMode="decimal"
+            />
+            <Input
+                placeholder={type === 'chapter' ? 'Chapter title' : 'Subchapter title'}
+                value={title}
+                onChange={(e) => onTitleChange(e.target.value)}
+                className="md:w-[300px] placeholder:text-[#d8dce3]"
+            />
+            {canAddChild && (
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    type="button"
+                    className="h-8 w-8 hover:bg-sidebar hover:text-white"
+                    onClick={() => onAddChild(id)}
+                >
+                    <Plus className="w-4 h-4" />
+                </Button>
+            )}
+            <Button variant="ghost" className="hover:text-red-500 hover:bg-sidebar" onClick={onDelete}>
+                <Trash2 />
+            </Button>
+        </div>
+    );
 };
 
 export default function TableOfContentsComponent() {
@@ -123,7 +124,7 @@ export default function TableOfContentsComponent() {
 
     useEffect(() => {
         const dataToUse = isFirstLoad ? latestSettings : settings;
-        
+
         if (dataToUse) {
             setIsActivated(dataToUse.isTableOfContent || false);
             const tocItems = (dataToUse.tableOfContents || []).flatMap((chapter, chapterIndex) => [
@@ -162,6 +163,7 @@ export default function TableOfContentsComponent() {
 
     const sensors = useSensors(
         useSensor(PointerSensor),
+        useSensor(TouchSensor),
         useSensor(KeyboardSensor)
     );
 

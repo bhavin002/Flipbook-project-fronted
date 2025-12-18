@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useShelfCreate } from "@/layout/ShelfCreateLayout";
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, TouchSensor } from "@dnd-kit/core";
 import { arrayMove, SortableContext, useSortable, rectSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import bookLogo from '/assets/book_thumbnail.jpg';
@@ -26,7 +26,7 @@ function SortableFlipbookCard({ flipbook }) {
   return (
     <div
       ref={setNodeRef}
-      style={style}
+      style={{ ...style, touchAction: 'none' }}
       {...listeners}
       {...attributes}
       className={`relative flex flex-col rounded-sm h-[351px] overflow-hidden group transition-all duration-200 border-2 border-primary group-hover:border-4 group-hover:border-primary group-hover:rounded-md group-hover:shadow-lg group-hover:shadow-black/30
@@ -51,22 +51,23 @@ function SortableFlipbookCard({ flipbook }) {
         >
           {flipbook.name}
         </p>
-        <img src="/assets/globe.png" className="w-4 h-4"/>
+        <img src="/assets/globe.png" className="w-4 h-4" />
       </div>
     </div>
   );
 }
 
 export default function OrganizeShelf() {
-  const { 
-    orderedFlipbooks, 
-    setOrderedFlipbooks, 
+  const {
+    orderedFlipbooks,
+    setOrderedFlipbooks,
     isEditMode,
     loading,
   } = useShelfCreate();
 
   const sensors = useSensors(
-    useSensor(PointerSensor)
+    useSensor(PointerSensor),
+    useSensor(TouchSensor)
   );
 
   const handleDragEnd = (event) => {
@@ -95,7 +96,7 @@ export default function OrganizeShelf() {
   return (
     <div className="w-full px-4 md:px-6 mt-4">
       <div className="flex justify-between items-center gap-3">
-        <p className="text-lg font-semibold">
+        <p className="text-base md:text-lg font-semibold">
           {isEditMode ? "Reorganize" : "Organize"} flipbooks ({orderedFlipbooks.length})
         </p>
       </div>

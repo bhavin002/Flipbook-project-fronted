@@ -7,7 +7,6 @@ import {
     SidebarProvider,
 } from "@/components/ui/sidebar"
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
-import AppBreadcrumbs from "@/utils/AppBreadcrumb";
 import CreateDropDownCom from "@/components/AppLayoutComponents/CreateDropDownCom";
 import { AppSidebar } from "@/utils/AppSidebar";
 import BottomSidebarNavigation from "@/components/AppLayoutComponents/BottomSidebarNavigation";
@@ -33,8 +32,8 @@ export default function AppLayout({ setIsSidebarOpen }) {
         <>
             <div className="flex flex-col min-h-screen">
                 <header className="fixed top-0 left-0 right-0 z-10 bg-white">
-                    <div className="flex h-16 w-full justify-between shrink-0 items-center px-4 md:px-6">
-                        <div className="flex items-center gap-2 sm:gap-3 px-3 pr-2 py-2">
+                    <div className="flex h-16 w-full justify-between shrink-0 items-center px-3 md:px-6">
+                        <div className="flex items-center gap-2 sm:gap-3">
                             <div
                                 className="relative flex items-center cursor-pointer"
                                 onClick={() => navigate("/myflipbooks/flipbooks")}
@@ -69,12 +68,9 @@ export default function AppLayout({ setIsSidebarOpen }) {
                             {permissions?.flipbooksFilter && <FilterCom />}
                         </div>
                     )}
-                    <div className="md:hidden px-4 py-3 sticky top-0 bg-white z-10">
-                        <AppBreadcrumbs />
-                    </div>
                 </header>
 
-                <div className="flex-1 z-0 max-md:flex md:mt-[64px] max-md:mt-[156px] max-md:mb-[80px] overflow-y-auto">
+                <div className={`flex-1 z-0 max-md:flex md:mt-[64px] ${shouldShowSearchAndFilter() ? "max-md:mt-[116px]" : "max-md:mt-[68px]"} max-md:mb-[80px] overflow-y-auto`}>
                     <div className="flex flex-1">
                         <div className="hidden relative md:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
                             <SidebarProvider value={{ selectedItem, setSelectedItem, width: "15rem" }}>
@@ -84,9 +80,6 @@ export default function AppLayout({ setIsSidebarOpen }) {
                         </div>
 
                         <div className="flex flex-1 flex-col md:max-h-[calc(100vh-64px)] md:overflow-y-auto">
-                            <div className="hidden py-4 md:block px-4 sticky top-0 bg-white z-10 border-t">
-                                <AppBreadcrumbs />
-                            </div>
                             <Outlet />
                         </div>
                     </div>

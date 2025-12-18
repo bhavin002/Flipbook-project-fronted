@@ -8,12 +8,12 @@ export default function SettingWorkspaceAccess() {
     const historyData = getData('historyData');
 
     return (
-        <div className="p-6 max-w-[100vw] overflow-auto space-y-4 pt-0">
+        <div className="md:p-6 p-3 max-w-[100vw] overflow-auto space-y-4 pt-0">
             <div className="p-6 bg-gradient-to-r from-violet-50 to-violet-100 rounded-lg">
                 <h1 className="text-2xl font-bold mb-2">Workspace access</h1>
                 <p className="text-gray-500">Temporarily allow FlipDrag access to your workspace.</p>
             </div>
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>Give FlipDrag access to your account</CardTitle>
                     <CardDescription>
@@ -26,7 +26,7 @@ export default function SettingWorkspaceAccess() {
                     </Button>
                 </CardContent>
             </Card>
-             <Card>
+            <Card>
                 <CardHeader>
                     <CardTitle>FlipDrag access approval history</CardTitle>
                 </CardHeader>

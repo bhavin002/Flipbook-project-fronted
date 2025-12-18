@@ -21,6 +21,7 @@ import {
     PointerSensor,
     useSensor,
     useSensors,
+    TouchSensor,
 } from '@dnd-kit/core';
 import {
     arrayMove,
@@ -71,6 +72,7 @@ function SortableImageItem({ image, onDelete, isLoading }) {
                     className="cursor-grab focus:outline-none"
                     {...attributes}
                     {...listeners}
+                    style={{ touchAction: 'none' }}
                 >
                     <GripVertical className="h-4 w-4 text-gray-400" />
                 </button>
@@ -233,6 +235,7 @@ export default function SlideShow({ mainStage, setMainStage, selectedShape, sele
     // DnD setup
     const sensors = useSensors(
         useSensor(PointerSensor),
+        useSensor(TouchSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })
@@ -251,7 +254,7 @@ export default function SlideShow({ mainStage, setMainStage, selectedShape, sele
             handleInputChange("images", reorderedImages);
         }
     }
-    
+
     const handleSlideDurationChange = (value) => {
         handleInputChange("slideDuration", value);
     };
@@ -271,7 +274,7 @@ export default function SlideShow({ mainStage, setMainStage, selectedShape, sele
     return (
         <div className="p-6 space-y-2 w-full overflow-y-auto">
             <Label className="text-lg">SlideShow</Label>
-            
+
             <Form {...form}>
                 {form.getValues("images").length > 0 && (
                     <>
@@ -295,7 +298,7 @@ export default function SlideShow({ mainStage, setMainStage, selectedShape, sele
                                     </FormItem>
                                 )}
                             />
-                            
+
                             <FormField
                                 control={form.control}
                                 name="autoplaySlideshow"
@@ -365,7 +368,7 @@ export default function SlideShow({ mainStage, setMainStage, selectedShape, sele
                                 />
                             )}
                         </div>
-                        
+
                         <FormField
                             control={form.control}
                             name="imageProperties"
@@ -402,7 +405,7 @@ export default function SlideShow({ mainStage, setMainStage, selectedShape, sele
                                 </FormItem>
                             )}
                         />
-                        
+
                         <div className="space-y-1">
                             <Label className="text-xs">
                                 Image preview

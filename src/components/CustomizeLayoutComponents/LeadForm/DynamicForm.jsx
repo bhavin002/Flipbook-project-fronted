@@ -23,6 +23,7 @@ import {
     useSensor,
     useSensors,
     KeyboardSensor,
+    TouchSensor,
 } from "@dnd-kit/core";
 import {
     arrayMove,
@@ -64,6 +65,7 @@ const SortableDropdownOption = ({
                 ref={setNodeRef}
                 {...attributes}
                 {...listeners}
+                style={{ touchAction: 'none' }}
                 className="flex items-center justify-center cursor-move"
             >
                 <GripVertical className="h-4 w-4" />
@@ -119,7 +121,7 @@ const SortableField = ({
         transition,
     };
 
-    const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor));
+    const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor), useSensor(KeyboardSensor));
 
     const isDropdown = field.options.length > 1;
 
@@ -130,6 +132,7 @@ const SortableField = ({
                     ref={setNodeRef}
                     {...attributes}
                     {...listeners}
+                    style={{ touchAction: 'none' }}
                     className="flex items-center justify-center cursor-move"
                 >
                     <GripVertical className="h-4 w-4" />
@@ -275,7 +278,7 @@ export default function DynamicForm({ fields: initialFields = [], onChange = () 
         { label: "Custom input", value: "Custom input", type: "custom_input" },
     ];
 
-    const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor));
+    const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor), useSensor(KeyboardSensor));
 
     const handleDragEnd = (event) => {
         const { active, over } = event;

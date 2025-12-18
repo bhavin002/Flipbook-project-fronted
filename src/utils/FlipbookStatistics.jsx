@@ -39,19 +39,6 @@ export default function FlipbookStatistics({ statsData = [], dates, loading }) {
     }));
 
     const totalDays = differenceInDays(parseISO(to), parseISO(from)) + 1;
-    let tickInterval = 1;
-    
-    if (totalDays > 365) {
-        tickInterval = 30; 
-    } else if (totalDays > 180) {
-        tickInterval = 14; 
-    } else if (totalDays > 90) {
-        tickInterval = 7; 
-    } else if (totalDays > 30) {
-        tickInterval = 3; 
-    } else if (totalDays > 14) {
-        tickInterval = 2; 
-    }
 
     const statsTabs = [
         {
@@ -87,7 +74,7 @@ export default function FlipbookStatistics({ statsData = [], dates, loading }) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Flipbook statistics</CardTitle>
+                <CardTitle className="text-xl md:text-2xl">Flipbook statistics</CardTitle>
             </CardHeader>
             <CardContent>
                 {loading ? (
@@ -97,7 +84,7 @@ export default function FlipbookStatistics({ statsData = [], dates, loading }) {
                     </div>
                 ) : (
                     <Tabs defaultValue="impressions" className="w-full">
-                        <TabsList className="max-md:w-full overflow-auto mb-6">
+                        <TabsList className="bg-muted/50 p-1 mb-6">
                             {statsTabs.map((stat) => (
                                 <TabsTrigger
                                     key={stat.id}
@@ -117,7 +104,7 @@ export default function FlipbookStatistics({ statsData = [], dates, loading }) {
                                                 name: item.date,
                                                 [stat.id]: item[stat.id]
                                             }))}
-                                            margin={{ top: 10, right: 10, left: 0, bottom: 10 }}
+                                            margin={{ top: 10, right: 10, left: 0, bottom: 20 }}
                                         >
                                             <defs>
                                                 <linearGradient id={`color${stat.id}`} x1="0" y1="0" x2="0" y2="1">
@@ -127,22 +114,22 @@ export default function FlipbookStatistics({ statsData = [], dates, loading }) {
                                             </defs>
                                             <XAxis
                                                 dataKey="name"
-                                                tick={{ fontSize: 12 }}
+                                                tick={{ fontSize: 10 }}
                                                 tickLine={false}
                                                 axisLine={{ stroke: '#E5E7EB' }}
-                                                interval={tickInterval - 1}
+                                                interval="preserveStartEnd"
+                                                minTickGap={30}
                                                 tickFormatter={(value) => {
                                                     if (totalDays > 365) {
                                                         return format(parseISO(value), "MMM yyyy");
-                                                    } else if (totalDays > 60) {
-                                                        return format(parseISO(value), "dd MMM");
                                                     } else {
                                                         return format(parseISO(value), "dd MMM");
                                                     }
                                                 }}
                                             />
                                             <YAxis
-                                                tick={{ fontSize: 12 }}
+                                                width={30}
+                                                tick={{ fontSize: 10 }}
                                                 tickLine={false}
                                                 axisLine={{ stroke: '#E5E7EB' }}
                                                 tickFormatter={stat.valueFormatter}

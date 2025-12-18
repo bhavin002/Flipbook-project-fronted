@@ -21,6 +21,7 @@ import {
     PointerSensor,
     useSensor,
     useSensors,
+    TouchSensor,
 } from '@dnd-kit/core';
 import {
     arrayMove,
@@ -75,6 +76,7 @@ function SortableImageItem({ image, onDelete, isLoading }) {
                     className="cursor-grab focus:outline-none"
                     {...attributes}
                     {...listeners}
+                    style={{ touchAction: 'none' }}
                 >
                     <GripVertical className="h-4 w-4 text-gray-400" />
                 </button>
@@ -256,6 +258,7 @@ export default function PhotoSlideshow({ mainStage, setMainStage, selectedShape,
     // DnD setup
     const sensors = useSensors(
         useSensor(PointerSensor),
+        useSensor(TouchSensor),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })

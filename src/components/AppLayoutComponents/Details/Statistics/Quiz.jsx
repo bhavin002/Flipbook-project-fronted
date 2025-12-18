@@ -189,7 +189,7 @@ export default function Quiz({ flipbookId }) {
                             </div>
                             <Separator />
                             <div className="overflow-x-auto">
-                                <p className="text-lg font-semibold">Scores</p>
+                                <p className="text-base md:text-lg font-semibold">Scores</p>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>

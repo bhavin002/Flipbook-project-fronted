@@ -6,7 +6,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EllipsisVertical, Pencil, LayoutPanelLeft, PencilOff, CopyPlus, PencilLine, Share2, Code, Link2, Download, ChartPie, ChartColumnIncreasing, SquareArrowRight, Trash, Send, Facebook, Twitter, Linkedin, Mail, Clock, Trash2 } from 'lucide-react';
+import { EllipsisVertical, Pencil, LayoutPanelLeft, PencilOff, CopyPlus, PencilLine, Share2, Code, Link2, Download, ChartPie, ChartColumnIncreasing, SquareArrowRight, Trash, Send, Facebook, Twitter, Linkedin, Mail, Clock, Trash2, SlidersHorizontal, Eye, BookOpenText } from 'lucide-react';
 import SaveAsTemplateDialog from "./SaveAsTemplateDialog";
 import { useState } from "react";
 import RenameFlipbookDialog from "./RenameFlipbookDialog";
@@ -21,7 +21,7 @@ import { flipbookType } from "@/utils/enum";
 import { CancelDraftFlipbookApi } from "@/service/flipbook.publish.service";
 import { Button } from "@/components/ui/button";
 
-export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isTrash }) {
+export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isTrash, isMobile }) {
     const [isSaveAsTemplateModalOpen, setIsSaveAsTemplateModalOpen] = useState(false);
     const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = useState(false);
@@ -46,6 +46,8 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
     };
 
     const handleItemClick = async (action, e) => {
+
+        console.log("flipbook ??", flipbook)
 
         if (e) {
             e.preventDefault();
@@ -141,6 +143,16 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
         } else if (action === "bookshelfStats") {
             navigate(`/shelf/stats/${flipbook._id}`);
             closeDropdown();
+        } else if (action === "open") {
+            const path = flipbook.flipbookState === "Bookshelf" ? "/public-bookshelf" : "/public-flipbook";
+            window.open(`${path}/${flipbook._id}`, '_blank');
+            closeDropdown();
+        } else if (action === "overview") {
+            navigate(`/details/${flipbook._id}`);
+            closeDropdown();
+        } else if (action === "customize") {
+            navigate(`/customize/${flipbook._id}`);
+            closeDropdown();
         } else {
             console.error("Invalid action:", action);
         }
@@ -225,9 +237,24 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
     const getMenuItems = () => {
         const publishedItems = (
             <>
+                {isMobile && (
+                    <>
+                        <DropdownMenuItem onClick={() => handleItemClick('open')}>
+                            <Eye className="mr-2 h-4 w-4" /> Open
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleItemClick('overview')}>
+                            <BookOpenText className="mr-2 h-4 w-4" /> Overview
+                        </DropdownMenuItem>
+                    </>
+                )}
                 <DropdownMenuItem onClick={() => handleItemClick('edit')}>
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                 </DropdownMenuItem>
+                {isMobile && (
+                    <DropdownMenuItem onClick={() => handleItemClick('customize')}>
+                        <SlidersHorizontal className="mr-2 h-4 w-4" /> Customize
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
                     <LayoutPanelLeft className="mr-2 h-4 w-4" /> Save as template
@@ -271,9 +298,24 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
 
         const draftItems = (
             <>
+                {isMobile && (
+                    <>
+                        <DropdownMenuItem onClick={() => handleItemClick('open')}>
+                            <Eye className="mr-2 h-4 w-4" /> Open
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleItemClick('overview')}>
+                            <BookOpenText className="mr-2 h-4 w-4" /> Overview
+                        </DropdownMenuItem>
+                    </>
+                )}
                 <DropdownMenuItem onClick={() => handleItemClick('edit')}>
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                 </DropdownMenuItem>
+                {isMobile && (
+                    <DropdownMenuItem onClick={() => handleItemClick('customize')}>
+                        <SlidersHorizontal className="mr-2 h-4 w-4" /> Customize
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                     onClick={() => {
@@ -333,6 +375,11 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 <DropdownMenuItem onClick={() => handleItemClick('edit')}>
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                 </DropdownMenuItem>
+                {isMobile && (
+                    <DropdownMenuItem onClick={() => handleItemClick('customize')}>
+                        <SlidersHorizontal className="mr-2 h-4 w-4" /> Customize
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
                     <LayoutPanelLeft className="mr-2 h-4 w-4" /> Save as template
                 </DropdownMenuItem>
@@ -408,9 +455,24 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
 
         const bookshelfItems = (
             <>
+                {isMobile && (
+                    <>
+                        <DropdownMenuItem onClick={() => handleItemClick('open')}>
+                            <Eye className="mr-2 h-4 w-4" /> Open
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleItemClick('overview')}>
+                            <BookOpenText className="mr-2 h-4 w-4" /> Overview
+                        </DropdownMenuItem>
+                    </>
+                )}
                 <DropdownMenuItem onClick={() => handleItemClick('editbookshelf')}>
                     <Pencil className="mr-2 h-4 w-4" /> Edit
                 </DropdownMenuItem>
+                {isMobile && (
+                    <DropdownMenuItem onClick={() => handleItemClick('customize')}>
+                        <SlidersHorizontal className="mr-2 h-4 w-4" /> Customize
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                     disabled={isCopying}
                     onSelect={(e) => {

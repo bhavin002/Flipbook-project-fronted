@@ -278,25 +278,35 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
     };
 
     const ListSkeleton = () => (
-        <div className="bg-white rounded-xl overflow-hidden border border-gray-200 cursor-pointer group relative animate-pulse">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4">
-                <div className="flex-shrink-0 relative w-full sm:w-auto">
-                    <div className="w-full sm:w-20 h-24 bg-gray-200 rounded"></div>
+        <div className="bg-white rounded-md overflow-hidden border border-gray-200 animate-pulse">
+            {/* Mobile & Tablet Skeleton */}
+            <div className="block lg:hidden">
+                <div className="flex items-start gap-0">
+                    <div className="flex-shrink-0 w-28 h-32 bg-gray-200"></div>
+                    <div className="flex-1 p-3 space-y-3">
+                        <div className="flex gap-2">
+                            <div className="h-4 w-16 bg-gray-200 rounded"></div>
+                        </div>
+                        <div className="h-5 w-3/4 bg-gray-200 rounded"></div>
+                        <div className="mt-4 h-3 w-full bg-gray-200 rounded"></div>
+                    </div>
                 </div>
-                
-                <div className="flex-1 min-w-0 space-y-1.5 w-full">
-                    <div className="flex items-center gap-2">
+            </div>
+
+            {/* Desktop Skeleton */}
+            <div className="hidden lg:flex items-center gap-3 p-0 mr-2">
+                <div className="flex-shrink-0 w-28 h-32 bg-gray-200"></div>
+                <div className="flex-1 space-y-2 py-2">
+                    <div className="flex gap-2">
                         <div className="h-4 w-16 bg-gray-200 rounded"></div>
                         <div className="h-4 w-4 bg-gray-200 rounded"></div>
                     </div>
-                    <div className="h-5 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-4 bg-gray-200 rounded w-full sm:w-1/2"></div>
+                    <div className="h-6 w-1/3 bg-gray-200 rounded"></div>
+                    <div className="h-4 w-1/2 bg-gray-200 rounded"></div>
                 </div>
-                
-                <div className="flex sm:ml-auto items-center gap-2 w-full sm:w-auto justify-end">
-                    {[...Array(3)].map((_, index) => (
-                        <div key={index} className="h-8 w-16 bg-gray-200 rounded hidden md:block"></div>
-                    ))}
+                <div className="flex items-center gap-2 pr-2">
+                    <div className="h-8 w-20 bg-gray-200 rounded hidden xl:block"></div>
+                    <div className="h-8 w-20 bg-gray-200 rounded hidden xl:block"></div>
                     <div className="h-8 w-8 bg-gray-200 rounded"></div>
                 </div>
             </div>
@@ -305,9 +315,9 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
 
     const renderContent = () => {
         const isSelectionMode = selectedFlipbooks.length > 0;
-        
+
         return (
-            <div className="p-3 sm:p-6 sm:pt-0 mt-4">
+            <div className="p-6 max-md:p-3 pt-0">
                 <div className="space-y-3 sm:space-y-4">
                     {isLoading
                         ? [...Array(6)].map((_, index) => <ListSkeleton key={index} />)
@@ -326,7 +336,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                         <div className="absolute inset-0 bg-primary/5 z-10 flex items-center justify-center">
                                         </div>
                                     )}
-                                    
+
                                     {/* Mobile & Tablet View */}
                                     <div className="block lg:hidden">
                                         {/* First Section: Image + Details */}
@@ -348,67 +358,34 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                                     </div>
                                                 )}
                                             </div>
-                                            
-                                            <div className="flex-1 min-w-0 space-y-1.5 p-3">
-                                                {permissions.flipbookDetails && (
-                                                    <div className="flex items-center gap-2 flex-wrap">
-                                                        <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center ${getStatusBadgeStyle(status)}`}>
-                                                            {getStatusDisplayText(status)}
-                                                        </span>
-                                                        {getVisibilityIcon(flipbook.visibilityStatus)}
+
+                                            <div className="flex-1 min-w-0 flex flex-col justify-between p-3 relative">
+                                                <div className="space-y-1.5">
+                                                    {permissions.flipbookDetails && (
+                                                        <div className="flex items-center gap-2 flex-wrap pr-8">
+                                                            <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded inline-flex items-center ${getStatusBadgeStyle(status)}`}>
+                                                                {getStatusDisplayText(status)}
+                                                            </span>
+                                                            {getVisibilityIcon(flipbook.visibilityStatus)}
+                                                        </div>
+                                                    )}
+                                                    <h3 title={flipbook.name} className="font-semibold text-gray-900 text-sm truncate pr-8">
+                                                        {flipbook.name}
+                                                    </h3>
+                                                </div>
+
+                                                <div className="flex items-end justify-between gap-2 mt-2">
+                                                    <p className="text-xs text-gray-600 break-words flex-1">
+                                                        Created: {format(flipbook.createdAt, "MMM d, yyyy")} by {flipbook.createdBy.firstName} {flipbook.createdBy.lastName}
+                                                    </p>
+                                                </div>
+                                                {permissions.flipbookDetails && !isSelectionMode && (
+                                                    <div onClick={(e) => e.stopPropagation()} className="absolute top-2 right-1">
+                                                        <MyFlipbookDropdown status={status} flipbook={flipbook} setFlipbooks={setFlipbooks} isTrash={isTrash} isMobile={true} />
                                                     </div>
                                                 )}
-                                                <h3 title={flipbook.name} className="font-semibold text-gray-900 text-sm truncate">
-                                                    {flipbook.name}
-                                                </h3>
-                                                <p className="text-xs text-gray-600 break-words">
-                                                    Created: {format(flipbook.createdAt, "MMM d, yyyy")} by {flipbook.createdBy.firstName} {flipbook.createdBy.lastName}
-                                                </p>
                                             </div>
                                         </div>
-                                        
-                                        {/* Second Section: Buttons */}
-                                        {permissions.flipbookDetails && !isSelectionMode && (
-                                            <div className="flex items-center gap-2 p-3 pt-0 flex-wrap">
-                                                {actionButtons.map((btn, index) => {
-                                                    const isShare = btn.value === 'share';
-                                                    if (isShare) {
-                                                        return (
-                                                            <Button
-                                                                key={index}
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                className="border border-primary text-primary"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleItemClick(btn.value, flipbook._id, status);
-                                                                }}
-                                                            >
-                                                                {btn.title}
-                                                            </Button>
-                                                        );
-                                                    } else {
-                                                        return (
-                                                            <Button
-                                                                key={index}
-                                                                variant="ghost"
-                                                                size="sm"
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    handleItemClick(btn.value, flipbook._id, status);
-                                                                }}
-                                                            >
-                                                                {btn.title}
-                                                            </Button>
-                                                        );
-                                                    }
-                                                })}
-                                                
-                                                <div onClick={(e) => e.stopPropagation()}>
-                                                    <MyFlipbookDropdown status={status} flipbook={flipbook} setFlipbooks={setFlipbooks} isTrash={isTrash} />
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
 
                                     {/* Desktop View */}
@@ -430,7 +407,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                                 </div>
                                             )}
                                         </div>
-                                        
+
                                         <div className="flex-1 min-w-0 space-y-1.5 py-2">
                                             {permissions.flipbookDetails && (
                                                 <div className="flex items-center gap-2 flex-wrap">
@@ -447,7 +424,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                                 Created: {format(flipbook.createdAt, "MMM d, yyyy")} by {flipbook.createdBy.firstName} {flipbook.createdBy.lastName}
                                             </p>
                                         </div>
-                                        
+
                                         {permissions.flipbookDetails && !isSelectionMode && (
                                             <div className="flex ml-auto items-center gap-2 pr-2 flex-wrap">
                                                 {actionButtons.map((btn, index) => {
@@ -483,7 +460,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
                                                         );
                                                     }
                                                 })}
-                                                
+
                                                 <div onClick={(e) => e.stopPropagation()}>
                                                     <MyFlipbookDropdown status={status} flipbook={flipbook} setFlipbooks={setFlipbooks} isTrash={isTrash} />
                                                 </div>
@@ -525,7 +502,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
             />
 
             {canBulkOperate && selectedFlipbooks.length > 0 && (
-                <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-white text-gray-900 px-3 sm:px-4 py-2 rounded-lg shadow-lg flex items-center justify-between w-[90%] sm:w-96 max-w-md z-50 border border-violet-200">
+                <div className="fixed bottom-[100px] md:bottom-6 left-1/2 transform -translate-x-1/2 bg-white text-gray-900 px-3 sm:px-4 py-2 rounded-lg shadow-lg flex items-center justify-between w-[90%] sm:w-96 max-w-md z-50 border border-violet-200">
                     <div className="flex items-center gap-2 sm:gap-3">
                         {isAllSelected ? (
                             <Checkbox
