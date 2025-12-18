@@ -30,7 +30,7 @@ import cartService from '@/service/IndexedDBCart.service';
 import { getProductCartInfoApi } from '@/service/product.service.js';
 import { toast } from "sonner";
 import { useShopSettings } from "@/context/ShopSettingsContext.jsx";
-import ShareFlipbookDialog from "@/components/AppLayoutComponents/Sidebar/Home/MyFlipbooks/ShareFlipbookDialog.jsx";
+import ShareFlipbookPopover from "./ShareFlipbookPopover.jsx";
 
 export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false, publicFlipbookData, startPage }) {
     const [currentPage, setCurrentPage] = useState(startPage || 1);
@@ -42,7 +42,6 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [isLeadFormOpen, setIsLeadFormOpen] = useState(false);
     const [isPageOverviewOpen, setIsPageOverviewOpen] = useState(false);
-    const [isShareModalOpen, setIsShareModalOpen] = useState(false);
     const [isAutoFlipping, setIsAutoFlipping] = useState(false);
     const [pendingPageChange, setPendingPageChange] = useState(null);
     const { latestJson } = useFlipbookSettingsContext();
@@ -257,6 +256,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+                if (event.target.closest('.share-popover-content')) return;
                 setShowMobileMenu(false);
             }
         };
@@ -438,12 +438,17 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                                 </button>
                                             )}
                                             {visibilitySettings.showShare && (
-                                                <button
-                                                    className="flex items-center gap-3 px-4 py-2 text-sm text-white hover:opacity-70 w-full text-left transition-colors"
-                                                    onClick={() => { setIsShareModalOpen(true); setShowMobileMenu(false); }}
+                                                <ShareFlipbookPopover
+                                                    flipbookId={flipbookId}
+                                                    visibilitySettings={visibilitySettings}
+                                                    container={containerRef.current}
                                                 >
-                                                    <Share2 className="h-4 w-4" /> Social Share
-                                                </button>
+                                                    <button
+                                                        className="flex items-center gap-3 px-4 py-2 text-sm text-white hover:opacity-70 w-full text-left transition-colors"
+                                                    >
+                                                        <Share2 className="h-4 w-4" /> Social Share
+                                                    </button>
+                                                </ShareFlipbookPopover>
                                             )}
                                             {visibilitySettings.showFullscreen && (
                                                 <button
@@ -548,17 +553,22 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 </Button>
                             )}
                             {visibilitySettings.showShare && (
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="hover:bg-transparent hover:opacity-70 transition-colors [&_svg]:size-5"
-                                    style={{ color: visibilitySettings.playerPanelColorHash || 'black' }}
-                                    disabled={!shopSettings?.isAllowToShare}
-                                    onClick={() => setIsShareModalOpen(true)}
-                                    title="Share"
+                                <ShareFlipbookPopover
+                                    flipbookId={flipbookId}
+                                    visibilitySettings={visibilitySettings}
+                                    container={containerRef.current}
                                 >
-                                    <Share2 />
-                                </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="hover:bg-transparent hover:opacity-70 transition-colors [&_svg]:size-5"
+                                        style={{ color: visibilitySettings.playerPanelColorHash || 'black' }}
+                                        disabled={!shopSettings?.isAllowToShare}
+                                        title="Share"
+                                    >
+                                        <Share2 />
+                                    </Button>
+                                </ShareFlipbookPopover>
                             )}
 
                             {visibilitySettings.showTableOfContent && (
@@ -737,12 +747,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                             />
                         )
                     }
-                    <ShareFlipbookDialog 
-                        isShareModalOpen={isShareModalOpen} 
-                        setIsShareModalOpen={setIsShareModalOpen} 
-                        flipbookId={flipbookId} visibilitySettings={visibilitySettings} 
-                        container={containerRef.current}
-                    />
+
                 </div >
 
             </div >

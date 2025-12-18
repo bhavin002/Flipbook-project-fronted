@@ -1,21 +1,23 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-export default function AudioButton({ shape, visibilitySettings, currentPages }) {
+export default function AudioButton({ shape, visibilitySettings, currentPages, isVisible }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [animationClass, setAnimationClass] = useState('');
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
   const audioRef = useRef(null);
 
   useEffect(() => {
-    if (visibilitySettings.showAnimateInteraction) {
+    if (visibilitySettings.showAnimateInteraction && isVisible) {
       setAnimationClass('ping-initial');
       const timer = setTimeout(() => {
         setAnimationClass('ping-hover');
       }, 1500);
       return () => clearTimeout(timer);
+    } else {
+      setAnimationClass('');
     }
-  }, [visibilitySettings.showAnimateInteraction, currentPages]);
+  }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
   useEffect(() => {
     if (shape.htmlData?.audioFile?.url) {
