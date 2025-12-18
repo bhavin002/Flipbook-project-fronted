@@ -235,7 +235,7 @@ export default function StockGif({ shape, flipbookRef }) {
                     height: `100%`,
                     position: "relative",
                     transform: `scaleX(${shape.flipX ? -1 : 1}) scaleY(${shape.flipY ? -1 : 1})`,
-                    transformOrigin: "center center",
+                    transformOrigin: `${(crop.x * -1 || 0) + (shape.width / 2)}px ${(crop.y * -1 || 0) + (shape.height / 2)}px`,
                 }}>
                     <div style={{
                         width: `calc(100% - ${crop.x * -1 || 0}px - ${(crop.width - shape.width - crop.x * -1) || 0}px)`,
