@@ -55,7 +55,7 @@ export default function ProfileDropDownCom() {
                         <img
                             src={userMeta.profileImage}
                             alt="Profile"
-                            className="w-full h-full object-cover aspect-1"
+                            className="w-auto h-auto max-h-12 max-w-full"
                         />
                     ) : (
                         <div className="w-[35px] h-[34px] bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">
@@ -71,7 +71,7 @@ export default function ProfileDropDownCom() {
                             <img
                                 src={userMeta.profileImage}
                                 alt="Profile"
-                                className="w-full h-full object-cover aspect-1"
+                                className="w-auto h-auto max-h-12 max-w-full"
                             />
                         ) : (
                             <div className="w-[35px] h-[34px] bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-medium">

@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { showModal } from '@/utils/ShowModal';
 import QuestionModel from './QuestionModel';
 
-export default function Question({ shape, visibilitySettings, currentPages, isVisible }) {
+export default function Question({ shape, visibilitySettings, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 

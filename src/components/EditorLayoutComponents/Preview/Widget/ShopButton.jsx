@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { showModal } from '@/utils/ShowModal';
 import ShopAreaModal from './ShopAreaModal';
 
-export default function ShopButton({ shape, visibilitySettings, flipbookId, currentPages, isVisible }) {
+export default function ShopButton({ shape, visibilitySettings, flipbookId, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
 
     useEffect(() => {

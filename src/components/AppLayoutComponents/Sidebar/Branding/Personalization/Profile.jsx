@@ -80,7 +80,7 @@ export default function Profile() {
                         <div className="flex justify-center items-center size-20 rounded-full overflow-hidden border">
                             <img
                                 src={previewUrls.profileImage}
-                                className="w-full h-full object-cover aspect-1"
+                                className="w-auto h-auto max-h-12 max-w-full"
                                 alt="Profile"
                             />
                         </div>

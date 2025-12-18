@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ProductTagModal from './ProductTagModal';
 import { showModal } from '@/utils/ShowModal';
 
-export default function ProductTag({ shape, visibilitySettings, currentPages, isVisible }) {
+export default function ProductTag({ shape, visibilitySettings, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
 
     useEffect(() => {

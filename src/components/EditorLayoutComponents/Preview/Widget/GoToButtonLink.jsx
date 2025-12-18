@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-export default function GoToButtonLink({ shape, visibilitySettings, currentPages, isVisible }) {
+export default function GoToButtonLink({ shape, visibilitySettings, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 

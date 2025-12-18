@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { showModal } from '@/utils/ShowModal';
 import QuizModel from './QuizModel';
 
-export default function Quiz({ shape, visibilitySettings, flipbookId, currentPages, isVisible }) {
+export default function Quiz({ shape, visibilitySettings, flipbookId, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 

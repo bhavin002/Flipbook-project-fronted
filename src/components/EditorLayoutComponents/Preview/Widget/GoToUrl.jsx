@@ -109,7 +109,7 @@ function showModal(ModalComponent, htmlData) {
     );
 }
 
-export default function GoToUrl({ shape, visibilitySettings, flipbookRef, currentPages, isVisible }) {
+export default function GoToUrl({ shape, visibilitySettings, flipbookRef, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 

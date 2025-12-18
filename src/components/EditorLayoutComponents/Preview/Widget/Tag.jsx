@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import LinkModal from "./LinkModal";
 import { showModal } from "@/utils/ShowModal";
 
-export default function Tag({ shape, visibilitySettings, currentPages, isVisible }) {
+export default function Tag({ shape, visibilitySettings, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
 
     useEffect(() => {

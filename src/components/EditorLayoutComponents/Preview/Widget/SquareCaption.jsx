@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { showModal } from "@/utils/ShowModal";
 import LinkModal from "./LinkModal";
 
-export default function SquareCaption({ shape, visibilitySettings, currentPages, isVisible }) {
+export default function SquareCaption({ shape, visibilitySettings, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
 
     useEffect(() => {

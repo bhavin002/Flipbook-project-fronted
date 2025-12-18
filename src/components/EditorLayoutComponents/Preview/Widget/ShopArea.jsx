@@ -3,7 +3,7 @@ import ShopAreaModal from './ShopAreaModal';
 import { showModal } from '@/utils/ShowModal';
 import { useShopSettings } from '@/context/ShopSettingsContext';
 
-export default function ShopArea({ shape, visibilitySettings, flipbookId, currentPages, isVisible }) {
+export default function ShopArea({ shape, visibilitySettings, flipbookId, isVisible }) {
     const [animationClass, setAnimationClass] = useState('');
     const { getCurrentCurrency } = useShopSettings();
 

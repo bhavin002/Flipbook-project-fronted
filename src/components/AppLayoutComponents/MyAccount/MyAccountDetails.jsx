@@ -137,7 +137,7 @@ export default function MyAccountDetails() {
                                     {hasProfileImage ? (
                                         <img 
                                             src={getProfileImage()} 
-                                            className="w-full h-full object-cover aspect-1" 
+                                            className="w-auto h-auto max-w-[76px] max-h-[76px] object-cover " 
                                             alt="Profile" 
                                         />
                                     ) : (

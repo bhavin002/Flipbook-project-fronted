@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-export default function AudioButton({ shape, visibilitySettings, currentPages, isVisible }) {
+export default function AudioButton({ shape, visibilitySettings, isVisible }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [animationClass, setAnimationClass] = useState('');
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });

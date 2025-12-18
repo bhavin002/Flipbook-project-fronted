@@ -477,7 +477,6 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                                                                             visibilitySettings={visibilitySettings}
                                                                             flipbookRef={myRef}
                                                                             flipbookId={flipbookId}
-                                                                            currentPages={currentPages}
                                                                             isVisible={isVisible}
                                                                         />
                                                                     ))}
@@ -485,10 +484,10 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                                                             )}
                                                         </div>
                                                         {(!isLoaded && isVisible) && (
-                                                                <div className="absolute inset-0 flex items-center justify-center bg-white z-50">
-                                                                    <Loader />
-                                                                </div>
-                                                            )}
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-white z-50">
+                                                                <Loader />
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 );
                                             })}
