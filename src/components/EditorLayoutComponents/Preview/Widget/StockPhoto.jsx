@@ -174,8 +174,28 @@ export default function StockPhoto({ shape, flipbookRef }) {
     if (effect.saturation) filters.push(`saturate(${effect.saturation / 100 + 1})`);
     if (effect.blur) filters.push(`blur(${effect.blur / 100 + 1}px)`);
     if (effect.grayscale) filters.push(`grayscale(${effect.grayscale / 100 + 1})`);
+
+    // Special handling for action buttons with white background to ensure icons are visible (black)
+    const fill = shape.fill?.toLowerCase();
+    const isWhiteBg = !fill || ['#ffffff', 'white', '#fff', 'rgb(255, 255, 255)', 'rgba(255, 255, 255, 1)'].includes(fill);
+    const isIconButton = [
+        'video-button', 'audio-button', 'go-to-button-link', 'square-caption', 'page-options', 'go-to-page',
+        'go-to-previous-page', 'go-to-next-page', 'go-to-first-page', 'go-to-last-page'
+    ].includes(shape.htmlType) ||
+        ['video-button', 'audio-button', 'link-button', 'caption', 'page-options', 'go-to-page'].includes(shape.title);
+
+    let iconFilter = '';
+    if (isIconButton && isWhiteBg) {
+        iconFilter = 'invert(1)';
+    }
+
     if (filters.length > 0) {
         effectStyles.filter = filters.join(' ');
+        if (iconFilter) {
+            effectStyles.filter += ` ${iconFilter}`;
+        }
+    } else if (iconFilter) {
+        effectStyles.filter = iconFilter;
     }
 
     // opacity

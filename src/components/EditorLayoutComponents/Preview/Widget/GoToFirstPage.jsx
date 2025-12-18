@@ -88,6 +88,7 @@ export default function GoToFirstPage({ shape, visibilitySettings, flipbookRef, 
                         translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                     cursor: "pointer",
+                    filter: (!shape.fill || ['#ffffff', 'white', '#fff', 'rgb(255, 255, 255)', 'rgba(255, 255, 255, 1)'].includes(shape.fill?.toLowerCase())) ? 'invert(1)' : 'none'
                 }}
             />
             {tooltipPos.visible && createPortal(

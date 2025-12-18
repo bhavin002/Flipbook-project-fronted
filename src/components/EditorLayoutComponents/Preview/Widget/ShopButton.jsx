@@ -60,6 +60,7 @@ export default function ShopButton({ shape, visibilitySettings, flipbookId, curr
                     height: `30px`,
                     position: "absolute",
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                    filter: (!shape.fill || ['#ffffff', 'white', '#fff', 'rgb(255, 255, 255)', 'rgba(255, 255, 255, 1)'].includes(shape.fill?.toLowerCase())) ? 'invert(1)' : 'none'
                 }}
             />
         </div>

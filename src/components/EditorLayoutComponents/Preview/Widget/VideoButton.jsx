@@ -90,6 +90,7 @@ export default function VideoButton({ shape, visibilitySettings, currentPages, i
       skewY(${shape.skewY || 0}deg)
       translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                         display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                        filter: (!shape.fill || ['#ffffff', 'white', '#fff', 'rgb(255, 255, 255)', 'rgba(255, 255, 255, 1)'].includes(shape.fill?.toLowerCase())) ? 'invert(1)' : 'none'
                     }}
                 />
             </div>

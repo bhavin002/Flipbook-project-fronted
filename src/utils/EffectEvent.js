@@ -63,6 +63,19 @@ export const EffectEvent = (shape, ractnode, imgNode) => {
         filterArray.push(Konva.Filters.Grayscale);
     }
 
+    // Special handling for action buttons with white background to ensure icons are visible (black)
+    const fill = shape.fill?.toLowerCase();
+    const isWhiteBg = !fill || ['#ffffff', 'white', '#fff', 'rgb(255, 255, 255)', 'rgba(255, 255, 255, 1)'].includes(fill);
+    const isIconButton = [
+        'video-button', 'audio-button', 'go-to-button-link', 'square-caption', 'page-options', 'go-to-page',
+        'go-to-previous-page', 'go-to-next-page', 'go-to-first-page', 'go-to-last-page'
+    ].includes(shape.htmlType) || 
+                         ['video-button', 'audio-button', 'link-button', 'caption', 'page-options', 'go-to-page'].includes(shape.title);
+    
+    if (isIconButton && isWhiteBg) {
+        filterArray.push(Konva.Filters.Invert);
+    }
+
     // ractnode.fill('rgba(0, 0, 0, 0)');
     // CRITICAL: Never apply shadow to PNG images, even if shadow settings exist
     if (effect.isShadowEnabled && !isPng) {

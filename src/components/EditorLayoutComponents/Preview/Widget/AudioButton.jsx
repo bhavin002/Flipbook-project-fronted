@@ -143,6 +143,7 @@ export default function AudioButton({ shape, visibilitySettings, currentPages, i
             height: "100%",
             position: "absolute",
             display: !isPlaying ? "block" : "none",
+            filter: (!shape.fill || ['#ffffff', 'white', '#fff', 'rgb(255, 255, 255)', 'rgba(255, 255, 255, 1)'].includes(shape.fill?.toLowerCase())) ? 'invert(1)' : 'none'
           }}
         />
 
@@ -154,6 +155,7 @@ export default function AudioButton({ shape, visibilitySettings, currentPages, i
             height: "100%",
             position: "absolute",
             display: isPlaying ? "block" : "none",
+            filter: (!shape.fill || ['#ffffff', 'white', '#fff', 'rgb(255, 255, 255)', 'rgba(255, 255, 255, 1)'].includes(shape.fill?.toLowerCase())) ? 'invert(1)' : 'none'
           }}
         />
       </div>

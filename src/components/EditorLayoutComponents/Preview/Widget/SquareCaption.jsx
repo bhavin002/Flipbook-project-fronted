@@ -55,6 +55,7 @@ export default function SquareCaption({ shape, visibilitySettings, currentPages,
                     width: `${shape.width}px`,
                     height: `${shape.height}px`,
                     position: "absolute",
+                    filter: (!shape.fill || ['#ffffff', 'white', '#fff', 'rgb(255, 255, 255)', 'rgba(255, 255, 255, 1)'].includes(shape.fill?.toLowerCase())) ? 'invert(1)' : 'none'
                 }}
             />
         </a>

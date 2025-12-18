@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 export default function VideoEmbed({ shape, isVisible }) {
     const [isLoading, setIsLoading] = useState(true);
     let embedUrl = null;
-    
+
     useEffect(() => {
         setIsLoading(true);
         if (isVisible && embedUrl) {
@@ -63,9 +63,9 @@ export default function VideoEmbed({ shape, isVisible }) {
                         pointerEvents: isLoading ? 'auto' : 'none',
                         zIndex: 1
                     }}>
-                        <img 
-                            src="/assets/icons/Play.svg" 
-                            alt="Play" 
+                        <img
+                            src="/assets/icons/Play.svg"
+                            alt="Play"
                             style={{ width: '60px', height: '60px' }}
                         />
                     </div>
@@ -105,6 +105,7 @@ export default function VideoEmbed({ shape, isVisible }) {
                             height: `30px`,
                             position: "absolute",
                             display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
+                            filter: (!shape.fill || ['#ffffff', 'white', '#fff', 'rgb(255, 255, 255)', 'rgba(255, 255, 255, 1)'].includes(shape.fill?.toLowerCase())) ? 'invert(1)' : 'none'
                         }}
                     />
                 </>
