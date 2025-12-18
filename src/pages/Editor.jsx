@@ -927,29 +927,68 @@ export default function Editor() {
                 const oldScaleY = oldY;
 
                 // Adjust position based on inner image
-                const newX = selectedShapeData.attrs.x + (imageNode.attrs.x * oldX);
-                const newY = selectedShapeData.attrs.y + (imageNode.attrs.y * oldY);
-                selectedShapeData.x(newX || selectedShapeData.attrs.x);
-                selectedShapeData.y(newY || selectedShapeData.attrs.y);
+                const isFlipX = selectedShapeData.attrs.flipX;
+                const isFlipY = selectedShapeData.attrs.flipY;
+                const shapeWidth = selectedShapeData.attrs.width;
+                const shapeHeight = selectedShapeData.attrs.height;
+                const imgX = imageNode.attrs.x;
+                const imgY = imageNode.attrs.y;
+                const imgW = imageNode.attrs.width;
+                const imgH = imageNode.attrs.height;
 
-                // Scale adjustments based on image dimensions
-                const scaleFactorX = (imageNode.attrs.width / selectedShapeData.attrs.width) * oldX;
-                const scaleFactorY = (imageNode.attrs.height / selectedShapeData.attrs.height) * oldY;
-                selectedShapeData.scaleX(scaleFactorX);
-                selectedShapeData.scaleY(scaleFactorY);
+                const rotation = selectedShapeData.attrs.rotation || 0;
 
-                // Update image node dimensions
-                imageNode.width(selectedShapeData.width());
-                imageNode.height(selectedShapeData.height());
+                // Calculate local offset (unrotated, but scaled)
+                let offsetX, offsetY;
+
+                if (isFlipX) {
+                    offsetX = (shapeWidth - imgX - imgW) * oldX;
+                } else {
+                    offsetX = imgX * oldX;
+                }
+
+                if (isFlipY) {
+                    offsetY = (shapeHeight - imgY - imgH) * oldY;
+                } else {
+                    offsetY = imgY * oldY;
+                }
+
+                // Apply rotation to the local offset vector to get global displacement
+                const rad = rotation * (Math.PI / 180);
+                const rotatedX = offsetX * Math.cos(rad) - offsetY * Math.sin(rad);
+                const rotatedY = offsetX * Math.sin(rad) + offsetY * Math.cos(rad);
+
+                const newX = selectedShapeData.attrs.x + rotatedX;
+                const newY = selectedShapeData.attrs.y + rotatedY;
+
+                selectedShapeData.x((newX === undefined || isNaN(newX)) ? selectedShapeData.attrs.x : newX);
+                selectedShapeData.y((newY === undefined || isNaN(newY)) ? selectedShapeData.attrs.y : newY);
+
+                // Update container dimensions to match the cropped image size
+                // This prevents the transformer from becoming huge by keeping scale consistent (resize behavior)
+                selectedShapeData.width(imgW);
+                selectedShapeData.height(imgH);
+
+                // Restore original scale (maintain user's zoom level) instead of skewing scale
+                selectedShapeData.scaleX(oldX);
+                selectedShapeData.scaleY(oldY);
+
+                // Update image node dimensions to fill the new container size
+                imageNode.width(imgW);
+                imageNode.height(imgH);
 
                 // Recalculate crop image values
+                // Since we restored scale to oldScale, the ratio is 1, essentially preserving the crop as-is
                 const cropImg = selectedShapeData.attrs.cropImage;
                 if (cropImg) {
-                    cropImg.x(((cropImg.x() || 0) * oldX) / (selectedShapeData.attrs.scaleX || 1) || 0);
-                    cropImg.y(((cropImg.y() || 0) * oldY) / (selectedShapeData.attrs.scaleY || 1) || 0);
+                    const currentScaleX = selectedShapeData.scaleX() || 1;
+                    const currentScaleY = selectedShapeData.scaleY() || 1;
 
-                    cropImg.scaleX((cropImg.scaleX() || 1) * oldScaleX / (selectedShapeData.attrs.scaleX || 1));
-                    cropImg.scaleY((cropImg.scaleY() || 1) * oldScaleY / (selectedShapeData.attrs.scaleY || 1));
+                    cropImg.x(((cropImg.x() || 0) * oldX) / currentScaleX || 0);
+                    cropImg.y(((cropImg.y() || 0) * oldY) / currentScaleY || 0);
+
+                    cropImg.scaleX((cropImg.scaleX() || 1) * oldScaleX / currentScaleX);
+                    cropImg.scaleY((cropImg.scaleY() || 1) * oldScaleY / currentScaleY);
 
                     cropImg.width(cropImg.width() * (cropImg.scaleX() || 1));
                     cropImg.height(cropImg.height() * (cropImg.scaleY() || 1));
@@ -961,9 +1000,19 @@ export default function Editor() {
                 // Reset positions and visibility
                 imageNode.x(0);
                 imageNode.y(0);
-                container.x(0);
-                container.y(0);
-                selectedShapeData.children[0].visible(true);
+
+                // Correctly position container based on flip state to prevent jumping
+                // Flipped groups need to be offset by their width/height to stay in the visible area
+                container.x(isFlipX ? imgW : 0);
+                container.y(isFlipY ? imgH : 0);
+
+                // Update background/border rect (first child) to match new dimensions
+                if (selectedShapeData.children[0]) {
+                    selectedShapeData.children[0].width(imgW - 4);
+                    selectedShapeData.children[0].height(imgH - 4);
+                    selectedShapeData.children[0].visible(true);
+                }
+
                 imageNode.visible(true);
 
                 EffectEvent(selectedShapeData.attrs, imageNode);
