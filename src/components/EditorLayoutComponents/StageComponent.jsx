@@ -150,25 +150,27 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                         let shapeWidth = child2.width() * child2.scaleX();
                         let parentHeight = child1.children[1].height() / child1.children[1].scaleY();
                         let shapeHeight = child2.height() * child2.scaleY();
+                        let offsetX = (child2.offsetX() || 0) * child2.scaleX();
+                        let offsetY = (child2.offsetY() || 0) * child2.scaleY();
 
                         switch (selectedAlignType) {
                             case "alignLeft":
-                                child2.attrs.x = 0.001;
+                                child2.attrs.x = 0.001 + offsetX;
                                 break;
                             case "alignMiddle":
-                                child2.attrs.x = (parentWidth - shapeWidth) / 2;
+                                child2.attrs.x = (parentWidth - shapeWidth) / 2 + offsetX;
                                 break;
                             case "alignRight":
-                                child2.attrs.x = parentWidth - shapeWidth;
+                                child2.attrs.x = parentWidth - shapeWidth + offsetX;
                                 break;
                             case "alignTop":
-                                child2.attrs.y = 0.001;
+                                child2.attrs.y = 0.001 + offsetY;
                                 break;
                             case "alignBottom":
-                                child2.attrs.y = parentHeight - shapeHeight;
+                                child2.attrs.y = parentHeight - shapeHeight + offsetY;
                                 break;
                             case "alignCenter":
-                                child2.attrs.y = (parentHeight - shapeHeight) / 2;
+                                child2.attrs.y = (parentHeight - shapeHeight) / 2 + offsetY;
                                 break;
                             default:
                                 break;
@@ -202,15 +204,20 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                 let parentWidth = child1.children[1].width() / child1.children[1].scaleX();
                 let parentHeight = child1.children[1].height() / child1.children[1].scaleY();
 
+                const getVisualX = (s) => s.attrs.x - (s.offsetX() || 0) * s.scaleX();
+                const getVisualY = (s) => s.attrs.y - (s.offsetY() || 0) * s.scaleY();
+                const getVisualWidth = (s) => s.width() * s.scaleX();
+                const getVisualHeight = (s) => s.height() * s.scaleY();
+
                 switch (selectedAlignType) {
                     case "alignLeft":
-                        const leftmostX = Math.min(...selectedStageShapes.map(shape => shape.attrs.x));
+                        const leftmostX = Math.min(...selectedStageShapes.map(shape => getVisualX(shape)));
                         selectedStageShapes.forEach(shape => shape.attrs.x -= leftmostX);
                         break;
 
                     case "alignRight":
                         const rightmostX = Math.max(...selectedStageShapes.map(shape =>
-                            (shape.attrs.x + (shape.width() * shape.scaleX()))
+                            getVisualX(shape) + getVisualWidth(shape)
                         ));
                         selectedStageShapes.forEach(shape => {
                             shape.attrs.x += parentWidth - rightmostX;
@@ -218,9 +225,9 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                         break;
 
                     case "alignMiddle":
-                        const minX = Math.min(...selectedStageShapes.map(shape => shape.attrs.x));
+                        const minX = Math.min(...selectedStageShapes.map(shape => getVisualX(shape)));
                         const maxX = Math.max(...selectedStageShapes.map(shape =>
-                            (shape.attrs.x + (shape.width() * shape.scaleX()))
+                            getVisualX(shape) + getVisualWidth(shape)
                         ));
                         const widthTr = maxX - minX;
                         selectedStageShapes.forEach(shape => {
@@ -229,13 +236,13 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                         break;
 
                     case "alignTop":
-                        const topY = Math.min(...selectedStageShapes.map(shape => shape.attrs.y));
+                        const topY = Math.min(...selectedStageShapes.map(shape => getVisualY(shape)));
                         selectedStageShapes.forEach(shape => shape.attrs.y -= topY);
                         break;
 
                     case "alignBottom":
                         const bottomY = Math.max(...selectedStageShapes.map(shape =>
-                            shape.attrs.y + (shape.height() * shape.scaleY())
+                            getVisualY(shape) + getVisualHeight(shape)
                         ));
                         selectedStageShapes.forEach(shape => {
                             shape.attrs.y += parentHeight - bottomY;
@@ -243,9 +250,9 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                         break;
 
                     case "alignCenter":
-                        const minY = Math.min(...selectedStageShapes.map(shape => shape.attrs.y));
+                        const minY = Math.min(...selectedStageShapes.map(shape => getVisualY(shape)));
                         const maxY = Math.max(...selectedStageShapes.map(shape =>
-                            (shape.attrs.y + (shape.height() * shape.scaleY()))
+                            getVisualY(shape) + getVisualHeight(shape)
                         ));
                         const heightTr = maxY - minY;
                         selectedStageShapes.forEach(shape => {
