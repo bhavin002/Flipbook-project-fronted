@@ -41,6 +41,30 @@ export default function KonvaGif({
                 // Set canvas dimensions to match shape
                 canvas.width = shape.width || anim.frames[0].width;
                 canvas.height = shape.height || anim.frames[0].height;
+                const frames = anim._frames || [];
+                const firstFrame = frames[0];
+                if (frames && frames.length == 1) {
+                    const img = new window.Image();
+                    img.src = shape.src;
+                    img.crossOrigin = 'Anonymous';
+                    img.onload = () => {
+                        setImageLoadCounterPageWise((prev) => ({
+                            ...prev,
+                            [index]: (prev[index] || 0) - 1,
+                        }));
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        canvas.getContext('2d').drawImage(img, 0, 0);
+                    };
+                    img.onerror = () => {
+                        setImageLoadCounterPageWise((prev) => ({
+                            ...prev,
+                            [index]: (prev[index] || 0) - 1,
+                        }));
+                    };
+
+                    return;
+                }
                 anim.animateInCanvas(canvas);
                 anim.onDrawFrame = (ctx, frame) => {
                     ctx.drawImage(frame.buffer, frame.x, frame.y);
