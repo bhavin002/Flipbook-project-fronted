@@ -1,14 +1,13 @@
 import { useOutletContext } from "react-router-dom";
 import StageComponent from "../components/EditorLayoutComponents/StageComponent";
-import { use, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TopToolbar from "../components/EditorLayoutComponents/TopToolbar";
 import PanelRight from "@/components/EditorLayoutComponents/PanelRight";
 import LateralPanelRightPages from "@/components/EditorLayoutComponents/LateralPanelRightPages";
 import LateralPanelRightLayer from "@/components/EditorLayoutComponents/LateralPanelRightLayer";
-import { BookOpen, Layers, Redo, Undo, ZoomIn, ZoomOut } from "lucide-react";
+import { BookOpen, Layers, Redo, Undo } from "lucide-react";
 import { v4 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import Konva from 'konva';
 import { EffectEvent } from "@/utils/EffectEvent";
 import { deleteShape } from "@/utils/Helper";
@@ -372,7 +371,7 @@ export default function Editor() {
         return ref.current;
     }
 
-    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage } = useOutletContext();
+    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage, stageWidth, stageHeight } = useOutletContext();
     const autoScroll = useRef([]);
 
     const parentRef = useRef(null);
@@ -380,6 +379,7 @@ export default function Editor() {
     const [rectProps, setRectProps] = useState({ x: 0, y: 0, size: 0, tempWidth: 0, tempHeight: 0 });
     const [scale, setScale] = useState({ scaleX: 1, scaleY: 1 });
     const [mainStageString, setMainStageString] = useState("");
+    console.log("mainStageString ??", mainStageString)
     const [isCropping, setIsCropping] = useState(false);
     const allowHtmlTypesForCrop = ['stock-photo', 'stock-gif', 'stock-sticker', 'masked-image', 'masked-gif', 'masked-sticker', 'upload-photo'];
     const [selectedAlignType, setSelectedAlignType] = useState("");
@@ -1091,7 +1091,7 @@ export default function Editor() {
 
     return (
         <div className="flex w-full flex-col h-full">
-            <TopToolbar setIsShapeDrawerOpen={setIsShapeDrawerOpen} isCropping={isCropping} handleCrop={handleCrop} handleCropEnd={handleCropEnd} handleCropCancel={handleCropCancel} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} />
+            <TopToolbar setIsShapeDrawerOpen={setIsShapeDrawerOpen} isCropping={isCropping} handleCrop={handleCrop} handleCropEnd={handleCropEnd} handleCropCancel={handleCropCancel} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedShape={selectedShape} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} stageWidth={stageWidth} stageHeight={stageHeight} />
             <div className="flex w-full flex-grow relative">
                 {((mainStage.length !== pageCounter - 1) && !isInitialLoad) && <>
                     <div className="absolute inset-0 bg-white/40 backdrop-blur-sm z-40 pointer-events-auto" />

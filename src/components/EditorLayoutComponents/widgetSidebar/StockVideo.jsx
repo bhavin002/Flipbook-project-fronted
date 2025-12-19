@@ -6,17 +6,17 @@ import { Label } from "@/components/ui/label";
 export default function StockVideo({ mainStage, setMainStage, selectedShape, selectedIndex }) {
 
     const [showControls, setShowControls] = useState(
-        selectedShape?.[0]?.attrs?.htmlData?.showControls || true
+        selectedShape?.[0]?.attrs?.htmlData?.showControls || false
     );
-    
+
     const [autoPlay, setAutoPlay] = useState(
         selectedShape?.[0]?.attrs?.htmlData?.autoPlay || false
     );
-    
+
     const [mute, setMute] = useState(
         selectedShape?.[0]?.attrs?.htmlData?.mute || false
     );
-    
+
     const [loop, setLoop] = useState(
         selectedShape?.[0]?.attrs?.htmlData?.loop || false
     );
@@ -25,7 +25,8 @@ export default function StockVideo({ mainStage, setMainStage, selectedShape, sel
         if (selectedShape.length && selectedShape[0]) {
             // Set stock video specific values
             const htmlData = selectedShape[0]?.attrs?.htmlData || {};
-            setShowControls(htmlData.showControls || true);
+            console.log("htmlData", htmlData);
+            setShowControls(htmlData.showControls || false);
             setAutoPlay(htmlData.autoPlay || false);
             setMute(htmlData.mute || false);
             setLoop(htmlData.loop || false);
@@ -33,6 +34,7 @@ export default function StockVideo({ mainStage, setMainStage, selectedShape, sel
     }, [selectedShape]);
 
     const updateStockVideoInMainStage = (data) => {
+        console.log("updateStockVideoInMainStage", data);
         if (!selectedShape.length || !mainStage[selectedIndex]?.shapes) return;
 
         const updatedMainStage = [...mainStage];

@@ -22,7 +22,6 @@ export default function KonvaGif({
         const node = document.createElement('canvas');
         return node;
     }, []);
-    console.log("imageLoadCounterPageWise", imageLoadCounterPageWise);
 
     // Handle GIF animation
     useEffect(() => {
@@ -68,8 +67,15 @@ export default function KonvaGif({
                 anim.animateInCanvas(canvas);
                 anim.onDrawFrame = (ctx, frame) => {
                     ctx.drawImage(frame.buffer, frame.x, frame.y);
-                    if (imageRef.current && imageRef.current.getLayer()) {
-                        imageRef.current.getLayer().draw();
+                    if (imageRef.current) {
+                        // If filters are applied, the node is cached.
+                        // We need to re-cache on every frame to apply filters to the new frame.
+                        if (imageRef.current.isCached()) {
+                            imageRef.current.cache();
+                        }
+                        if (imageRef.current.getLayer()) {
+                            imageRef.current.getLayer().draw();
+                        }
                     }
                 };
                 setTimeout(() => {

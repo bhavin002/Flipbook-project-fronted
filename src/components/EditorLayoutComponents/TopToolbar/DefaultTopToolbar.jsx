@@ -1,12 +1,12 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-export default function DefaultTopToolbar({ setIsShapeDrawerOpen, selectedSubMenu, setSelectedSubMenu,mainStage, selectedIndex }) {
+export default function DefaultTopToolbar({ setIsShapeDrawerOpen, selectedSubMenu, setSelectedSubMenu, mainStage, selectedIndex, stageWidth, stageHeight }) {
     return (
         <div className="h-[49px] flex justify-between items-center px-3 py-[6px] bg-white border-y border-[#d0d0d0]">
             <div className="flex gap-2">
                 <div className="border-r border-[#d0d0d0] pr-2">
-                    <p className="text-sm">Page 1</p>
-                    <p className="text-[10px] text-gray-500">1632 x 1056 px</p>
+                    <p className="text-sm">Page {selectedIndex + 1}</p>
+                    <p className="text-[10px] text-gray-500">{stageWidth} x {stageHeight} px</p>
                 </div>
                 <div className="flex gap-2 items-center">
                     <p className="text-xs">Background</p>

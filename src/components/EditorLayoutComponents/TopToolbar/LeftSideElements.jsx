@@ -333,6 +333,12 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
                 {selectedShape?.length == 1 && <>
                     <Button variant="ghost" size="sm" onClick={() => {
                         setIsShapeDrawerOpen(true)
+                        selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
+                    }}>
+                        Filters
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={() => {
+                        setIsShapeDrawerOpen(true)
                         selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style")
                     }}>
                         Style
@@ -360,6 +366,12 @@ const renderElements = (shapeType, selectedShape, selectedSubMenu, setSelectedSu
         case 'stock-gif':
             return <>
                 {selectedShape?.length == 1 && <>
+                    <Button variant="ghost" size="sm" onClick={() => {
+                        setIsShapeDrawerOpen(true)
+                        selectedSubMenu === "image-filter" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-filter")
+                    }}>
+                        Filters
+                    </Button>
                     <Button variant="ghost" size="sm" onClick={() => {
                         setIsShapeDrawerOpen(true)
                         selectedSubMenu === "image-style" ? setSelectedSubMenu(null) : setSelectedSubMenu("image-style")

@@ -7,8 +7,6 @@ export default function Quiz({ shape, visibilitySettings, flipbookId, isVisible 
     const [animationClass, setAnimationClass] = useState('');
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
-    console.log("shape quiz", shape);
-
     useEffect(() => {
         if (visibilitySettings.showAnimateInteraction && isVisible) {
             setAnimationClass('ping-initial');
