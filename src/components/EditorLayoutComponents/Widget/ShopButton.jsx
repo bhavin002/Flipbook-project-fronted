@@ -144,8 +144,8 @@ export default function ShopButton({ mainStage, selectedIndex, shape, handleDrag
                 fill={colors.buttonColor}
                 x={0}
                 y={0}
-                width={shape.width}
-                height={shape.height}
+                width={Math.max(0, shape.width || 0)}
+                height={Math.max(0, shape.height || 0)}
             />
             <Image
                 image={image}

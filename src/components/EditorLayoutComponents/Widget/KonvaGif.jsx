@@ -155,10 +155,10 @@ export default function KonvaGif({
     const shapeHeight = shape?.height || canvas.height || 0;
     const shapeEffect = shape?.effect || {};
     const shapeCornerRadius = shapeEffect.cornerRadius || 0;
-    const maxRadius = Math.min(shapeWidth / 2, shapeHeight / 2); // Cap radius to half the smallest dimension
+    const maxRadius = Math.max(0, Math.min(shapeWidth / 2, shapeHeight / 2)); // Cap radius to half the smallest dimension
 
-    // Limit each corner radius to prevent overextension
-    const getRadius = (r) => Math.min(r || 0, maxRadius);
+    // Limit each corner radius to prevent overextension and ensure it's not negative
+    const getRadius = (r) => Math.max(0, Math.min(r || 0, maxRadius));
 
     const topLeftRadius = shapeEffect.individualCorners ? getRadius(shapeEffect.topLeftRadius) : getRadius(shapeCornerRadius);
     const topRightRadius = shapeEffect.individualCorners ? getRadius(shapeEffect.topRightRadius) : getRadius(shapeCornerRadius);
@@ -199,8 +199,8 @@ export default function KonvaGif({
                 ref={rectRef}
                 x={0 + 2}
                 y={0 + 2}
-                width={shapeWidth - 4}
-                height={shapeHeight - 4}
+                width={Math.max(0, shapeWidth - 4)}
+                height={Math.max(0, shapeHeight - 4)}
                 cornerRadius={[
                     topLeftRadius,
                     topRightRadius,
@@ -254,8 +254,8 @@ export default function KonvaGif({
                         <Rect
                             x={borderWidth / 2}
                             y={borderWidth / 2}
-                            width={shapeWidth - borderWidth}
-                            height={shapeHeight - borderWidth}
+                            width={Math.max(0, shapeWidth - borderWidth)}
+                            height={Math.max(0, shapeHeight - borderWidth)}
                             cornerRadius={borderRadii}
                             stroke={borderColor}
                             strokeWidth={borderWidth}

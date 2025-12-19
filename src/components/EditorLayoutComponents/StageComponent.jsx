@@ -1199,8 +1199,8 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                         <Rect
                             x={rectProps.x}
                             y={rectProps.y}
-                            width={rectProps.tempWidth}
-                            height={rectProps.tempHeight}
+                            width={Math.max(0, rectProps.tempWidth || 0)}
+                            height={Math.max(0, rectProps.tempHeight || 0)}
                             fill={stage.background}
                             listening={false}
                         />
@@ -1300,8 +1300,8 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                             id="boundary"
                             x={rectProps.x}
                             y={rectProps.y}
-                            width={rectProps.tempWidth}
-                            height={rectProps.tempHeight}
+                            width={Math.max(0, rectProps.tempWidth || 0)}
+                            height={Math.max(0, rectProps.tempHeight || 0)}
                             stroke={isSelected ? "#7b39ed" : "#999"}
                             strokeWidth={2}
                             // fill={stage.background}
@@ -1331,8 +1331,8 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                             <Rect
                                 x={selectionRect.x}
                                 y={selectionRect.y}
-                                width={selectionRect.width}
-                                height={selectionRect.height}
+                                width={Math.max(0, selectionRect.width || 0)}
+                                height={Math.max(0, selectionRect.height || 0)}
                                 fill="rgba(0, 161, 255, 0.3)"
                                 stroke="blue"
 

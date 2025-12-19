@@ -137,8 +137,8 @@ export default function StockGif({ shape, flipbookRef }) {
 
     const shapeWidth = shape.width || 0;
     const shapeHeight = shape.height || 0;
-    const maxRadius = Math.min(shapeWidth / 2, shapeHeight / 2);
-    const getRadius = (r) => Math.min(r || 0, maxRadius);
+    const maxRadius = Math.max(0, Math.min(shapeWidth / 2, shapeHeight / 2));
+    const getRadius = (r) => Math.max(0, Math.min(r || 0, maxRadius));
 
     // Build effect-related styles
     const effectStyles = {};

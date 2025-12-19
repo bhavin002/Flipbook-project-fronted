@@ -109,9 +109,9 @@ const MaskedImage = ({
             break;
           case 'A': {
             const [cx, cy, rx, ry, sa, ea, rot, ccw] = points;
-            const r = Math.max(rx, ry);
-            const scaleX = rx > ry ? 1 : rx / ry;
-            const scaleY = rx > ry ? ry / rx : 1;
+            const r = Math.max(0, Math.max(rx, ry));
+            const scaleX = rx > ry ? 1 : (ry === 0 ? 1 : rx / ry);
+            const scaleY = rx > ry ? (rx === 0 ? 1 : ry / rx) : 1;
 
             ctx.save();
             ctx.translate(cx, cy);
@@ -166,8 +166,8 @@ const MaskedImage = ({
       <Rect
         x={0}
         y={0}
-        width={shape.width || 100}
-        height={shape.height || 100}
+        width={Math.max(0, shape.width || 100)}
+        height={Math.max(0, shape.height || 100)}
         fill="transparent"
       />
       <Group
@@ -186,8 +186,8 @@ const MaskedImage = ({
             draggable={false}
             x={0}
             y={0}
-            width={shapeWidth}
-            height={shapeHeight}
+            width={Math.max(0, shapeWidth)}
+            height={Math.max(0, shapeHeight)}
             fill={shape.fill || 'transparent'}
           />
           <Image

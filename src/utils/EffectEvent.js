@@ -96,6 +96,5 @@ export const EffectEvent = (shape, ractnode, imgNode) => {
         imgNode.filters([]);
     }
 
-    imgNode.cornerRadius([0, 10, 20, 30]);
     imgNode.getLayer()?.batchDraw();
 };

@@ -87,9 +87,8 @@ export default function VideoButton({ shape, onSelect, handleDragStart, handleDr
                 fill="#000000"
                 x={0}
                 y={0}
-                width={shape.width}
-                height={shape.height}
-
+                width={Math.max(0, shape.width || 0)}
+                height={Math.max(0, shape.height || 0)}
             />
             <Image
                 image={image}
