@@ -7,7 +7,7 @@ export default function StockVideo({ shape, isVisible }) {
     const videoRef = useRef(null);
 
     const {
-        showControls = true,
+        showControls = false,
         autoPlay = false,
         mute = false,
         loop = false
