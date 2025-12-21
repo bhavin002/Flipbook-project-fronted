@@ -1,151 +1,30 @@
 import { Button } from "@/components/ui/button";
 import { Brush, Upload } from "lucide-react";
-import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProfileDropDownCom from "./ProfileDropDownCom";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { UploadPdfApi } from "@/service/flipbook.service";
-import { toast } from "sonner";
-import { useFileUpload } from "@/context/FileUploadContext";
-import { FlipbookUploadMode } from "@/utils/enum";
 import LoadingButton from "@/utils/LoadingButton";
-import { useFlipbook } from "@/context/FlipbookContext";
-import { UploadFilesNewApi, subscribeToUploadProgress, GenerateFlipbookApi } from "@/service/flipbook.service";
+import { useFlipbookCreation } from "@/hooks/useFlipbookCreation";
 
 export default function CreateFirstFlipbook() {
-    const { fetchFlipbooks } = useFlipbook();
-    const fileInputRef = useRef(null);
     const navigate = useNavigate();
-    const { setFiles } = useFileUpload();
 
-    const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
-    const [multiFileDialogOpen, setMultiFileDialogOpen] = useState(false);
-    const [pendingFiles, setPendingFiles] = useState([]);
-    const [uploadingSeparately, setUploadingSeparately] = useState(false);
-
-    const handleUploadClick = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.value = null;
-            fileInputRef.current.click();
-        }
-    };
-
-    // const handleFileInputChange = async (event) => {
-    //     const files = Array.from(event.target.files).sort((a, b) => a.name.localeCompare(b.name));
-    //     if (!files.length) return;
-
-    //     // File type validation
-    //     const allowedTypes = [
-    //         "application/pdf",
-    //         "application/vnd.ms-powerpoint",
-    //         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-    //         "application/vnd.oasis.opendocument.presentation",
-    //         "image/jpeg",
-    //         "image/png",
-    //         "image/gif"
-    //     ];
-
-    //     const allValid = files.every(file => allowedTypes.includes(file.type));
-    //     if (!allValid) {
-    //         toast.error("Invalid file type", {
-    //             description: "Please select only PDF, PPTX, ODP, JPG, PNG, or GIF files."
-    //         });
-    //         return;
-    //     }
-
-    //     if (files.length === 1) {
-    //         const file = files[0];
-    //         setUploadDialogOpen(true);
-    //         try {
-    //             const formData = new FormData();
-    //             formData.append("files", file);
-    //             const response = await UploadPdfApi(formData);
-    //             const bookId = response.data.bookId;
-    //             setTimeout(() => {
-    //                 navigate(`/customize/${bookId}`);
-    //             }, 100);
-    //         } catch (error) {
-    //             toast.error("Failed to upload file", {
-    //                 description: error.message
-    //             });
-    //         } finally {
-    //             setUploadDialogOpen(false);
-    //         }
-    //     } else {
-    //         setPendingFiles(files);
-    //         setMultiFileDialogOpen(true);
-    //     }
-    // };
-
-    const handleFileInputChange = async (event) => {
-        const files = Array.from(event.target.files);
-        if (!files.length) return;
-
-        setUploadDialogOpen(true);
-        const formData = new FormData();
-        files.forEach(file => formData.append("files", file));
-        formData.append("mode", FlipbookUploadMode.COMBINE);
-
-        try {
-            // Step 1 — Upload to new API
-            const uploadRes = await UploadFilesNewApi(formData);
-            const { sessionId, mainFolderId, files: uploadedFiles } = uploadRes;
-
-            // Step 2 — Subscribe to SSE stream
-            const eventSource = subscribeToUploadProgress(sessionId, (data) => {
-                if (data.file) {
-                    console.log("Progress:", data.file, data.status, data.page || "");
-                }
-                if (data.stage === "all_done") {
-                    toast.success("Upload complete! Generating flipbook...");
-                    eventSource.close();
-
-                    // Step 3 — Auto trigger generate
-                    GenerateFlipbookApi({
-                        mainFolderId,
-                        files: uploadedFiles,
-                        mode: 1, // combine
-                    }).then((genRes) => {
-                        const { bookIds } = genRes.data;
-                        if (bookIds && bookIds.length) {
-                            navigate(`/customize/${bookIds[0]}`);
-                        }
-                    });
-                }
-            });
-        } catch (err) {
-            toast.error("Upload failed", { description: err.message });
-        } finally {
-            setUploadDialogOpen(false);
-        }
-    };
-
-    const handleUploadSeparately = async () => {
-        setUploadingSeparately(true);
-        try {
-            const formData = new FormData();
-            pendingFiles.forEach(file => formData.append("files", file));
-            formData.append("mode", FlipbookUploadMode.SEPARATELY);
-            await UploadPdfApi(formData);
-            setMultiFileDialogOpen(false);
-            setPendingFiles([]);
-            fetchFlipbooks();
-            navigate("/myflipbooks");
-        } catch (error) {
-            toast.error("Failed to upload files", {
-                description: error.message
-            });
-        } finally {
-            setUploadingSeparately(false);
-        }
-    };
-
-    const handleMergeIntoOne = () => {
-        setFiles(pendingFiles);
-        setMultiFileDialogOpen(false);
-        setPendingFiles([]);
-        navigate("/upload");
-    };
+    const {
+        uploadDialogOpen,
+        setUploadDialogOpen,
+        multiFileDialogOpen,
+        setMultiFileDialogOpen,
+        pendingFiles,
+        uploadingSeparately,
+        progressPercent,
+        progressText,
+        fileProgressList,
+        fileInputRef,
+        handleFileChange,
+        handleUploadSeparately,
+        handleMergeIntoOne,
+        triggerFileInput
+    } = useFlipbookCreation();
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -185,7 +64,7 @@ export default function CreateFirstFlipbook() {
                                     <div className="flex items-center gap-2">
                                         <Button
                                             className="bg-purple-600 hover:bg-purple-700"
-                                            onClick={handleUploadClick}
+                                            onClick={triggerFileInput}
                                         >
                                             <Upload className="w-4 h-4" />
                                             Upload files
@@ -198,19 +77,8 @@ export default function CreateFirstFlipbook() {
                                         multiple
                                         ref={fileInputRef}
                                         className="hidden"
-                                        onChange={handleFileInputChange}
+                                        onChange={handleFileChange}
                                     />
-                                    {uploadDialogOpen && (
-                                        <div className="p-6">
-                                            <div className="text-lg mb-2">{progressText}</div>
-                                            <div className="w-full h-2 bg-gray-200 rounded">
-                                                <div
-                                                    className="bg-purple-600 h-full transition-all"
-                                                    style={{ width: `${progressPercent}%` }}
-                                                ></div>
-                                            </div>
-                                        </div>
-                                    )}
                                 </div>
                                 <div className="flex justify-between items-center gap-2">
                                     <div>
@@ -227,33 +95,61 @@ export default function CreateFirstFlipbook() {
                 </div>
             </div>
 
-            {/* Single file upload dialog */}
             <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-                <DialogContent hideClose>
-                    <div className="flex flex-col items-center justify-center p-4">
-                        <img
-                            src="/assets/Uploading_cloud.gif" className="w-20 scale-150"
-                        />
-                        <div className="text-lg font-semibold mb-5">
-                            Uploading your file...
+                <DialogContent className="sm:max-w-[540px] w-[90vw]">
+                    <div className="flex flex-col items-center justify-center p-4 w-full space-y-6">
+                        <img src="/assets/Uploading_cloud.gif" className="w-20 scale-150" alt="uploading" />
+
+                        <div className="text-lg font-semibold">
+                            {progressText || "Uploading files..."}
                         </div>
-                        <div className="w-full mt-2 h-2 bg-gray-200 rounded overflow-hidden relative">
-                            <div className="absolute inset-0">
-                                <div className="infinite-progress-bar h-full" />
+
+                        {fileProgressList.length > 0 ? (
+                            <div className="w-full flex flex-col gap-4 max-h-[400px] overflow-y-auto">
+                                {fileProgressList.map((file, idx) => (
+                                    <div key={idx} className="max-w-[476px]">
+                                        <div className="flex justify-between items-center mb-1 gap-2 overflow-hidden w-full">
+                                            <span className="text-sm text-gray-700 truncate min-w-0 flex-1">{file.name}</span>
+                                            <span className="text-xs text-gray-500 flex-shrink-0 whitespace-nowrap">{file.percent}%</span>
+                                        </div>
+
+                                        <div className="w-full bg-gray-200 rounded h-2 overflow-hidden">
+                                            <div
+                                                className={`h-2 transition-all ${file.status === "done"
+                                                    ? "bg-green-500"
+                                                    : "bg-purple-600"
+                                                    }`}
+                                                style={{ width: `${file.percent}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
-                        </div>
+                        ) : (
+                            <>
+                                <div className="w-full mt-2 h-2 bg-gray-200 rounded overflow-hidden relative">
+                                    <div
+                                        className="h-full bg-purple-600 transition-all duration-300"
+                                        style={{ width: `${progressPercent}%` }}
+                                    ></div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </DialogContent>
             </Dialog>
 
-            {/* Multiple files upload options dialog */}
             <Dialog open={multiFileDialogOpen} onOpenChange={setMultiFileDialogOpen}>
-                <DialogContent hideClose>
+                <DialogContent className="sm:max-w-[540px] w-[90vw]">
                     <div className="flex flex-col items-center justify-center space-y-4">
                         <img src="/assets/box_lines.svg" />
                         <div className="space-y-2 text-center">
-                            <div className="text-xl font-bold">You have selected {pendingFiles.length} files</div>
-                            <div className="text-center text-gray-600">How would you like to upload them?</div>
+                            <div className="text-xl font-bold">
+                                You have selected {pendingFiles.length} files
+                            </div>
+                            <div className="text-center text-gray-600">
+                                How would you like to upload them?
+                            </div>
                         </div>
                         <div className="flex gap-4 w-full">
                             <Button
