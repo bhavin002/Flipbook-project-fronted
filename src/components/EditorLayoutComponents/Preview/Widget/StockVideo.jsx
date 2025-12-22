@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from 'react';
 
 export default function StockVideo({ shape, isVisible }) {
 
-    console.log("shape StockVideo ??? ", shape)
 
     const videoRef = useRef(null);
 

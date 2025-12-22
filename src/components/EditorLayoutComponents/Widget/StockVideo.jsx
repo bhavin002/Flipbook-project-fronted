@@ -47,7 +47,7 @@ export default function StockVideo({ shape, onSelect, handleDragStart, handelDra
                 ...prev,
                 [index]: (prev[index] || 0) + 1,
             }));
-            // img.crossOrigin = 'Anonymous';
+            img.crossOrigin = 'Anonymous';
             img.onload = () => {
                 setImageLoadCounterPageWise((prev) => ({
                     ...prev,

@@ -379,7 +379,6 @@ export default function Editor() {
     const [rectProps, setRectProps] = useState({ x: 0, y: 0, size: 0, tempWidth: 0, tempHeight: 0 });
     const [scale, setScale] = useState({ scaleX: 1, scaleY: 1 });
     const [mainStageString, setMainStageString] = useState("");
-    console.log("mainStageString ??", mainStageString)
     const [isCropping, setIsCropping] = useState(false);
     const allowHtmlTypesForCrop = ['stock-photo', 'stock-gif', 'stock-sticker', 'masked-image', 'masked-gif', 'masked-sticker', 'upload-photo'];
     const [selectedAlignType, setSelectedAlignType] = useState("");
