@@ -81,7 +81,7 @@ export default function KonvaGif({
                 setTimeout(() => {
                     setImageLoadCounterPageWise((prev) => ({
                         ...prev,
-                        [index]: (prev[index] || 0) - 1,
+                        [index]: Math.max(0,(prev[index] || 0) - 1),
                     }));
                 }, 0);
             })
