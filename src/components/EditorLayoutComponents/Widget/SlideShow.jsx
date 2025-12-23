@@ -19,9 +19,13 @@ export default function SlideShow({ shape, onSelect, handleDragStart,
         if (shape.src) {
             const img = new window.Image();
             img.src = shape.src;
-            imageLoadCounterPageWise[index] = (imageLoadCounterPageWise[index] || 0) + 1;
-            setImageLoadCounterPageWise({ ...imageLoadCounterPageWise });
+            // imageLoadCounterPageWise[index] = (imageLoadCounterPageWise[index] || 0) + 1;
+            // setImageLoadCounterPageWise({ ...imageLoadCounterPageWise });
             img.crossOrigin = 'Anonymous';
+               setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) + 1,
+                }));
             img.onload = () => {
                 setImageLoadCounterPageWise((prev) => ({
                     ...prev,
@@ -39,10 +43,14 @@ export default function SlideShow({ shape, onSelect, handleDragStart,
         if (haveImages) {
             const img = new window.Image();
             // img.src = `http://localhost:8080/api/v1/file/image?src=${encodeURIComponent(shape.htmlData.images[0].url)}`;
-            // img.crossOrigin = 'Anonymous';
+            img.crossOrigin = 'Anonymous';
             img.src = shape.htmlData.images[0].url;
-            imageLoadCounterPageWise[index] = (imageLoadCounterPageWise[index] || 0) + 1;
-            setImageLoadCounterPageWise({ ...imageLoadCounterPageWise });
+            // imageLoadCounterPageWise[index] = (imageLoadCounterPageWise[index] || 0) + 1;
+            // setImageLoadCounterPageWise({ ...imageLoadCounterPageWise });
+            setImageLoadCounterPageWise((prev) => ({
+                    ...prev,
+                    [index]: (prev[index] || 1) + 1,
+                }));
             img.onload = () => {
                 setImageLoadCounterPageWise((prev) => ({
                     ...prev,

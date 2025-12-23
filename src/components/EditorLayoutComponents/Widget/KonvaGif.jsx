@@ -63,27 +63,28 @@ export default function KonvaGif({
                     };
 
                     return;
+                } else {
+                    anim.animateInCanvas(canvas);
+                    anim.onDrawFrame = (ctx, frame) => {
+                        ctx.drawImage(frame.buffer, frame.x, frame.y);
+                        if (imageRef.current) {
+                            // If filters are applied, the node is cached.
+                            // We need to re-cache on every frame to apply filters to the new frame.
+                            if (imageRef.current.isCached()) {
+                                imageRef.current.cache();
+                            }
+                            if (imageRef.current.getLayer()) {
+                                imageRef.current.getLayer().draw();
+                            }
+                        }
+                    };
+                    setTimeout(() => {
+                        setImageLoadCounterPageWise((prev) => ({
+                            ...prev,
+                            [index]: (prev[index] || 0) - 1,
+                        }));
+                    }, 0);
                 }
-                anim.animateInCanvas(canvas);
-                anim.onDrawFrame = (ctx, frame) => {
-                    ctx.drawImage(frame.buffer, frame.x, frame.y);
-                    if (imageRef.current) {
-                        // If filters are applied, the node is cached.
-                        // We need to re-cache on every frame to apply filters to the new frame.
-                        if (imageRef.current.isCached()) {
-                            imageRef.current.cache();
-                        }
-                        if (imageRef.current.getLayer()) {
-                            imageRef.current.getLayer().draw();
-                        }
-                    }
-                };
-                setTimeout(() => {
-                    setImageLoadCounterPageWise((prev) => ({
-                        ...prev,
-                        [index]: Math.max(0,(prev[index] || 0) - 1),
-                    }));
-                }, 0);
             })
         } catch (error) {
             setImageLoadCounterPageWise((prev) => ({
