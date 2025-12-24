@@ -112,6 +112,7 @@ export const restrictNumericInput = (e, allowDecimal = true) => {
 
 
 const addEntryInDB = async (htmlType, id, setIsLoading) => {
+    if (!id) return { data: true };
     switch (htmlType) {
         case "shop-area":
             try {
@@ -183,14 +184,15 @@ export const duplicateShapes = async (mainStage, selectedIndex, setMainStage, se
         .map((e) => e.attrs);
     const newShapes = tempShapes.map((e) => {
         const newID = uuid();
+        const { variantId, ...restHtmlData } = e.htmlData || {};
         return {
             ...e,
             id: newID,
             x: e.x,
             y: e.y,
             htmlData: {
-                ...e.htmlData,
-                variantId: response.data
+                ...restHtmlData,
+                ...(typeof response.data === 'string' && { variantId: response.data })
             }
         };
     });
@@ -210,6 +212,30 @@ export const duplicateShapes = async (mainStage, selectedIndex, setMainStage, se
     mainStage.splice(selectedIndex, 1, mainStage[selectedIndex]);
     setMainStage([...mainStage]);
 };
+
+export const copyInAllPages = async (mainStage, selectedIndex, setMainStage, setIsLoading, selectedShapes) => {
+    for (let index = 0; index < mainStage.length; index++) {
+        if (selectedIndex !== index) {
+            for (const shape of selectedShapes) {
+                const response = await addEntryInDB(shape.attrs.htmlType, shape.attrs.htmlData?.variantId, setIsLoading);
+
+                if (!response?.data) continue;
+
+                const { variantId, ...restHtmlData } = shape.attrs.htmlData || {};
+                mainStage[index].shapes.push({
+                    ...shape.attrs,
+                    id: uuid(),
+                    htmlData: {
+                        ...restHtmlData,
+                        ...(typeof response.data === 'string' && { variantId: response.data })
+                    }
+                });
+            }
+        }
+    }
+
+    setMainStage([...mainStage]);
+}
 
 export const IsPublished = () => {
     const currentUrlBasePath = window.top.location.pathname.split('/')[1];

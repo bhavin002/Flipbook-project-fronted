@@ -350,7 +350,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurren
                             )}
 
                             {productInfo.description && (
-                                <p className="text-sm text-gray-700 leading-relaxed">
+                                <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
                                     {productInfo.description}
                                 </p>
                             )}
@@ -371,7 +371,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurren
                                                 <SelectTrigger className="mt-1">
                                                     <SelectValue placeholder={`Select ${attribute.attributeName}`} />
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className="z-[10001]">
                                                     {attribute.optionValues.map((value) => (
                                                         <SelectItem key={value} value={value}>
                                                             {value}

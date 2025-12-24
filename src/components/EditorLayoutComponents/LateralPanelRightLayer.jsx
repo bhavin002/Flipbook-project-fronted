@@ -1,5 +1,5 @@
 
-import { deleteShape, duplicateShapes } from '@/utils/Helper';
+import { copyInAllPages, deleteShape, duplicateShapes } from '@/utils/Helper';
 import { X, Lock, Unlock, Eye, EyeOff, Copy, Files, Trash2, AlignStartHorizontal, AlignCenterHorizontal, AlignEndHorizontal, AlignStartVertical, AlignEndVertical, ChevronsLeft, AlignVerticalJustifyCenter, SquareMousePointer, Shapes, Image, MousePointerClick, SquareDashedBottomCode, Youtube, SquarePlay, ShoppingBag, Mail, SquareDot, CircleHelp, ImageUp } from 'lucide-react';
 import { ReactSortable } from 'react-sortablejs';
 import { useEffect, useState } from 'react';
@@ -97,7 +97,7 @@ export default function LateralPanelRightLayer({ selectedShape, setIsPageShow, s
     const toggleVisiblity = (shape) => {
         setIsToggle(true);
         // mainStage[selectedIndex].shapes.find((e, index) => {
-           mainStage[selectedIndex].stageref.current.children[0].children[1].children.find((e, index) => {
+        mainStage[selectedIndex].stageref.current.children[0].children[1].children.find((e, index) => {
             if (e.attrs.id == shape.id) {
                 let visible = !e.attrs.visible;
                 mainStage[selectedIndex].shapes[index] = e.attrs;
@@ -143,23 +143,6 @@ export default function LateralPanelRightLayer({ selectedShape, setIsPageShow, s
             mainStage.splice(selectedIndex, 1, mainStage[selectedIndex]);
             setMainStage([...mainStage]);
         }
-    }
-
-    const copyInAllPages = () => {
-        const tempSelectedShapes = mainStage[selectedIndex].selectedShapes;
-
-        mainStage.forEach((element, index) => {
-            if (selectedIndex !== index) {
-                tempSelectedShapes.forEach(shape => {
-                    element.shapes.push({
-                        ...shape.attrs,
-                        id: uuid(),
-                    })
-                })
-            }
-        });
-
-        setMainStage([...mainStage]);
     }
 
     const closePanel = (isExpanded) => {
@@ -248,7 +231,7 @@ export default function LateralPanelRightLayer({ selectedShape, setIsPageShow, s
                         <Button size="sm" variant="ghost" disabled={!selectedShapes.length || isLoading} onClick={() => { duplicateShapes(mainStage, selectedIndex, setMainStage, setIsLoading, selectedShape) }}>
                             <Copy className='h-4 w-4' />
                         </Button>
-                        <Button size="sm" variant="ghost" disabled={!selectedShapes.length} onClick={() => { copyInAllPages() }}>
+                        <Button size="sm" variant="ghost" disabled={!selectedShapes.length || isLoading} onClick={() => { copyInAllPages(mainStage, selectedIndex, setMainStage, setIsLoading, mainStage[selectedIndex].selectedShapes) }}>
                             <Files className='h-4 w-4' />
                         </Button>
                         {mainStage[selectedIndex]?.selectedShapes.some(e => !e.attrs.draggable) ?

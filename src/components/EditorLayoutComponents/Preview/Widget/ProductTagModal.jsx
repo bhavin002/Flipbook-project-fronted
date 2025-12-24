@@ -112,7 +112,7 @@ const ProductTagModal = ({ open, onOpenChange, htmlData, container }) => {
                                     </h2>
                                 )}
                                 {showDescription && (
-                                    <p className="text-sm text-gray-700 leading-relaxed mt-1">
+                                    <p className="text-sm text-gray-700 leading-relaxed mt-1 whitespace-pre-line">
                                         {description}
                                     </p>
                                 )}
