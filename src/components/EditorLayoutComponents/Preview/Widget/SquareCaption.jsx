@@ -18,7 +18,7 @@ export default function SquareCaption({ shape, visibilitySettings, isVisible }) 
     }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
     const handleClick = () => {
-        if (shape.htmlType === 'square-caption' && shape.htmlData?.url) {
+        if (shape.htmlType === 'square-caption') {
             showModal(LinkModal, shape.htmlData);
         }
     };

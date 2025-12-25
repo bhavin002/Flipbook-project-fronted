@@ -16,7 +16,7 @@ const LinkModal = ({ open, onOpenChange, htmlData, container }) => {
             {htmlData?.text}
           </DialogTitle>
         </DialogHeader>
-        <Button
+        {htmlData.url && <Button
           className="bg-black text-white hover:bg-gray-700"
           onClick={() => {
             if (htmlData?.url) {
@@ -26,7 +26,7 @@ const LinkModal = ({ open, onOpenChange, htmlData, container }) => {
           }}
         >
           {htmlData?.buttonLabel}
-        </Button>
+        </Button>}
       </DialogContent>
     </Dialog>
   );

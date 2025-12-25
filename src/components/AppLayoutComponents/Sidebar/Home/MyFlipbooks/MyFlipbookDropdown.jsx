@@ -47,8 +47,6 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
 
     const handleItemClick = async (action, e) => {
 
-        console.log("flipbook ??", flipbook)
-
         if (e) {
             e.preventDefault();
             e.stopPropagation();

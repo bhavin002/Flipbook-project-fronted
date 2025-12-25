@@ -18,7 +18,7 @@ export default function Tag({ shape, visibilitySettings, isVisible }) {
     }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
     const handleClick = () => {
-        if (shape.htmlType === 'link-tag' && shape.htmlData?.url) {
+        if (shape.htmlType === 'link-tag') {
             showModal(LinkModal, shape.htmlData);
         }
     };
