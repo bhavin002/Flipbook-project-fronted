@@ -121,25 +121,22 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                 lineHeight: selectedShape[0].attrs.lineHeight || 1
             });
             setSelectedFontId(fontId);
-            if (selectedShape.length === 1) {
-                toggleStyle('textTransform', selectedShape[0].attrs.textTransform);
-            }
         }
     }, [selectedShape]);
 
     // Handle font selection - Dynamically loads font on click
     const handleFontSelect = async (fontId) => {
         setSelectedFontId(fontId);
-        const font = allFonts.find(f => f.id === fontId); // Use allFonts instead of dynamicFontManager.getFontById for consistency
+        const font = allFonts.find(f => f.id === fontId);
 
         if (font) {
-            // Load font if not already loaded (dynamic loading)
             const isLoaded = await dynamicFontManager.loadFontById(fontId);
 
             if (isLoaded) {
-                // Update both fontId and fontFamily
-                updateItem('fontId', fontId);
-                updateItem('fontFamily', font.family);
+                updateItem({
+                    fontId: fontId,
+                    fontFamily: font.family
+                });
                 setTextStyle(prev => ({
                     ...prev,
                     fontId: fontId,
@@ -151,14 +148,43 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
         }
     };
 
-    const updateItem = (key, value) => {
+    const updateItem = (keyOrUpdates, value) => {
         if (!selectedShape || !selectedShape[0]) return;
 
+        const selectedId = selectedShape[0].attrs.id;
+
         const updatedShapes = mainStage[selectedIndex].shapes.map(shape => {
-            if (selectedShape.some(e => shape.id === e.attrs.id)) {
+            const shapeId = shape.attrs ? shape.attrs.id : shape.id;
+
+            if (String(shapeId) === String(selectedId)) {
+                if (typeof keyOrUpdates === 'object') {
+                    if (shape.attrs) {
+                        return {
+                            ...shape,
+                            attrs: {
+                                ...shape.attrs,
+                                ...keyOrUpdates
+                            }
+                        };
+                    }
+                    return {
+                        ...shape,
+                        ...keyOrUpdates
+                    };
+                }
+
+                if (shape.attrs) {
+                    return {
+                        ...shape,
+                        attrs: {
+                            ...shape.attrs,
+                            [keyOrUpdates]: value
+                        }
+                    };
+                }
                 return {
                     ...shape,
-                    [key]: value
+                    [keyOrUpdates]: value
                 };
             }
             return shape;
@@ -272,10 +298,60 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
         });
     };
 
+    const getMeasuredWidth = (newFontSize) => {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+
+        const text = selectedShape?.[0]?.attrs?.text || textStyle.text || '';
+
+        let fontString = '';
+        if (textStyle.fontStyle.includes('italic')) fontString += 'italic ';
+        if (textStyle.fontStyle.includes('bold') || textStyle.fontWeight === 'bold') fontString += 'bold ';
+
+        fontString += `${newFontSize}px `;
+        fontString += `"${textStyle.fontFamily}"`;
+
+        context.font = fontString;
+        let width = context.measureText(text).width;
+
+        if (textStyle.letterSpacing && text.length > 1) {
+            width += (text.length - 1) * textStyle.letterSpacing;
+        }
+
+        return width;
+    };
+
     const handleFontSizeChange = (e) => {
         const size = parseInt(e.target.value);
         if (!isNaN(size) && size >= 0) {
-            updateItem('fontSize', size);
+            const text = selectedShape?.[0]?.attrs?.text || textStyle.text || '';
+
+            // Check if text is a single word (no spaces, no newlines)
+            // We also check for single letter specifically as requested
+            const isSingleWord = !text.trim().includes(' ') && !text.includes('\n');
+            const isSingleLetter = text.length === 1;
+
+            const measuredTextWidth = getMeasuredWidth(size);
+            const padding = selectedShape[0].attrs.padding || 0;
+            const buffer = 50;
+            const requiredWidth = Math.ceil(measuredTextWidth + (padding * 2) + buffer);
+
+            const currentWidth = selectedShape[0].attrs.width || 0;
+
+            const updates = {
+                fontSize: size
+            };
+
+            // Only automatically expand width if:
+            // 1. It's a single letter (always ensure it fits)
+            // 2. It's a single word AND the current width is too small
+            // 3. The current width is 0 (initial auto-width state)
+            // This preserves wrapping for multi-word or multi-line text.
+            if (currentWidth === 0 || isSingleLetter || (isSingleWord && requiredWidth > currentWidth)) {
+                updates.width = requiredWidth;
+            }
+
+            updateItem(updates);
             setTextStyle(prev => ({ ...prev, fontSize: size }));
         }
     };
@@ -307,7 +383,6 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                             </SelectValue>
                         </SelectTrigger>
                         <SelectContent className="max-h-60">
-                            {/* Search within dropdown - Fixed at top */}
                             <div className="sticky top-0 bg-white z-10 pb-2">
                                 <div className="relative" onKeyDown={(e) => e.stopPropagation()}>
                                     <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -327,7 +402,6 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                                 </div>
                                 <Separator className="mt-2" />
                             </div>
-                            {/* Font List with Previews */}
                             <div className="max-h-48 overflow-y-auto">
                                 {isLoadingFonts ? (
                                     <div className="p-4 text-center text-sm text-gray-500">
@@ -341,7 +415,6 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                                             className="cursor-pointer"
                                         >
                                             <div className="flex items-center justify-between w-full p-2">
-                                                {/* Preview Image */}
                                                 <img
                                                     src={font.preview}
                                                     alt={font.name}
@@ -351,7 +424,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                                         </SelectItem>
                                     ))
                                 )}
-                                
+
                                 {filteredFonts.length === 0 && !isLoadingFonts && (
                                     <div className="p-4 text-center text-sm text-gray-500">
                                         No fonts found
