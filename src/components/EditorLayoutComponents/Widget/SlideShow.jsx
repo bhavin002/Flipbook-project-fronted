@@ -24,7 +24,7 @@ export default function SlideShow({ shape, onSelect, handleDragStart,
             img.crossOrigin = 'Anonymous';
                setImageLoadCounterPageWise((prev) => ({
                     ...prev,
-                    [index]: (prev[index] || 1) + 1,
+                    [index]: (prev[index] || 0) + 1,
                 }));
             img.onload = () => {
                 setImageLoadCounterPageWise((prev) => ({
@@ -49,7 +49,7 @@ export default function SlideShow({ shape, onSelect, handleDragStart,
             // setImageLoadCounterPageWise({ ...imageLoadCounterPageWise });
             setImageLoadCounterPageWise((prev) => ({
                     ...prev,
-                    [index]: (prev[index] || 1) + 1,
+                    [index]: (prev[index] || 0) + 1,
                 }));
             img.onload = () => {
                 setImageLoadCounterPageWise((prev) => ({
