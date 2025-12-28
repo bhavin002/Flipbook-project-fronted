@@ -27,11 +27,11 @@ const getImageFitClass = (properties) => {
 };
 
 const PhotoSlideShow = ({ open, onOpenChange, htmlData, container }) => {
-    const [currentIndex, setCurrentIndex] = useState(1);
+    const images = htmlData?.images || [];
+    const [currentIndex, setCurrentIndex] = useState(images.length > 1 ? 1 : 0);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const intervalRef = useRef(null);
 
-    const images = htmlData?.images || [];
     const hideControls = htmlData?.hideControls ?? false;
     const autoplaySlideshow = htmlData?.autoplaySlideshow ?? false;
     const imageProperties = htmlData?.imageProperties || "fit-to-frame";
@@ -49,6 +49,15 @@ const PhotoSlideShow = ({ open, onOpenChange, htmlData, container }) => {
     const slidesWithClones = images.length > 1
         ? [images[images.length - 1], ...images, images[0]]
         : images;
+
+    // Reset index when images change or dialog opens
+    useEffect(() => {
+        if (open) {
+            setCurrentIndex(images.length > 1 ? 1 : 0);
+            setIsTransitioning(false);
+        }
+    }, [open, images.length]);
+
 
     useEffect(() => {
         if (!autoplaySlideshow || images.length <= 1 || !open) {

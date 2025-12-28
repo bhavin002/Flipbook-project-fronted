@@ -22,10 +22,10 @@ export default function SlideShow({ shape, onSelect, handleDragStart,
             // imageLoadCounterPageWise[index] = (imageLoadCounterPageWise[index] || 0) + 1;
             // setImageLoadCounterPageWise({ ...imageLoadCounterPageWise });
             img.crossOrigin = 'Anonymous';
-               setImageLoadCounterPageWise((prev) => ({
-                    ...prev,
-                    [index]: (prev[index] || 0) + 1,
-                }));
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             img.onload = () => {
                 setImageLoadCounterPageWise((prev) => ({
                     ...prev,
@@ -48,9 +48,9 @@ export default function SlideShow({ shape, onSelect, handleDragStart,
             // imageLoadCounterPageWise[index] = (imageLoadCounterPageWise[index] || 0) + 1;
             // setImageLoadCounterPageWise({ ...imageLoadCounterPageWise });
             setImageLoadCounterPageWise((prev) => ({
-                    ...prev,
-                    [index]: (prev[index] || 0) + 1,
-                }));
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
             img.onload = () => {
                 setImageLoadCounterPageWise((prev) => ({
                     ...prev,
