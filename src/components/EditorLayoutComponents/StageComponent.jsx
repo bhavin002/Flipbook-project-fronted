@@ -670,7 +670,6 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                             const updatedState = [...prevState];
                             updatedState[index] = { ...updatedState[index], thumbnails: mainStage[pageCounter].thumbnails }; return updatedState;
                         });
-                        console.log("mainStage[pageCounter].thumbnails", mainStage[pageCounter].thumbnails);
                         const nextPage = mainStage.length <= (pageCounter + 1) ? pageCounter : pageCounter + 1;
                         setSelectedIndex(nextPage);
                         setPageCounter(nextPage);
@@ -832,7 +831,6 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
         if (isCropping) return;
         const layer = e.target.getLayer();
         layer.find('.guid-line').forEach((l) => l.destroy());
-        console.log('dragging===========================================');
 
         // setMainStage(prevState => {
         //     const updatedState = [...prevState];
@@ -852,7 +850,6 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             shapes: newShapes,
         };
         setMainStage(nextMainStage);
-        console.log('dragging===========================================111');
         setIsAnyChangeMadeInStage(true);
         const newMainStageString = generateMainStageString(nextMainStage);
         setMainStageString(newMainStageString);

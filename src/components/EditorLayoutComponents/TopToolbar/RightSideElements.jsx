@@ -133,7 +133,6 @@ export default function RightSideElements({ selectedShape, setMainStage, mainSta
             try {
                 setIsFetching(true);
                 const response = await FieldMappingApi();
-                console.log("response ??", response.data);
                 setFieldMappingData(response.data || []);
             } catch (error) {
                 toast.error("Failed to get field mapping", {

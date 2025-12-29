@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 
-export function showModal(ModalComponent, htmlData, flipbookId, currentCurrency) {
+export function showModal(ModalComponent, htmlData, flipbookId, currentCurrency, isPublicView) {
     const fullscreenElement = document.fullscreenElement;
 
     const modalRoot = document.createElement('div');
@@ -28,6 +28,7 @@ export function showModal(ModalComponent, htmlData, flipbookId, currentCurrency)
             flipbookId={flipbookId}
             currentCurrency={currentCurrency}
             container={fullscreenElement}
+            isPublicView={isPublicView}
         />
     );
 }

@@ -17,7 +17,6 @@ import * as z from 'zod';
 import { CheckCircle } from 'lucide-react';
 import { ContactSubmissionApi } from '@/service/contactSubmission.service';
 import LoadingButton from '@/utils/LoadingButton';
-import { IsPublished } from '@/utils/Helper';
 
 const createContactFormSchema = (customerFields, settings) => {
     const baseSchema = {};
@@ -94,7 +93,7 @@ const createContactFormSchema = (customerFields, settings) => {
     return z.object(baseSchema);
 };
 
-const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container }) => {
+const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPublicView }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [contactFormInfo, setContactFormInfo] = useState(null);
     const [currentView, setCurrentView] = useState('form');
@@ -123,7 +122,7 @@ const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container 
         const getContactFormInfo = async () => {
             try {
                 setIsLoading(true);
-                const response = IsPublished() ? await getPublishedContactFormApi(htmlData.variantId) : await getContactFormApi(htmlData.variantId);
+                const response = isPublicView ? await getPublishedContactFormApi(htmlData.variantId) : await getContactFormApi(htmlData.variantId);
                 setContactFormInfo(response.data);
             } catch (error) {
                 toast.error('Failed to load contact form information', {

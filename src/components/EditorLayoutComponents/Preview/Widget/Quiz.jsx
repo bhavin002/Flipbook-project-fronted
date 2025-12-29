@@ -3,7 +3,8 @@ import { createPortal } from 'react-dom';
 import { showModal } from '@/utils/ShowModal';
 import QuizModel from './QuizModel';
 
-export default function Quiz({ shape, visibilitySettings, flipbookId, isVisible }) {
+export default function Quiz({ shape, visibilitySettings, flipbookId, isVisible, isPublicView }) {
+
     const [animationClass, setAnimationClass] = useState('');
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
@@ -22,7 +23,7 @@ export default function Quiz({ shape, visibilitySettings, flipbookId, isVisible 
     const handleClick = () => {
         setTooltipPos(prev => ({ ...prev, visible: false }));
         if (shape.htmlType === 'quiz') {
-            showModal(QuizModel, shape.htmlData, flipbookId);
+            showModal(QuizModel, shape.htmlData, flipbookId, null, isPublicView);
         }
     };
 

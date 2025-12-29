@@ -122,7 +122,6 @@ class DynamicFontManager {
     }
 
     async preloadFonts(fontIds) {
-        console.log('Preloading fonts:', fontIds);
         return this.loadFontsByIds(fontIds);
     }
 

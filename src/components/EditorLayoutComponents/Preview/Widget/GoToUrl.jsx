@@ -74,7 +74,6 @@ const linkAreaModalHandlers = {
         showModal(SpotlightModal, htmlData);
     },
     'photo-slideshow': (htmlData) => {
-        console.log("htmlData ??", htmlData)
         if (htmlData?.images) {
             showModal(PhotoSlideShow, htmlData);
         }

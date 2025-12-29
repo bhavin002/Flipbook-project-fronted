@@ -39,7 +39,6 @@ export default function SettingTeammates() {
                 // Fetch roles
                 setIsLoadingRoles(true);
                 const rolesResponse = await GetUserRolesApi();
-                console.log("role ??>?", rolesResponse.data)
                 setRoles(rolesResponse.data || []);
             } catch (error) {
                 toast.error("Failed to fetch data", {

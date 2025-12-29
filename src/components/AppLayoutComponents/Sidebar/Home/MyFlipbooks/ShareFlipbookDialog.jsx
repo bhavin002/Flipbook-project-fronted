@@ -40,8 +40,6 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
                 return;
             }
 
-            console.log('Starting QR code generation for:', shareUrl);
-
             // Set canvas size
             canvas.width = 256;
             canvas.height = 256;
@@ -58,10 +56,8 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
 
             // Get the data URL after generation
             const dataURL = canvas.toDataURL('image/png');
-            console.log('QR Code data URL generated:', dataURL.substring(0, 50) + '...');
             setQrCodeDataURL(dataURL);
 
-            console.log('QR Code generated successfully');
         } catch (error) {
             console.error('Error generating QR code:', error);
         }

@@ -31,7 +31,7 @@ const createQuestionSchema = (formData) => {
     return z.object(baseSchema);
 };
 
-const QuestionModel = ({ open, onOpenChange, htmlData, container }) => {
+const QuestionModel = ({ open, onOpenChange, htmlData, container, isPublicView }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(null);
     const [currentView, setCurrentView] = useState('question');
@@ -56,7 +56,7 @@ const QuestionModel = ({ open, onOpenChange, htmlData, container }) => {
         const getQuestionData = async () => {
             try {
                 setIsLoading(true);
-                const response = IsPublished() ? await getPublishedQuestionFormApi(htmlData.variantId) : await getQuestionFormApi(htmlData.variantId);
+                const response = isPublicView ? await getPublishedQuestionFormApi(htmlData.variantId) : await getQuestionFormApi(htmlData.variantId);
                 setFormData(response.data);
             } catch (error) {
                 toast.error('Failed to load question information', {

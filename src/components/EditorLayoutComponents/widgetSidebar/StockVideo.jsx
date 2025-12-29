@@ -25,7 +25,6 @@ export default function StockVideo({ mainStage, setMainStage, selectedShape, sel
         if (selectedShape.length && selectedShape[0]) {
             // Set stock video specific values
             const htmlData = selectedShape[0]?.attrs?.htmlData || {};
-            console.log("htmlData", htmlData);
             setShowControls(htmlData.showControls || false);
             setAutoPlay(htmlData.autoPlay || false);
             setMute(htmlData.mute || false);
@@ -34,7 +33,6 @@ export default function StockVideo({ mainStage, setMainStage, selectedShape, sel
     }, [selectedShape]);
 
     const updateStockVideoInMainStage = (data) => {
-        console.log("updateStockVideoInMainStage", data);
         if (!selectedShape.length || !mainStage[selectedIndex]?.shapes) return;
 
         const updatedMainStage = [...mainStage];

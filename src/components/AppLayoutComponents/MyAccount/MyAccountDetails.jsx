@@ -25,8 +25,6 @@ export default function MyAccountDetails() {
     const [previewUrl, setPreviewUrl] = useState(null);
     const fileInputRef = useRef(null);
 
-    console.log("userMeta in MyAccountDetails:", userMeta);
-
     const {
         register,
         handleSubmit,

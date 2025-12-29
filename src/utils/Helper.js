@@ -238,7 +238,7 @@ export const copyInAllPages = async (mainStage, selectedIndex, setMainStage, set
 }
 
 export const IsPublished = () => {
-    const currentUrlBasePath = window.top.location.pathname.split('/')[1];
+    const currentUrlBasePath = window.location.pathname.split('/')[1];
     if (currentUrlBasePath === "public-flipbook") {
         return true;
     }

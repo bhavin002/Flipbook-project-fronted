@@ -20,9 +20,8 @@ import { ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react';
 import { toast } from 'sonner';
 import { getProductApi, getPublishedProductApi } from '@/service/product.service';
 import cartService from '@/service/IndexedDBCart.service';
-import { IsPublished } from '@/utils/Helper';
 
-const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurrency, container }) => {
+const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurrency, container, isPublicView }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [productInfo, setProductInfo] = useState(null);
     const [selectedVariant, setSelectedVariant] = useState({});
@@ -37,7 +36,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurren
             const getProductInfo = async () => {
                 try {
                     setIsLoading(true);
-                    const response = IsPublished() ? await getPublishedProductApi(htmlData.variantId) : await getProductApi(htmlData.variantId);
+                    const response = isPublicView ? await getPublishedProductApi(htmlData.variantId) : await getProductApi(htmlData.variantId);
                     setProductInfo(response.data);
 
                     if (response.data?.productAttributes?.length > 0) {

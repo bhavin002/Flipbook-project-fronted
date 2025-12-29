@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { showModal } from '@/utils/ShowModal';
 import ContactFormModel from './ContactFormModel';
 
-export default function ContactForm({ shape, visibilitySettings, flipbookId, isVisible }) {
+export default function ContactForm({ shape, visibilitySettings, flipbookId, isVisible, isPublicView }) {
     const [animationClass, setAnimationClass] = useState('');
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
 
@@ -22,7 +22,7 @@ export default function ContactForm({ shape, visibilitySettings, flipbookId, isV
     const handleClick = () => {
         setTooltipPos(prev => ({ ...prev, visible: false }));
         if (shape.htmlType === 'contact-form') {
-            showModal(ContactFormModel, shape.htmlData, flipbookId);
+            showModal(ContactFormModel, shape.htmlData, flipbookId, null, isPublicView);
         }
     };
 

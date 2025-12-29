@@ -427,7 +427,6 @@ export default function Editor() {
         if (newMainStageString !== mainStageString) {
 
             debouncedUpdate(newMainStageString);
-            console.log('dragging===========================================111');
             undoStack.length > 1 && setIsAnyChangeMadeInStage(true);
         }
     }, [mainStage]);
@@ -611,8 +610,6 @@ export default function Editor() {
         setMainStage(temp1); // Set mainStage to the previous state
         setUndoStack([...undoStack]); // Remove last state from undo stack
         setRedoStack([...redoStack]); // Push current state to redo stack
-        console.log('redoStack===========================================333', redoStack)
-        console.log('undoStack===========================================333', undoStack)
     };
 
     // Redo functionality
@@ -650,9 +647,6 @@ export default function Editor() {
         setRedoStack(redoStack); // Remove first state from redo stack
         setUndoStack(undoStack); // Push current state to undo stack
         setMainStage(temp2); // Set mainStage to the next state
-
-        console.log('redoStack===========================================222', redoStack)
-        console.log('undoStack===========================================222', undoStack)
     };
 
     // Nudge selected shapes with arrow keys by fixed step

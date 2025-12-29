@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 export default function EmbedCode({ shape, isVisible }) {
     const [isLoading, setIsLoading] = useState(true);
-    console.log("shapeshape EmbedCode??", shape)
 
     useEffect(() => {
         setIsLoading(true);

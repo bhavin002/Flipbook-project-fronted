@@ -16,7 +16,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
-import { IsPublished } from '@/utils/Helper';
 
 const createQuizSchema = (collectEmail, questions) => {
     const baseSchema = {};
@@ -35,7 +34,7 @@ const createQuizSchema = (collectEmail, questions) => {
     return z.object(baseSchema);
 };
 
-const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container }) => {
+const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPublicView }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [quizInfo, setQuizInfo] = useState(null);
     const [currentView, setCurrentView] = useState('quiz');
@@ -64,7 +63,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container }) => {
         const getQuizData = async () => {
             try {
                 setIsLoading(true);
-                const response = IsPublished() ? await getPublishedQuizByIdApi(htmlData.variantId) : await getQuizByIdApi(htmlData.variantId);
+                const response = isPublicView ? await getPublishedQuizByIdApi(htmlData.variantId) : await getQuizByIdApi(htmlData.variantId);
                 setQuizInfo(response.data);
             } catch (error) {
                 toast.error('Failed to load quiz information', {
