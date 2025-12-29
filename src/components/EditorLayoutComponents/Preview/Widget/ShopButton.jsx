@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { showModal } from '@/utils/ShowModal';
 import ShopAreaModal from './ShopAreaModal';
+import { useShopSettings } from '@/context/ShopSettingsContext';
 
-export default function ShopButton({ shape, visibilitySettings, flipbookId, isVisible }) {
+export default function ShopButton({ shape, visibilitySettings, flipbookId, isVisible, isPublicView }) {
     const [animationClass, setAnimationClass] = useState('');
+    const { getCurrentCurrency } = useShopSettings();
 
     useEffect(() => {
         if (visibilitySettings.showAnimateInteraction && isVisible) {
@@ -19,7 +21,7 @@ export default function ShopButton({ shape, visibilitySettings, flipbookId, isVi
 
     const handleClick = () => {
         if (shape.htmlType === 'shop-button' && shape.htmlData?.variantId) {
-            showModal(ShopAreaModal, shape.htmlData, flipbookId);
+            showModal(ShopAreaModal, shape.htmlData, flipbookId, getCurrentCurrency(), isPublicView);
         }
     };
     return (

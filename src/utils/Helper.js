@@ -115,6 +115,7 @@ const addEntryInDB = async (htmlType, id, setIsLoading) => {
     if (!id) return { data: true };
     switch (htmlType) {
         case "shop-area":
+        case "shop-button":
             try {
                 setIsLoading(true);
                 const response = await duplicateProductApi(id);
