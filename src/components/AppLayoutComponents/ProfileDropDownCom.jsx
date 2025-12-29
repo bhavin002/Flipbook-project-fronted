@@ -24,7 +24,7 @@ export default function ProfileDropDownCom() {
 
     const handleMyProfileClick = () => {
         if (myWorkspaceId) {
-            window.open(`/profile/${myWorkspaceId}`, '_blank');
+            window.open(`/profile/${currentWorkspace._id}`, '_blank');
         }
     };
 
