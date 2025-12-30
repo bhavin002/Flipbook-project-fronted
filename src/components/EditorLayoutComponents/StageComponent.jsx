@@ -734,68 +734,48 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
         return await (await fetch(dataUrl)).blob();
     }
 
+    const handleSelectShape = (shape, e) => {
+        if (isCropping) return;
+        const metaPressed = e && (e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey);
 
+        setMainStage(prevState => {
+            const updatedState = [...prevState];
+            const currentStage = updatedState[index];
+            const currentSelected = currentStage.selectedShapes || [];
+
+            if (metaPressed) {
+                const isSelected = currentSelected.includes(shape);
+                if (isSelected) {
+                    currentStage.selectedShapes = currentSelected.filter(s => s !== shape);
+                } else {
+                    currentStage.selectedShapes = [...currentSelected, shape];
+                }
+            } else {
+                currentStage.selectedShapes = [shape];
+            }
+            return updatedState;
+        });
+    };
 
     const handleClick = (e) => {
         if (isCropping) return;
         if (selectionRect.visible) return;
-        // const clickedOnEmpty = e.target === e.target.getStage();
-        // if (clickedOnEmpty) {
-        //     setMainStage(prevState => {
-        //         const updatedState = [...prevState];
-        //         updatedState[index] = {
-        //             ...updatedState[index],
-        //             selectedShapes: []
-        //         };
-        //         return updatedState;
-        //     });
-        //     return;
-        // }
 
-        const metaPressed = e.evt.shiftKey || e.evt.ctrlKey || e.evt.metaKey;
-        const isSelected = stage.selectedShapes.includes(e.target);
-
-        if (!metaPressed && !isSelected) {
+        const clickedOnEmpty = e.target === e.target.getStage();
+        if (clickedOnEmpty) {
             setMainStage(prevState => {
                 const updatedState = [...prevState];
                 updatedState[index] = {
                     ...updatedState[index],
-                    selectedShapes: [e.target]
+                    selectedShapes: []
                 };
                 return updatedState;
             });
-        } else if (metaPressed && isSelected) {
-            setMainStage(prevState => {
-                const updatedState = [...prevState];
-                updatedState[index] = {
-                    ...updatedState[index],
-                    selectedShapes: stage.selectedShapes.filter(shape => shape !== e.target)
-                };
-                return updatedState;
-            });
-        } else if (metaPressed && !isSelected) {
-            setMainStage(prevState => {
-                const updatedState = [...prevState];
-                updatedState[index] = {
-                    ...updatedState[index],
-                    selectedShapes: [...stage.selectedShapes, e.target]
-                };
-                return updatedState;
-            });
+            return;
         }
 
-    };
-
-    const handleSelectShape = (shape) => {
-        if (isCropping) return;
-        setMainStage(prevState => {
-            const updatedState = [...prevState];
-            updatedState[index] = {
-                ...updatedState[index],
-                selectedShapes: [shape]
-            };
-            return updatedState;
-        });
+        // If propagation wasn't canceled by a widget, handle it here
+        handleSelectShape(e.target, e);
     };
 
     const handleUpdateShape = (updatedShape) => {

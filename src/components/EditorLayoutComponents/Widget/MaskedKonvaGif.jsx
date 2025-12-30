@@ -97,7 +97,7 @@ export default function MaskedKonvaGif({
     // -------------------------------
     const handleGroupClick = (e) => {
         e.cancelBubble = true;
-        onSelect?.(e.currentTarget);
+        onSelect?.(e.currentTarget, e);
     };
 
     // -------------------------------

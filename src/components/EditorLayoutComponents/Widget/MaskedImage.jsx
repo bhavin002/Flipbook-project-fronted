@@ -135,7 +135,7 @@ const MaskedImage = ({
   // -------------------------------
   const handleGroupClick = (e) => {
     e.cancelBubble = true;
-    onSelect?.(e.currentTarget);
+    onSelect?.(e.currentTarget, e);
   };
 
   // -------------------------------

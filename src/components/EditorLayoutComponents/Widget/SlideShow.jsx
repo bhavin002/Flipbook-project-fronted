@@ -77,7 +77,7 @@ export default function SlideShow({ shape, onSelect, handleDragStart,
     const handleGroupClick = (e) => {
         e.cancelBubble = true;
         if (onSelect) {
-            onSelect(e.currentTarget);
+            onSelect(e.currentTarget, e);
         }
     };
 

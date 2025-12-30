@@ -40,7 +40,7 @@ export default function RingShape({ shape, onSelect, handleDragStart, handleDrag
     const handleGroupClick = (e) => {
         e.cancelBubble = true;
         if (onSelect) {
-            onSelect(e.currentTarget);
+            onSelect(e.currentTarget, e);
         }
     };
 

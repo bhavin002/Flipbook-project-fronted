@@ -45,7 +45,7 @@ export default function VideoButton({ shape, onSelect, handleDragStart, handleDr
     const handleGroupClick = (e) => {
         e.cancelBubble = true;
         if (onSelect) {
-            onSelect(e.currentTarget);
+            onSelect(e.currentTarget, e);
         }
     };
 

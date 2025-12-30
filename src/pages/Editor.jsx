@@ -1,4 +1,4 @@
-import { useOutletContext } from "react-router-dom";
+import { useLocation, useOutletContext } from "react-router-dom";
 import StageComponent from "../components/EditorLayoutComponents/StageComponent";
 import { useEffect, useRef, useState } from "react";
 import TopToolbar from "../components/EditorLayoutComponents/TopToolbar";
@@ -10,7 +10,8 @@ import { v4 as uuid } from "uuid";
 import { Button } from "@/components/ui/button";
 import Konva from 'konva';
 import { EffectEvent } from "@/utils/EffectEvent";
-import { deleteShape } from "@/utils/Helper";
+import { deleteShape, handlePasteShapes } from "@/utils/Helper";
+import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
@@ -372,6 +373,7 @@ export default function Editor() {
     }
 
     const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage, stageWidth, stageHeight } = useOutletContext();
+    const location = useLocation();
     const autoScroll = useRef([]);
 
     const parentRef = useRef(null);
@@ -396,6 +398,7 @@ export default function Editor() {
     const [isPublishModalOpenInternal, setIsPublishModalOpenInternal] = useState(false); // Stack for redo
     const lastScrollTop = useRef(0);
     const scrollTimeout = useRef(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const generateMainStageString = (stages) => {
         // if (isCropping) return;
@@ -700,6 +703,32 @@ export default function Editor() {
                 if (event.key === 'y' || event.key === 'Y') {
                     event.preventDefault();
                     handleRedo();
+                    return;
+                }
+                if (event.key === 'c' || event.key === 'C') {
+                    event.preventDefault();
+                    const stageObj = mainStage[selectedIndex];
+                    if (stageObj && stageObj.selectedShapes && stageObj.selectedShapes.length > 0) {
+                        const clipboardData = {
+                            shapes: stageObj.selectedShapes.map(node => ({ ...node.attrs })),
+                            sourceStageIndex: selectedIndex,
+                            sourceFlipbookId: location.pathname
+                        };
+                        localStorage.setItem('flipbook_clipboard', JSON.stringify(clipboardData));
+                    }
+                    return;
+                }
+                if (event.key === 'v' || event.key === 'V') {
+                    event.preventDefault();
+                    const savedClipboard = localStorage.getItem('flipbook_clipboard');
+                    if (savedClipboard) {
+                        try {
+                            const currentClipboard = JSON.parse(savedClipboard);
+                            handlePasteShapes(currentClipboard, selectedIndex, setMainStage, setIsLoading, location.pathname);
+                        } catch (err) {
+                            console.error("Paste error:", err);
+                        }
+                    }
                     return;
                 }
             }
@@ -1229,6 +1258,11 @@ export default function Editor() {
                         </span>
                     </div>
                 </div>}
+                {isLoading && (
+                    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/20 backdrop-blur-[2px]">
+                        <Loader />
+                    </div>
+                )}
             </div>
         </div>
     )

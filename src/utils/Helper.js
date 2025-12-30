@@ -173,45 +173,76 @@ const addEntryInDB = async (htmlType, id, setIsLoading) => {
 }
 
 export const duplicateShapes = async (mainStage, selectedIndex, setMainStage, setIsLoading, selectedShape) => {
-    const response = await addEntryInDB(selectedShape[0].attrs.htmlType, selectedShape[0].attrs.htmlData?.variantId, setIsLoading);
+    if (!selectedShape || selectedShape.length === 0) return;
+    
+    // We handle duplication of all selected shapes properly
+    const selectedShapesAttrs = mainStage[selectedIndex]?.selectedShapes.map((e) => e.attrs);
+    const newShapes = [];
 
-    if (!response?.data) return;
+    for (const shape of selectedShapesAttrs) {
+        const response = await addEntryInDB(shape.htmlType, shape.htmlData?.variantId, setIsLoading);
+        if (!response?.data) continue;
 
-    const selectedShapes = mainStage[selectedIndex]?.selectedShapes
-        .map((e) => e.attrs)
-        .map((e) => e.id);
-    const tempShapes = mainStage[selectedIndex].stageref.current.children[0].children[1].children
-        .filter((e, index) => selectedShapes.includes(e.attrs.id))
-        .map((e) => e.attrs);
-    const newShapes = tempShapes.map((e) => {
-        const newID = uuid();
-        const { variantId, ...restHtmlData } = e.htmlData || {};
-        return {
-            ...e,
-            id: newID,
-            x: e.x,
-            y: e.y,
+        const { variantId, ...restHtmlData } = shape.htmlData || {};
+        newShapes.push({
+            ...JSON.parse(JSON.stringify(shape)),
+            id: uuid(),
+            x: shape.x + 30,
+            y: shape.y + 30,
             htmlData: {
                 ...restHtmlData,
                 ...(typeof response.data === 'string' && { variantId: response.data })
             }
+        });
+    }
+
+    if (newShapes.length === 0) return;
+
+    setMainStage(prevState => {
+        const updatedState = [...prevState];
+        updatedState[selectedIndex] = {
+            ...updatedState[selectedIndex],
+            shapes: [...(updatedState[selectedIndex].shapes || []), ...newShapes],
+            selectedShapes: [] // Selection will be updated by nodes being recreated
         };
+        return updatedState;
     });
-    mainStage[selectedIndex].shapes = mainStage[selectedIndex].stageref.current.children[0].children[1].children.map((e) =>
-        JSON.parse(JSON.stringify(e.attrs))
-    );
-    newShapes.forEach((e) => {
-        let index = mainStage[selectedIndex].shapes.findIndex((shape) => shape.id === e.id);
-        mainStage[selectedIndex].shapes.splice(index, 0, e);
+};
+
+export const handlePasteShapes = async (clipboard, selectedIndex, setMainStage, setIsLoading, currentFlipbookId) => {
+    if (!clipboard || !clipboard.shapes || clipboard.shapes.length === 0) return;
+
+    const newShapes = [];
+    const isSameStage = clipboard.sourceFlipbookId === currentFlipbookId && clipboard.sourceStageIndex === selectedIndex;
+
+    for (const shape of clipboard.shapes) {
+        const response = await addEntryInDB(shape.htmlType, shape.htmlData?.variantId, setIsLoading);
+        if (!response?.data) continue;
+
+        const { variantId, ...restHtmlData } = shape.htmlData || {};
+        newShapes.push({
+            ...JSON.parse(JSON.stringify(shape)),
+            id: uuid(),
+            x: isSameStage ? shape.x + 30 : shape.x,
+            y: isSameStage ? shape.y + 30 : shape.y,
+            htmlData: {
+                ...restHtmlData,
+                ...(typeof response.data === 'string' && { variantId: response.data })
+            }
+        });
+    }
+
+    if (newShapes.length === 0) return;
+
+    setMainStage(prevState => {
+        const updatedState = [...prevState];
+        updatedState[selectedIndex] = {
+            ...updatedState[selectedIndex],
+            shapes: [...(updatedState[selectedIndex].shapes || []), ...newShapes],
+            selectedShapes: []
+        };
+        return updatedState;
     });
-    mainStage[selectedIndex].shapes.find((e, index) => {
-        if (selectedShapes.includes(e.id)) {
-            e.x += 30;
-            e.y += 30;
-        }
-    });
-    mainStage.splice(selectedIndex, 1, mainStage[selectedIndex]);
-    setMainStage([...mainStage]);
 };
 
 export const copyInAllPages = async (mainStage, selectedIndex, setMainStage, setIsLoading, selectedShapes) => {

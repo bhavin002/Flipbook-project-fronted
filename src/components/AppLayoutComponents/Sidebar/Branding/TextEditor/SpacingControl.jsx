@@ -4,7 +4,7 @@ import { Slider } from '@/components/ui/slider';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from '@/components/ui/label';
 
-export default function SpacingControl({ config, updateConfig }){
+export default function SpacingControl({ config, updateConfig }) {
     const handleLetterSpacingChange = (vals) => {
         updateConfig({
             letterSpacing: vals[0]
@@ -34,8 +34,8 @@ export default function SpacingControl({ config, updateConfig }){
                         </div>
                         <Slider
                             value={[config.letterSpacing]}
-                            min={-10}
-                            max={30}
+                            min={-100}
+                            max={100}
                             step={1}
                             onValueChange={handleLetterSpacingChange}
                         />

@@ -75,7 +75,7 @@ export default function StockVideo({ shape, onSelect, handleDragStart, handelDra
     const handleGroupClick = (e) => {
         e.cancelBubble = true;
         if (onSelect) {
-            onSelect(e.currentTarget);
+            onSelect(e.currentTarget, e);
         }
     };
 

@@ -558,7 +558,7 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                     </div>
                     <FilterSlider
                         id="letterSpacing"
-                        min={-10}
+                        min={-50}
                         max={30}
                         step={1}
                         value={[textStyle.letterSpacing]}
