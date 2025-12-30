@@ -18,11 +18,18 @@ export default function ImageStyle({
     selectedShape[0].attrs?.effect?.individualCorners || false
   );
 
-  const isPng = useMemo(() => {
-    if (selectedShape.length && selectedShape[0].attrs?.src) {
-      return isPngImage(selectedShape[0].attrs.src);
-    }
-    return false;
+  const [isPng, setIsPng] = useState(false);
+
+  useEffect(() => {
+    const checkPng = async () => {
+      if (selectedShape.length && selectedShape[0].attrs?.src) {
+        const result = await isPngImage(selectedShape[0].attrs.src);
+        setIsPng(result);
+      } else {
+        setIsPng(false);
+      }
+    };
+    checkPng();
   }, [selectedShape]);
 
   const defaultCornerRadius = selectedShape[0].attrs?.effect?.cornerRadius || 0;
@@ -54,11 +61,9 @@ export default function ImageStyle({
 
   const [styles, setStyles] = useState(() => {
     const effect = selectedShape[0].attrs?.effect || {};
-    const imageSrc = selectedShape[0].attrs?.src;
-    const isImagePng = isPngImage(imageSrc);
 
     return {
-      isShadowEnabled: isImagePng ? false : (effect.isShadowEnabled || false),
+      isShadowEnabled: effect.isShadowEnabled || false,
       shadowColor: effect.shadowColor || "#000000",
       shadowOpacity: effect.shadowOpacity || 60,
       shadowOffsetX: effect.shadowOffsetX || 0,
@@ -97,11 +102,8 @@ export default function ImageStyle({
         setBottomLeftRadius(uniformRadius);
       }
 
-      const imageSrc = selectedShape[0].attrs?.src;
-      const isImagePng = isPngImage(imageSrc);
-
       setStyles({
-        isShadowEnabled: isImagePng ? false : (effect.isShadowEnabled !== undefined ? effect.isShadowEnabled : false),
+        isShadowEnabled: isPng ? false : (effect.isShadowEnabled !== undefined ? effect.isShadowEnabled : false),
         shadowColor: effect.shadowColor || "#000000",
         shadowOpacity: effect.shadowOpacity !== undefined ? effect.shadowOpacity : 60,
         shadowOffsetX: effect.shadowOffsetX !== undefined ? effect.shadowOffsetX : 0,
@@ -114,7 +116,7 @@ export default function ImageStyle({
         borderRoundedCorners: effect.borderRoundedCorners !== undefined ? effect.borderRoundedCorners : false,
       });
     }
-  }, [selectedShape]);
+  }, [selectedShape, isPng]);
 
   useEffect(() => {
     if (!selectedShape.length || !mainStage[selectedIndex]?.shapes) return;
@@ -126,8 +128,6 @@ export default function ImageStyle({
           (selShape) => selShape.attrs.id === element.id
         );
         if (matchingShape) {
-          const isElementPng = isPngImage(element.src);
-
           return {
             ...element,
             effect: {
@@ -138,7 +138,7 @@ export default function ImageStyle({
               bottomRightRadius: useIndividualCorners ? bottomRightRadius : cornerRadius,
               bottomLeftRadius: useIndividualCorners ? bottomLeftRadius : cornerRadius,
               ...styles,
-              isShadowEnabled: isElementPng ? false : styles.isShadowEnabled,
+              isShadowEnabled: isPng ? false : styles.isShadowEnabled,
             },
           };
         }
@@ -149,7 +149,7 @@ export default function ImageStyle({
     setMainStage(updatedMainStage);
   }, [
     cornerRadius, useIndividualCorners, topLeftRadius, topRightRadius,
-    bottomRightRadius, bottomLeftRadius, styles, selectedShape, selectedIndex
+    bottomRightRadius, bottomLeftRadius, styles, selectedShape, selectedIndex, isPng
   ]);
 
   const handleStyleChange = (key, value) => {

@@ -19,6 +19,17 @@ export default function StockPhoto({
     const imageRef = useRef(null);
     const ractRef = useRef(null);
     const groupRef = useRef();
+    const [isPng, setIsPng] = useState(false);
+
+    useEffect(() => {
+        const checkPng = async () => {
+            if (shape?.src) {
+                const result = await isPngImage(shape.src);
+                setIsPng(result);
+            }
+        };
+        checkPng();
+    }, [shape?.src]);
 
     useEffect(() => {
         if (shape && shape.src) {
@@ -118,7 +129,6 @@ export default function StockPhoto({
     if (!loadedImage) return null;
 
     // Check if this is a PNG image - use transparent fill to preserve transparency
-    const isPng = isPngImage(shape.src);
     const shadowRectFill = isPng ? 'transparent' : '#000000';
 
     const borderWidth = shapeEffect.isBorderEnabled ? (shapeEffect.borderWidth || 0) : 0;
