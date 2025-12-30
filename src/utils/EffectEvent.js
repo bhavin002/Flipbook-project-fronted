@@ -1,16 +1,6 @@
 import Konva from 'konva';
+import { isPngImage } from './Helper';
 
-// Utility function to check if image is PNG
-const isPngImage = (src) => {
-    if (!src) return false;
-    // Check file extension
-    if (src.toLowerCase().endsWith('.png')) return true;
-    // Check data URL
-    if (src.startsWith('data:image/png')) return true;
-    // Check if URL contains .png extension (with or without query parameters)
-    if (src.toLowerCase().includes('.png')) return true;
-    return false;
-};
 
 export const EffectEvent = (shape, ractnode, imgNode) => {
     const effect = shape.effect || {};
