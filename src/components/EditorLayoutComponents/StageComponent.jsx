@@ -1354,6 +1354,10 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                                 keepRatio={['link-area', 'shop-area', 'quiz', 'question', 'contact-form'].includes(stage.selectedShapes[0]?.attrs.htmlType) ? false : true}
                                 rotationSnapTolerance={stage.selectedShapes[0]?.attrs.htmlType === 'tag' ? false : undefined}
                                 flipEnabled={false}
+                                enabledAnchors={
+                                    stage.selectedShapes[0]?.attrs.htmlType === 'shop-button' ? ['top-left', 'top-right', 'bottom-left', 'bottom-right'] : undefined
+                                }
+
                                 boundBoxFunc={(oldBox, newBox) => {
                                     if (stage.selectedShapes[0]?.attrs.type === 'text') {
                                         if (newBox.width < 10 || newBox.height < 10) return oldBox;
