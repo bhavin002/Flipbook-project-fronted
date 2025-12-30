@@ -66,13 +66,10 @@ export default function MaskedImageWidget({ shape, flipbookRef }) {
     const maskId = `mask-${shape.id}`;
 
     return (
-        <svg
-            height={shape.height}
-            width={shape.width}
-            xmlns="http://www.w3.org/2000/svg"
+        <div
             style={{
-                width: `${shape.width}px`,
                 height: `${shape.height}px`,
+                width: `${shape.width}px`,
                 position: "absolute",
                 left: `${shape.x}px`,
                 top: `${shape.y}px`,
@@ -86,57 +83,76 @@ export default function MaskedImageWidget({ shape, flipbookRef }) {
                 display: shape.visible ? "block" : "none",
             }}
         >
-            <defs>
-                <clipPath id={maskId}>
-                    {shape.data.map((element, index) => {
-                        if (element.type === 'path') {
-                            return <path d={element.data} />
-                        }
-                        else if (element.type === 'rect') {
-                            return <rect
-                                key={`rect-${index}`}
-                                x={Number(element.x) || 0}
-                                y={Number(element.y) || 0}
-                                width={Number(element.width)}
-                                height={Number(element.height)}
-                            />
-                        } else if (element.type === 'polygon') {
-                            return <polygon
-                                key={`polygon-${index}`}
-                                points={element.points}
-                            />
-                        } else if (element.type === 'circle') {
-                            return <circle
-                                key={`circle-${index}`}
-                                cx={Number(element.cx) || 0}
-                                cy={Number(element.cy) || 0}
-                                r={Number(element.r) || 0}
-                            />
-                        } else if (element.type === 'ellipse') {
-                            return <ellipse
-                                key={`ellipse-${index}`}
-                                cx={Number(element.cx) || 0}
-                                cy={Number(element.cy) || 0}
-                                rx={Number(element.rx) || 0}
-                                ry={Number(element.ry) || 0}
-                            />
-                        }
-                    })}
-                </clipPath>
-            </defs>
-            {/* Cropped + Masked image */}
-            <image
-                href={directUrl}
-                x={crop.x || 0}
-                y={crop.y || 0}
-                width={displayWidth}
-                height={displayHeight}
-                preserveAspectRatio="none"
-                clipPath={shape.maskData ? `url(#${maskId})` : undefined}
-                style={{
-                    ...effectStyles,
-                }}
-            />
-        </svg>
+            <div style={{
+                width: `100%`,
+                height: `100%`,
+                position: "relative",
+                transform: `scaleX(${shape.flipX ? -1 : 1}) scaleY(${shape.flipY ? -1 : 1})`,
+                transformOrigin: `${shape.width / 2}px ${shape.height / 2}px`,
+            }}>
+                <svg
+                    height={shape.height}
+                    width={shape.width}
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                        width: `${shape.width}px`,
+                        height: `${shape.height}px`,
+                        display: "block",
+                    }}
+                >
+                    <defs>
+                        <clipPath id={maskId}>
+                            {shape.data.map((element, index) => {
+                                if (element.type === 'path') {
+                                    return <path d={element.data} />
+                                }
+                                else if (element.type === 'rect') {
+                                    return <rect
+                                        key={`rect-${index}`}
+                                        x={Number(element.x) || 0}
+                                        y={Number(element.y) || 0}
+                                        width={Number(element.width)}
+                                        height={Number(element.height)}
+                                    />
+                                } else if (element.type === 'polygon') {
+                                    return <polygon
+                                        key={`polygon-${index}`}
+                                        points={element.points}
+                                    />
+                                } else if (element.type === 'circle') {
+                                    return <circle
+                                        key={`circle-${index}`}
+                                        cx={Number(element.cx) || 0}
+                                        cy={Number(element.cy) || 0}
+                                        r={Number(element.r) || 0}
+                                    />
+                                } else if (element.type === 'ellipse') {
+                                    return <ellipse
+                                        key={`ellipse-${index}`}
+                                        cx={Number(element.cx) || 0}
+                                        cy={Number(element.cy) || 0}
+                                        rx={Number(element.rx) || 0}
+                                        ry={Number(element.ry) || 0}
+                                    />
+                                }
+                            })}
+                        </clipPath>
+                    </defs>
+                    {/* Cropped + Masked image */}
+                    <image
+                        href={directUrl}
+                        x={crop.x || 0}
+                        y={crop.y || 0}
+                        width={displayWidth}
+                        height={displayHeight}
+                        preserveAspectRatio="none"
+                        clipPath={shape.maskData ? `url(#${maskId})` : undefined}
+                        style={{
+                            ...effectStyles,
+                        }}
+                    />
+                </svg>
+            </div>
+        </div>
     );
-} 
+}
