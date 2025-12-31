@@ -725,3 +725,9 @@ html , body, #root {
   height: 100%;
   width: 100%;
 }
+
+@media (max-width: 767px) {
+  .crisp-offset #crisp-chatbox-button {
+    bottom: 94px !important;
+  }
+}
