@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Download, Eye, BarChart2, ShoppingCart } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 
-export default function FlipbookSummary({ viewsCount = 0, impressionCount = 0, orderCount = 0, orderValues = [], loadingStats }) {
+export default function FlipbookSummary({ flipbookDetails, viewsCount = 0, impressionCount = 0, orderCount = 0, orderValues = [], loadingStats }) {
     // Ensure orderValues is always an array for backward compatibility
     const normalizedOrderValues = Array.isArray(orderValues)
         ? orderValues
@@ -33,14 +33,14 @@ export default function FlipbookSummary({ viewsCount = 0, impressionCount = 0, o
             icon: <Eye className="h-5 w-5 text-purple-600" />,
             color: "bg-purple-600",
         },
-        {
-            id: "downloads",
-            title: "0",
-            label: "Downloads",
-            description: "Total number of times your flipbooks have been downloaded by users.",
-            icon: <Download className="h-5 w-5 text-green-600" />,
-            color: "bg-green-600",
-        },
+        // {
+        //     id: "downloads",
+        //     title: "0",
+        //     label: "Downloads",
+        //     description: "Total number of times your flipbooks have been downloaded by users.",
+        //     icon: <Download className="h-5 w-5 text-green-600" />,
+        //     color: "bg-green-600",
+        // },
         {
             id: "orders",
             title: orderCount,
@@ -79,26 +79,26 @@ export default function FlipbookSummary({ viewsCount = 0, impressionCount = 0, o
             <CardHeader>
                 <div className="flex items-center justify-between w-full">
                     <CardTitle>Summary</CardTitle>
-                    <button className="text-blue-600 text-sm hover:underline">Download CSV</button>
+                    {/* <button className="text-blue-600 text-sm hover:underline">Download CSV</button> */}
                 </div>
             </CardHeader>
             <CardContent>
                 <div className="flex flex-col md:flex-row gap-4">
-                    <div className="w-full md:w-1/3 lg:w-1/4">
+                    <div className="w-full md:w-[200px] flex-shrink-0">
                         <Card className="h-full">
-                            <CardContent className="p-6 h-full flex items-center justify-center">
-                                <div className="flex flex-col space-y-2">
+                            <CardContent className="p-3 h-full flex items-center justify-center">
+                                <div className="flex flex-col">
                                     <img
-                                        className="max-w-full mx-auto"
-                                        src="/assets/page_1.jpg"
-                                        alt="page_1"
+                                        className="max-w-full max-h-[220px] object-contain"
+                                        src={flipbookDetails?.flipbookData?.thumbnail || "/assets/book_thumbnail.jpg"}
+                                        alt="thumbnail"
                                     />
                                 </div>
                             </CardContent>
                         </Card>
                     </div>
-                    <div className="w-full md:w-2/3 lg:w-3/4">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="flex-1">
+                        <div className="grid grid-cols-1 sm:grid-cols-2  gap-4">
                             {statsData.map((stat, index) => (
                                 <TooltipProvider key={index}>
                                     <Tooltip>

@@ -3,6 +3,8 @@ import { createContext, useContext, useState } from 'react';
 
 const EmailCustomizationContext = createContext();
 
+const DEFAULT_LOGO = "/assets/logo.png";
+
 export const useEmailCustomization = () => {
     const context = useContext(EmailCustomizationContext);
     if (!context) {
@@ -21,7 +23,7 @@ export const EmailCustomizationProvider = ({ children }) => {
         footerDescription: "FlipDrag LLC - 535 Mission St. FL 14, San Francisco, CA 94105, USA",
         backgroundColor: "#e6e7e8",
         accentColor: "#7b39ed",
-        logo: "https://flipbook-subway-workspace-logo.s3.ap-south-1.amazonaws.com/5e909bd2-5ac1-4dd8-a886-2df3327e86cb.png",
+        logo: DEFAULT_LOGO,
     });
 
     const [errors, setErrors] = useState({});
@@ -90,7 +92,7 @@ export const EmailCustomizationProvider = ({ children }) => {
     const resetLogo = () => {
         setEmailData(prev => ({
             ...prev,
-            logo: "https://flipbook-subway-workspace-logo.s3.ap-south-1.amazonaws.com/5e909bd2-5ac1-4dd8-a886-2df3327e86cb.png"
+            logo: DEFAULT_LOGO
         }));
 
         if (errors.logo) {
@@ -123,7 +125,7 @@ export const EmailCustomizationProvider = ({ children }) => {
             footerDescription: "FlipDrag LLC - 535 Mission St. FL 14, San Francisco, CA 94105, USA",
             backgroundColor: "#e6e7e8",
             accentColor: "#7b39ed",
-            logo: "https://flipbook-subway-workspace-logo.s3.ap-south-1.amazonaws.com/5e909bd2-5ac1-4dd8-a886-2df3327e86cb.png",
+            logo: DEFAULT_LOGO,
         });
         clearErrors();
     };

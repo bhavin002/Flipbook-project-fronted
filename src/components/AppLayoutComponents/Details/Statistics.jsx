@@ -18,6 +18,7 @@ import CountryViewsTable from "./Statistics/CountryViewsTable";
 import DevicePieChart from "./Statistics/DevicePieChart";
 
 export default function Statistics({ flipbookId, flipbookDetails }) {
+    console.log("flipbookDetails", flipbookDetails);
     const today = new Date();
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(today.getMonth() - 1);
@@ -88,6 +89,7 @@ export default function Statistics({ flipbookId, flipbookDetails }) {
                 </Button>
             </div>
             <FlipbookSummary
+                flipbookDetails={flipbookDetails}
                 viewsCount={stats?.totalViews || 0}
                 impressionCount={stats?.totalImpressions || 0}
                 orderCount={stats?.orderCount || 0}

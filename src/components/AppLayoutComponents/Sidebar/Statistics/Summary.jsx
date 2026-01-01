@@ -26,14 +26,14 @@ export default function Summary({ totalImpressions = 0, totalViews = 0, totalDow
             icon: <Eye className="h-5 w-5 text-purple-600" />,
             color: "bg-purple-600",
         },
-        {
-            id: "downloads",
-            title: totalDownloads,
-            label: "Downloads",
-            description: "Total number of times your flipbooks have been downloaded by users.",
-            icon: <Download className="h-5 w-5 text-green-600" />,
-            color: "bg-green-600",
-        }
+        // {
+        //     id: "downloads",
+        //     title: totalDownloads,
+        //     label: "Downloads",
+        //     description: "Total number of times your flipbooks have been downloaded by users.",
+        //     icon: <Download className="h-5 w-5 text-green-600" />,
+        //     color: "bg-green-600",
+        // }
     ]
 
     if (loading) {
