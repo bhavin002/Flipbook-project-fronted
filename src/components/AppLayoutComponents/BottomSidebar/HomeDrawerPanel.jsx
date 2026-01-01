@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ChevronRight, Folder, BookOpen, Users, UserCheck, LayoutPanelLeft, Trash, Crown } from "lucide-react";
+import { ChevronRight, Folder, BookOpen, Users, UserCheck, LayoutPanelLeft, Trash, Crown, LayoutGrid } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -19,7 +19,7 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
   const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { permissions } = useAuth();
+  const { permissions, userMeta } = useAuth();
 
   const getFolders = async () => {
     setIsLoading(true);
@@ -59,6 +59,8 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
       return { sectionId: "share-with-me", folderId: null };
     } else if (path.includes('/myflipbooks/trash')) {
       return { sectionId: "trash", folderId: null };
+    } else if (path.includes('/myflipbooks/admin-templates')) {
+      return { sectionId: "admin-template-team", folderId: null };
     } else if (path.includes('/myflipbooks')) {
       return { sectionId: "flipbooks-team", folderId: null };
     }
@@ -87,6 +89,8 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
       navigate("/myflipbooks");
     } else if (sectionId === "template-team") {
       navigate("/myflipbooks/template");
+    } else if (sectionId === "admin-template-team") {
+      navigate("/myflipbooks/admin-templates");
     } else if (sectionId === "share-with-me") {
       navigate("/myflipbooks/shared-with-me");
     } else if (sectionId === "trash") {
@@ -157,17 +161,28 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
             sectionLabel: 'Template',
             sectionType: 'template',
             folderData: templateFolders
+          },
+          {
+            sectionIcon: LayoutGrid,
+            sectionLabel: 'Admin Template',
+            sectionType: 'admin-template',
+            folderData: []
           }
         ].filter(section => {
           if (section.sectionType === 'template' && !permissions?.templates) {
             return false;
           }
+          if (section.sectionType === 'admin-template' && userMeta?.role !== 1) {
+            return false;
+          }
           return true;
         }).map(({ sectionIcon: SectionIcon, sectionLabel, sectionType, folderData }) => (
           <div key={sectionLabel} className="mb-4">
-            <div className="px-3 py-2 text-sm font-medium flex items-center">
-              <SectionIcon className="mr-1 h-4 w-4" /> {sectionLabel}
-            </div>
+            {sectionType !== 'admin-template' && (
+              <div className="px-3 py-2 text-sm font-medium flex items-center">
+                <SectionIcon className="mr-1 h-4 w-4" /> {sectionLabel}
+              </div>
+            )}
             <div className="space-y-1">
               {sidebarSections
                 .filter(section => section.type === sectionType)
@@ -242,6 +257,17 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
                   >
                     <UserCheck className="h-4 w-4 mr-2" />
                     Share with me
+                  </MenuButton>
+                </div>
+              )}
+              {sectionType === 'admin-template' && (
+                <div className="px-2">
+                  <MenuButton
+                    isActive={selectedItem.sectionId === 'admin-template-team'}
+                    onClick={() => handleItemSelect('admin-template-team')}
+                  >
+                    <LayoutGrid className="h-4 w-4 mr-2" />
+                    Admin Templates
                   </MenuButton>
                 </div>
               )}

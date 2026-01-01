@@ -2,6 +2,7 @@ import { duplicateContactFormApi } from "@/service/contactForm.service";
 import { duplicateProductApi } from "@/service/product.service";
 import { duplicateQuestionFormApi } from "@/service/question.service";
 import { duplicateQuizApi } from "@/service/quiz.service";
+import { GetTemplateApi, GetPageByIndexApi } from "@/service/template.service";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
 import { DeviceType } from "./enum";
@@ -24,18 +25,41 @@ export const addStage = (mainStage, setMainStage, index, setSelectedIndex) => {
     // }, 0);
 }
 
-export const duplicateStage = (mainStage, setMainStage, index, setSelectedIndex) => {
-    const temp = JSON.parse(JSON.stringify(mainStage[index]));
-    temp.shapes = mainStage[index].stageref && mainStage[index].stageref.current ? mainStage[index].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) : (mainStage[index].shapes || []);
-    temp.shapes.forEach(element => { element.id = uuid() })
-    temp.stageref.current = JSON.parse(temp.stageref.current);
-    temp.selectedShapes = [];
-    mainStage.splice(index + 1, 0, temp);
-    setMainStage([...mainStage]);
-    // setTimeout(() => {
-        setSelectedIndex(index + 1)
-    // }, 0);
+export const duplicateStage = async (mainStage, setMainStage, index, setSelectedIndex, setIsLoading) => {
+    try {
+        setIsLoading(true);
+        const temp = JSON.parse(JSON.stringify(mainStage[index]));
+        const currentShapes = mainStage[index].stageref && mainStage[index].stageref.current 
+            ? mainStage[index].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) 
+            : (mainStage[index].shapes || []);
 
+        const newShapes = [];
+        for (const shape of currentShapes) {
+            const dbResponse = await addEntryInDB(shape.htmlType, shape.htmlData?.variantId, setIsLoading);
+            if (!dbResponse?.data) continue;
+
+            const { variantId, ...restHtmlData } = shape.htmlData || {};
+            newShapes.push({
+                ...JSON.parse(JSON.stringify(shape)),
+                id: uuid(),
+                htmlData: {
+                    ...restHtmlData,
+                    ...(typeof dbResponse.data === 'string' && { variantId: dbResponse.data })
+                }
+            });
+        }
+
+        temp.shapes = newShapes;
+        temp.stageref.current = JSON.parse(temp.stageref.current);
+        temp.selectedShapes = [];
+        mainStage.splice(index + 1, 0, temp);
+        setMainStage([...mainStage]);
+        setSelectedIndex(index + 1);
+    } catch (error) {
+        toast.error("Failed to duplicate stage");
+    } finally {
+        setIsLoading(false);
+    }
 }
 
 export const deleteStage = (mainStage, setMainStage, index, selectedIndex, setSelectedIndex) => {
@@ -325,4 +349,91 @@ export const isPngImage = async (src) => {
     console.error('PNG check failed:', err);
     return false;
   }
+};
+
+export const applyTemplate = async (templateId, mainStage, index, setMainStage, setIsLoading) => {
+    try {
+        setIsLoading(true);
+        const response = await GetTemplateApi(templateId, false);
+        const validPageData = response.data.pages;
+        const newStageData = validPageData.map(e => JSON.parse(e.pageData));
+
+        // Sync current stages
+        mainStage.forEach(e => {
+            e.shapes = e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) : e.shapes;
+        });
+
+        const finalNewStageData = [];
+        for (const page of newStageData) {
+            const newShapes = [];
+            for (const shape of page.shapes) {
+                const dbResponse = await addEntryInDB(shape.htmlType, shape.htmlData?.variantId, setIsLoading);
+                if (!dbResponse?.data) continue;
+
+                const { variantId, ...restHtmlData } = shape.htmlData || {};
+                newShapes.push({
+                    ...JSON.parse(JSON.stringify(shape)),
+                    id: uuid(),
+                    htmlData: {
+                        ...restHtmlData,
+                        ...(typeof dbResponse.data === 'string' && { variantId: dbResponse.data })
+                    }
+                });
+            }
+            finalNewStageData.push({
+                ...page,
+                shapes: newShapes,
+                selectedShapes: []
+            });
+        }
+
+        mainStage.splice(index, 1, ...finalNewStageData);
+        setMainStage([...mainStage]);
+    } catch (error) {
+        toast.error(error.message || 'Something went wrong');
+    } finally {
+        setIsLoading(false);
+    }
+};
+
+export const applyPage = async (templateId, pageIndex, mainStage, index, setMainStage, setIsLoading) => {
+    try {
+        setIsLoading(true);
+        const response = await GetPageByIndexApi(templateId, pageIndex);
+        const page = JSON.parse(response.data.pageData);
+
+        // Sync current stages
+        mainStage.forEach(e => {
+            e.shapes = e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) : e.shapes;
+        });
+
+        const newShapes = [];
+        for (const shape of page.shapes) {
+            const dbResponse = await addEntryInDB(shape.htmlType, shape.htmlData?.variantId, setIsLoading);
+            if (!dbResponse?.data) continue;
+
+            const { variantId, ...restHtmlData } = shape.htmlData || {};
+            newShapes.push({
+                ...JSON.parse(JSON.stringify(shape)),
+                id: uuid(),
+                htmlData: {
+                    ...restHtmlData,
+                    ...(typeof dbResponse.data === 'string' && { variantId: dbResponse.data })
+                }
+            });
+        }
+
+        const finalPage = {
+            ...page,
+            shapes: newShapes,
+            selectedShapes: []
+        };
+
+        mainStage.splice(index, 1, finalPage);
+        setMainStage([...mainStage]);
+    } catch (error) {
+        toast.error(error.message || 'Something went wrong');
+    } finally {
+        setIsLoading(false);
+    }
 };

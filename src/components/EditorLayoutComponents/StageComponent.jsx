@@ -17,7 +17,7 @@ import KonavGif from "./Widget/KonvaGif";
 import MaskedKonvaGif from "./Widget/MaskedKonvaGif";
 import KonvaText from "./Widget/KonvaText";
 import UploadPhoto from "./Widget/UploadPhoto";
-import { GetPageByIndexApi, GetTemplateApi } from "@/service/template.service";
+import { applyTemplate, applyPage } from "@/utils/Helper";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
@@ -1085,7 +1085,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             }
 
 
-            <StagePageMenu setSelectedIndex={setSelectedIndex} selectedIndex={selectedIndex} rectProps={rectProps} mainStage={mainStage} setMainStage={setMainStage} index={index} />
+            <StagePageMenu setIsLoading={setIsLoading} setSelectedIndex={setSelectedIndex} selectedIndex={selectedIndex} rectProps={rectProps} mainStage={mainStage} setMainStage={setMainStage} index={index} />
             <ConfirmationDialog
                 isConfirmModalOpen={isTemplateModalOpen}
                 setIsConfirmModalOpen={setIsTemplateModalOpen}
@@ -1094,25 +1094,11 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                 isLoading={isLoading}
                 onConfirm={async () => {
                     try {
-                        setIsLoading(true);
-                        const response = await GetTemplateApi(stage.dragRect.current.templateId, false);
-                        const validPageData = response.data.pages;
-                        const newStageData = validPageData.map(e => JSON.parse(e.pageData));
-                        mainStage.forEach(e => {
-                            e.shapes = e.stageref && e.stageref.current ? e.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) : e.shapes;
-                        })
-                        newStageData.forEach(e => {
-                            e.shapes.forEach(shape => {
-                                shape.id = uuid();
-                            })
-                        })
-                        mainStage.splice(index, 1, ...newStageData)
-                        setMainStage([...mainStage]);
+                        await applyTemplate(stage.dragRect.current.templateId, mainStage, index, setMainStage, setIsLoading);
                         stage.dragRect.current = null;
                     } catch (error) {
                         toast.error(error.message || 'Something went wrong');
                     } finally {
-                        setIsLoading(false);
                         setIsTemplateModalOpen(false);
                     }
                 }}
@@ -1129,19 +1115,11 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                 isLoading={isLoading}
                 onConfirm={async () => {
                     try {
-                        setIsLoading(true);
-                        const response = await GetPageByIndexApi(stage.dragRect.current.templateId, stage.dragRect.current.pageIndex);
-                        const newStageData = JSON.parse(response.data.pageData);
-                        newStageData.shapes.forEach(shape => {
-                            shape.id = uuid();
-                        });
-                        mainStage.splice(index, 1, newStageData)
-                        setMainStage([...mainStage]);
+                        await applyPage(stage.dragRect.current.templateId, stage.dragRect.current.pageIndex, mainStage, index, setMainStage, setIsLoading);
                         stage.dragRect.current = null;
                     } catch (error) {
                         toast.error(error.message || 'Something went wrong');
                     } finally {
-                        setIsLoading(false);
                         setIsPageModalOpen(false);
                     }
                 }}

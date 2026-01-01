@@ -155,6 +155,10 @@ const templateButtons = [
     { icon: Pencil, title: "Edit", value: "edit", color: "text-amber-600", bg: "bg-amber-50", hover: "hover:bg-amber-100" },
 ];
 
+const adminTemplateButtons = [
+    { icon: Pencil, title: "Edit", value: "edit", color: "text-amber-600", bg: "bg-amber-50", hover: "hover:bg-amber-100" },
+];
+
 const sidebarSections = [
     {
         id: 'flipbooks-team',
@@ -2482,6 +2486,8 @@ export function getData(dataType) {
             return publishedButtons;
         case 'templateButtons':
             return templateButtons;
+        case 'adminTemplateButtons':
+            return adminTemplateButtons;
         case 'bookshelfButtons':
             return publishedButtons;
         case 'sidebarSections':

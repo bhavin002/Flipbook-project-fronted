@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { ChevronRight, Folder, FolderPlus } from "lucide-react"
+import { ChevronRight, Folder, FolderPlus, LayoutGrid } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
 import {
     Collapsible,
@@ -46,7 +46,7 @@ export default function HomeSidebarPanel() {
     const location = useLocation();
 
     const { folders, isLoading, refreshFolders, updateFolder, removeFolder, addFolder } = useFolders();
-    const { permissions } = useAuth();
+    const { permissions, userMeta } = useAuth();
 
     useEffect(() => {
         refreshFolders();
@@ -86,6 +86,8 @@ export default function HomeSidebarPanel() {
             return { sectionId: "share-with-me", folderId: null };
         } else if (path.includes('/myflipbooks/trash')) {
             return { sectionId: "trash", folderId: null };
+        } else if (path.includes('/myflipbooks/admin-templates')) {
+            return { sectionId: "admin-template-team", folderId: null };
         } else if (path.includes('/myflipbooks/flipbooks')) {
             return { sectionId: "flipbooks-team", folderId: null };
         }
@@ -114,6 +116,8 @@ export default function HomeSidebarPanel() {
             navigate("/myflipbooks/flipbooks");
         } else if (sectionId === "template-team") {
             navigate("/myflipbooks/template");
+        } else if (sectionId === "admin-template-team") {
+            navigate("/myflipbooks/admin-templates");
         } else if (sectionId === "share-with-me") {
             navigate("/myflipbooks/shared-with-me");
         } else if (sectionId === "trash") {
@@ -174,17 +178,29 @@ export default function HomeSidebarPanel() {
                         sectionType: 'template',
                         sectionId: 'template-team',
                         folderData: templateFolders
+                    },
+                    {
+                        sectionIcon: LayoutGrid,
+                        sectionLabel: 'Admin Template',
+                        sectionType: 'admin-template',
+                        sectionId: 'admin-template-team',
+                        folderData: []
                     }
                 ].filter(section => {
                     if (section.sectionType === 'template' && !permissions?.templates) {
                         return false;
                     }
+                    if (section.sectionType === 'admin-template' && userMeta?.role !== 1) {
+                        return false;
+                    }
                     return true;
                 }).map(({ sectionIcon: SectionIcon, sectionLabel, sectionType, sectionId, folderData }) => (
                     <SidebarGroup key={sectionLabel}>
-                        <SidebarGroupLabel className="items-center">
-                            <SectionIcon className="mr-1" /> <p className="text-[14px]">{sectionLabel}</p>
-                        </SidebarGroupLabel>
+                        {sectionType !== 'admin-template' && (
+                            <SidebarGroupLabel className="items-center">
+                                <SectionIcon className="mr-1" /> <p className="text-[14px]">{sectionLabel}</p>
+                            </SidebarGroupLabel>
+                        )}
                         <SidebarGroupContent>
                             <SidebarMenu>
                                 {sidebarSections
@@ -203,7 +219,7 @@ export default function HomeSidebarPanel() {
                                                         <ChevronRight className="transition-transform" />
                                                         <section.icon />
                                                         <div className="flex items-center justify-between w-full">
-                                                            {section.label}
+                                                            {sectionType !== 'admin-template' && section.label}
                                                             {permissions.createFolder && <div
                                                                 className="w-6 h-6 hover:bg-[#8e65ff] flex items-center justify-center rounded-sm"
                                                                 onClick={(e) => handleCreateFolder(e, sectionType)}
@@ -258,6 +274,17 @@ export default function HomeSidebarPanel() {
                                         >
                                             <UserCheck />
                                             Share with me
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                )}
+                                {sectionType === 'admin-template' && (
+                                    <SidebarMenuItem>
+                                        <SidebarMenuButton
+                                            onClick={() => handleItemSelect('admin-template-team')}
+                                            isActive={selectedItem.sectionId === 'admin-template-team'}
+                                        >
+                                            <LayoutGrid />
+                                            Admin Templates
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
                                 )}

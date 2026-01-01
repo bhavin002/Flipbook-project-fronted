@@ -46,3 +46,8 @@ export const GetAllTemplateCategories = async () => {
     const response = await ApiClient().get(`/template-category/get-all`);
     return response.data;
 }
+
+export const DeleteTemplateApi = async (templateId) => {
+    const response = await ApiClient().delete(`/template/delete/${templateId}`);
+    return response.data;
+}

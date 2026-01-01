@@ -6,7 +6,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { EllipsisVertical, Pencil, LayoutPanelLeft, PencilOff, CopyPlus, PencilLine, Share2, Code, Link2, Download, ChartPie, ChartColumnIncreasing, SquareArrowRight, Trash, Send, Facebook, Twitter, Linkedin, Mail, Clock, Trash2, SlidersHorizontal, Eye, BookOpenText } from 'lucide-react';
+import { EllipsisVertical, Pencil, LayoutPanelLeft, PencilOff, CopyPlus, PencilLine, Share2, Code, Link2, Download, ChartPie, ChartColumnIncreasing, SquareArrowRight, Trash, Send, Facebook, Twitter, Linkedin, Mail, Clock, Trash2, SlidersHorizontal, Eye, BookOpenText, LayoutGrid } from 'lucide-react';
 import SaveAsTemplateDialog from "./SaveAsTemplateDialog";
 import { useState } from "react";
 import RenameFlipbookDialog from "./RenameFlipbookDialog";
@@ -20,6 +20,8 @@ import { toast } from "sonner";
 import { flipbookType } from "@/utils/enum";
 import { CancelDraftFlipbookApi } from "@/service/flipbook.publish.service";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
+import MakeAdminTemplateDialog from "./MakeAdminTemplateDialog";
 
 export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isTrash, isMobile }) {
     const [isSaveAsTemplateModalOpen, setIsSaveAsTemplateModalOpen] = useState(false);
@@ -35,7 +37,9 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
     const [isRecovering, setIsRecovering] = useState(false);
     const [isCancelDraftModalOpen, setIsCancelDraftModalOpen] = useState(false);
     const [isCancelDraftLoading, setIsCancelDraftLoading] = useState(false);
+    const [isMakeAdminTemplateModalOpen, setIsMakeAdminTemplateModalOpen] = useState(false);
     const navigate = useNavigate();
+    const { userMeta } = useAuth();
 
     const handleDropdownOpenChange = (open) => {
         setIsDropdownOpen(open);
@@ -151,6 +155,9 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
         } else if (action === "customize") {
             navigate(`/customize/${flipbook._id}`);
             closeDropdown();
+        } else if (action === "makeAdminTemplate") {
+            setIsMakeAdminTemplateModalOpen(true);
+            closeDropdown();
         } else {
             console.error("Invalid action:", action);
         }
@@ -257,6 +264,11 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
                     <LayoutPanelLeft className="mr-2 h-4 w-4" /> Save as template
                 </DropdownMenuItem>
+                {userMeta?.role === 1 && (
+                    <DropdownMenuItem onClick={() => handleItemClick('makeAdminTemplate')}>
+                        <LayoutGrid className="mr-2 h-4 w-4" /> Make admin template
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                     disabled={isCopying}
                     onSelect={(e) => {
@@ -327,6 +339,11 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
                     <LayoutPanelLeft className="mr-2 h-4 w-4" /> Save as template
                 </DropdownMenuItem>
+                {userMeta?.role === 1 && (
+                    <DropdownMenuItem onClick={() => handleItemClick('makeAdminTemplate')}>
+                        <LayoutGrid className="mr-2 h-4 w-4" /> Make admin template
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                     disabled={isCopying}
                     onSelect={(e) => {
@@ -381,6 +398,11 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 <DropdownMenuItem onClick={() => handleItemClick('saveAsTemplate')}>
                     <LayoutPanelLeft className="mr-2 h-4 w-4" /> Save as template
                 </DropdownMenuItem>
+                {userMeta?.role === 1 && (
+                    <DropdownMenuItem onClick={() => handleItemClick('makeAdminTemplate')}>
+                        <LayoutGrid className="mr-2 h-4 w-4" /> Make admin template
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                     disabled={isCopying}
                     onSelect={(e) => {
@@ -588,6 +610,11 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
                 isLoading={isCancelDraftLoading}
                 onConfirm={() => handleCancelDraftConfirmation(true)}
                 onCancel={() => handleCancelDraftConfirmation(false)}
+            />
+            <MakeAdminTemplateDialog
+                isMakeAdminTemplateModalOpen={isMakeAdminTemplateModalOpen}
+                setIsMakeAdminTemplateModalOpen={setIsMakeAdminTemplateModalOpen}
+                flipbook={flipbook}
             />
         </>
     );

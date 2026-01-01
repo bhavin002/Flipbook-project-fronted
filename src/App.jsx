@@ -12,6 +12,7 @@ import ResetPassword from "./pages/Auth/ResetPassowrd";
 import MyFlipbooks from "./pages/MyFlipbooks";
 import AutomationContent from "./pages/AutomationContent";
 import StatisticsContent from "./pages/StatisticsContent";
+import AdminTemplatesPage from "./pages/AdminTemplatesPage";
 
 // Branding pages
 import BrandingSettings from "./pages/Branding/BrandingSettings";
@@ -206,6 +207,7 @@ export default function App() {
                           </PermissionRoute>
                         } />
                         <Route path="shared-with-me" element={<SharedWithMe isSidebarOpen={isSidebarOpen} />} />
+                        <Route path="admin-templates" element={<AdminTemplatesPage isSidebarOpen={isSidebarOpen} />} />
                         <Route path="trash" element={
                           <PermissionRoute requiredPermission="trash">
                             <Trash isSidebarOpen={isSidebarOpen} />

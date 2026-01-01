@@ -163,3 +163,12 @@ export const GetDomainRestrictionApi = async flipbookId => {
   )
   return response.data
 }
+
+export const MakeAdminTemplateApi = async data => {
+  const response = await ApiClient().post(
+    `/template/save-flipbook-as-template`,
+    data
+  )
+  return response.data
+}
+
