@@ -727,7 +727,10 @@ html , body, #root {
 }
 
 @media (max-width: 767px) {
-  .crisp-offset #crisp-chatbox-button {
+  /* .crisp-offset #crisp-chatbox-button {
+    bottom: 94px !important;
+  } */
+  #crisp-chatbox > div > div {
     bottom: 94px !important;
   }
 }
