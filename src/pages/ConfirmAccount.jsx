@@ -87,9 +87,9 @@ export default function ConfirmAccount() {
                 <div className="flex items-center gap-2 sm:gap-3 px-3 pr-2 py-2" style={{ "transform": "scale(1)", "margin": "auto" }}>
                   <div className="relative flex items-center">
                     <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
-                    <span className="absolute -right-6 top-3 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-[1px] rounded">
+                    {/* <span className="absolute -right-6 top-3 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-[1px] rounded">
                       BETA
-                    </span>
+                    </span> */}
                   </div>
                 </div>
                 <CardTitle>Check your email</CardTitle>

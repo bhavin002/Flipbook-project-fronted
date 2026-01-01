@@ -136,6 +136,16 @@ export default function App() {
         Crisp.chat.hide();
       }
     }
+
+    // Apply offset for mobile on dashboard routes
+    const offsetRoutes = ['/myflipbooks', '/statistics', '/branding', '/settings'];
+    const shouldApplyOffset = offsetRoutes.some(route => location.pathname.startsWith(route));
+
+    if (shouldApplyOffset) {
+      document.body.classList.add('crisp-offset');
+    } else {
+      document.body.classList.remove('crisp-offset');
+    }
   }, [location.pathname]);
 
   return (

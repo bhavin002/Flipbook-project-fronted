@@ -28,9 +28,9 @@ export default function ExpireAccount() {
                                 onClick={() => navigate("/myflipbooks/flipbooks")}
                             >
                                 <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
-                                <span className="absolute -right-6 top-3 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-[1px] rounded cursor-default">
+                                {/* <span className="absolute -right-6 top-3 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-[1px] rounded cursor-default">
                                     BETA
-                                </span>
+                                </span> */}
                             </div>
                         </div>
                         <div className="flex md:gap-6 gap-2 items-center">
@@ -103,9 +103,9 @@ export default function ExpireAccount() {
                             onClick={() => navigate("/myflipbooks/flipbooks")}
                         >
                             <img src="/assets/logo.png" width={200} className="my-2" alt="Logo" />
-                            <span className="absolute -right-6 top-3 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-[1px] rounded cursor-default">
+                            {/* <span className="absolute -right-6 top-3 bg-purple-600 text-white text-[9px] font-bold px-1.5 py-[1px] rounded cursor-default">
                                 BETA
-                            </span>
+                            </span> */}
                         </div>
                     </div>
                     <div className="flex md:gap-6 gap-2 items-center">
