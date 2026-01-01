@@ -31,7 +31,7 @@ export default function Editor() {
         return ref.current;
     }
 
-    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage, stageWidth, stageHeight } = useOutletContext();
+    const { setIsShapeDrawerOpen, selectedIndex, selectedShape, setSelectedIndex, mainStage, setMainStage, isSidebarOpen, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, isSavingTemplateInternal, setIsSavingTemplateInternal, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage, stageWidth, stageHeight } = useOutletContext();
     const location = useLocation();
     const autoScroll = useRef([]);
 
@@ -807,23 +807,21 @@ export default function Editor() {
                             {
 
                                 mainStage.map((stage, index) => {
-                                    if (((isPublishModalOpenInternal && index == pageCounter) || (!isPublishModalOpenInternal && (index == prevSelectedIndex || index == selectedIndex || index == selectedIndex - 1 || index == selectedIndex + 1)))) {
+                                    if (((isPublishModalOpenInternal && index === pageCounter) || (isSavingTemplateInternal && index === pageCounter) || (!isPublishModalOpenInternal && !isSavingTemplateInternal && (index === prevSelectedIndex || index === selectedIndex || index === selectedIndex - 1 || index === selectedIndex + 1)))) {
                                         return (
                                             <div key={index} ref={(el) => (autoScroll.current[index] = el)} style={{ height: "100%", width: "100%" }} className="relative">
-                                                {/* onWheelZoom={(e) => zoomManager.current.handleWheel(e)}  */}
-                                                <StageComponent imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} setIsAnyChangeMadeInStage={setIsAnyChangeMadeInStage} isPublishModalOpenInternal={isPublishModalOpenInternal} />
+                                                <StageComponent imageLoadCounterPageWise={imageLoadCounterPageWise} setImageLoadCounterPageWise={setImageLoadCounterPageWise} prevSelectedIndex={prevSelectedIndex} pageCounter={pageCounter} setPageCounter={setPageCounter} setIsInitialLoad={setIsInitialLoad} zoomper={zoomper} isRightLateralCollapse={isRightLateralCollapse} isCropping={isCropping} stage={stage} parentRef={parentRef} mainStageString={mainStageString} setMainStageString={setMainStageString} rectProps={rectProps} setRectProps={setRectProps} scale={scale} isSelected={selectedIndex === index} setScale={setScale} selectedIndex={selectedIndex} index={index} mainStage={mainStage} setMainStage={setMainStage} setSelectedIndex={setSelectedIndex} selectedAlignType={selectedAlignType} setSelectedAlignType={setSelectedAlignType} isSidebarOpen={isSidebarOpen} setIsAnyChangeMadeInStage={setIsAnyChangeMadeInStage} isPublishModalOpenInternal={isPublishModalOpenInternal} isSavingTemplateInternal={isSavingTemplateInternal} />
                                             </div>
                                         )
-                                    } else return (<div key={index} style={{
-                                        height: "100%", width: "100%", transformOrigin: "top center",
-                                        transform: `scale(${50 / zoomper})`,
-                                    }} className="relative" >
-
-
-                                        <div className="absolute flex justify-between z-[111] text-primary font-[500] text-[14px]" style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y - 30) }}><span>Page {index + 1} / {mainStage.length}</span></div>
-                                        <div className='absolute flex justify-between z-[111] border-2 border-primary' style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y) }}>   <Loader /></div>
-
-                                    </div>)
+                                    } else return (
+                                        <div key={index} style={{
+                                            height: "100%", width: "100%", transformOrigin: "top center",
+                                            transform: `scale(${50 / zoomper})`,
+                                        }} className="relative" >
+                                            <div className="absolute flex justify-between z-[111] text-primary font-[500] text-[14px]" style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y - 30) }}><span>Page {index + 1} / {mainStage.length}</span></div>
+                                            <div className='absolute flex justify-between z-[111] border-2 border-primary' style={{ width: rectProps.tempWidth, height: rectProps.tempHeight, left: rectProps.x, top: (rectProps.y) }}>   <Loader /></div>
+                                        </div>
+                                    )
                                 })
                             }
                         </div>
@@ -923,6 +921,6 @@ export default function Editor() {
                     </div>
                 )}
             </div>
-        </div>
+        </div >
     )
 }

@@ -22,7 +22,7 @@ import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 
-export default function StageComponent({ imageLoadCounterPageWise, setImageLoadCounterPageWise, prevSelectedIndex, isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad, setIsAnyChangeMadeInStage, isPublishModalOpenInternal }) {
+export default function StageComponent({ imageLoadCounterPageWise, setImageLoadCounterPageWise, prevSelectedIndex, isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad, setIsAnyChangeMadeInStage, isPublishModalOpenInternal, isSavingTemplateInternal }) {
     // Consistent Refs Initialization
     const stageRef = useRef(null);
     const demo = useRef(null);
@@ -638,13 +638,6 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
         }
     };
 
-    // useEffect(() => {
-    //     const stage = stageRef.current;
-    //     if (stage) {
-    //         const layers = stage.getLayers();
-    //         if (layers.length > 0) {
-    //             setIsInitialLoad(true);
-    //             setPageCounter(pageCounter + 1);
     //         }
     //     }
     // }, [stageRef.current]);
@@ -656,19 +649,21 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
             }
         }
     }, [isPublishModalOpenInternal]);
-
     useEffect(() => {
-        if (isPublishModalOpenInternal && imageLoadCounterPageWise[pageCounter] != undefined && !imageLoadCounterPageWise[pageCounter]) {
+        if ((isPublishModalOpenInternal || isSavingTemplateInternal) && imageLoadCounterPageWise[pageCounter] !== undefined && !imageLoadCounterPageWise[pageCounter]) {
             const stage = stageRef.current;
             if (stage) {
                 const layers = stage.getLayers();
                 if (layers.length > 0) {
                     let a = async () => {
                         setIsInitialLoad(true);
-                        mainStage[pageCounter].thumbnails = await generateThumbnails(stage, pageCounter == 0);
+                        const currentShapes = stage.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)));
+                        const thumbnailBlob = await generateThumbnails(stage, pageCounter === 0);
+
                         setMainStage(prevState => {
                             const updatedState = [...prevState];
-                            updatedState[index] = { ...updatedState[index], thumbnails: mainStage[pageCounter].thumbnails }; return updatedState;
+                            updatedState[index] = { ...updatedState[index], thumbnails: thumbnailBlob, shapes: currentShapes };
+                            return updatedState;
                         });
                         const nextPage = mainStage.length <= (pageCounter + 1) ? pageCounter : pageCounter + 1;
                         setSelectedIndex(nextPage);
@@ -683,7 +678,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                 }
             }
         }
-    }, [isPublishModalOpenInternal, imageLoadCounterPageWise, stageRef.current]);
+    }, [isPublishModalOpenInternal, isSavingTemplateInternal, imageLoadCounterPageWise, pageCounter, stageRef.current]);
 
     const cloneStageElements = (stage) => {
         const layer = stage.children[0];

@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams, useBlocker } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Eye, SlidersHorizontal, Download } from "lucide-react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/utils/AppSidebar";
 import EditorSidebarNavigation from "@/components/EditorLayoutComponents/EditorSidebarNavigation";
@@ -20,7 +21,8 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+import SaveConfirmationDialog from "@/components/EditorLayoutComponents/SaveConfirmationDialog";
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
@@ -36,6 +38,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const { id } = useParams();
     const [mainStage, setMainStage] = useState([]);
     const navigate = useNavigate();
+    const location = useLocation();
     const [templateType, setTemplateType] = useState("2");
     const [templateCategories, setTemplateCategories] = useState([]);
     const [templateCategory, setTemplateCategory] = useState("all-templates");
@@ -43,6 +46,11 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const [pageCounter, setPageCounter] = useState(0);
     const [imageLoadCounterPageWise, setImageLoadCounterPageWise] = useState({});
     const [isAnyChangeMadeInStage, setIsAnyChangeMadeInStage] = useState(false);
+    const [isSavingTemplateInternal, setIsSavingTemplateInternal] = useState(false);
+    const [showSaveDialog, setShowSaveDialog] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+    const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+    const pendingNavigationRef = useRef(null);
 
     useEffect(() => {
         const fetchTemplateCategories = async () => {
@@ -80,6 +88,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                     })
                 });
                 setMainStage(validPageData);
+                setIsInitialLoad(true);
             } catch (error) {
                 toast.error(error?.message || "Error fetching page data");
             }
@@ -87,66 +96,142 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
         if (id) {
             getFlipbook();
         }
-    }, [id])
+    }, [id]);
 
-    const cloneStageElements = (stageRef) => {
-        const targetChild = stageRef.children[0].children[1];
-        const bg = stageRef.children[0].children[0];
-        const targetWidth = targetChild.width() / targetChild.scaleX();
-        const targetHeight = targetChild.height() / targetChild.scaleY();
+    // Removed auto-save interval as per user request - API should only be called on manual save.
 
-        // Clone target child and background
-        const clonedNode = targetChild.clone();
-        const clonedBg = bg.clone();
+    const blocker = useBlocker(
+        ({ nextLocation }) => {
+            const isLeavingEditor = !nextLocation.pathname.includes('/editor');
+            return isAnyChangeMadeInStage && isLeavingEditor && isInitialLoad;
+        }
+    );
 
-        // Reset attributes
-        clonedNode.setAttr('scaleX', 1);
-        clonedNode.setAttr('scaleY', 1);
-        clonedNode.setAttr('x', 0);
-        clonedNode.setAttr('y', 0);
+    useEffect(() => {
+        const handleBeforeUnload = (e) => {
+            if (isAnyChangeMadeInStage && isInitialLoad) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
 
-        clonedBg.setAttr('height', targetHeight);
-        clonedBg.setAttr('width', targetWidth);
-        clonedBg.setAttr('x', 0);
-        clonedBg.setAttr('y', 0);
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }, [isAnyChangeMadeInStage, isInitialLoad]);
 
-        clonedNode.children = [clonedBg, ...clonedNode.children];
+    useEffect(() => {
+        if (blocker.state === 'blocked') {
+            pendingNavigationRef.current = blocker.proceed;
+            setShowSaveDialog(true);
+        }
+    }, [blocker]);
 
-        return { clonedNode, targetWidth, targetHeight };
+    const handleSaveAndNavigate = async () => {
+        try {
+            handleSaveTemplateClick();
+            setShowSaveDialog(false);
+            // Navigation will happen in the finalized useEffect once isSavingTemplateInternal completes
+        } catch (error) {
+            toast.error("Failed to initiate save", {
+                description: error.message || "Something went wrong"
+            });
+        }
     };
 
-    const saveTemplate = async () => {
+    const handleCancelNavigation = () => {
+        setIsAnyChangeMadeInStage(false);
+        setShowSaveDialog(false);
+        if (blocker.state === 'blocked') {
+            blocker.reset();
+        }
+        pendingNavigationRef.current = null;
+        setTimeout(() => {
+            navigate('/myflipbooks/flipbooks');
+        }, 0);
+    };
+
+    const handleDiscardAndNavigate = () => {
+        setIsAnyChangeMadeInStage(false);
+        setShowSaveDialog(false);
+        if (pendingNavigationRef.current) {
+            pendingNavigationRef.current();
+            pendingNavigationRef.current = null;
+        }
+    };
+
+    const handlePreviewClick = async () => {
+        setIsPreviewOpen(true);
+    };
+
+    const cloneStageElements = (stage) => {
+        const layer = stage.children[0];
+        const bg = layer.children[0];
+        const target = layer.children[1];
+
+        const targetWidth = target.width() / target.scaleX();
+        const targetHeight = target.height() / target.scaleY();
+
+        const clonedNode = target.clone({ x: 0, y: 0, scaleX: 1, scaleY: 1 });
+        const clonedBg = bg.clone({
+            width: targetWidth,
+            height: targetHeight,
+            x: 0,
+            y: 0
+        });
+
+        const group = new window.Konva.Group({
+            width: targetWidth,
+            height: targetHeight,
+            x: 0,
+            y: 0
+        });
+
+        group.add(clonedBg);
+        group.add(clonedNode);
+
+        return { group, targetWidth, targetHeight };
+    };
+
+    const generateThumbnails = async (stage, isFirstPage = false) => {
+        if (!stage) return null;
+
+        const { group, targetWidth, targetHeight } = cloneStageElements(stage);
+
+        const dataUrl = await group.toDataURL({
+            x: 0,
+            y: 0,
+            width: targetWidth,
+            height: targetHeight,
+            pixelRatio: isFirstPage ? 1 : 0.4,
+            mimeType: "image/jpeg",
+            quality: isFirstPage ? 1 : 0.1
+        });
+
+        return await (await fetch(dataUrl)).blob();
+    };
+
+    const saveTemplate = async (showToast = true) => {
         try {
-            setIsLoading(true);
+            if (showToast) setIsLoading(true);
             const formData = new FormData();
 
-            mainStage.map(page => {
-                page.shapes = page.stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) || [];
-                page.selectedShapes = [];
-                formData.append('pages', JSON.stringify({
-                    ...page,
+            mainStage.forEach((page, idx) => {
+                // Remove the Blob property so it doesn't get stringified as {}
+                const { thumbnails, ...cleanPageData } = page;
+                const pageToSave = {
+                    ...cleanPageData,
+                    selectedShapes: [],
                     stageref: null
-                }));
+                };
+                formData.append('pages', JSON.stringify(pageToSave));
             });
 
-            const imagePromises = mainStage.map(async (stage, index) => {
-                const stageRef = stage.stageref.current;
-                const { clonedNode, targetWidth, targetHeight } = cloneStageElements(stageRef);
-                const clippedImage = await clonedNode.toDataURL({
-                    x: 0,
-                    y: 0,
-                    width: targetWidth,
-                    crossOriginIsolated: false,
-                    height: targetHeight,
-                    pixelRatio: 1,
-                    mimeType: 'image/png',
-                });
-                const blob = await (await fetch(clippedImage)).blob();
-                formData.append("thumbnails", blob, `image_${index}.jpg`);
+            mainStage.forEach((stage, index) => {
+                if (stage.thumbnails instanceof Blob) {
+                    // Match the backend Multer config: upload.array("thumbnails")
+                    formData.append("thumbnails", stage.thumbnails, `thumbnail_${index}.jpg`);
+                }
             });
-
-            // Wait for all images to be processed and added to FormData
-            await Promise.all(imagePromises);
 
             formData.append('width', stageWidth);
             formData.append('height', stageHeight);
@@ -156,16 +241,51 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
             }
 
             const response = await EditTemplateApi(id, formData);
-            toast.success("Template saved successfully", {
-                description: response.data.message
-            });
+            if (showToast) {
+                toast.success("Template saved successfully", {
+                    description: response.data.message
+                });
+            }
+            setIsAnyChangeMadeInStage(false);
+            return true;
         } catch (error) {
-            toast.error(error?.message || "Error saving template");
+            if (showToast) {
+                toast.error(error?.message || "Error saving template");
+            }
+            return false;
         } finally {
-            setIsLoading(false);
+            if (showToast) setIsLoading(false);
+            setIsSavingTemplateInternal(false);
         }
+    };
 
-    }
+    const handleSaveTemplateClick = () => {
+        // Clear old thumbnails (which might be URL strings) to ensure we only collect fresh Blobs
+        setMainStage(prev => prev.map(page => {
+            const { thumbnails, ...rest } = page;
+            return rest;
+        }));
+        setIsSavingTemplateInternal(true);
+        setPageCounter(0);
+        setSelectedIndex(0);
+    };
+
+    useEffect(() => {
+        const finalizeSave = async () => {
+            if (isSavingTemplateInternal && !isLoading && pageCounter === mainStage.length - 1) {
+                // Only proceed if ALL pages have a Blob in thumbnails
+                const allThumbnailsReady = mainStage.every(page => page.thumbnails instanceof Blob);
+                if (allThumbnailsReady) {
+                    const success = await saveTemplate();
+                    if (success && pendingNavigationRef.current) {
+                        pendingNavigationRef.current();
+                        pendingNavigationRef.current = null;
+                    }
+                }
+            }
+        };
+        finalizeSave();
+    }, [pageCounter, isSavingTemplateInternal, mainStage, isLoading]);
 
     const [selectedSubMenu, setSelectedSubMenu] = useState(null);
     const [isShapeDrawerOpen, setIsShapeDrawerOpen] = useState(false);
@@ -353,8 +473,8 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                 </span>
                             </div>
                         </div>
-                        <div className="flex-1 gap-2 flex justify-center max-md:hidden">
-                            <Select value={templateType} onValueChange={setTemplateType}>
+                        <div className="flex-1 gap-2 flex justify-center max-md:hidden h-9">
+                            <Select value={templateType} onValueChange={(val) => { setTemplateType(val); setIsAnyChangeMadeInStage(true); }}>
                                 <SelectTrigger className="w-[180px]">
                                     <SelectValue placeholder="Select template type" />
                                 </SelectTrigger>
@@ -364,7 +484,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                     <SelectItem value="3">Text Template</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <Select value={templateCategory} onValueChange={setTemplateCategory}>
+                            <Select value={templateCategory} onValueChange={(val) => { setTemplateCategory(val); setIsAnyChangeMadeInStage(true); }}>
                                 <SelectTrigger className="w-[180px]">
                                     <SelectValue placeholder="Select template type" />
                                 </SelectTrigger>
@@ -381,8 +501,11 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         </div>
                         <div className="flex gap-2 items-center">
                             <div className="flex gap-2">
-                                <Button className="max-lg:hidden" disabled={isLoading} onClick={() => saveTemplate()}>
-                                    {isLoading ? <LoadingButton /> : "Save Template"}
+                                <Button variant="outline" className="max-lg:hidden" onClick={handlePreviewClick} disabled={isPreviewLoading || !isInitialLoad}>
+                                    <Eye className="mr-2 h-4 w-4" /> Preview
+                                </Button>
+                                <Button className="max-lg:hidden" disabled={isLoading || isSavingTemplateInternal || !isInitialLoad} onClick={handleSaveTemplateClick}>
+                                    {isLoading || isSavingTemplateInternal ? <LoadingButton /> : "Save Template"}
                                 </Button>
                             </div>
                             <ProfileDropDownCom />
@@ -430,7 +553,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage }} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, isSavingTemplateInternal, setIsSavingTemplateInternal, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage, stageWidth, stageHeight }} />
                             </div>
                         </div>
                     </div>
@@ -448,6 +571,13 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                 </>
                 }
             </div>
+            <SaveConfirmationDialog
+                isOpen={showSaveDialog}
+                onOpenChange={setShowSaveDialog}
+                onSave={handleSaveAndNavigate}
+                onCancel={handleCancelNavigation}
+                isLoading={isSavingTemplateInternal}
+            />
         </>
     );
 }

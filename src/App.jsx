@@ -123,9 +123,9 @@ export default function App() {
       '/profile',
       '/customize'
     ];
-    
+
     const shouldShowCrisp = !disallowedRoutes.some(route => location.pathname.startsWith(route));
-    
+
     if (shouldShowCrisp) {
       initCrisp();
       if (window.$crisp) {
@@ -546,7 +546,11 @@ export default function App() {
                       <Route path="/admin-editor/:id" element={
                         <PermissionRoute>
                           <ViewModeProvider>
-                            <AdminEditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                            <FlipbookSettingsProvider>
+                              <ShopSettingsProvider>
+                                <AdminEditorAppLayout isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
+                              </ShopSettingsProvider>
+                            </FlipbookSettingsProvider>
                           </ViewModeProvider>
                         </PermissionRoute>
                       }>
