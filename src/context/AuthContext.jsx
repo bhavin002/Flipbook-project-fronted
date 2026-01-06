@@ -88,6 +88,7 @@ export function AuthProvider({ children }) {
 
     const login = async (data) => {
         localStorage.setItem('fd_access_token', data.token);
+        localStorage.setItem('fd_workspace_id', data.workspaceId);
         localStorage.removeItem('fd_confirm_token');
         const isValid = await isTokenVerified(data.token);
         if (isValid) {
