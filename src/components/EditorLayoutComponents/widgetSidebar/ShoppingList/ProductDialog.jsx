@@ -37,7 +37,6 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoadingButton from "@/utils/LoadingButton";
-import { useCurrency } from "@/context/CurrencyContext";
 import { addIntercationDataToMainStage, restrictNumericInput } from "@/utils/Helper";
 import { productSchema } from "./product.schema";
 import { useShopSettings } from "@/context/ShopSettingsContext";

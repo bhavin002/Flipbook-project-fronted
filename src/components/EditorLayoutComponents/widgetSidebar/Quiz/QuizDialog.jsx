@@ -45,7 +45,7 @@ export default function QuizDialog({ selectedShape, mainStage, setMainStage, sel
                 collectEmail: false,
                 addPrivacyPolicy: false,
                 companyName: "FlipDrag",
-                privacyPolicyLink: "https://legal.flipdrag.com/privacy-policy",
+                privacyPolicyLink: "https://www.flipdrag.com/privacy",
                 addGDPRCompliance: false,
                 gdprMessage: "By clicking on the button below, you agree to our Privacy Policy and Terms of Service."
             }

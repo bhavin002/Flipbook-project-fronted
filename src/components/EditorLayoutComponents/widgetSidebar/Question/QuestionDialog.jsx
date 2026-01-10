@@ -117,7 +117,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
         form.setValue("addPrivacyPolicy", checked);
         if (checked) {
             form.setValue("companyName", "FlipDrag");
-            form.setValue("privacyPolicyLink", "https://legal.flipdrag.com/privacy-policy");
+            form.setValue("privacyPolicyLink", "https://www.flipdrag.com/privacy");
         }
     };
 
@@ -284,7 +284,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                                                             type="text"
                                                             id="privacy-policy"
                                                             {...form.register("privacyPolicyLink")}
-                                                            placeholder="https://legal.flipdrag.com/privacy-policy"
+                                                            placeholder="https://www.flipdrag.com/privacy"
                                                             className={errors.privacyPolicyLink ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                                         />
                                                         {errors.privacyPolicyLink && <p className="text-red-500 text-xs">{errors.privacyPolicyLink.message}</p>}

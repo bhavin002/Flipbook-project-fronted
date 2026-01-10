@@ -44,7 +44,10 @@ export default function ShoppingList({ mainStage, setMainStage, selectedShape, s
                             !selectedShape[0].attrs?.htmlData?.variantId ? <Button
                                 className="w-full text-black hover:text-primary"
                                 variant="outline"
-                                onClick={() => setIsProductDialogOpen(true)}
+                                onClick={() => {
+                                    setProductData(null);
+                                    setIsProductDialogOpen(true);
+                                }}
                             >
                                 <Plus /> Add product
                             </Button> :
