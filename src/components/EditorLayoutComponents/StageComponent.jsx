@@ -47,7 +47,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
     });
 
     // Constants
-    const GUIDELINE_OFFSET = 5;
+    const GUIDELINE_OFFSET = 2;
 
     // Update stage references
     useEffect(() => {

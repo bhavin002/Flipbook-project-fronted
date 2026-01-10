@@ -394,7 +394,7 @@ export default function Editor() {
 
             // Arrow keys to nudge selection by 10 units when not typing
             if (!isInputFocused) {
-                const STEP = 10;
+                const STEP = 1;
                 if (event.key === 'ArrowLeft') {
                     event.preventDefault();
                     moveSelectedShapes(-STEP, 0);

@@ -561,6 +561,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         open={isPreviewOpen}
                         onOpenChange={setIsPreviewOpen}
                         flipbookId={id}
+                        startPage={selectedIndex + 1}
                     />
                     <BottomEditorPanel isEditorDrawerOpen={isEditorDrawerOpen} setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} mainStage={mainStage} selectedIndex={selectedIndex} currentView={currentView} setCurrentView={setCurrentView} stageWidth={stageWidth} stageHeight={stageHeight} />
                     {

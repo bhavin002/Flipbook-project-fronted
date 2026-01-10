@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog"
 import FlipBookPreview from "./Components/FlipBookPreview"
 
-export default function PreviewDialog({ flipbookId, open, onOpenChange }) {
+export default function PreviewDialog({ flipbookId, open, onOpenChange, startPage }) {
     return (
         <Dialog open={open} onOpenChange={onOpenChange} className="">
             <DialogContent className="min-h-[90vh] max-w-[90vw] p-0 overflow-hidden">
@@ -17,7 +17,7 @@ export default function PreviewDialog({ flipbookId, open, onOpenChange }) {
                         Description
                     </DialogDescription>
                 </DialogHeader>
-                <FlipBookPreview flipbookId={flipbookId} component={"previewDialog"} />
+                <FlipBookPreview flipbookId={flipbookId} component={"previewDialog"} startPage={startPage} />
             </DialogContent>
         </Dialog>
     )

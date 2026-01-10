@@ -26,7 +26,7 @@ const debounce = (func, delay) => {
     };
 };
 
-const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, containerRefHeight, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef, setZoomLevel, isAutoFlipping }, ref) {
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, containerRefHeight, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef, setZoomLevel, isAutoFlipping, startPage }, ref) {
     const [width, setWidth] = useState(400);
     const [height, setHeight] = useState(400);
     const [divWidth, setDivWidth] = useState(400);
@@ -34,7 +34,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
     const [isMouseDown, setIsMouseDown] = useState(false);
     const [pageContent, setPageContent] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(Number(startPage) || 1);
     const [viewCountUpdated, setViewCountUpdated] = useState(false);
     const { latestJson } = useFlipbookSettingsContext();
     const visibilitySettings = useFlipbookSettings(latestJson);
@@ -437,6 +437,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                                             visibilitySettings={visibilitySettings}
                                             setCurrentPages={setCurrentPages}
                                             isAutoFlipping={isAutoFlipping}
+                                            startPage={Number(startPage) || 1}
                                         >
                                             {pageContent.map((page, index) => {
                                                 const pageNumber = index + 1;

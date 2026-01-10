@@ -12,7 +12,8 @@ function Turn({
   visibilitySettings,
   isDisabled = false,
   setCurrentPages,
-  isAutoFlipping = false
+  isAutoFlipping = false,
+  startPage = 1
 }) {
   const audio = new Audio(pageTurnSound);
 
@@ -37,6 +38,7 @@ function Turn({
         autoCenter: true,
         height: height,
         display: pageType,
+        page: startPage,
         turnCorners: 'bl,br',
         gradients: true,
         cornerSize: 100,

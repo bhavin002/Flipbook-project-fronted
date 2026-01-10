@@ -148,7 +148,7 @@ export default function StockPhoto({
         getBorderRectRadius(bottomRightRadius),
         getBorderRectRadius(bottomLeftRadius)
     ];
-
+    
     return (
         <Group
             ref={groupRef}
@@ -169,7 +169,7 @@ export default function StockPhoto({
                 width={Math.max(0, shapeWidth - 4)}
                 height={Math.max(0, shapeHeight - 4)}
                 cornerRadius={[topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
-                fill={shadowRectFill}
+                fill={shape.fill.toLowerCase() == 'transparent' ? shadowRectFill : null}
                 listening={false}
             />
 

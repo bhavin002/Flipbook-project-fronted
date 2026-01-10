@@ -33,7 +33,7 @@ import { useShopSettings } from "@/context/ShopSettingsContext.jsx";
 import ShareFlipbookPopover from "./ShareFlipbookPopover.jsx";
 
 export default function FlipBookPreview({ flipbookId, component, id = "preview-dialog", isPublicView = false, publicFlipbookData, startPage }) {
-    const [currentPage, setCurrentPage] = useState(startPage || 1);
+    const [currentPage, setCurrentPage] = useState(Number(startPage) || 1);
     const [totalPages, setTotalPages] = useState(1);
     const [isDragging, setIsDragging] = useState(false);
     const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -684,6 +684,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         publicFlipbookData={publicFlipbookData}
                                         isAutoFlipping={isAutoFlipping}
                                         setIsAutoFlipping={setIsAutoFlipping}
+                                        startPage={startPage}
                                     />
                                 </div>
                             </TabsContent>
@@ -730,6 +731,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                             publicFlipbookData={publicFlipbookData}
                                             isAutoFlipping={isAutoFlipping}
                                             setIsAutoFlipping={setIsAutoFlipping}
+                                            startPage={startPage}
                                         />
                                     </div>
                                 </div>

@@ -144,6 +144,7 @@ export default function ShapeWidget({ shape, flipbookRef }) {
           translate(${shape.offsetX || 0}px, ${shape.offsetY || 0}px)`,
                     display: ('visible' in shape) ? shape.visible ? "block" : "none" : "block",
                     cursor: cursorStyle,
+                    opacity: shape.opacity !== undefined ? shape.opacity : (shape.effect?.opacity !== undefined ? shape.effect.opacity / 100 : 1),
                 }}
             >
                 <svg

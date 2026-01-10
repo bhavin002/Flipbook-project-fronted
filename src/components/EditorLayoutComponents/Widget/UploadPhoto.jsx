@@ -169,7 +169,7 @@ export default function UploadPhoto({
                 width={Math.max(0, shapeWidth - 4)}
                 height={Math.max(0, shapeHeight - 4)}
                 cornerRadius={[topLeftRadius, topRightRadius, bottomRightRadius, bottomLeftRadius]}
-                fill={shadowRectFill}
+                fill={shape?.fill?.toLowerCase() == 'transparent' ? 'transparent' : shadowRectFill}
                 listening={false}
             />
 
