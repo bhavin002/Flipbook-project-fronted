@@ -189,7 +189,7 @@ export default function ProductCatalog({ open, onOpenChange }) {
             />
 
             <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-                <DialogContent hideClose>
+                <DialogContent className="sm:max-w-[540px] w-[90vw]" hideClose>
                     <div className="flex flex-col items-center justify-center p-4">
                         <img
                             src="/assets/Uploading_cloud.gif" className="w-20 scale-150"
@@ -207,7 +207,7 @@ export default function ProductCatalog({ open, onOpenChange }) {
             </Dialog>
 
             <Dialog open={open} onOpenChange={onOpenChange}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[540px] w-[90vw]">
                     <DialogHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                         <DialogTitle>Import product feed</DialogTitle>
                     </DialogHeader>
@@ -215,8 +215,8 @@ export default function ProductCatalog({ open, onOpenChange }) {
                     <div className="space-y-6">
                         <div
                             className={`border-2 border-dashed rounded-lg p-12 text-center cursor-pointer transition-colors ${isDragOver
-                                    ? 'border-primary bg-primary/10'
-                                    : 'border-gray-200 hover:border-primary bg-gray-50'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-gray-200 hover:border-primary bg-gray-50'
                                 }`}
                             onClick={handleUploadCsvClick}
                             onDragEnter={handleDragEnter}
@@ -255,7 +255,7 @@ export default function ProductCatalog({ open, onOpenChange }) {
             </Dialog>
 
             <Dialog open={fileExistsDialog.open} onOpenChange={handleCancelFileExists}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[540px] w-[90vw]">
                     <DialogHeader>
                         <DialogTitle className="text-xl font-semibold">Feed already used</DialogTitle>
                     </DialogHeader>

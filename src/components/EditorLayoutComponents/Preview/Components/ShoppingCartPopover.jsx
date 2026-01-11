@@ -292,7 +292,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 15 }}
                             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                            className={`absolute ${isRTL ? "left-0" : "right-0"} mt-2 w-auto bg-black text-white border border-neutral-800 rounded-md shadow-lg z-50 max-h-[600px] flex flex-col ${isMobile ? 'md:w-[23rem]' : 'md:w-[28rem]'}`}
+                            className={`absolute ${isRTL ? "left-0" : "right-0"} mt-2 w-auto bg-black text-white border border-neutral-800 rounded-md shadow-lg z-50 max-h-[600px]  min-w-[20rem] flex flex-col`}
                             style={{ top: '100%' }}
                             dir={isRTL ? "rtl" : "ltr"}
                         >

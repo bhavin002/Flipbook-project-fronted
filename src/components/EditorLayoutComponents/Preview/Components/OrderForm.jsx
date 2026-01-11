@@ -355,7 +355,7 @@ const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings }) => {
                 return (
                     <div key={field._id}>
                         <Label htmlFor={`field_${index}`} className="text-sm font-medium">
-                            {field.label} {showAsterisk && <span className="text-red-500">*</span>}
+                            {field.label} {showAsterisk && <span>*</span>}
                         </Label>
                         {renderField(field, index)}
                         {errors[`field_${index}`] && (
@@ -423,7 +423,7 @@ const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings }) => {
 
     return (
         <Dialog open={open} onOpenChange={handleCloseModal}>
-            <DialogContent className={`max-w-lg max-h-[90vh] overflow-y-auto ${isRTL ? "text-right" : "text-left"}`} dir={isRTL ? "rtl" : "ltr"}>
+            <DialogContent className={`sm:max-w-[540px] w-[90vw] max-h-[90vh] overflow-y-auto${isRTL ? "text-right" : "text-left"}`} dir={isRTL ? "rtl" : "ltr"}>
                 {currentView === 'form' && renderFormView()}
                 {currentView === 'success' && renderSuccessView()}
             </DialogContent>

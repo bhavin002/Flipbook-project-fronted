@@ -174,6 +174,79 @@ export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, set
                     </Card>
                     <Card>
                         <CardHeader>
+                            <CardTitle>Share</CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <FacebookShareButton url={shareUrl} quote={"Check out this flipbook!"}>
+                                    <Button variant="outline" size="icon">
+                                        <img className="w-7" src="/assets/social/facebook.png" alt="Facebook" />
+                                    </Button>
+                                </FacebookShareButton>
+                                <TwitterShareButton url={shareUrl} title={"Check out this flipbook!"}>
+                                    <Button variant="outline" size="icon">
+                                        <img className="w-7" src="/assets/social/twitter.png" alt="Twitter" />
+                                    </Button>
+                                </TwitterShareButton>
+                                <WhatsappShareButton url={shareUrl} title={"Check out this flipbook!"}>
+                                    <Button variant="outline" size="icon">
+                                        <img className="w-7" src="/assets/social/whatsapp.png" alt="Whatsapp" />
+                                    </Button>
+                                </WhatsappShareButton>
+                                <LinkedinShareButton url={shareUrl} title={"Check out this flipbook!"}>
+                                    <Button variant="outline" size="icon">
+                                        <img className="w-7" src="/assets/social/linkedin.png" alt="Linkedin" />
+                                    </Button>
+                                </LinkedinShareButton>
+                                <Button variant="outline" onClick={() => {
+                                    navigate(`/send-email/${flipbookId}`)
+                                }}>
+                                    <Mail /> Send Email
+                                </Button>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <Input
+                                    value={`${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`}
+                                    readOnly
+                                />
+                                <Button variant="outline" onClick={handleCopy}>
+                                    {copied ? (
+                                        <>
+                                            <Check className="h-4 w-4 mr-2" />
+                                            Copied
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Copy className="h-4 w-4 mr-2" />
+                                            Copy
+                                        </>
+                                    )}
+                                </Button>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="publication"
+                                    checked={checkedIsVisible}
+                                    onCheckedChange={handleToggleIsVisible}
+                                />
+                                <Label htmlFor="publication" className="text-sm font-medium leading-none">
+                                    Show publication on my profile
+                                </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <Checkbox
+                                    id="publish"
+                                    checked={checkedIsPublishDtVisible}
+                                    onCheckedChange={handleToggleIsPublishDtVisible}
+                                />
+                                <Label htmlFor="publish" className="text-sm font-medium leading-none">
+                                    Show publish date
+                                </Label>
+                            </div>
+                        </CardContent>
+                    </Card>
+                    {/* <Card>
+                        <CardHeader>
                             <CardTitle>Download</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -249,7 +322,7 @@ export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, set
                                 </div>
                             </div>
                         </CardContent>
-                    </Card>
+                    </Card> */}
                 </div>
                 <Card className="shadow-sm lg:w-[60%] flex-grow rounded-lg w-full flex flex-col gap-4 p-4 relative" style={{ minHeight: '600px' }}>
                     <FlipBookPreview flipbookId={flipbookId} component={"detailsPage"} />
@@ -287,79 +360,6 @@ export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, set
                     </div>
                 </Card>
             </div>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Share</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <FacebookShareButton url={shareUrl} quote={"Check out this flipbook!"}>
-                            <Button variant="outline">
-                                <img className="w-7" src="/assets/social/facebook.png" alt="Facebook" />
-                            </Button>
-                        </FacebookShareButton>
-                        <TwitterShareButton url={shareUrl} title={"Check out this flipbook!"}>
-                            <Button variant="outline">
-                                <img className="w-7" src="/assets/social/twitter.png" alt="Twitter" />
-                            </Button>
-                        </TwitterShareButton>
-                        <WhatsappShareButton url={shareUrl} title={"Check out this flipbook!"}>
-                            <Button variant="outline">
-                                <img className="w-7" src="/assets/social/whatsapp.png" alt="Whatsapp" />
-                            </Button>
-                        </WhatsappShareButton>
-                        <LinkedinShareButton url={shareUrl} title={"Check out this flipbook!"}>
-                            <Button variant="outline">
-                                <img className="w-7" src="/assets/social/linkedin.png" alt="Linkedin" />
-                            </Button>
-                        </LinkedinShareButton>
-                        <Button variant="outline" onClick={() => {
-                            navigate(`/send-email/${flipbookId}`)
-                        }}>
-                            <Mail /> Send Email
-                        </Button>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <Input
-                            value={`${import.meta.env.VITE_APP_URL}/public-flipbook/${flipbookId}`}
-                            readOnly
-                        />
-                        <Button variant="outline" onClick={handleCopy}>
-                            {copied ? (
-                                <>
-                                    <Check className="h-4 w-4 mr-2" />
-                                    Copied
-                                </>
-                            ) : (
-                                <>
-                                    <Copy className="h-4 w-4 mr-2" />
-                                    Copy
-                                </>
-                            )}
-                        </Button>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <Checkbox
-                            id="publication"
-                            checked={checkedIsVisible}
-                            onCheckedChange={handleToggleIsVisible}
-                        />
-                        <Label htmlFor="publication" className="text-sm font-medium leading-none">
-                            Show publication on my profile
-                        </Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <Checkbox
-                            id="publish"
-                            checked={checkedIsPublishDtVisible}
-                            onCheckedChange={handleToggleIsPublishDtVisible}
-                        />
-                        <Label htmlFor="publish" className="text-sm font-medium leading-none">
-                            Show publish date
-                        </Label>
-                    </div>
-                </CardContent>
-            </Card>
             {/* <Card>
                 <CardHeader>
                     <CardTitle>Order printed copies</CardTitle>
