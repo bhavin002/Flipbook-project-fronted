@@ -22,7 +22,7 @@ export default function ContactForm({ shape, visibilitySettings, flipbookId, isV
     const handleClick = () => {
         setTooltipPos(prev => ({ ...prev, visible: false }));
         if (shape.htmlType === 'contact-form') {
-            showModal(ContactFormModel, shape.htmlData, flipbookId, null, isPublicView);
+            showModal(ContactFormModel, shape.htmlData, flipbookId, null, isPublicView, visibilitySettings);
         }
     };
 

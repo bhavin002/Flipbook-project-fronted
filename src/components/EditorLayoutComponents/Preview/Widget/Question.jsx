@@ -22,7 +22,7 @@ export default function Question({ shape, visibilitySettings, isVisible, flipboo
     const handleClick = () => {
         setTooltipPos(prev => ({ ...prev, visible: false }));
         if (shape.htmlType === 'question') {
-            showModal(QuestionModel, shape.htmlData, flipbookId, null, isPublicView);
+            showModal(QuestionModel, shape.htmlData, flipbookId, null, isPublicView, visibilitySettings);
         }
     };
 

@@ -103,7 +103,7 @@ const ProductTagModal = ({ open, onOpenChange, htmlData, container }) => {
                         </div>
                     )}
 
-                    <div className="space-y-4 overflow-y-auto p-2">
+                    <div className="space-y-4 p-2">
                         {showTitleOrDescriptionSection && (
                             <div>
                                 {showTitle && (

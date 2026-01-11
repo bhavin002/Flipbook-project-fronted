@@ -39,7 +39,7 @@ export default function CustomDomainSettings() {
 
     return (
         <div className="mt-8">
-             <Card>
+            <Card>
                 <CardHeader className="pb-0">
                     <div className="flex items-center justify-between w-full">
                         <CardTitle>Custom Domain</CardTitle>
@@ -152,12 +152,12 @@ function DNSVerificationStep({ onContinue, onBack }) {
                             <TableRow>
                                 <TableCell className="font-medium">CNAME</TableCell>
                                 <TableCell>forms</TableCell>
-                                <TableCell>app-client.feedspace.io</TableCell>
+                                <TableCell>app-client.flipdrag.io</TableCell>
                             </TableRow>
                             <TableRow>
                                 <TableCell className="font-medium">TXT</TableCell>
                                 <TableCell>forms.verify</TableCell>
-                                <TableCell className="font-mono text-sm">feedspace-site-verification=a1b2c3d4</TableCell>
+                                <TableCell className="font-mono text-sm">flipdrag-site-verification=a1b2c3d4</TableCell>
                             </TableRow>
                         </TableBody>
                     </Table>

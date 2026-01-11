@@ -18,6 +18,7 @@ import { useShopSettings } from '@/context/ShopSettingsContext';
 import cartService from '@/service/IndexedDBCart.service';
 import { CreateOrderApi } from '@/service/order.service';
 import LoadingButton from '@/utils/LoadingButton';
+import { getContrastTextColor, hexToHslComponents } from '@/utils/colorUtils';
 
 const createOrderFormSchema = (customerFields, shopSettings) => {
     const baseSchema = {};
@@ -309,7 +310,7 @@ const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings }) => {
     if (!shopSettings) return null;
 
     const renderFormView = () => (
-        <div className="space-y-4">
+        <div className="space-y-4" style={{ '--ring': hexToHslComponents(visibilitySettings?.playerAccentColorHash) }}>
             {shopSettings.contactTitle && (
                 <h3 className="text-lg font-semibold text-gray-800">{shopSettings.contactTitle}</h3>
             )}
@@ -371,6 +372,11 @@ const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings }) => {
                             checked={privacyAccepted}
                             onCheckedChange={handlePrivacyChange}
                             className="mt-0.5"
+                            style={{
+                                borderColor: visibilitySettings?.playerAccentColorHash,
+                                backgroundColor: privacyAccepted ? visibilitySettings?.playerAccentColorHash : undefined,
+                                color: privacyAccepted ? 'white' : undefined
+                            }}
                         />
                         <Label htmlFor="privacy" className="text-sm leading-relaxed">
                             I agree to the following company's Privacy Policy:
@@ -378,7 +384,8 @@ const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings }) => {
                                 href={shopSettings.privacyPolicyLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-primary hover:underline ml-1"
+                                className="hover:underline ml-1"
+                                style={{ color: visibilitySettings?.playerAccentColorHash }}
                             >
                                 {shopSettings.privacyPolicyCompanyName}
                             </a> <span className="text-red-500">*</span>
@@ -390,6 +397,10 @@ const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings }) => {
                 onClick={handleSubmit(onSubmit)}
                 className="w-full"
                 disabled={!isFormValid() || submitting}
+                style={{
+                    backgroundColor: isFormValid() && !submitting ? visibilitySettings?.playerAccentColorHash : undefined,
+                    color: isFormValid() && !submitting ? getContrastTextColor(visibilitySettings?.playerAccentColorHash) : undefined
+                }}
             >
                 {submitting ? <LoadingButton /> : (shopSettings.checkoutButtonLabel || 'Place Order')}
             </Button>

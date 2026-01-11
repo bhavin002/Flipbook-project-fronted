@@ -23,7 +23,7 @@ export default function Quiz({ shape, visibilitySettings, flipbookId, isVisible,
     const handleClick = () => {
         setTooltipPos(prev => ({ ...prev, visible: false }));
         if (shape.htmlType === 'quiz') {
-            showModal(QuizModel, shape.htmlData, flipbookId, null, isPublicView);
+            showModal(QuizModel, shape.htmlData, flipbookId, null, isPublicView, visibilitySettings);
         }
     };
 

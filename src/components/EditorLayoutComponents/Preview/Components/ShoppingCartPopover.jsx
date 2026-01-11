@@ -9,13 +9,74 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import cartService from '@/service/IndexedDBCart.service';
 import { toast } from 'sonner';
 import { useShopSettings } from "@/context/ShopSettingsContext";
 import { ShopAppearance } from "@/utils/enum";
 import OrderForm from './OrderForm';
+import { getContrastTextColor } from '@/utils/colorUtils';
+
+const QuantityButton = ({ onClick, disabled, icon: Icon, accentColor }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-none hover:bg-transparent transition-colors"
+            onClick={onClick}
+            disabled={disabled}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{
+                color: isHovered && !disabled ? accentColor : 'white',
+            }}
+        >
+            <Icon className="h-3 w-3" />
+        </Button>
+    );
+};
+
+const DeleteButton = ({ onClick, accentColor }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <Button
+            variant="ghost"
+            size="icon"
+            className="hover:bg-transparent transition-colors"
+            onClick={onClick}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{
+                color: isHovered ? accentColor : 'white',
+            }}
+        >
+            <Trash2 className="h-4 w-4" />
+        </Button>
+    );
+};
+
+const CloseButton = ({ onClick, accentColor }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <Button
+            variant="ghost"
+            size="icon"
+            className="hover:bg-transparent transition-colors"
+            onClick={onClick}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{
+                color: isHovered ? accentColor : 'white',
+            }}
+        >
+            <X className="h-4 w-4" />
+        </Button>
+    );
+};
 
 const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -113,34 +174,9 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
         }
     };
 
-    const updateQuantity = async (productIdentifier, newQuantity, item) => {
-        if (
-            (item.minQuantity !== null && item.minQuantity !== undefined && newQuantity < item.minQuantity) ||
-            (item.maxQuantity !== null && item.maxQuantity !== undefined && newQuantity > item.maxQuantity)
-        ) return;
-
-        try {
-            await cartService.updateProductQuantity(flipbookId, productIdentifier, newQuantity);
-        } catch (error) {
-            toast.error('Failed to update quantity', {
-                description: error.message || "Oops! Something went wrong.",
-            });
-        }
-    };
-
     const removeItemByCartId = async (cartId) => {
         try {
             await cartService.removeFromCartByCartId(flipbookId, cartId);
-        } catch (error) {
-            toast.error('Failed to remove item', {
-                description: error.message || "Oops! Something went wrong.",
-            });
-        }
-    };
-
-    const removeItem = async (productIdentifier) => {
-        try {
-            await cartService.removeFromCart(flipbookId, productIdentifier);
         } catch (error) {
             toast.error('Failed to remove item', {
                 description: error.message || "Oops! Something went wrong.",
@@ -238,8 +274,11 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
                     {getCartIcon()}
                     {getTotalItems() > 0 && (
                         <Badge
-                            variant="default"
                             className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+                            style={{
+                                backgroundColor: visibilitySettings?.playerAccentColorHash,
+                                color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                            }}
                         >
                             {getTotalItems()}
                         </Badge>
@@ -253,39 +292,44 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 15 }}
                             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                            className={`absolute ${isRTL ? "left-0" : "right-0"} mt-2 w-auto bg-background border rounded-md shadow-lg z-50 max-h-[600px] flex flex-col ${isMobile ? 'md:w-[23rem]' : 'md:w-[28rem]'}`}
+                            className={`absolute ${isRTL ? "left-0" : "right-0"} mt-2 w-auto bg-black text-white border border-neutral-800 rounded-md shadow-lg z-50 max-h-[600px] flex flex-col ${isMobile ? 'md:w-[23rem]' : 'md:w-[28rem]'}`}
                             style={{ top: '100%' }}
                             dir={isRTL ? "rtl" : "ltr"}
                         >
-                            <div className="flex items-center justify-between p-4 border-b">
+                            <div className="flex items-center justify-between p-4">
                                 <div className="flex items-center gap-2">
                                     <h3 className="font-semibold">My list</h3>
-                                    <Badge className="bg-primary text-white">
+                                    <Badge
+                                        style={{
+                                            backgroundColor: visibilitySettings?.playerAccentColorHash,
+                                            color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                                        }}
+                                    >
                                         {getTotalItems()}
                                     </Badge>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <Button
-                                        variant="outline"
                                         type="button"
                                         size="sm"
                                         onClick={handleClearCartClick}
+                                        style={{
+                                            backgroundColor: visibilitySettings?.playerAccentColorHash,
+                                            color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                                        }}
                                         disabled={cartItems.length === 0}
                                     >
                                         Clear list
                                     </Button>
                                     {renderDownloadButton()}
-                                    <Button
-                                        variant="ghost"
-                                        size="icon"
+                                    <CloseButton
                                         onClick={() => setIsOpen(false)}
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </Button>
+                                        accentColor={visibilitySettings?.playerAccentColorHash}
+                                    />
                                 </div>
                             </div>
 
-                            <div className="flex-1 p-4 overflow-y-auto" style={{ maxHeight: '200px' }}>
+                            <div className="flex-1 p-4 bg-[#1E1E1E]" style={{ maxHeight: '200px' }}>
                                 {isLoading ? (
                                     <div className="text-center text-muted-foreground">
                                         Loading cart...
@@ -320,18 +364,12 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
                                                     )}
                                                 </div>
                                                 <div className={`flex flex-col gap-2 ${isRTL ? "items-start" : "items-end"}`}>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
+                                                    <DeleteButton
                                                         onClick={() => removeItemByCartId(item.cartId)}
-                                                    >
-                                                        <Trash2 className="h-4 w-4" color="red" />
-                                                    </Button>
-                                                    <div className="flex items-center gap-1 border rounded-md">
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="h-8 w-8"
+                                                        accentColor={visibilitySettings?.playerAccentColorHash}
+                                                    />
+                                                    <div className="flex items-center border border-neutral-700 rounded-md">
+                                                        <QuantityButton
                                                             onClick={() => {
                                                                 const step = getStep(item);
                                                                 const newQty = item.productQty - step;
@@ -340,16 +378,15 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
                                                                 }
                                                             }}
                                                             disabled={item.minQuantity !== null && item.minQuantity !== undefined && item.productQty <= item.minQuantity}
-                                                        >
-                                                            <Minus className="h-3 w-3" />
-                                                        </Button>
-                                                        <span className="px-3 py-1 text-sm min-w-[2rem] text-center">
+                                                            icon={Minus}
+                                                            accentColor={visibilitySettings?.playerAccentColorHash}
+                                                        />
+                                                        <div className="w-[1px] h-4 bg-neutral-700" />
+                                                        <span className="px-3 py-1 text-sm min-w-[2rem] text-center text-white">
                                                             {item.productQty}
                                                         </span>
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="icon"
-                                                            className="h-8 w-8"
+                                                        <div className="w-[1px] h-4 bg-neutral-700" />
+                                                        <QuantityButton
                                                             onClick={() => {
                                                                 const step = getStep(item);
                                                                 const newQty = item.productQty + step;
@@ -358,9 +395,9 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
                                                                 }
                                                             }}
                                                             disabled={item.maxQuantity !== null && item.maxQuantity !== undefined && item.productQty >= item.maxQuantity}
-                                                        >
-                                                            <Plus className="h-3 w-3" />
-                                                        </Button>
+                                                            icon={Plus}
+                                                            accentColor={visibilitySettings?.playerAccentColorHash}
+                                                        />
                                                     </div>
                                                 </div>
                                             </div>
@@ -371,14 +408,21 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
 
                             {cartItems.length > 0 && (
                                 <>
-                                    <Separator />
                                     <div className="p-4 space-y-4">
                                         <div className="flex justify-between items-center">
                                             <span className="text-lg font-semibold">Total:</span>
                                             <span className="text-lg font-bold">{getTotalPrice()} {getCurrentCurrency()}</span>
                                         </div>
                                         {shopSettings.emailCheckout && (
-                                            <Button className="w-full" size="lg" onClick={() => setIsOrderFormOpen(true)}>
+                                            <Button
+                                                className="w-full hover:opacity-90"
+                                                size="lg"
+                                                onClick={() => setIsOrderFormOpen(true)}
+                                                style={{
+                                                    backgroundColor: visibilitySettings?.playerAccentColorHash,
+                                                    color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                                                }}
+                                            >
                                                 {shopSettings.checkoutButtonLabel}
                                             </Button>
                                         )}

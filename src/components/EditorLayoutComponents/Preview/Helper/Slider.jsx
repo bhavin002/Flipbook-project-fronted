@@ -216,6 +216,8 @@ const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentP
                                                     backgroundColor: page?.background || visibilitySettings.backgroundColor || "white",
                                                     position: "relative",
                                                     overflow: "hidden",
+                                                    filter: (!isLoaded && isVisible) ? 'blur(4px)' : 'none',
+                                                    transition: 'filter 0.5s ease-in-out'
                                                 }}
                                             >
                                                 {isRendered && (
@@ -237,10 +239,19 @@ const Slider = ({ width, height, pageType, pageContent, currentPage, setCurrentP
                                                     </PageWrapper>
                                                 )}
 
+                                                {/* Enhanced Spine Shadow / Depth Overlay */}
+                                                <div className="absolute inset-0 pointer-events-none"
+                                                    style={{
+                                                        background: pageNumber % 2 === 0
+                                                            ? 'linear-gradient(to left, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 10%)'
+                                                            : 'linear-gradient(to right, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 10%)',
+                                                        zIndex: 10
+                                                    }}
+                                                />
+
+                                                {/* Skeleton Shimmer Overlay */}
                                                 {(!isLoaded && isVisible) && (
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-white z-50">
-                                                        <Loader />
-                                                    </div>
+                                                    <div className="absolute inset-0 z-50 skeleton-shimmer bg-white/20" />
                                                 )}
                                             </div>
                                         </div>

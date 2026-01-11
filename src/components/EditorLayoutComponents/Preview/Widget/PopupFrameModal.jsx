@@ -11,7 +11,6 @@ const PopupFrameModal = ({ open, onOpenChange, htmlData, container }) => {
   useEffect(() => {
     if (open && embedCode) {
       const script = document.createElement('script');
-      script.src = "https://js.feedspace.io/v1/embed/embed.min.js";
       script.async = true;
       document.body.appendChild(script);
 

@@ -65,22 +65,22 @@ const linkAreaActionHandlers = {
 };
 
 const linkAreaModalHandlers = {
-    'popup-frame': (htmlData) => {
+    'popup-frame': (htmlData, visibilitySettings) => {
         if (htmlData?.embedCode) {
-            showModal(PopupFrameModal, htmlData);
+            showModal(PopupFrameModal, htmlData, visibilitySettings);
         }
     },
-    'spotlight': (htmlData) => {
-        showModal(SpotlightModal, htmlData);
+    'spotlight': (htmlData, visibilitySettings) => {
+        showModal(SpotlightModal, htmlData, visibilitySettings);
     },
-    'photo-slideshow': (htmlData) => {
+    'photo-slideshow': (htmlData, visibilitySettings) => {
         if (htmlData?.images) {
-            showModal(PhotoSlideShow, htmlData);
+            showModal(PhotoSlideShow, htmlData, visibilitySettings);
         }
     },
 };
 
-function showModal(ModalComponent, htmlData) {
+function showModal(ModalComponent, htmlData, visibilitySettings) {
     const fullscreenElement = document.fullscreenElement;
 
     const modalRoot = document.createElement('div');
@@ -104,6 +104,7 @@ function showModal(ModalComponent, htmlData) {
             }}
             htmlData={htmlData}
             container={fullscreenElement}
+            visibilitySettings={visibilitySettings}
         />
     );
 }
@@ -132,7 +133,7 @@ export default function GoToUrl({ shape, visibilitySettings, flipbookRef, isVisi
                 return;
             }
             if (shape.htmlData?.action && linkAreaModalHandlers[shape.htmlData.action]) {
-                linkAreaModalHandlers[shape.htmlData.action](shape.htmlData);
+                linkAreaModalHandlers[shape.htmlData.action](shape.htmlData, visibilitySettings);
                 return;
             }
         }

@@ -17,7 +17,7 @@ import * as z from 'zod';
 import { CheckCircle } from 'lucide-react';
 import { CreateQuestionFormResponseApi } from '@/service/questionFormResponse.service';
 import LoadingButton from '@/utils/LoadingButton';
-import { IsPublished } from '@/utils/Helper';
+import { getContrastTextColor, hexToHslComponents } from '@/utils/colorUtils';
 
 const createQuestionSchema = (formData) => {
     const baseSchema = {
@@ -31,7 +31,7 @@ const createQuestionSchema = (formData) => {
     return z.object(baseSchema);
 };
 
-const QuestionModel = ({ open, onOpenChange, htmlData, container, isPublicView }) => {
+const QuestionModel = ({ open, onOpenChange, htmlData, container, isPublicView, visibilitySettings }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState(null);
     const [currentView, setCurrentView] = useState('question');
@@ -195,7 +195,7 @@ const QuestionModel = ({ open, onOpenChange, htmlData, container, isPublicView }
     if (!formData) return null;
 
     const renderQuestionView = () => (
-        <div className="space-y-4">
+        <div className="space-y-4" style={{ '--ring': hexToHslComponents(visibilitySettings?.playerAccentColorHash) }}>
             {/* Email Collection */}
             {formData.collectEmailAddress && (
                 <div className="space-y-2">
@@ -236,6 +236,11 @@ const QuestionModel = ({ open, onOpenChange, htmlData, container, isPublicView }
                             checked={privacyAccepted}
                             onCheckedChange={setPrivacyAccepted}
                             className="mt-1"
+                            style={{
+                                borderColor: visibilitySettings?.playerAccentColorHash,
+                                backgroundColor: privacyAccepted ? visibilitySettings?.playerAccentColorHash : undefined,
+                                color: privacyAccepted ? 'white' : undefined
+                            }}
                         />
                         <Label htmlFor="privacy" className="text-sm leading-relaxed">
                             I agree to the following company's Privacy Policy:
@@ -243,7 +248,8 @@ const QuestionModel = ({ open, onOpenChange, htmlData, container, isPublicView }
                                 href={formData.privacyPolicyLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-primary hover:underline ml-1"
+                                className="hover:underline ml-1"
+                                style={{ color: visibilitySettings?.playerAccentColorHash }}
                             >
                                 {formData.companyName}
                             </a> *
@@ -259,6 +265,11 @@ const QuestionModel = ({ open, onOpenChange, htmlData, container, isPublicView }
                             checked={gdprAccepted}
                             onCheckedChange={setGdprAccepted}
                             className="mt-1"
+                            style={{
+                                borderColor: visibilitySettings?.playerAccentColorHash,
+                                backgroundColor: gdprAccepted ? visibilitySettings?.playerAccentColorHash : undefined,
+                                color: gdprAccepted ? 'white' : undefined
+                            }}
                         />
                         <Label htmlFor="gdpr" className="text-sm leading-relaxed">
                             {formData.formulateMessage} *
@@ -271,6 +282,10 @@ const QuestionModel = ({ open, onOpenChange, htmlData, container, isPublicView }
                 onClick={handleSubmit(onSubmit)}
                 className="w-full"
                 disabled={!isFormValid() || submitting}
+                style={{
+                    backgroundColor: visibilitySettings?.playerAccentColorHash,
+                    color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                }}
             >
                 {submitting ? <LoadingButton /> : (formData.buttonLabel || 'Submit')}
             </Button>

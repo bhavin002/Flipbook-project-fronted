@@ -220,7 +220,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurren
                 </div>
             </div>
 
-            <div className="space-y-4 overflow-y-auto p-2">
+            <div className="space-y-4 p-2">
                 <Skeleton className="h-8 w-3/4" />
                 <Skeleton className="h-4 w-1/2" />
                 <Skeleton className="h-20 w-full" />
@@ -331,7 +331,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurren
                             </div>
                         )}
 
-                        <div className="space-y-4 overflow-y-auto p-2">
+                        <div className="space-y-4 p-2">
                             {(productInfo.productTitle || productInfo.sku) && (
                                 <div>
                                     {productInfo.productTitle && (

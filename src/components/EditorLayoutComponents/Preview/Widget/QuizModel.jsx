@@ -16,6 +16,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { getContrastTextColor, hexToHslComponents } from '@/utils/colorUtils';
 
 const createQuizSchema = (collectEmail, questions) => {
     const baseSchema = {};
@@ -34,7 +35,7 @@ const createQuizSchema = (collectEmail, questions) => {
     return z.object(baseSchema);
 };
 
-const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPublicView }) => {
+const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPublicView, visibilitySettings }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [quizInfo, setQuizInfo] = useState(null);
     const [currentView, setCurrentView] = useState('quiz');
@@ -226,7 +227,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
     if (!quizInfo) return null;
 
     const renderQuizView = () => (
-        <div className="space-y-6">
+        <div className="space-y-6" style={{ '--ring': hexToHslComponents(visibilitySettings?.playerAccentColorHash) }}>
             {quizInfo.settings.collectEmail && (
                 <div className="space-y-4 pb-4 border-b">
                     <div>
@@ -249,6 +250,11 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                                     id="privacy"
                                     checked={privacyAccepted}
                                     onCheckedChange={setPrivacyAccepted}
+                                    style={{
+                                        borderColor: visibilitySettings?.playerAccentColorHash,
+                                        backgroundColor: privacyAccepted ? visibilitySettings?.playerAccentColorHash : undefined,
+                                        color: privacyAccepted ? 'white' : undefined
+                                    }}
                                 />
                                 <Label htmlFor="privacy" className="text-sm leading-relaxed">
                                     I agree to the following company's Privacy Policy:
@@ -256,7 +262,8 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                                         href={quizInfo.settings.privacyPolicyLink}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-primary hover:underline ml-1"
+                                        className="hover:underline ml-1"
+                                        style={{ color: visibilitySettings?.playerAccentColorHash }}
                                     >
                                         {quizInfo.settings.companyName}
                                     </a> *
@@ -269,6 +276,11 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                                     id="gdpr"
                                     checked={gdprAccepted}
                                     onCheckedChange={setGdprAccepted}
+                                    style={{
+                                        borderColor: visibilitySettings?.playerAccentColorHash,
+                                        backgroundColor: gdprAccepted ? visibilitySettings?.playerAccentColorHash : undefined,
+                                        color: gdprAccepted ? 'white' : undefined
+                                    }}
                                 />
                                 <Label htmlFor="gdpr" className="text-sm">
                                     {quizInfo.settings.gdprMessage || "I agree to GDPR compliance"} *
@@ -293,6 +305,11 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                                         id={`${questionIndex}_${option._id}`}
                                         checked={(watchedValues[`question_${questionIndex}`] || []).includes(option._id)}
                                         onCheckedChange={() => handleAnswerChange(questionIndex, option._id, true)}
+                                        style={{
+                                            borderColor: visibilitySettings?.playerAccentColorHash,
+                                            backgroundColor: (watchedValues[`question_${questionIndex}`] || []).includes(option._id) ? visibilitySettings?.playerAccentColorHash : undefined,
+                                            color: (watchedValues[`question_${questionIndex}`] || []).includes(option._id) ? 'white' : undefined
+                                        }}
                                     />
                                     <Label htmlFor={`${questionIndex}_${option._id}`} className="flex-1 cursor-pointer">
                                         {String.fromCharCode(65 + question.options.indexOf(option))}. {option.text}
@@ -307,7 +324,14 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                         >
                             {question.options.map((option) => (
                                 <div key={option._id} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
-                                    <RadioGroupItem value={option._id} id={`${questionIndex}_${option._id}`} />
+                                    <RadioGroupItem
+                                        value={option._id}
+                                        id={`${questionIndex}_${option._id}`}
+                                        style={{
+                                            borderColor: visibilitySettings?.playerAccentColorHash,
+                                            color: visibilitySettings?.playerAccentColorHash
+                                        }}
+                                    />
                                     <Label htmlFor={`${questionIndex}_${option._id}`} className="flex-1 cursor-pointer">
                                         {String.fromCharCode(65 + question.options.indexOf(option))}. {option.text}
                                     </Label>
@@ -322,6 +346,10 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                 onClick={handleSubmit(onSubmit)}
                 className="w-full"
                 disabled={!isFormValid()}
+                style={{
+                    backgroundColor: visibilitySettings?.playerAccentColorHash,
+                    color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                }}
             >
                 {quizInfo.settings.quizButtonLabel || 'Submit quiz'}
             </Button>
@@ -361,7 +389,14 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                     </>
                 )}
                 <div className="space-y-3">
-                    {quizInfo.settings.isShowCorrectAnswer && <Button onClick={handleViewResults} className="w-full">
+                    {quizInfo.settings.isShowCorrectAnswer && <Button
+                        onClick={handleViewResults}
+                        className="w-full"
+                        style={{
+                            backgroundColor: visibilitySettings?.playerAccentColorHash,
+                            color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                        }}
+                    >
                         View results
                     </Button>}
                     {(quizInfo.settings.allowRetake) && (
@@ -457,7 +492,14 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                     <Button onClick={handleRetakeQuiz} variant="outline" className="flex-1">
                         Retake quiz
                     </Button>
-                    <Button onClick={handleCloseModal} className="flex-1">
+                    <Button
+                        onClick={handleCloseModal}
+                        className="flex-1"
+                        style={{
+                            backgroundColor: visibilitySettings?.playerAccentColorHash,
+                            color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                        }}
+                    >
                         Close
                     </Button>
                 </div>

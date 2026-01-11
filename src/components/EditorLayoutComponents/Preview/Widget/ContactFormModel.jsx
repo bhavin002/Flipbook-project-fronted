@@ -17,6 +17,7 @@ import * as z from 'zod';
 import { CheckCircle } from 'lucide-react';
 import { ContactSubmissionApi } from '@/service/contactSubmission.service';
 import LoadingButton from '@/utils/LoadingButton';
+import { getContrastTextColor, hexToHslComponents } from '@/utils/colorUtils';
 
 const createContactFormSchema = (customerFields, settings) => {
     const baseSchema = {};
@@ -93,7 +94,7 @@ const createContactFormSchema = (customerFields, settings) => {
     return z.object(baseSchema);
 };
 
-const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPublicView }) => {
+const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPublicView, visibilitySettings }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [contactFormInfo, setContactFormInfo] = useState(null);
     const [currentView, setCurrentView] = useState('form');
@@ -307,7 +308,7 @@ const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container,
     if (!contactFormInfo) return null;
 
     const renderFormView = () => (
-        <div className="space-y-4">
+        <div className="space-y-4" style={{ '--ring': hexToHslComponents(visibilitySettings?.playerAccentColorHash) }}>
             {contactFormInfo.description && (
                 <p className="text-sm text-gray-600 mb-4">
                     {contactFormInfo.description}
@@ -332,6 +333,11 @@ const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container,
                                 checked={privacyAccepted}
                                 onCheckedChange={handlePrivacyChange}
                                 className="mt-0.5"
+                                style={{
+                                    borderColor: visibilitySettings?.playerAccentColorHash,
+                                    backgroundColor: privacyAccepted ? visibilitySettings?.playerAccentColorHash : undefined,
+                                    color: privacyAccepted ? 'white' : undefined
+                                }}
                             />
                             <Label htmlFor="privacy" className="text-sm leading-relaxed">
                                 I agree to the following company's Privacy Policy:
@@ -339,7 +345,8 @@ const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container,
                                     href={contactFormInfo.settings.privacyPolicyLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-primary hover:underline ml-1"
+                                    className="hover:underline ml-1"
+                                    style={{ color: visibilitySettings?.playerAccentColorHash }}
                                 >
                                     {contactFormInfo.settings.companyName}
                                 </a> <span className="text-red-500">*</span>
@@ -354,6 +361,11 @@ const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container,
                                 checked={gdprAccepted}
                                 onCheckedChange={handleGdprChange}
                                 className="mt-0.5"
+                                style={{
+                                    borderColor: visibilitySettings?.playerAccentColorHash,
+                                    backgroundColor: gdprAccepted ? visibilitySettings?.playerAccentColorHash : undefined,
+                                    color: gdprAccepted ? 'white' : undefined
+                                }}
                             />
                             <Label htmlFor="gdpr" className="text-sm leading-relaxed">
                                 {contactFormInfo.settings.gdprMessage} <span className="text-red-500">*</span>
@@ -367,6 +379,10 @@ const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container,
                 onClick={handleSubmit(onSubmit)}
                 className="w-full"
                 disabled={!isFormValid() || submitting}
+                style={{
+                    backgroundColor: visibilitySettings?.playerAccentColorHash,
+                    color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                }}
             >
                 {submitting ? <LoadingButton /> : (contactFormInfo.settings.buttonLabel || 'Submit')}
             </Button>
@@ -381,7 +397,14 @@ const ContactFormModel = ({ open, onOpenChange, htmlData, flipbookId, container,
             <h3 className="text-lg font-semibold">
                 {contactFormInfo.settings.thankYouMessage || "Thank you for your submission!"}
             </h3>
-            <Button onClick={handleCloseModal} className="w-full">
+            <Button
+                onClick={handleCloseModal}
+                className="w-full"
+                style={{
+                    backgroundColor: visibilitySettings?.playerAccentColorHash,
+                    color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                }}
+            >
                 Close
             </Button>
         </div>

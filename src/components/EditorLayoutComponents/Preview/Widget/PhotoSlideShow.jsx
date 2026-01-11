@@ -26,7 +26,7 @@ const getImageFitClass = (properties) => {
     }
 };
 
-const PhotoSlideShow = ({ open, onOpenChange, htmlData, container }) => {
+const PhotoSlideShow = ({ open, onOpenChange, htmlData, container, visibilitySettings }) => {
     const images = htmlData?.images || [];
     const [currentIndex, setCurrentIndex] = useState(images.length > 1 ? 1 : 0);
     const [isTransitioning, setIsTransitioning] = useState(false);
@@ -198,11 +198,11 @@ const PhotoSlideShow = ({ open, onOpenChange, htmlData, container }) => {
                                         onClick={() => goToSlide(index)}
                                         disabled={isTransitioning}
                                         className={`w-2 h-2 rounded-full transition-all duration-300 ${getActualIndex() === index
-                                            ? "bg-primary scale-125"
+                                            ? "scale-125"
                                             : "bg-white bg-opacity-50 hover:bg-opacity-75"
                                             }`}
                                         aria-label={`Go to slide ${index + 1}`}
-                                        style={{ cursor: 'pointer' }}
+                                        style={getActualIndex() === index ? { cursor: 'pointer', backgroundColor: visibilitySettings?.playerAccentColorHash } : { cursor: 'pointer' }}
                                     />
                                 ))}
                             </div>

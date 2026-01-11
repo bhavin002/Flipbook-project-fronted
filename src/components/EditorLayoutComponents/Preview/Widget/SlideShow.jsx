@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-export default function SlideShow({ shape }) {
+export default function SlideShow({ shape, visibilitySettings }) {
     const [currentIndex, setCurrentIndex] = useState(1);
     const [isTransitioning, setIsTransitioning] = useState(false);
     const intervalRef = useRef(null);
@@ -197,11 +197,11 @@ export default function SlideShow({ shape }) {
                                 onClick={() => goToSlide(index)}
                                 disabled={isTransitioning}
                                 className={`w-5 h-5 rounded-full transition-all duration-300 ${getActualIndex() === index
-                                        ? "bg-primary scale-125"
-                                        : "bg-white bg-opacity-50 hover:bg-opacity-75"
+                                    ? "scale-125"
+                                    : "bg-white bg-opacity-50 hover:bg-opacity-75"
                                     }`}
                                 aria-label={`Go to slide ${index + 1}`}
-                                style={{ cursor: 'pointer' }}
+                                style={getActualIndex() === index ? { cursor: 'pointer', backgroundColor: visibilitySettings?.playerAccentColorHash } : { cursor: 'pointer' }}
                             />
                         ))}
                     </div>

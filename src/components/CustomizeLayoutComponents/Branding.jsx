@@ -478,7 +478,7 @@ export default function Branding() {
                 <Input
                     type="url"
                     id="logo-link"
-                    placeholder="https://feedspace.com/example"
+                    placeholder="https://flipdrag.com/example"
                     value={logoLink}
                     onChange={handleLogoLinkChange}
                     onBlur={handleLogoLinkBlur}

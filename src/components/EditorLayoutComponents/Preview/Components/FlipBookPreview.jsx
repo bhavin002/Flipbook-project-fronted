@@ -343,14 +343,14 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         onMouseDown={handleMouseDown}
                                         onTouchStart={handleTouchStart}
                                         style={{
-                                            backgroundColor: visibilitySettings.playerAccentColorHash || 'black'
+                                            backgroundColor: visibilitySettings.playerPanelColorHash || 'black'
                                         }}
                                     >
                                         <div
                                             className={`h-[2px] rounded-full absolute top-0 transition-all duration-300 ${isRTL ? "right-0" : "left-0"}`}
                                             style={{
                                                 width: `${isNaN(progress) ? 0 : progress}%`,
-                                                backgroundColor: visibilitySettings.playerPanelColorHash || 'black'
+                                                backgroundColor: visibilitySettings.playerAccentColorHash || 'black'
                                             }}
                                         />
                                         <div
@@ -514,14 +514,14 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         onMouseDown={handleMouseDown}
                                         onTouchStart={handleTouchStart}
                                         style={{
-                                            backgroundColor: visibilitySettings.playerAccentColorHash || 'black'
+                                            backgroundColor: visibilitySettings.playerPanelColorHash || 'black'
                                         }}
                                     >
                                         <div
                                             className={`h-[2px] rounded-full absolute top-0 transition-all duration-300 ${isRTL ? "right-0" : "left-0"}`}
                                             style={{
                                                 width: `${isNaN(progress) ? 0 : progress}%`,
-                                                backgroundColor: visibilitySettings.playerPanelColorHash || 'black'
+                                                backgroundColor: visibilitySettings.playerAccentColorHash || 'black'
                                             }}
                                         />
                                         <div

@@ -4,18 +4,30 @@ import { PageNavigationActions } from '@/components/EditorLayoutComponents/Previ
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Memoized thumbnail card components to prevent unnecessary re-renders
-const SingleThumbnailCard = React.memo(({ pageNumber, isCurrent, onClick, getImageSrc, aspectRatioString }) => (
+const SingleThumbnailCard = React.memo(({ pageNumber, isCurrent, onClick, getImageSrc, aspectRatioString, visibilitySettings }) => (
     <div
         className="relative group flex-shrink-0 flex flex-col items-center"
         onClick={() => onClick(pageNumber)}
-        style={{ cursor: 'pointer' }}
+        style={{
+            cursor: 'pointer',
+            '--accent-color': visibilitySettings?.playerAccentColorHash || '#7b39ed'
+        }}
     >
         <div
-            className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg h-[100px] flex items-center justify-center transition-all duration-300 ${isCurrent
-                ? 'border-2 border-primary ring-2 ring-primary/50'
-                : 'border-2 border-transparent hover:border-primary/50'
-                } rounded-md`}
-            style={{ aspectRatio: aspectRatioString }}
+            className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg h-[100px] flex items-center justify-center transition-all duration-300 rounded-md`}
+            style={{
+                aspectRatio: aspectRatioString,
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                borderColor: isCurrent ? 'var(--accent-color)' : 'transparent',
+                boxShadow: isCurrent ? '0 0 0 2px color-mix(in srgb, var(--accent-color) 50%, transparent)' : 'none',
+            }}
+            onMouseEnter={(e) => {
+                if (!isCurrent) e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--accent-color) 50%, transparent)';
+            }}
+            onMouseLeave={(e) => {
+                if (!isCurrent) e.currentTarget.style.borderColor = 'transparent';
+            }}
         >
             <img
                 src={getImageSrc(pageNumber)}
@@ -31,14 +43,26 @@ const SingleThumbnailCard = React.memo(({ pageNumber, isCurrent, onClick, getIma
 ));
 SingleThumbnailCard.displayName = 'SingleThumbnailCard';
 
-const PairedThumbnailCard = React.memo(({ leftPageNumber, rightPageNumber, isCurrentLeft, isCurrentRight, onClick, getImageSrc, aspectRatioString, isRTL }) => (
-    <div className="relative group flex-shrink-0 flex flex-col items-center" onClick={() => onClick(leftPageNumber)} style={{ cursor: 'pointer' }}>
+const PairedThumbnailCard = React.memo(({ leftPageNumber, rightPageNumber, isCurrentLeft, isCurrentRight, onClick, getImageSrc, aspectRatioString, isRTL, visibilitySettings }) => (
+    <div className="relative group flex-shrink-0 flex flex-col items-center" onClick={() => onClick(leftPageNumber)} style={{
+        cursor: 'pointer',
+        '--accent-color': visibilitySettings?.playerAccentColorHash || '#7b39ed'
+    }}>
         <div
             dir={isRTL ? "rtl" : "ltr"}
-            className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg h-[100px] flex transition-all duration-300 ${isCurrentLeft || isCurrentRight
-                ? 'border-2 border-primary ring-2 ring-primary/50'
-                : 'border-2 border-transparent hover:border-primary/50'
-                } rounded-md`}
+            className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg h-[100px] flex transition-all duration-300 rounded-md`}
+            style={{
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                borderColor: (isCurrentLeft || isCurrentRight) ? 'var(--accent-color)' : 'transparent',
+                boxShadow: (isCurrentLeft || isCurrentRight) ? '0 0 0 2px color-mix(in srgb, var(--accent-color) 50%, transparent)' : 'none',
+            }}
+            onMouseEnter={(e) => {
+                if (!(isCurrentLeft || isCurrentRight)) e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--accent-color) 50%, transparent)';
+            }}
+            onMouseLeave={(e) => {
+                if (!(isCurrentLeft || isCurrentRight)) e.currentTarget.style.borderColor = 'transparent';
+            }}
         >
             <div
                 className={`relative flex-1 flex items-center justify-center h-full ${isRTL ? "border-l" : "border-r"} border-gray-300/20`}
@@ -129,6 +153,7 @@ const PageOverviewModal = ({
                         onClick={handleThumbnailClick}
                         getImageSrc={getImageSrc}
                         aspectRatioString={aspectRatioString}
+                        visibilitySettings={visibilitySettings}
                     />
                 );
             }
@@ -141,6 +166,7 @@ const PageOverviewModal = ({
                     onClick={handleThumbnailClick}
                     getImageSrc={getImageSrc}
                     aspectRatioString={aspectRatioString}
+                    visibilitySettings={visibilitySettings}
                 />
             );
             let i = 1;
@@ -163,6 +189,7 @@ const PageOverviewModal = ({
                         getImageSrc={getImageSrc}
                         aspectRatioString={aspectRatioString}
                         isRTL={isRTL}
+                        visibilitySettings={visibilitySettings}
                     />
                 );
             }
@@ -176,6 +203,7 @@ const PageOverviewModal = ({
                         onClick={handleThumbnailClick}
                         getImageSrc={getImageSrc}
                         aspectRatioString={aspectRatioString}
+                        visibilitySettings={visibilitySettings}
                     />
                 );
             } else if (i < totalPages) {
@@ -194,6 +222,7 @@ const PageOverviewModal = ({
                         getImageSrc={getImageSrc}
                         aspectRatioString={aspectRatioString}
                         isRTL={isRTL}
+                        visibilitySettings={visibilitySettings}
                     />
                 );
             }
