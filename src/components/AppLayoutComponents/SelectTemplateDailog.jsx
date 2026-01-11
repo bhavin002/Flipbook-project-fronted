@@ -174,7 +174,7 @@ export default function SelectTemplateDialog({ open, onOpenChange, catalogId }) 
                         <div>
                             <div className="grid grid-cols-2 gap-8 border-b my-4">
                                 <div>
-                                    <h4 className="font-medium mb-3">Flipsnack option</h4>
+                                    <h4 className="font-medium mb-3">FlipDrag option</h4>
                                 </div>
                                 <div>
                                     <h4 className="font-medium mb-3">Your feed columns</h4>

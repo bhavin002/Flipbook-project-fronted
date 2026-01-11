@@ -40,7 +40,7 @@ export default function CreateTrackableLinkDialog() {
         <Dialog>
             <DialogTrigger asChild>
                 <Button>
-                Create trackable link
+                    Create trackable link
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[540px] w-[90vw]">
@@ -48,7 +48,7 @@ export default function CreateTrackableLinkDialog() {
                     <DialogTitle>New trackable link</DialogTitle>
                     <DialogDescription>
                         Learn what your lead is up to! Create a unique link for each lead and track their interactions in your flipbook.<a
-                            href="https://help.flipsnack.com/en/articles/2139448-using-a-custom-domain-with-flipsnack"
+                            href="https://flipdrag.com"
                             className="text-[12px] font-medium text-purple-600 hover:underline"
                         >
                             Learn more

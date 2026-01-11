@@ -21,7 +21,7 @@ export default function Settings({ form, clearErrors }) {
         form.setValue("settings.addPrivacyPolicy", checked);
         if (checked) {
             form.setValue("settings.companyName", "FlipDrag");
-            form.setValue("settings.privacyPolicyLink", "https://legal.flipsnack.com/privacy-policy");
+            form.setValue("settings.privacyPolicyLink", "https://flipdrag.com/privacy");
         }
     };
 
@@ -135,7 +135,7 @@ export default function Settings({ form, clearErrors }) {
                                     type="text"
                                     id="privacy-policy"
                                     {...form.register("settings.privacyPolicyLink")}
-                                    placeholder="https://legal.flipsnack.com/privacy-policy"
+                                    placeholder="https://flipdrag.com/privacy"
                                     className={errors.settings?.privacyPolicyLink ? "border-red-500 focus:outline-none focus-visible:ring-0" : ""}
                                 />
                                 {errors.settings?.privacyPolicyLink && <p className="text-red-500 text-xs">{errors.settings.privacyPolicyLink.message}</p>}

@@ -496,21 +496,21 @@ const groups = [
 ]
 
 const trackableLinks = [
-    { id: 1, name: "megaDeal", created: "Mar 5, 2025", link: "https://www.flipdrag.com/AABBCCDD/abcd1234-ef56-7890-ghij-klmnopqrstuv", lastViewed: "Mar 10, 2025" },
-    { id: 2, name: "springSale", created: "Mar 15, 2025", link: "https://www.flipdrag.com/A1B2C3D4E5F6/23a67b88-9f1d-4b6d-8c2e-abc123xyz456", lastViewed: "Mar 18, 2025" },
-    { id: 3, name: "discountOffer", created: "Mar 10, 2025", link: "https://www.flipdrag.com/FFEEAABBCCDD/7845a1c2-b3d4-5678-e9f0-111213141516", lastViewed: "Mar 12, 2025" },
-    { id: 4, name: "limitedDeal", created: "Feb 25, 2025", link: "https://www.flipdrag.com/112233445566/9876abcd-5432-1efg-hijk-987654321000", lastViewed: "Mar 1, 2025" },
-    { id: 5, name: "exclusivePromo", created: "Feb 20, 2025", link: "https://www.flipdrag.com/778899AABBCC/11223344-5566-7788-99AA-BBCCDDEEFF00", lastViewed: "Feb 28, 2025" },
-    { id: 6, name: "flashSale", created: "Mar 5, 2025", link: "https://www.flipdrag.com/ZXCVCXCVXCVX/aaaa1111-bbbb-cccc-dddd-eeeeffff0000", lastViewed: "Mar 8, 2025" },
-    { id: 7, name: "weekendOffer", created: "Mar 8, 2025", link: "https://www.flipdrag.com/ASDFQWERZXCV/11112222-3333-4444-5555-666677778888", lastViewed: "Mar 11, 2025" },
-    { id: 8, name: "newCollection", created: "Feb 10, 2025", link: "https://www.flipdrag.com/QWERTYUIOPASD/99887766-5544-3322-1100-AABBCCDDEEFF", lastViewed: "Feb 15, 2025" },
-    { id: 9, name: "springTrends", created: "Mar 2, 2025", link: "https://www.flipdrag.com/POIUYTREWQASD/44445555-6666-7777-8888-99990000AAAA", lastViewed: "Mar 6, 2025" },
-    { id: 10, name: "shopNow", created: "Jan 30, 2025", link: "https://www.flipdrag.com/MNBVCXZLKJHG/ABCDEF12-3456-7890-GHIJ-KLMNOPQRSTUV", lastViewed: "Feb 5, 2025" },
-    { id: 11, name: "newArrivals", created: "Feb 28, 2025", link: "https://www.flipdrag.com/YTREWQASDFGHJ/99887744-6655-3322-1100-AABBCCDDEEFF", lastViewed: "Mar 3, 2025" },
-    { id: 12, name: "hotPicks", created: "Jan 15, 2025", link: "https://www.flipdrag.com/ZXCVMNBQWERTY/11113333-5555-7777-9999-BBCCAAFFDD00", lastViewed: "Jan 20, 2025" },
-    { id: 13, name: "topDeals", created: "Feb 5, 2025", link: "https://www.flipdrag.com/QAZWSXEDCRFVTG/22224444-6666-8888-AAAA-BBBBCCCCDDDD", lastViewed: "Feb 9, 2025" },
-    { id: 14, name: "cyberOffer", created: "Mar 1, 2025", link: "https://www.flipdrag.com/MNBVCXZLKJHGFDS/55557777-9999-BBBB-DDDD-EEEEFFFF0000", lastViewed: "Mar 4, 2025" },
-    { id: 15, name: "festiveSale", created: "Feb 22, 2025", link: "https://www.flipdrag.com/ASDFGHJKLPOIUYT/33335555-7777-9999-BBBB-CCCCDDDDFFFF", lastViewed: "Feb 27, 2025" }
+    { id: 1, name: "megaDeal", created: "Mar 5, 2025", link: "https://flipdrag.com", lastViewed: "Mar 10, 2025" },
+    { id: 2, name: "springSale", created: "Mar 15, 2025", link: "https://flipdrag.com", lastViewed: "Mar 18, 2025" },
+    { id: 3, name: "discountOffer", created: "Mar 10, 2025", link: "https://flipdrag.com", lastViewed: "Mar 12, 2025" },
+    { id: 4, name: "limitedDeal", created: "Feb 25, 2025", link: "https://flipdrag.com", lastViewed: "Mar 1, 2025" },
+    { id: 5, name: "exclusivePromo", created: "Feb 20, 2025", link: "https://flipdrag.com", lastViewed: "Feb 28, 2025" },
+    { id: 6, name: "flashSale", created: "Mar 5, 2025", link: "https://flipdrag.com", lastViewed: "Mar 8, 2025" },
+    { id: 7, name: "weekendOffer", created: "Mar 8, 2025", link: "https://flipdrag.com", lastViewed: "Mar 11, 2025" },
+    { id: 8, name: "newCollection", created: "Feb 10, 2025", link: "https://flipdrag.com", lastViewed: "Feb 15, 2025" },
+    { id: 9, name: "springTrends", created: "Mar 2, 2025", link: "https://flipdrag.com", lastViewed: "Mar 6, 2025" },
+    { id: 10, name: "shopNow", created: "Jan 30, 2025", link: "https://flipdrag.com", lastViewed: "Feb 5, 2025" },
+    { id: 11, name: "newArrivals", created: "Feb 28, 2025", link: "https://flipdrag.com", lastViewed: "Mar 3, 2025" },
+    { id: 12, name: "hotPicks", created: "Jan 15, 2025", link: "https://flipdrag.com", lastViewed: "Jan 20, 2025" },
+    { id: 13, name: "topDeals", created: "Feb 5, 2025", link: "https://flipdrag.com", lastViewed: "Feb 9, 2025" },
+    { id: 14, name: "cyberOffer", created: "Mar 1, 2025", link: "https://flipdrag.com", lastViewed: "Mar 4, 2025" },
+    { id: 15, name: "festiveSale", created: "Feb 22, 2025", link: "https://flipdrag.com", lastViewed: "Feb 27, 2025" }
 ];
 
 
@@ -598,28 +598,7 @@ const activityOptions = [
     { value: "scheduled-flipbook-publish", label: "Scheduled flipbook for publish" }
 ]
 
-const templatesData = [
-    { value: "all-templates", label: "All templates" },
-    { value: "featured", label: "Featured" },
-    { value: "presentations", label: "Presentations" },
-    { value: "reports", label: "Reports" },
-    { value: "flyers", label: "Flyers" },
-    { value: "magazines", label: "Magazines" },
-    { value: "catalogs", label: "Catalogs" },
-    { value: "brochures", label: "Brochures" },
-    { value: "event-programs", label: "Event Programs" },
-    { value: "guides", label: "Guides" },
-    { value: "menus", label: "Menus" },
-    { value: "covers", label: "Covers" },
-    { value: "portfolios", label: "Portfolios" },
-    { value: "newsletters", label: "Newsletters" },
-    { value: "booklets", label: "Booklets" },
-    { value: "lookbooks", label: "Lookbooks" },
-    { value: "table-of-contents", label: "Table of Contents" },
-    { value: "flipbooks", label: "Flipbooks" },
-    { value: "ebooks", label: "eBooks" },
-    { value: "pitch-decks", label: "Pitch Decks" }
-]
+const templatesData = []
 
 const hyperlinks = [
     { value: "send-email", label: "Send email" },
@@ -1159,263 +1138,9 @@ const customizeMenuItems = [
     // }
 ];
 
-const templates = [
-    {
-        id: 1,
-        pages: 14,
-        thumbnail: "https://cdn.flipsnack.com/template/4897/thumb/page_1",
-        pageThumbnails: [
-            "https://cdn.flipsnack.com/template/4897/thumb/page_1",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_2",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_3",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_4",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_5",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_6",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_7",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_8",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_9",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_10",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_11",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_12",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_13",
-            "https://cdn.flipsnack.com/template/4897/thumb/page_14",
-        ]
-    },
-    {
-        id: 2,
-        pages: 12,
-        thumbnail: "https://cdn.flipsnack.com/template/4844/thumb/page_1",
-        pageThumbnails: [
-            "https://cdn.flipsnack.com/template/4844/thumb/page_1",
-            "https://cdn.flipsnack.com/template/4844/thumb/page_2",
-            "https://cdn.flipsnack.com/template/4844/thumb/page_3",
-            "https://cdn.flipsnack.com/template/4844/thumb/page_4",
-            "https://cdn.flipsnack.com/template/4844/thumb/page_5",
-            "https://cdn.flipsnack.com/template/4844/thumb/page_6",
-            "https://cdn.flipsnack.com/template/4844/thumb/page_7",
-            "https://cdn.flipsnack.com/template/4844/thumb/page_8",
-            "https://cdn.flipsnack.com/template/4844/thumb/page_9",
-            "https://cdn.flipsnack.com/template/4844/thumb/page_10",
-            "https://cdn.flipsnack.com/template/4844/thumb/page_11",
-            "https://cdn.flipsnack.com/template/4844/thumb/page_12",
-        ]
-    },
-    {
-        id: 3,
-        pages: 12,
-        thumbnail: "https://cdn.flipsnack.com/template/4832/thumb/page_1",
-        pageThumbnails: [
-            "https://cdn.flipsnack.com/template/4832/thumb/page_1",
-            "https://cdn.flipsnack.com/template/4832/thumb/page_2",
-            "https://cdn.flipsnack.com/template/4832/thumb/page_3",
-            "https://cdn.flipsnack.com/template/4832/thumb/page_4",
-            "https://cdn.flipsnack.com/template/4832/thumb/page_5",
-            "https://cdn.flipsnack.com/template/4832/thumb/page_6",
-            "https://cdn.flipsnack.com/template/4832/thumb/page_7",
-            "https://cdn.flipsnack.com/template/4832/thumb/page_8",
-            "https://cdn.flipsnack.com/template/4832/thumb/page_9",
-            "https://cdn.flipsnack.com/template/4832/thumb/page_10",
-            "https://cdn.flipsnack.com/template/4832/thumb/page_11",
-            "https://cdn.flipsnack.com/template/4832/thumb/page_12",
-        ]
-    },
-    {
-        id: 4,
-        pages: 14,
-        thumbnail: "https://cdn.flipsnack.com/template/4815/thumb/page_1",
-        pageThumbnails: [
-            "https://cdn.flipsnack.com/template/4815/thumb/page_1",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_2",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_3",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_4",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_5",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_6",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_7",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_8",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_9",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_10",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_11",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_12",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_13",
-            "https://cdn.flipsnack.com/template/4815/thumb/page_14",
-        ]
-    },
-    {
-        id: 5,
-        pages: 16,
-        thumbnail: "https://cdn.flipsnack.com/template/4811/thumb/page_1",
-        pageThumbnails: [
-            "https://cdn.flipsnack.com/template/4811/thumb/page_1",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_2",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_3",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_4",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_5",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_6",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_7",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_8",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_9",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_10",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_11",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_12",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_13",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_14",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_15",
-            "https://cdn.flipsnack.com/template/4811/thumb/page_16",
-        ]
-    },
-    {
-        id: 6,
-        pages: 14,
-        thumbnail: "https://cdn.flipsnack.com/template/4804/thumb/page_1",
-        pageThumbnails: [
-            "https://cdn.flipsnack.com/template/4804/thumb/page_1",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_2",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_3",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_4",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_5",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_6",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_7",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_8",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_9",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_10",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_11",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_12",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_13",
-            "https://cdn.flipsnack.com/template/4804/thumb/page_14",
-        ]
-    },
-    {
-        id: 7,
-        pages: 18,
-        thumbnail: "https://cdn.flipsnack.com/template/4779/thumb/page_1",
-        pageThumbnails: [
-            "https://cdn.flipsnack.com/template/4779/thumb/page_1",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_2",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_3",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_4",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_5",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_6",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_7",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_8",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_9",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_10",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_11",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_12",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_13",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_14",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_15",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_16",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_17",
-            "https://cdn.flipsnack.com/template/4779/thumb/page_18",
-        ]
-    },
-    {
-        id: 8,
-        pages: 16,
-        thumbnail: "https://cdn.flipsnack.com/template/4774/thumb/page_1",
-        pageThumbnails: [
-            "https://cdn.flipsnack.com/template/4774/thumb/page_1",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_2",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_3",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_4",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_5",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_6",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_7",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_8",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_9",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_10",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_11",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_12",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_13",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_14",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_15",
-            "https://cdn.flipsnack.com/template/4774/thumb/page_16",
-        ]
-    },
-    {
-        id: 9,
-        pages: 14,
-        thumbnail: "https://cdn.flipsnack.com/template/4770/thumb/page_1",
-        pageThumbnails: [
-            "https://cdn.flipsnack.com/template/4770/thumb/page_1",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_2",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_3",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_4",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_5",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_6",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_7",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_8",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_9",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_10",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_11",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_12",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_13",
-            "https://cdn.flipsnack.com/template/4770/thumb/page_14",
-        ]
-    },
-    {
-        id: 10,
-        pages: 12,
-        thumbnail: "https://cdn.flipsnack.com/template/4723/thumb/page_1",
-        pageThumbnails: [
-            "https://cdn.flipsnack.com/template/4723/thumb/page_1",
-            "https://cdn.flipsnack.com/template/4723/thumb/page_2",
-            "https://cdn.flipsnack.com/template/4723/thumb/page_3",
-            "https://cdn.flipsnack.com/template/4723/thumb/page_4",
-            "https://cdn.flipsnack.com/template/4723/thumb/page_5",
-            "https://cdn.flipsnack.com/template/4723/thumb/page_6",
-            "https://cdn.flipsnack.com/template/4723/thumb/page_7",
-            "https://cdn.flipsnack.com/template/4723/thumb/page_8",
-            "https://cdn.flipsnack.com/template/4723/thumb/page_9",
-            "https://cdn.flipsnack.com/template/4723/thumb/page_10",
-            "https://cdn.flipsnack.com/template/4723/thumb/page_11",
-            "https://cdn.flipsnack.com/template/4723/thumb/page_12",
-        ]
-    },
-];
+const templates = [];
 
-const textTemplates = [
-    {
-        id: 1,
-        thumbnail: "https://cdn.flipsnack.com/template/4753/thumb/page_1",
-    },
-    {
-        id: 2,
-        thumbnail: "https://cdn.flipsnack.com/template/4752/thumb/page_1",
-    },
-    {
-        id: 3,
-        thumbnail: "https://cdn.flipsnack.com/template/4751/thumb/page_1",
-    },
-    {
-        id: 4,
-        thumbnail: "https://cdn.flipsnack.com/template/4750/thumb/page_1",
-    },
-    {
-        id: 5,
-        thumbnail: "https://cdn.flipsnack.com/template/4749/thumb/page_1",
-    },
-    {
-        id: 6,
-        thumbnail: "https://cdn.flipsnack.com/template/3763/thumb/page_1",
-    },
-    {
-        id: 7,
-        thumbnail: "https://cdn.flipsnack.com/template/3762/thumb/page_1",
-    },
-    {
-        id: 8,
-        thumbnail: "https://cdn.flipsnack.com/template/3761/thumb/page_1",
-    },
-    {
-        id: 9,
-        thumbnail: "https://cdn.flipsnack.com/template/3760/thumb/page_1",
-    },
-    {
-        id: 10,
-        thumbnail: "https://cdn.flipsnack.com/template/3757/thumb/page_1",
-    }
-]
+const textTemplates = [];
 const interactions = [
     {
         title: "Links and tags",
@@ -2245,42 +1970,42 @@ const folders = [
 const library = [
     {
         id: 1,
-        img: "https://cdn.flipsnack.com/collections/uploads/c73d3737ee40146f20a8e5ef49804638_t",
+        img: "/assets/imported/740871234c6945cd6f74fd5dbb2d7390.png",
         mediaType: "JPG",
     },
     {
         id: 2,
-        img: "https://cdn.flipsnack.com/collections/uploads/0417f8e82f828042a3e27b3f49804639_t",
+        img: "/assets/imported/3a721af589fececa4fc8c69ff459655c.png",
         mediaType: "PNG",
     },
     {
         id: 3,
-        img: "https://cdn.flipsnack.com/collections/uploads/5a0c38e5a4d3a0fbedda523f49804640_t",
+        img: "/assets/imported/49603f6747459dc715ef49a80d9fdf9c.png",
         mediaType: "JPEG",
     },
     {
         id: 4,
-        img: "https://cdn.flipsnack.com/collections/uploads/7a3c7fe645f87ff4902cb63f49804636_t",
+        img: "/assets/imported/a57511a9cd27fbb0351b06e97ef671ad.png",
         mediaType: "SVG",
     },
     {
         id: 5,
-        img: "https://cdn.flipsnack.com/collections/uploads/110368fc5d5b38d17466948f49804637_t",
+        img: "/assets/imported/ee625a0f0ad427b42c0491abd8a271b2.png",
         mediaType: "WEBP",
     },
     {
         id: 6,
-        img: "https://cdn.flipsnack.com/collections/uploads/cdf9c22b5aea6b22cb520c2f49804608_t",
+        img: "/assets/imported/b87e4237af0fcf72d55d200cf844e8f9.png",
         mediaType: "JPG",
     },
     {
         id: 7,
-        img: "https://cdn.flipsnack.com/collections/uploads/a8a5a3294ca03b647c14719f49804606_t",
+        img: "/assets/imported/a5585bc5bc6a49fb4687a8bf7630aa74.png",
         mediaType: "PNG",
     },
     {
         id: 8,
-        img: "https://cdn.flipsnack.com/collections/uploads/846ee260539bfa4c2260adaf49804607_t",
+        img: "/assets/imported/914fb85e4d7ea6bb258148c4c53d9bbc.png",
         mediaType: "JPEG",
     }
 ]

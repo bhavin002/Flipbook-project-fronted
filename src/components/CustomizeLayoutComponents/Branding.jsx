@@ -435,7 +435,7 @@ export default function Branding() {
                             <div className="relative w-16 h-12 bg-white border rounded overflow-hidden">
                                 <div
                                     className="absolute inset-0 bg-center bg-repeat opacity-20"
-                                    style={{ backgroundImage: 'url(https://cdn.flipsnack.com/site/images/transparent-bg-pattern.png)' }}
+                                    style={{ backgroundImage: 'url(/assets/imported/9abf1a4f7689eb526315af2a5bc4c429.png)' }}
                                 />
                                 <img
                                     src={selectedLogo.src}

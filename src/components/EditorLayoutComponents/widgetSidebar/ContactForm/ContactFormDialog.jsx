@@ -31,7 +31,7 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
                 thankYouMessage: "Your response has been submitted.",
                 addPrivacyPolicy: false,
                 companyName: "FlipDrag",
-                privacyPolicyLink: "https://www.flipdrag.com/privacy",
+                privacyPolicyLink: "https://flipdrag.com/privacy",
                 addGDPRCompliance: false,
                 gdprMessage: "I agree to receive marketing materials."
             },
@@ -67,7 +67,7 @@ export default function ContactFormDialog({ selectedShape, mainStage, setMainSta
                     thankYouMessage: response.data.settings?.thankYouMessage || "Your response has been submitted.",
                     addPrivacyPolicy: response.data.settings?.addPrivacyPolicy || false,
                     companyName: response.data.settings?.companyName || "FlipDrag",
-                    privacyPolicyLink: response.data.settings?.privacyPolicyLink || "https://www.flipdrag.com/privacy",
+                    privacyPolicyLink: response.data.settings?.privacyPolicyLink || "https://flipdrag.com/privacy",
                     addGDPRCompliance: response.data.settings?.addGDPRCompliance || false,
                     gdprMessage: response.data.settings?.gdprMessage || "I agree to receive marketing materials."
                 },

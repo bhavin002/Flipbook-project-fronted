@@ -166,7 +166,7 @@ function LogoCard({ logo, onDelete }) {
         <Card className="relative overflow-hidden aspect-square border border-gray-200 rounded-lg shadow-sm hover:shadow transition-all">
             <div
                 className="absolute inset-0 bg-center bg-repeat"
-                style={{ backgroundImage: 'url(https://cdn.flipsnack.com/site/images/transparent-bg-pattern.png)' }}
+                style={{ backgroundImage: 'url(/assets/imported/9abf1a4f7689eb526315af2a5bc4c429.png)' }}
             />
 
             <img

@@ -72,7 +72,7 @@ export default function OrderOptions({ form, clearErrors, errors }) {
                 <span className="text-sm font-semibold">Send order via email</span>
             </div>
             <p className="text-sm text-gray-500">
-                Your customers can send their orders directly via email through Flipsnack.
+                Your customers can send their orders directly via email through FlipDrag.
             </p>
             <div className="flex items-center justify-between">
                 <Label className="text-sm font-semibold">Enable Email Checkout</Label>
