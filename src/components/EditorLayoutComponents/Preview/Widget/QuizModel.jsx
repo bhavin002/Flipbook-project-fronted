@@ -400,7 +400,14 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                         View results
                     </Button>}
                     {(quizInfo.settings.allowRetake) && (
-                        <Button onClick={handleRetakeQuiz} variant="outline" className="w-full">
+                        <Button
+                            onClick={handleRetakeQuiz}
+                            className="w-full"
+                            style={{
+                                backgroundColor: visibilitySettings?.playerAccentColorHash,
+                                color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                            }}
+                        >
                             Retake quiz
                         </Button>
                     )}
@@ -489,7 +496,14 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                     </div>
                 ))}
                 <div className="flex gap-3">
-                    <Button onClick={handleRetakeQuiz} variant="outline" className="flex-1">
+                    <Button
+                        onClick={handleRetakeQuiz}
+                        className="flex-1"
+                        style={{
+                            backgroundColor: visibilitySettings?.playerAccentColorHash,
+                            color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                        }}
+                    >
                         Retake quiz
                     </Button>
                     <Button

@@ -176,7 +176,7 @@ const PhotoSlideShow = ({ open, onOpenChange, htmlData, container, visibilitySet
                                     aria-label="Previous slide"
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    <ChevronLeft className="w-6 h-6 text-black" />
+                                    <ChevronLeft className="w-6 h-6" style={{ color: visibilitySettings?.playerAccentColorHash }} />
                                 </button>
                                 <button
                                     onClick={goToNextSlide}
@@ -185,7 +185,7 @@ const PhotoSlideShow = ({ open, onOpenChange, htmlData, container, visibilitySet
                                     aria-label="Next slide"
                                     style={{ cursor: 'pointer' }}
                                 >
-                                    <ChevronRight className="w-6 h-6 text-black" />
+                                    <ChevronRight className="w-6 h-6" style={{ color: visibilitySettings?.playerAccentColorHash }} />
                                 </button>
                             </div>
                         )}

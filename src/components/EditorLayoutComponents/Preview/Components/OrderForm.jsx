@@ -396,10 +396,10 @@ const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings }) => {
             <Button
                 onClick={handleSubmit(onSubmit)}
                 className="w-full"
-                disabled={!isFormValid() || submitting}
+                disabled={!isFormValid()}
                 style={{
-                    backgroundColor: isFormValid() && !submitting ? visibilitySettings?.playerAccentColorHash : undefined,
-                    color: isFormValid() && !submitting ? getContrastTextColor(visibilitySettings?.playerAccentColorHash) : undefined
+                    backgroundColor: visibilitySettings?.playerAccentColorHash,
+                    color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
                 }}
             >
                 {submitting ? <LoadingButton /> : (shopSettings.checkoutButtonLabel || 'Place Order')}
@@ -415,7 +415,14 @@ const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings }) => {
             <h3 className="text-lg font-semibold">
                 {shopSettings.orderConfirmationMessage || "Thank you for your order!"}
             </h3>
-            <Button onClick={handleCloseModal} className="w-full">
+            <Button
+                onClick={handleCloseModal}
+                className="w-full"
+                style={{
+                    backgroundColor: visibilitySettings?.playerAccentColorHash,
+                    color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                }}
+            >
                 Close
             </Button>
         </div>

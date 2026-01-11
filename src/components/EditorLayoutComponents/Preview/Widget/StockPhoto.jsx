@@ -44,18 +44,18 @@ const actionHandlers = {
 
 // Modal handlers for different action types
 const modalHandlers = {
-    'open-overlay': (htmlData) => {
-        showModal(OverlayModal, htmlData);
+    'open-overlay': (htmlData, visibilitySettings) => {
+        showModal(OverlayModal, htmlData, null, null, null, visibilitySettings);
     },
-    'spotlight': (htmlData) => {
-        showModal(SpotlightModal, htmlData);
+    'spotlight': (htmlData, visibilitySettings) => {
+        showModal(SpotlightModal, htmlData, null, null, null, visibilitySettings);
     },
-    'popup-frame': (htmlData) => {
-        showModal(PopupFrameModal, htmlData);
+    'popup-frame': (htmlData, visibilitySettings) => {
+        showModal(PopupFrameModal, htmlData, null, null, null, visibilitySettings);
     },
 };
 
-export default function StockPhoto({ shape, flipbookRef }) {
+export default function StockPhoto({ shape, flipbookRef, visibilitySettings }) {
 
     const [isHovered, setIsHovered] = useState(false);
     const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0, visible: false });
@@ -73,7 +73,7 @@ export default function StockPhoto({ shape, flipbookRef }) {
 
                 // If action handler returns true, show modal
                 if (shouldShowModal && modalHandlers[action]) {
-                    modalHandlers[action](shape.htmlData);
+                    modalHandlers[action](shape.htmlData, visibilitySettings);
                 }
             }
         }

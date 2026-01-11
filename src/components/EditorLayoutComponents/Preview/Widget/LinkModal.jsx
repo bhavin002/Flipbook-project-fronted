@@ -6,8 +6,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
+import { getContrastTextColor } from '@/utils/colorUtils';
 
-const LinkModal = ({ open, onOpenChange, htmlData, container }) => {
+const LinkModal = ({ open, onOpenChange, htmlData, container, visibilitySettings }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[300px] z-[10000]" container={container}>
@@ -17,7 +18,11 @@ const LinkModal = ({ open, onOpenChange, htmlData, container }) => {
           </DialogTitle>
         </DialogHeader>
         {htmlData.url && <Button
-          className="bg-black text-white hover:bg-gray-700"
+          className="w-full"
+          style={{
+            backgroundColor: visibilitySettings?.playerAccentColorHash,
+            color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+          }}
           onClick={() => {
             if (htmlData?.url) {
               window.open(htmlData.url, '_blank');

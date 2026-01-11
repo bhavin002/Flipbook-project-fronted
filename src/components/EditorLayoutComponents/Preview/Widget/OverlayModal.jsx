@@ -8,8 +8,9 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from '@/components/ui/button';
+import { getContrastTextColor } from '@/utils/colorUtils';
 
-const OverlayModal = ({ open, onOpenChange, htmlData }) => {
+const OverlayModal = ({ open, onOpenChange, htmlData, visibilitySettings }) => {
   const { title, description } = htmlData || {};
 
   return (
@@ -31,8 +32,11 @@ const OverlayModal = ({ open, onOpenChange, htmlData }) => {
         </DialogHeader>
         <DialogFooter>
           <Button
-            variant="default"
-            className="bg-black text-white hover:bg-gray-700"
+            className="w-full"
+            style={{
+              backgroundColor: visibilitySettings?.playerAccentColorHash,
+              color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+            }}
             onClick={() => onOpenChange(false)}
           >
             Close

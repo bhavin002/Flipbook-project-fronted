@@ -54,7 +54,8 @@ export default function QuizSettings({ form, clearErrors }) {
             <div className="flex items-center gap-2 my-6">
                 <Checkbox
                     id="show-correct-answer"
-                    {...form.register("settings.isShowCorrectAnswer")}
+                    checked={form.watch("settings.isShowCorrectAnswer")}
+                    onCheckedChange={(checked) => form.setValue("settings.isShowCorrectAnswer", checked)}
                 />
                 <div className='flex gap-2 items-center'>
                     <Label htmlFor="show-correct-answer" className="text-sm font-medium leading-none">
@@ -197,7 +198,8 @@ export default function QuizSettings({ form, clearErrors }) {
             <div className="flex items-center gap-2 my-6">
                 <Checkbox
                     id="allow-retake-quiz"
-                    {...form.register("settings.allowRetake")}
+                    checked={form.watch("settings.allowRetake")}
+                    onCheckedChange={(checked) => form.setValue("settings.allowRetake", checked)}
                 />
                 <div className='flex gap-2 items-center'>
                     <Label htmlFor="allow-retake-quiz" className="text-sm font-medium leading-none">

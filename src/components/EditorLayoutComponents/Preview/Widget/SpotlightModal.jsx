@@ -3,6 +3,8 @@ import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
+import { Button } from '@/components/ui/button';
+import { getContrastTextColor } from '@/utils/colorUtils';
 
 const getImageSizeClass = (size) => {
   switch (size) {
@@ -28,22 +30,32 @@ const getImageFitClass = (properties) => {
   }
 };
 
-const SpotlightModal = ({ open, onOpenChange, htmlData, container }) => {
+const SpotlightModal = ({ open, onOpenChange, htmlData, container, visibilitySettings }) => {
   const imageSizeClass = getImageSizeClass(htmlData?.imageSize);
   const imageFitClass = getImageFitClass(htmlData?.imageProperties);
-  const backgroundClass = htmlData?.showBackground 
-    ? 'bg-white border border-gray-200 shadow-lg' 
+  const backgroundClass = htmlData?.showBackground
+    ? 'bg-white border border-gray-200 shadow-lg'
     : 'bg-transparent shadow-none border-0 text-white';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={`max-h-[80vh] max-w-[80vw] z-[10000] overflow-hidden rounded-lg ${backgroundClass}`} container={container}>
-        <div className="flex justify-center w-full p-2">
-          <img 
-            src={htmlData?.spotlightImage?.url} 
-            alt={htmlData?.spotlightImage?.name || "spotlight image"} 
+        <div className="flex flex-col items-center justify-center w-full p-2 gap-4">
+          <img
+            src={htmlData?.spotlightImage?.url}
+            alt={htmlData?.spotlightImage?.name || "spotlight image"}
             className={`${imageSizeClass} ${imageFitClass} rounded-md`}
           />
+          <Button
+            className="w-full"
+            style={{
+              backgroundColor: visibilitySettings?.playerAccentColorHash,
+              color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+            }}
+            onClick={() => onOpenChange(false)}
+          >
+            Close
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

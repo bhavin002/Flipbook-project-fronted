@@ -19,7 +19,7 @@ export default function ProductTag({ shape, visibilitySettings, isVisible }) {
 
     const handleClick = () => {
         if (shape.htmlType === 'product-tag') {
-            showModal(ProductTagModal, shape.htmlData);
+            showModal(ProductTagModal, shape.htmlData, null, null, null, visibilitySettings);
         }
     };
     return (

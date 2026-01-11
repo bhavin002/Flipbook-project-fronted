@@ -22,7 +22,7 @@ export default function VideoButton({ shape, visibilitySettings, isVisible }) {
     const handleClick = () => {
         setTooltipPos(prev => ({ ...prev, visible: false }));
         if (shape.htmlType === 'video-button' && shape.htmlData?.url) {
-            showModal(VideoButtonModal, shape.htmlData);
+            showModal(VideoButtonModal, shape.htmlData, null, null, null, visibilitySettings);
         }
     };
 

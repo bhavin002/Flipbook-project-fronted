@@ -5,8 +5,9 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getContrastTextColor } from '@/utils/colorUtils';
 
-const ProductTagModal = ({ open, onOpenChange, htmlData, container }) => {
+const ProductTagModal = ({ open, onOpenChange, htmlData, container, visibilitySettings }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const defaultTitle = "My product title";
@@ -71,6 +72,7 @@ const ProductTagModal = ({ open, onOpenChange, htmlData, container }) => {
                                             variant="outline"
                                             size="icon"
                                             className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80"
+                                            style={{ color: visibilitySettings?.playerAccentColorHash, borderColor: visibilitySettings?.playerAccentColorHash }}
                                             onClick={prevImage}
                                         >
                                             <ChevronLeft className="h-4 w-4" />
@@ -79,6 +81,7 @@ const ProductTagModal = ({ open, onOpenChange, htmlData, container }) => {
                                             variant="outline"
                                             size="icon"
                                             className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80"
+                                            style={{ color: visibilitySettings?.playerAccentColorHash, borderColor: visibilitySettings?.playerAccentColorHash }}
                                             onClick={nextImage}
                                         >
                                             <ChevronRight className="h-4 w-4" />
@@ -135,7 +138,11 @@ const ProductTagModal = ({ open, onOpenChange, htmlData, container }) => {
                         {showButton && (
                             <div className="space-y-3">
                                 <Button
-                                    className="bg-black text-white hover:bg-black/80"
+                                    className="w-full"
+                                    style={{
+                                        backgroundColor: visibilitySettings?.playerAccentColorHash,
+                                        color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                                    }}
                                     onClick={() => window.open(htmlData.productUrl, '_blank')}
                                 >
                                     {buttonLabel}

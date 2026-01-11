@@ -14,9 +14,10 @@ const SingleThumbnailCard = React.memo(({ pageNumber, isCurrent, onClick, getIma
         }}
     >
         <div
-            className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg h-[100px] flex items-center justify-center transition-all duration-300 rounded-md`}
+            className={`relative overflow-hidden shadow-lg h-[100px] flex items-center justify-center transition-all duration-300 rounded-md`}
             style={{
                 aspectRatio: aspectRatioString,
+                backgroundColor: 'color-mix(in srgb, var(--accent-color) 15%, transparent)',
                 borderWidth: '2px',
                 borderStyle: 'solid',
                 borderColor: isCurrent ? 'var(--accent-color)' : 'transparent',
@@ -50,8 +51,9 @@ const PairedThumbnailCard = React.memo(({ leftPageNumber, rightPageNumber, isCur
     }}>
         <div
             dir={isRTL ? "rtl" : "ltr"}
-            className={`relative bg-[#d6d1f4] overflow-hidden shadow-lg h-[100px] flex transition-all duration-300 rounded-md`}
+            className={`relative overflow-hidden shadow-lg h-[100px] flex transition-all duration-300 rounded-md`}
             style={{
+                backgroundColor: 'color-mix(in srgb, var(--accent-color) 15%, transparent)',
                 borderWidth: '2px',
                 borderStyle: 'solid',
                 borderColor: (isCurrentLeft || isCurrentRight) ? 'var(--accent-color)' : 'transparent',

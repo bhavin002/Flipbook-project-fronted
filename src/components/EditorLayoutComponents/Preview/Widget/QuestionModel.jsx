@@ -301,6 +301,17 @@ const QuestionModel = ({ open, onOpenChange, htmlData, container, isPublicView, 
             <h3 className="text-xl font-semibold">
                 {formData.thankYouMessage || 'Thank you for your response!'}
             </h3>
+
+            <Button
+                onClick={handleCloseModal}
+                className="w-full"
+                style={{
+                    backgroundColor: visibilitySettings?.playerAccentColorHash,
+                    color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                }}
+            >
+                Close
+            </Button>
         </div>
     );
 
