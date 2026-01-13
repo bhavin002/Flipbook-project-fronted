@@ -111,7 +111,7 @@ export const FlipbookSettingsProvider = ({ children, publicData }) => {
     };
 
     return (
-        <FlipbookSettingsContext.Provider value={{ settings, updateSettings, flipbookId, latestSettings, latestJson }}>
+        <FlipbookSettingsContext.Provider value={{ settings, updateSettings, flipbookId, latestSettings, latestJson, setLatestSettings, setLatestJson }}>
             {children}
         </FlipbookSettingsContext.Provider>
     );

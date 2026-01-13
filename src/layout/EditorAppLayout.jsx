@@ -23,8 +23,10 @@ import { CreateFlipbookActiveEditor, ReplaceFlipbookActiveEditor, DeleteFlipbook
 import SessionConflictDialog from "@/components/EditorLayoutComponents/SessionConflictDialog";
 import SaveConfirmationDialog from "@/components/EditorLayoutComponents/SaveConfirmationDialog";
 import dynamicFontManager from '@/utils/dynamicFontManager';
+import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
+    const { setLatestSettings, setLatestJson } = useFlipbookSettings();
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [isFormCustomize, setIsFormCustomize] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -571,7 +573,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage, stageWidth, stageHeight }} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage, stageWidth, stageHeight, flipbookId: id, setLatestSettings, setLatestJson }} />
                             </div>
                         </div>
                     </div>

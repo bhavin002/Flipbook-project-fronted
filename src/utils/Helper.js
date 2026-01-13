@@ -5,6 +5,7 @@ import { duplicateQuizApi } from "@/service/quiz.service";
 import { GetTemplateApi, GetPageByIndexApi } from "@/service/template.service";
 import { toast } from "sonner";
 import { v4 as uuid } from "uuid";
+import { UpdateFlipbookPreviewSettingApi } from "@/service/flipbookPreviewSetting.service";
 import { DeviceType } from "./enum";
 
 
@@ -351,7 +352,7 @@ export const isPngImage = async (src) => {
   }
 };
 
-export const applyTemplate = async (templateId, mainStage, index, setMainStage, setIsLoading) => {
+export const applyTemplate = async (templateId, mainStage, index, setMainStage, setIsLoading, flipbookId, setLatestSettings, setLatestJson) => {
     try {
         setIsLoading(true);
         const response = await GetTemplateApi(templateId, false);
@@ -389,6 +390,19 @@ export const applyTemplate = async (templateId, mainStage, index, setMainStage, 
 
         mainStage.splice(index, 1, ...finalNewStageData);
         setMainStage([...mainStage]);
+
+        // Check if any shop widgets are present in the new shapes
+        const hasShopWidget = finalNewStageData.some(page => 
+            page.shapes.some(shape => shape.htmlType === 'shop-area' || shape.htmlType === 'shop-button')
+        );
+
+        if (hasShopWidget && flipbookId) {
+            const formData = new FormData();
+            formData.append('showShoppingList', 'true');
+            const response = await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
+            if (setLatestSettings) setLatestSettings(response.data);
+            if (setLatestJson) setLatestJson(prev => ({ ...prev, showShoppingList: true }));
+        }
     } catch (error) {
         toast.error(error.message || 'Something went wrong');
     } finally {
@@ -396,7 +410,7 @@ export const applyTemplate = async (templateId, mainStage, index, setMainStage, 
     }
 };
 
-export const applyPage = async (templateId, pageIndex, mainStage, index, setMainStage, setIsLoading) => {
+export const applyPage = async (templateId, pageIndex, mainStage, index, setMainStage, setIsLoading, flipbookId, setLatestSettings, setLatestJson) => {
     try {
         setIsLoading(true);
         const response = await GetPageByIndexApi(templateId, pageIndex);
@@ -431,6 +445,17 @@ export const applyPage = async (templateId, pageIndex, mainStage, index, setMain
 
         mainStage.splice(index, 1, finalPage);
         setMainStage([...mainStage]);
+
+        // Check if any shop widgets are present in the new shapes
+        const hasShopWidget = finalPage.shapes.some(shape => shape.htmlType === 'shop-area' || shape.htmlType === 'shop-button');
+
+        if (hasShopWidget && flipbookId) {
+            const formData = new FormData();
+            formData.append('showShoppingList', 'true');
+            const response = await UpdateFlipbookPreviewSettingApi(flipbookId, formData);
+            if (setLatestSettings) setLatestSettings(response.data);
+            if (setLatestJson) setLatestJson(prev => ({ ...prev, showShoppingList: true }));
+        }
     } catch (error) {
         toast.error(error.message || 'Something went wrong');
     } finally {

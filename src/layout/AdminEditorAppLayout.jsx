@@ -23,8 +23,10 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import SaveConfirmationDialog from "@/components/EditorLayoutComponents/SaveConfirmationDialog";
+import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
+    const { setLatestSettings, setLatestJson } = useFlipbookSettings();
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -553,7 +555,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                             </div>
 
                             <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
-                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, isSavingTemplateInternal, setIsSavingTemplateInternal, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage, stageWidth, stageHeight }} />
+                                <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, isSavingTemplateInternal, setIsSavingTemplateInternal, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage, stageWidth, stageHeight, flipbookId: id, setLatestSettings, setLatestJson }} />
                             </div>
                         </div>
                     </div>

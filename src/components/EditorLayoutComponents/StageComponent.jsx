@@ -22,7 +22,7 @@ import ConfirmationDialog from "@/utils/ConfirmationDialog";
 import { toast } from "sonner";
 import { Loader } from "@/components/ui/loader";
 
-export default function StageComponent({ imageLoadCounterPageWise, setImageLoadCounterPageWise, prevSelectedIndex, isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad, setIsAnyChangeMadeInStage, isPublishModalOpenInternal, isSavingTemplateInternal }) {
+export default function StageComponent({ imageLoadCounterPageWise, setImageLoadCounterPageWise, prevSelectedIndex, isCropping, zoomper, stage, isRightLateralCollapse, parentRef, mainStageString, setMainStageString, mainStage, setMainStage, selectedAlignType, setSelectedAlignType, selectedIndex, index, scale, setScale, rectProps, setRectProps, setSelectedIndex, isSelected, isSidebarOpen, pageCounter, setPageCounter, setIsInitialLoad, setIsAnyChangeMadeInStage, isPublishModalOpenInternal, isSavingTemplateInternal, flipbookId, setLatestSettings, setLatestJson }) {
     // Consistent Refs Initialization
     const stageRef = useRef(null);
     const demo = useRef(null);
@@ -1094,7 +1094,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                 isLoading={isLoading}
                 onConfirm={async () => {
                     try {
-                        await applyTemplate(stage.dragRect.current.templateId, mainStage, index, setMainStage, setIsLoading);
+                        await applyTemplate(stage.dragRect.current.templateId, mainStage, index, setMainStage, setIsLoading, flipbookId, setLatestSettings, setLatestJson);
                         stage.dragRect.current = null;
                     } catch (error) {
                         toast.error(error.message || 'Something went wrong');
@@ -1115,7 +1115,7 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
                 isLoading={isLoading}
                 onConfirm={async () => {
                     try {
-                        await applyPage(stage.dragRect.current.templateId, stage.dragRect.current.pageIndex, mainStage, index, setMainStage, setIsLoading);
+                        await applyPage(stage.dragRect.current.templateId, stage.dragRect.current.pageIndex, mainStage, index, setMainStage, setIsLoading, flipbookId, setLatestSettings, setLatestJson);
                         stage.dragRect.current = null;
                     } catch (error) {
                         toast.error(error.message || 'Something went wrong');
