@@ -685,6 +685,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                         isAutoFlipping={isAutoFlipping}
                                         setIsAutoFlipping={setIsAutoFlipping}
                                         startPage={startPage}
+                                        fullscreenContainerRef={containerRef}
                                     />
                                 </div>
                             </TabsContent>
@@ -732,6 +733,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                             isAutoFlipping={isAutoFlipping}
                                             setIsAutoFlipping={setIsAutoFlipping}
                                             startPage={startPage}
+                                            fullscreenContainerRef={containerRef}
                                         />
                                     </div>
                                 </div>

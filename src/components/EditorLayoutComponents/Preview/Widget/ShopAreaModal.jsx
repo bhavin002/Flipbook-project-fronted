@@ -370,7 +370,7 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurren
                                                 <SelectTrigger className="mt-1">
                                                     <SelectValue placeholder={`Select ${attribute.attributeName}`} />
                                                 </SelectTrigger>
-                                                <SelectContent className="z-[10001]">
+                                                <SelectContent className="z-[10001]" container={container}>
                                                     {attribute.optionValues.map((value) => (
                                                         <SelectItem key={value} value={value}>
                                                             {value}

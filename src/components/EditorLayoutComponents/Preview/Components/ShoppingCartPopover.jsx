@@ -78,7 +78,7 @@ const CloseButton = ({ onClick, accentColor }) => {
     );
 };
 
-const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
+const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings, fullscreenContainerRef }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
@@ -235,7 +235,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
                             <Download className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="center" className="w-20">
+                    <DropdownMenuContent align="center" className="w-20" container={fullscreenContainerRef?.current}>
                         <DropdownMenuItem onClick={() => handleDownload('PDF')}>
                             PDF
                         </DropdownMenuItem>
@@ -433,13 +433,14 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings }) => {
                     )}
                 </AnimatePresence>
             </div>
-            <OrderForm open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen} flipbookId={flipbookId} visibilitySettings={visibilitySettings} />
+            <OrderForm open={isOrderFormOpen} onOpenChange={setIsOrderFormOpen} flipbookId={flipbookId} visibilitySettings={visibilitySettings} container={fullscreenContainerRef?.current} />
             <ConfirmationDialog
                 isConfirmModalOpen={isConfirmModalOpen}
                 setIsConfirmModalOpen={setIsConfirmModalOpen}
                 title="Clear Shopping List"
                 onConfirm={clearCart}
                 description="Are you sure you want to clear all items from your shopping list? This action cannot be undone."
+                container={fullscreenContainerRef?.current}
             />
         </>
     );

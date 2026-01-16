@@ -107,7 +107,7 @@ const createOrderFormSchema = (customerFields, shopSettings) => {
     return z.object(baseSchema);
 };
 
-const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings }) => {
+const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings, container }) => {
     const { shopSettings, isLoading } = useShopSettings();
     const [currentView, setCurrentView] = useState('form');
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
@@ -430,7 +430,7 @@ const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings }) => {
 
     return (
         <Dialog open={open} onOpenChange={handleCloseModal}>
-            <DialogContent className={`sm:max-w-[540px] w-[90vw] max-h-[90vh] overflow-y-auto${isRTL ? "text-right" : "text-left"}`} dir={isRTL ? "rtl" : "ltr"}>
+            <DialogContent container={container} className={`sm:max-w-[540px] w-[90vw] max-h-[90vh] overflow-y-auto${isRTL ? "text-right" : "text-left"}`} dir={isRTL ? "rtl" : "ltr"}>
                 {currentView === 'form' && renderFormView()}
                 {currentView === 'success' && renderSuccessView()}
             </DialogContent>

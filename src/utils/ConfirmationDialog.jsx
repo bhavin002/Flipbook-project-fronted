@@ -16,7 +16,8 @@ export default function ConfirmationDialog({
     description = "Are you sure you want to proceed with this action?",
     onConfirm,
     onCancel,
-    isLoading = false
+    isLoading = false,
+    container
 }) {
     const handleConfirm = (e) => {
         // Prevent event propagation
@@ -24,7 +25,7 @@ export default function ConfirmationDialog({
             e.preventDefault();
             e.stopPropagation();
         }
-        
+
         if (onConfirm) {
             onConfirm(e);
         } else {
@@ -38,7 +39,7 @@ export default function ConfirmationDialog({
             e.preventDefault();
             e.stopPropagation();
         }
-        
+
         if (onCancel) {
             onCancel(e);
         } else {
@@ -47,12 +48,12 @@ export default function ConfirmationDialog({
     };
 
     // Function to handle dialog close via the X button or clicking outside
-    const handleOpenChange = (open,e) => {
+    const handleOpenChange = (open, e) => {
         if (e) {
             e.preventDefault();
             e.stopPropagation();
         }
-        
+
         if (!open && onCancel) {
             onCancel();
         } else {
@@ -61,12 +62,13 @@ export default function ConfirmationDialog({
     };
 
     return (
-        <Dialog 
-            open={isConfirmModalOpen} 
+        <Dialog
+            open={isConfirmModalOpen}
             onOpenChange={handleOpenChange}
             onClick={(e) => e.stopPropagation()} // Prevent clicks from reaching parent
         >
-            <DialogContent 
+            <DialogContent
+                container={container}
                 className="sm:max-w-[540px] w-[90vw]"
                 onClick={(e) => e.stopPropagation()} // Prevent clicks from reaching parent
             >

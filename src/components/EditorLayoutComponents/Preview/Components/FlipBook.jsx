@@ -26,7 +26,7 @@ const debounce = (func, delay) => {
     };
 };
 
-const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, containerRefHeight, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef, setZoomLevel, isAutoFlipping, startPage }, ref) {
+const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, containerRefHeight, component, isMobile, isDrawerOpen, isFullscreen, pageType, setPageType, previewId, isPageOverviewOpen, isPublicView, publicFlipbookData, zoomLevel = 1, transformRef, setZoomLevel, isAutoFlipping, startPage, fullscreenContainerRef }, ref) {
     const [width, setWidth] = useState(400);
     const [height, setHeight] = useState(400);
     const [divWidth, setDivWidth] = useState(400);
@@ -387,7 +387,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                         </div>
                     )}
                     {visibilitySettings.showShoppingList && <div className={`absolute top-4 ${visibilitySettings.rightToLeftOrientation ? "left-4" : "right-4"} z-[12]`}>
-                        <ShoppingCartPopover flipbookId={flipbookId} isMobile={isMobile} visibilitySettings={visibilitySettings} />
+                        <ShoppingCartPopover flipbookId={flipbookId} isMobile={isMobile} visibilitySettings={visibilitySettings} fullscreenContainerRef={isFullscreen ? fullscreenContainerRef : null} />
                     </div>}
                 </div>
 
