@@ -253,7 +253,8 @@ export const handlePasteShapes = async (clipboard, selectedIndex, setMainStage, 
             htmlData: {
                 ...restHtmlData,
                 ...(typeof response.data === 'string' && { variantId: response.data })
-            }
+            },
+            shouldSelect: true
         });
     }
 
