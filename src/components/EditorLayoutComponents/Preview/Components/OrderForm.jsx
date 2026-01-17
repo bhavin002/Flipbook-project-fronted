@@ -355,7 +355,7 @@ const OrderForm = ({ open, onOpenChange, flipbookId, visibilitySettings, contain
                 return (
                     <div key={field._id}>
                         <Label htmlFor={`field_${index}`} className="text-sm font-medium">
-                            {field.label} {showAsterisk && <span>*</span>}
+                            {field.label} {showAsterisk && <span className="text-red-500">*</span>}
                         </Label>
                         {renderField(field, index)}
                         {errors[`field_${index}`] && (

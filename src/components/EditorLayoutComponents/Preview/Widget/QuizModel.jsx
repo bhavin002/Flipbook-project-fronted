@@ -231,11 +231,11 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
             {quizInfo.settings.collectEmail && (
                 <div className="space-y-4 pb-4 border-b">
                     <div>
-                        <Label htmlFor="email" className="text-sm font-medium">
+                        <Label htmlFor="preview-email" className="text-sm font-medium">
                             Email address *
                         </Label>
                         <Input
-                            id="email"
+                            id="preview-email"
                             type="email"
                             placeholder="Your email"
                             {...register('email')}
@@ -247,7 +247,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                         {quizInfo.settings.addPrivacyPolicy && (
                             <div className="flex items-center space-x-2">
                                 <Checkbox
-                                    id="privacy"
+                                    id="preview-privacy"
                                     checked={privacyAccepted}
                                     onCheckedChange={setPrivacyAccepted}
                                     style={{
@@ -256,7 +256,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                                         color: privacyAccepted ? 'white' : undefined
                                     }}
                                 />
-                                <Label htmlFor="privacy" className="text-sm leading-relaxed">
+                                <Label htmlFor="preview-privacy" className="text-sm leading-relaxed">
                                     I agree to the following company's Privacy Policy:
                                     <a
                                         href={quizInfo.settings.privacyPolicyLink}
@@ -273,7 +273,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                         {quizInfo.settings.addGDPRCompliance && (
                             <div className="flex items-center space-x-2">
                                 <Checkbox
-                                    id="gdpr"
+                                    id="preview-gdpr"
                                     checked={gdprAccepted}
                                     onCheckedChange={setGdprAccepted}
                                     style={{
@@ -282,7 +282,7 @@ const QuizModel = ({ open, onOpenChange, htmlData, flipbookId, container, isPubl
                                         color: gdprAccepted ? 'white' : undefined
                                     }}
                                 />
-                                <Label htmlFor="gdpr" className="text-sm">
+                                <Label htmlFor="preview-gdpr" className="text-sm">
                                     {quizInfo.settings.gdprMessage || "I agree to GDPR compliance"} *
                                 </Label>
                             </div>

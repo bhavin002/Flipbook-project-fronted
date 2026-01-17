@@ -159,7 +159,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                                     </div>
                                     <div>
                                         <Label htmlFor="question" className={`text-xs ${errors.question ? "text-red-500" : ""}`}>
-                                            Question <span>*</span>
+                                            Question <span className="text-red-500">*</span>
                                         </Label>
                                         <Input
                                             type="text"
@@ -181,7 +181,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                                     </div>
                                     <div>
                                         <Label htmlFor="button-label" className={`text-xs ${errors.buttonLabel ? "text-red-500" : ""}`}>
-                                            Button label <span>*</span>
+                                            Button label <span className="text-red-500">*</span>
                                         </Label>
                                         <Input
                                             type="text"
@@ -203,7 +203,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                                     </div>
                                     <div>
                                         <Label htmlFor="message-text" className={`text-xs ${errors.thankYouMessage ? "text-red-500" : ""}`}>
-                                            Message text <span>*</span>
+                                            Message text <span className="text-red-500">*</span>
                                         </Label>
                                         <Textarea
                                             type="text"
@@ -265,7 +265,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                                                 <>
                                                     <div>
                                                         <Label htmlFor="company-name" className={`text-xs ${errors.companyName ? "text-red-500" : ""}`}>
-                                                            Company name <span>*</span>
+                                                            Company name <span className="text-red-500">*</span>
                                                         </Label>
                                                         <Input
                                                             type="text"
@@ -278,7 +278,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                                                     </div>
                                                     <div>
                                                         <Label htmlFor="privacy-policy" className={`text-xs ${errors.privacyPolicyLink ? "text-red-500" : ""}`}>
-                                                            Privacy Policy link <span>*</span>
+                                                            Privacy Policy link <span className="text-red-500">*</span>
                                                         </Label>
                                                         <Input
                                                             type="text"
@@ -325,7 +325,7 @@ export default function QuestionDialog({ selectedShape, mainStage, setMainStage,
                                             {form.watch("addGDPRCompliance") && (
                                                 <div>
                                                     <Label htmlFor="gdpr-message" className={`text-xs ${errors.formulateMessage ? "text-red-500" : ""}`}>
-                                                        Formulate message <span>*</span>
+                                                        Formulate message <span className="text-red-500">*</span>
                                                     </Label>
                                                     <Input
                                                         type="text"

@@ -117,79 +117,83 @@ export default function Appearance() {
 
     return (
         <>
-            {/* <div className="flex flex-col gap-2 text-white">
+            <div className="flex flex-col gap-2 text-white">
                 <Label>Player skin</Label>
                 <Tabs value={playerSkin} onValueChange={handlePlayerSkinChange}>
                     <TabsList className={`w-full ${!isFieldEnabled("playerSkin") ? 'opacity-50 pointer-events-none' : ''}`}>
-                        <TabsTrigger className="items-center gap-2 w-full" value="classic">Classic</TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="modern">Modern</TabsTrigger>
-                    </TabsList>
-                </Tabs>
-            </div> */}
-            <div className="flex flex-col gap-2 text-white">
-                <Label>Page transition</Label>
-                <Tabs value={pageTransition} onValueChange={handlePageTransitionChange}>
-                    <TabsList className={`w-full ${!isFieldEnabled("pageTransition") ? 'opacity-50 pointer-events-none' : ''}`}>
-                        <TabsTrigger className="items-center gap-2 w-full" value="flip">Flip</TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="slide">Slide</TabsTrigger>
-                        {/* <TabsTrigger className="items-center gap-2 w-full" value="scroll">Scroll</TabsTrigger> */}
+                        <TabsTrigger className="items-center gap-2 w-full" value="classic">Flipbook View</TabsTrigger>
+                        <TabsTrigger className="items-center gap-2 w-full" value="modern">Web View</TabsTrigger>
                     </TabsList>
                 </Tabs>
             </div>
-            <div className="flex flex-col gap-2 text-white">
-                <div className="flex justify-between">
-                    <Label>Layout style</Label>
-                    <p className="text-sm cursor-pointer text-gray-300 hover:underline">Learn more</p>
-                </div>
-                <Select value={layoutStyle} onValueChange={handleLayoutStyleChange} disabled={!isFieldEnabled("layoutStyle")}>
-                    <SelectTrigger>
-                        <SelectValue placeholder="Select a layout view" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="smart-view">
-                                <div className="flex gap-2">
-                                    Smart view
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Info className="h-4 w-4 cursor-pointer" />
-                                            </TooltipTrigger>
-                                            <TooltipContent
-                                                side="right"
-                                                align="center"
-                                                className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                            >
-                                                <p className="text-sm">Create unique link for each lead to track their interactions in your flipbook</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="single-page-view">
-                                <div className="flex gap-2">
-                                    Single page view
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <Info className="h-4 w-4 cursor-pointer" />
-                                            </TooltipTrigger>
-                                            <TooltipContent
-                                                side="right"
-                                                align="center"
-                                                className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
-                                            >
-                                                <p className="text-sm">Create unique link for each lead to track their interactions in your flipbook</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                </div>
-                            </SelectItem>
-                            <SelectItem value="two-page-view">Two page view</SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
+            {playerSkin !== "modern" && (
+                <>
+                    <div className="flex flex-col gap-2 text-white">
+                        <Label>Page transition</Label>
+                        <Tabs value={pageTransition} onValueChange={handlePageTransitionChange}>
+                            <TabsList className={`w-full ${!isFieldEnabled("pageTransition") ? 'opacity-50 pointer-events-none' : ''}`}>
+                                <TabsTrigger className="items-center gap-2 w-full" value="flip">Flip</TabsTrigger>
+                                <TabsTrigger className="items-center gap-2 w-full" value="slide">Slide</TabsTrigger>
+                                {/* <TabsTrigger className="items-center gap-2 w-full" value="scroll">Scroll</TabsTrigger> */}
+                            </TabsList>
+                        </Tabs>
+                    </div>
+                    <div className="flex flex-col gap-2 text-white">
+                        <div className="flex justify-between">
+                            <Label>Layout style</Label>
+                            <p className="text-sm cursor-pointer text-gray-300 hover:underline">Learn more</p>
+                        </div>
+                        <Select value={layoutStyle} onValueChange={handleLayoutStyleChange} disabled={!isFieldEnabled("layoutStyle")}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a layout view" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="smart-view">
+                                        <div className="flex gap-2">
+                                            Smart view
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Info className="h-4 w-4 cursor-pointer" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent
+                                                        side="right"
+                                                        align="center"
+                                                        className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                                                    >
+                                                        <p className="text-sm">Create unique link for each lead to track their interactions in your flipbook</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="single-page-view">
+                                        <div className="flex gap-2">
+                                            Single page view
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger asChild>
+                                                        <Info className="h-4 w-4 cursor-pointer" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent
+                                                        side="right"
+                                                        align="center"
+                                                        className="bg-white text-gray-800 border border-gray-200 shadow-md max-w-xs p-2 rounded-md"
+                                                    >
+                                                        <p className="text-sm">Create unique link for each lead to track their interactions in your flipbook</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="two-page-view">Two page view</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </>
+            )}
             {checkboxOptions.map((option) => (
                 <div key={option.id} className="flex items-center gap-2 text-white">
                     <Checkbox

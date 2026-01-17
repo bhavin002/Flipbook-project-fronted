@@ -14,6 +14,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { CheckCircle } from 'lucide-react';
+import { getContrastTextColor, hexToHslComponents } from '@/utils/colorUtils';
 
 const createLeadFormSchema = (fields, settings) => {
     const baseSchema = {};
@@ -78,7 +79,7 @@ const createLeadFormSchema = (fields, settings) => {
     return z.object(baseSchema);
 };
 
-const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
+const LeadFormModel = ({ open, onOpenChange, leadFormData, visibilitySettings }) => {
     const [currentView, setCurrentView] = useState('form');
     const [privacyAccepted, setPrivacyAccepted] = useState(false);
     const [gdprAccepted, setGdprAccepted] = useState(false);
@@ -183,7 +184,7 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
         const hasError = errors[fieldKey];
 
         const commonProps = {
-            id: fieldKey,
+            id: `preview-${fieldKey}`,
             placeholder: field.label,
             value: fieldValue,
             onChange: (e) => handleFieldChange(index, e.target.value),
@@ -222,10 +223,10 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
     if (!leadFormData) return null;
 
     const renderFormView = () => (
-        <div className="space-y-4">
+        <div className="space-y-4" style={{ '--ring': hexToHslComponents(visibilitySettings?.playerAccentColorHash) }}>
             {leadFormData.fields.map((field, index) => (
                 <div key={index}>
-                    <Label htmlFor={`field_${index}`} className="text-sm font-medium">
+                    <Label htmlFor={`preview-field_${index}`} className="text-sm font-medium">
                         {field.label} {field.required && <span className="text-red-500">*</span>}
                     </Label>
                     {renderField(field, index)}
@@ -237,18 +238,24 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
                     {leadFormData.addPrivacyPolicy && (
                         <div className="flex items-start space-x-2">
                             <Checkbox
-                                id="privacy"
+                                id="preview-privacy"
                                 checked={privacyAccepted}
                                 onCheckedChange={handlePrivacyChange}
                                 className="mt-0.5"
+                                style={{
+                                    borderColor: visibilitySettings?.playerAccentColorHash,
+                                    backgroundColor: privacyAccepted ? visibilitySettings?.playerAccentColorHash : undefined,
+                                    color: privacyAccepted ? 'white' : undefined
+                                }}
                             />
-                            <Label htmlFor="privacy" className="text-sm leading-relaxed">
+                            <Label htmlFor="preview-privacy" className="text-sm leading-relaxed">
                                 I agree to the following company's Privacy Policy:
                                 <a
                                     href={leadFormData.privacyPolicyLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-primary hover:underline ml-1"
+                                    className="hover:underline ml-1"
+                                    style={{ color: visibilitySettings?.playerAccentColorHash }}
                                 >
                                     {leadFormData.companyName}
                                 </a> <span className="text-red-500">*</span>
@@ -259,12 +266,17 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
                     {leadFormData.gdprCompliancyCheck && (
                         <div className="flex items-start space-x-2">
                             <Checkbox
-                                id="gdpr"
+                                id="preview-gdpr"
                                 checked={gdprAccepted}
                                 onCheckedChange={handleGdprChange}
                                 className="mt-0.5"
+                                style={{
+                                    borderColor: visibilitySettings?.playerAccentColorHash,
+                                    backgroundColor: gdprAccepted ? visibilitySettings?.playerAccentColorHash : undefined,
+                                    color: gdprAccepted ? 'white' : undefined
+                                }}
                             />
-                            <Label htmlFor="gdpr" className="text-sm leading-relaxed">
+                            <Label htmlFor="preview-gdpr" className="text-sm leading-relaxed">
                                 {leadFormData.gdprMessage} <span className="text-red-500">*</span>
                             </Label>
                         </div>
@@ -277,6 +289,10 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
                     onClick={handleSubmit(onSubmit)}
                     className="flex-1"
                     disabled={!isFormValid()}
+                    style={{
+                        backgroundColor: visibilitySettings?.playerAccentColorHash,
+                        color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                    }}
                 >
                     {leadFormData.submitButtonText}
                 </Button>
@@ -296,12 +312,19 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
     const renderSuccessView = () => (
         <div className="text-center space-y-4">
             <div className="flex justify-center">
-                <CheckCircle className="h-16 w-16 text-green-500" />
+                <CheckCircle className="h-16 w-16" style={{ color: visibilitySettings?.playerAccentColorHash || '#22c55e' }} />
             </div>
             <h3 className="text-lg font-semibold">
                 Thank you for your submission!
             </h3>
-            <Button onClick={handleCloseModal} className="w-full">
+            <Button
+                onClick={handleCloseModal}
+                className="w-full"
+                style={{
+                    backgroundColor: visibilitySettings?.playerAccentColorHash,
+                    color: getContrastTextColor(visibilitySettings?.playerAccentColorHash)
+                }}
+            >
                 Close
             </Button>
         </div>
@@ -312,7 +335,7 @@ const LeadFormModel = ({ open, onOpenChange, leadFormData }) => {
             <Dialog open={open} onOpenChange={handleCloseModal}>
                 <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto" container={containerRef.current}>
                     <DialogHeader>
-                        <DialogTitle className="text-lg text-gray-800">
+                        <DialogTitle className="text-lg" style={{ color: visibilitySettings?.playerAccentColorHash || '#1f2937' }}>
                             {leadFormData.title}
                         </DialogTitle>
                     </DialogHeader>

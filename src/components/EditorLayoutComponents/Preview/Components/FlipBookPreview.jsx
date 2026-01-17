@@ -49,6 +49,8 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
     const { activeTab, setActiveTab } = useViewMode();
     const { shopSettings } = useShopSettings();
     const { isPlaying, toggleAudio, handleFirstClick } = useBackgroundAudio(visibilitySettings);
+    const [isControlBarVisible, setIsControlBarVisible] = useState(true);
+    const hideTimerRef = useRef(null);
 
     useEffect(() => {
         if (visibilitySettings.automaticTransition) {
@@ -81,6 +83,48 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, [setActiveTab]);
+
+    // Auto-hide control bar logic
+    const resetHideTimer = React.useCallback(() => {
+        setIsControlBarVisible(true);
+        if (hideTimerRef.current) {
+            clearTimeout(hideTimerRef.current);
+        }
+        hideTimerRef.current = setTimeout(() => {
+            if (visibilitySettings.playerSkin === 1) { // Only auto-hide for Modern (Web) skin
+                setIsControlBarVisible(false);
+            }
+        }, 3000);
+    }, [visibilitySettings.playerSkin]);
+
+    useEffect(() => {
+        const handleInteraction = (e) => {
+            // If it's a scroll event and we are auto-scrolling, don't show the bar
+            if (e.type === 'scroll' && flipBookRef.current?.isAutoScrolling?.()) {
+                return;
+            }
+            resetHideTimer();
+        };
+
+        if (visibilitySettings.playerSkin === 1) {
+            window.addEventListener('mousemove', handleInteraction);
+            window.addEventListener('scroll', handleInteraction, true);
+            window.addEventListener('mousedown', handleInteraction);
+            window.addEventListener('touchstart', handleInteraction);
+
+            resetHideTimer(); // Start initial timer
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleInteraction);
+            window.removeEventListener('scroll', handleInteraction, true);
+            window.removeEventListener('mousedown', handleInteraction);
+            window.removeEventListener('touchstart', handleInteraction);
+            if (hideTimerRef.current) {
+                clearTimeout(hideTimerRef.current);
+            }
+        };
+    }, [visibilitySettings.playerSkin, resetHideTimer]);
 
     const [pageType, setPageType] = useState("double");
     const progressBarRef = useRef(null);
@@ -329,8 +373,21 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
         if (isMobileView) {
             return (
                 visibilitySettings.showControlBar && (
-                    <div dir={isRTL ? "rtl" : "ltr"} className="w-full flex flex-col items-center justify-center bottom-0 left-0 right-0 z-[2000] absolute  ">
-                        <div className={`max-md:w-full w-full bg-transparent p-3 flex items-center justify-between gap-2 ${isPublicView ? "" : "max-w-[400px]"}`}>
+                    <div
+                        dir={isRTL ? "rtl" : "ltr"}
+                        className="w-full flex flex-col items-center justify-center bottom-0 left-0 right-0 z-[2000] absolute pointer-events-none"
+                        style={{
+                            transition: 'all 0.5s ease-in-out',
+                            opacity: isControlBarVisible ? 1 : 0,
+                            transform: isControlBarVisible ? 'translateY(0)' : 'translateY(20px)',
+                        }}
+                    >
+                        <div
+                            className={`max-md:w-full w-full p-3 flex items-center justify-between gap-2 pointer-events-auto ${isPublicView ? "" : "max-w-[400px]"}`}
+                            style={{
+                                backgroundColor: visibilitySettings.playerSkin === 1 ? '#00000073' : 'transparent',
+                            }}
+                        >
                             <span className="text-xs font-medium whitespace-nowrap" style={{ color: visibilitySettings.playerPanelColorHash || 'black' }}>
                                 {pageDisplay}/{displayTotalPages}
                             </span>
@@ -470,7 +527,17 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
 
         return (
             visibilitySettings.showControlBar && (
-                <div dir={isRTL ? "rtl" : "ltr"} className={`w-full bg-transparent p-4 flex flex-wrap items-center justify-between absolute bottom-0 ${isMobileView ? "rounded-b-lg" : ""}`}>
+                <div
+                    dir={isRTL ? "rtl" : "ltr"}
+                    className={`w-full p-4 flex flex-wrap items-center justify-between absolute bottom-0 ${isMobileView ? "rounded-b-lg" : ""}`}
+                    style={{
+                        backgroundColor: visibilitySettings.playerSkin === 1 ? '#00000073' : 'transparent',
+                        transition: 'all 0.5s ease-in-out',
+                        opacity: isControlBarVisible ? 1 : 0,
+                        transform: isControlBarVisible ? 'translateY(0)' : 'translateY(20px)',
+                        pointerEvents: isControlBarVisible ? 'auto' : 'none'
+                    }}
+                >
                     <div className="flex items-center justify-between w-full gap-4">
 
                         <div className="flex items-center gap-2">
@@ -748,6 +815,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                                 open={isLeadFormOpen}
                                 onOpenChange={setIsLeadFormOpen}
                                 leadFormData={visibilitySettings.leadForm}
+                                visibilitySettings={visibilitySettings}
                             />
                         )
                     }

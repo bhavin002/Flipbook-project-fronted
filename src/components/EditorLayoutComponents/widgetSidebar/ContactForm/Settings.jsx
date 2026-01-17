@@ -46,7 +46,7 @@ export default function Settings({ form, clearErrors }) {
                     </div>
                     <div>
                         <Label htmlFor="button-label" className={`text-xs ${errors.settings?.buttonLabel ? "text-red-500" : ""}`}>
-                            Button label <span>*</span>
+                            Button label <span className="text-red-500">*</span>
                         </Label>
                         <Input
                             type="text"
@@ -68,7 +68,7 @@ export default function Settings({ form, clearErrors }) {
                     </div>
                     <div>
                         <Label htmlFor="message-text" className={`text-xs ${errors.settings?.thankYouMessage ? "text-red-500" : ""}`}>
-                            Message text <span>*</span>
+                            Message text <span className="text-red-500">*</span>
                         </Label>
                         <Textarea
                             type="text"
@@ -116,7 +116,7 @@ export default function Settings({ form, clearErrors }) {
                         <>
                             <div>
                                 <Label htmlFor="company-name" className={`text-xs ${errors.settings?.companyName ? "text-red-500" : ""}`}>
-                                    Company name <span>*</span>
+                                    Company name <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
                                     type="text"
@@ -129,7 +129,7 @@ export default function Settings({ form, clearErrors }) {
                             </div>
                             <div>
                                 <Label htmlFor="privacy-policy" className={`text-xs ${errors.settings?.privacyPolicyLink ? "text-red-500" : ""}`}>
-                                    Privacy Policy link <span>*</span>
+                                    Privacy Policy link <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
                                     type="text"
@@ -177,7 +177,7 @@ export default function Settings({ form, clearErrors }) {
                     {form.watch("settings.addGDPRCompliance") && (
                         <div>
                             <Label htmlFor="gdpr-message" className={`text-xs ${errors.settings?.gdprMessage ? "text-red-500" : ""}`}>
-                                Formulate message <span>*</span>
+                                Formulate message <span className="text-red-500">*</span>
                             </Label>
                             <Input
                                 type="text"

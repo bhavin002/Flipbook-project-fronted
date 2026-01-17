@@ -318,7 +318,7 @@ export default function GeneralSettings({ form, clearErrors }) {
                         name="simpleInboxEmails"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="text-xs">Email <span>*</span></FormLabel>
+                                <FormLabel className="text-xs">Email <span className="text-red-500">*</span></FormLabel>
                                 <FormControl>
                                     <MaskEmailInput
                                         value={field.value}
@@ -559,7 +559,7 @@ export default function GeneralSettings({ form, clearErrors }) {
                             name="privacyPolicyCompanyName"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-xs">Company name <span>*</span></FormLabel>
+                                    <FormLabel className="text-xs">Company name <span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
                                         <Input
                                             type="text"
@@ -576,7 +576,7 @@ export default function GeneralSettings({ form, clearErrors }) {
                             name="privacyPolicyLink"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-xs">Privacy Policy link <span>*</span></FormLabel>
+                                    <FormLabel className="text-xs">Privacy Policy link <span className="text-red-500">*</span></FormLabel>
                                     <FormControl>
                                         <Input
                                             type="text"

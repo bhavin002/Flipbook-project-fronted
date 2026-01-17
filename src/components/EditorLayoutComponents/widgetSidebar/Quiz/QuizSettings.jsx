@@ -90,7 +90,7 @@ export default function QuizSettings({ form, clearErrors }) {
                 </div>
                 <div>
                     <Label htmlFor="button-name" className={`text-xs ${errors.settings?.quizName ? "text-red-500" : ""}`}>
-                        Name <span>*</span>
+                        Name <span className="text-red-500">*</span>
                     </Label>
                     <Input
                         type="text"
@@ -114,7 +114,7 @@ export default function QuizSettings({ form, clearErrors }) {
                 </div>
                 <div>
                     <Label htmlFor="button-label" className={`text-xs ${errors.settings?.quizButtonLabel ? "text-red-500" : ""}`}>
-                        Button label <span>*</span>
+                        Button label <span className="text-red-500">*</span>
                     </Label>
                     <Input
                         type="text"
@@ -150,7 +150,7 @@ export default function QuizSettings({ form, clearErrors }) {
                     <>
                         <div>
                             <Label htmlFor="passed-quiz-message" className={`text-xs ${errors.settings?.passedQuizMessage ? "text-red-500" : ""}`}>
-                                Message for passed quiz <span>*</span>
+                                Message for passed quiz <span className="text-red-500">*</span>
                             </Label>
                             <Textarea
                                 type="text"
@@ -164,7 +164,7 @@ export default function QuizSettings({ form, clearErrors }) {
                         </div>
                         <div>
                             <Label htmlFor="failed-quiz-message" className={`text-xs ${errors.settings?.failedQuizMessage ? "text-red-500" : ""}`}>
-                                Message for failed quiz <span>*</span>
+                                Message for failed quiz <span className="text-red-500">*</span>
                             </Label>
                             <Textarea
                                 type="text"
@@ -180,7 +180,7 @@ export default function QuizSettings({ form, clearErrors }) {
                 ) : (
                     <div>
                         <Label htmlFor="message-text" className={`text-xs ${errors.settings?.messageText ? "text-red-500" : ""}`}>
-                            Message text <span>*</span>
+                            Message text <span className="text-red-500">*</span>
                         </Label>
                         <Textarea
                             type="text"
@@ -273,7 +273,7 @@ export default function QuizSettings({ form, clearErrors }) {
                             <>
                                 <div>
                                     <Label htmlFor="company-name" className={`text-xs ${errors.settings?.companyName ? "text-red-500" : ""}`}>
-                                        Company name <span>*</span>
+                                        Company name <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
                                         type="text"
@@ -286,7 +286,7 @@ export default function QuizSettings({ form, clearErrors }) {
                                 </div>
                                 <div>
                                     <Label htmlFor="privacy-policy" className={`text-xs ${errors.settings?.privacyPolicyLink ? "text-red-500" : ""}`}>
-                                        Privacy Policy link <span>*</span>
+                                        Privacy Policy link <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
                                         type="text"
@@ -334,7 +334,7 @@ export default function QuizSettings({ form, clearErrors }) {
                         {form.watch("settings.addGDPRCompliance") && (
                             <div>
                                 <Label htmlFor="gdpr-message" className={`text-xs ${errors.settings?.gdprMessage ? "text-red-500" : ""}`}>
-                                    Formulate message <span>*</span>
+                                    Formulate message <span className="text-red-500">*</span>
                                 </Label>
                                 <Input
                                     type="text"

@@ -36,7 +36,8 @@ export const useFlipbookSettings = (settings) => {
       layoutStyle: settings.layoutStyle,
       pageTransition: settings.pageTransition,
       showShoppingList: settings.showShoppingList == true,
-      playerPanelColorHash: settings.playerPanelColorHash
+      playerPanelColorHash: settings.playerPanelColorHash,
+      playerSkin: settings.playerSkin
     };
   }, [settings]);
 
