@@ -56,7 +56,7 @@ export default function Appearance() {
         "animate": false,
         "highlights": false,
     });
-    const [playerSkin, setPlayerSkin] = useState(PlayerSkin.CLASSIC);
+    const [playerSkin, setPlayerSkin] = useState("classic");
     const [pageTransition, setPageTransition] = useState("flip");
     const [layoutStyle, setLayoutStyle] = useState("smart-view");
     const [automaticTransitionDelay, setAutomaticTransitionDelay] = useState(7);
@@ -73,7 +73,8 @@ export default function Appearance() {
                 "animate": dataToUse.animateInteraction || false,
                 "highlights": dataToUse.highlightsOnLink || false,
             });
-            setPlayerSkin(Object.keys(PlayerSkin)[dataToUse.playerSkin]?.toLowerCase() || PlayerSkin.CLASSIC);
+            const skinKey = Object.keys(PlayerSkin).find(key => PlayerSkin[key] === dataToUse.playerSkin);
+            setPlayerSkin(skinKey?.toLowerCase() || "classic");
             setPageTransition(Object.keys(PageTransition)[dataToUse.pageTransition]?.toLowerCase() || "flip");
             setLayoutStyle(layoutStyleMapping[dataToUse.layoutStyle] || "smart-view");
             setAutomaticTransitionDelay(dataToUse.automaticTransitionDelay || 7);
@@ -95,6 +96,7 @@ export default function Appearance() {
     };
 
     const handlePlayerSkinChange = (value) => {
+        console.log("value ??", value)
         setPlayerSkin(value);
         updateSettings({ playerSkin: PlayerSkin[value.toUpperCase()] });
     };
@@ -121,12 +123,12 @@ export default function Appearance() {
                 <Label>Player skin</Label>
                 <Tabs value={playerSkin} onValueChange={handlePlayerSkinChange}>
                     <TabsList className={`w-full ${!isFieldEnabled("playerSkin") ? 'opacity-50 pointer-events-none' : ''}`}>
-                        <TabsTrigger className="items-center gap-2 w-full" value={PlayerSkin.CLASSIC}>Flipbook View</TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value={PlayerSkin.MODERN}>Web View</TabsTrigger>
+                        <TabsTrigger className="items-center gap-2 w-full" value="classic">Flipbook View</TabsTrigger>
+                        <TabsTrigger className="items-center gap-2 w-full" value="modern">Web View</TabsTrigger>
                     </TabsList>
                 </Tabs>
             </div>
-            {playerSkin !== PlayerSkin.MODERN && (
+            {playerSkin !== "modern" && (
                 <>
                     <div className="flex flex-col gap-2 text-white">
                         <Label>Page transition</Label>
