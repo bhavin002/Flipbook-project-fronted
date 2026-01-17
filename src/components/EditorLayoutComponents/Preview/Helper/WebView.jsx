@@ -255,6 +255,7 @@ const WebView = forwardRef(function WebView({
                 height: isPreviewMode && !isFullscreen ? 'calc(100vh - 64px)' : '100dvh',
                 overflowY: isZoomed ? 'hidden' : 'auto',
                 overflowX: 'hidden',
+                touchAction: isZoomed ? 'none' : 'pan-y',
                 position: isPreviewMode ? 'relative' : 'absolute',
                 top: 0,
                 left: 0,

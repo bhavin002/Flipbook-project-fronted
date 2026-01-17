@@ -442,6 +442,10 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
                             }}
                             disablePadding={true}
                             disabled={zoomLevel == 1 && isMouseDown}
+                            panning={{
+                                disabled: isWebView ? zoomLevel === 1 : (zoomLevel === 1 && isMouseDown),
+                                velocityDisabled: true
+                            }}
                             doubleClick={{ mode: "reset" }}
                             wheel={{ smoothStep: 0.01, wheelDisabled: true }}
                             pinch={{ disabled: false, step: 0.05 }}
