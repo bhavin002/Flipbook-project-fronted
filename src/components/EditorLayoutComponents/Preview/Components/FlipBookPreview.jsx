@@ -22,7 +22,7 @@ import FlipBook from "./FlipBook.jsx";
 import { useFlipbookSettings as useFlipbookSettingsContext } from "@/context/FlipbookSettingsProvider.jsx";
 import { useFlipbookSettings } from "@/hooks/useFlipbookSettings";
 import { useViewMode } from "@/context/ViewModeContext";
-import { BackgroundColorType, BackgroundImageType } from "@/utils/enum.js";
+import { BackgroundColorType, BackgroundImageType, PlayerSkin } from "@/utils/enum.js";
 import BackgroundAudioPlayer, { useBackgroundAudio } from "./BackgroundAudioPlayer";
 import TableOfContentsDrawer from "./TableOfContentsDrawer.jsx";
 import LeadFormModel from "./LeadFormModel";
@@ -91,7 +91,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
             clearTimeout(hideTimerRef.current);
         }
         hideTimerRef.current = setTimeout(() => {
-            if (visibilitySettings.playerSkin === 1) { // Only auto-hide for Modern (Web) skin
+            if (visibilitySettings.playerSkin === PlayerSkin.MODERN) { // Only auto-hide for Modern (Web) skin
                 setIsControlBarVisible(false);
             }
         }, 3000);
@@ -106,7 +106,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
             resetHideTimer();
         };
 
-        if (visibilitySettings.playerSkin === 1) {
+        if (visibilitySettings.playerSkin === PlayerSkin.MODERN) {
             window.addEventListener('mousemove', handleInteraction);
             window.addEventListener('scroll', handleInteraction, true);
             window.addEventListener('mousedown', handleInteraction);
@@ -385,7 +385,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                         <div
                             className={`max-md:w-full w-full p-3 flex items-center justify-between gap-2 pointer-events-auto ${isPublicView ? "" : "max-w-[400px]"}`}
                             style={{
-                                backgroundColor: visibilitySettings.playerSkin === 1 ? '#00000073' : 'transparent',
+                                backgroundColor: visibilitySettings.playerSkin === PlayerSkin.MODERN ? '#00000073' : 'transparent',
                             }}
                         >
                             <span className="text-xs font-medium whitespace-nowrap" style={{ color: visibilitySettings.playerPanelColorHash || 'black' }}>
@@ -531,7 +531,7 @@ export default function FlipBookPreview({ flipbookId, component, id = "preview-d
                     dir={isRTL ? "rtl" : "ltr"}
                     className={`w-full p-4 flex flex-wrap items-center justify-between absolute bottom-0 ${isMobileView ? "rounded-b-lg" : ""}`}
                     style={{
-                        backgroundColor: visibilitySettings.playerSkin === 1 ? '#00000073' : 'transparent',
+                        backgroundColor: visibilitySettings.playerSkin === PlayerSkin.MODERN ? '#00000073' : 'transparent',
                         transition: 'all 0.5s ease-in-out',
                         opacity: isControlBarVisible ? 1 : 0,
                         transform: isControlBarVisible ? 'translateY(0)' : 'translateY(20px)',

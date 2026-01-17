@@ -73,8 +73,8 @@ export const BackgroundColorType = {
 }
 
 export const PlayerSkin = {
-    CLASSIC: 0,
-    MODERN: 1,
+    MODERN: 0,
+    CLASSIC: 1,
 }
 
 export const PageTransition = {

@@ -56,14 +56,14 @@ export default function Appearance() {
         "animate": false,
         "highlights": false,
     });
-    const [playerSkin, setPlayerSkin] = useState("classic");
+    const [playerSkin, setPlayerSkin] = useState(PlayerSkin.CLASSIC);
     const [pageTransition, setPageTransition] = useState("flip");
     const [layoutStyle, setLayoutStyle] = useState("smart-view");
     const [automaticTransitionDelay, setAutomaticTransitionDelay] = useState(7);
 
     useEffect(() => {
         const dataToUse = isFirstLoad ? latestSettings : settings;
-        
+
         if (dataToUse) {
             setCheckedItems({
                 "automatic-transition": dataToUse.automaticTransition || false,
@@ -77,7 +77,7 @@ export default function Appearance() {
             setPageTransition(Object.keys(PageTransition)[dataToUse.pageTransition]?.toLowerCase() || "flip");
             setLayoutStyle(layoutStyleMapping[dataToUse.layoutStyle] || "smart-view");
             setAutomaticTransitionDelay(dataToUse.automaticTransitionDelay || 7);
-            
+
             if (isFirstLoad) {
                 setIsFirstLoad(false);
             }
@@ -121,12 +121,12 @@ export default function Appearance() {
                 <Label>Player skin</Label>
                 <Tabs value={playerSkin} onValueChange={handlePlayerSkinChange}>
                     <TabsList className={`w-full ${!isFieldEnabled("playerSkin") ? 'opacity-50 pointer-events-none' : ''}`}>
-                        <TabsTrigger className="items-center gap-2 w-full" value="classic">Flipbook View</TabsTrigger>
-                        <TabsTrigger className="items-center gap-2 w-full" value="modern">Web View</TabsTrigger>
+                        <TabsTrigger className="items-center gap-2 w-full" value={PlayerSkin.CLASSIC}>Flipbook View</TabsTrigger>
+                        <TabsTrigger className="items-center gap-2 w-full" value={PlayerSkin.MODERN}>Web View</TabsTrigger>
                     </TabsList>
                 </Tabs>
             </div>
-            {playerSkin !== "modern" && (
+            {playerSkin !== PlayerSkin.MODERN && (
                 <>
                     <div className="flex flex-col gap-2 text-white">
                         <Label>Page transition</Label>
