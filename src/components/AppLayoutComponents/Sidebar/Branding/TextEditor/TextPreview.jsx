@@ -17,21 +17,22 @@ export default function TextPreview({ config }) {
 
     const getHeadingStyles = () => {
         const styles = {
-            fontFamily: config.fontFamily,
-            color: config.textColor,
-            fontSize: `${config.fontSize}px`,
-            letterSpacing: `${config.letterSpacing / 100}em`,
-            lineHeight: config.lineHeight,
+            fontFamily: config.fontFamily || 'Arial',
+            color: config.textColor || '#000000',
+            fontSize: `${config.fontSize || 16}px`,
+            letterSpacing: `${(config.letterSpacing || 0) / 100}em`,
+            lineHeight: config.lineHeight || 1.2,
         };
 
         if (config.textCase === 'uppercase') styles.textTransform = 'uppercase';
         else if (config.textCase === 'lowercase') styles.textTransform = 'lowercase';
         else if (config.textCase === 'capitalize') styles.textTransform = 'capitalize';
 
-        if (config.styles.includes('italic')) styles.fontStyle = 'italic';
-        if (config.styles.includes('underline')) styles.textDecoration = 'underline';
-        if (config.styles.includes('strikethrough')) styles.textDecoration = 'line-through';
-        if (config.styles.includes('underline') && config.styles.includes('strikethrough')) {
+        const configStyles = config.styles || [];
+        if (configStyles.includes('italic')) styles.fontStyle = 'italic';
+        if (configStyles.includes('underline')) styles.textDecoration = 'underline';
+        if (configStyles.includes('strikethrough')) styles.textDecoration = 'line-through';
+        if (configStyles.includes('underline') && configStyles.includes('strikethrough')) {
             styles.textDecoration = 'underline line-through';
         }
 

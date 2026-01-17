@@ -570,14 +570,14 @@ export default function Text({ selectedShape, setMainStage, mainStage, selectedI
                 <div>
                     <div className="flex justify-between">
                         <Label htmlFor="lineHeight" className="text-xs font-medium">Line height</Label>
-                        <span className="text-sm">{textStyle.lineHeight.toFixed(1)}</span>
+                        <span className="text-sm">{Number(textStyle.lineHeight ?? 1).toFixed(1)}</span>
                     </div>
                     <FilterSlider
                         id="lineHeight"
                         min={0.5}
                         max={2.5}
                         step={0.1}
-                        value={[textStyle.lineHeight]}
+                        value={[Number(textStyle.lineHeight ?? 1)]}
                         onValueChange={handleLineHeightChange}
                         className="mt-2"
                     />

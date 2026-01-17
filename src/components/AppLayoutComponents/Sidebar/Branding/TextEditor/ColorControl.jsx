@@ -2,9 +2,9 @@ import React, { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Baseline } from 'lucide-react';
 
-export default function ColorControl ({ config, updateConfig }){
+export default function ColorControl({ config, updateConfig }) {
     const [showColorPicker, setShowColorPicker] = useState(false);
-    const [selectedColor, setSelectedColor] = useState(config.textColor);
+    const [selectedColor, setSelectedColor] = useState(config.textColor || '#000000');
     const colorInputRef = useRef(null);
 
     const handleColorClick = () => {

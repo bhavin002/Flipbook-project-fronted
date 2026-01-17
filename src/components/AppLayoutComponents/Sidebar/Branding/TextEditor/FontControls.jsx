@@ -74,7 +74,8 @@ export default function FontControls({ config, updateConfig }) {
     };
 
     const handleFontWeightChange = (value) => {
-        const newStyles = [...config.styles];
+        const currentStyles = config.styles || [];
+        const newStyles = [...currentStyles];
 
         if (value === 'bold') {
             if (!newStyles.includes('bold')) {

@@ -30,10 +30,10 @@ export default function SpacingControl({ config, updateConfig }) {
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
                             <Label>Letter spacing</Label>
-                            <span>{config.letterSpacing}</span>
+                            <span>{config.letterSpacing ?? 0}</span>
                         </div>
                         <Slider
-                            value={[config.letterSpacing]}
+                            value={[config.letterSpacing ?? 0]}
                             min={-100}
                             max={100}
                             step={1}
@@ -43,10 +43,10 @@ export default function SpacingControl({ config, updateConfig }) {
                     <div className="space-y-2">
                         <div className="flex items-center justify-between">
                             <Label>Line height</Label>
-                            <span>{config.lineHeight.toFixed(1)}</span>
+                            <span>{Number(config.lineHeight ?? 1.2).toFixed(1)}</span>
                         </div>
                         <Slider
-                            value={[config.lineHeight * 10]}
+                            value={[(Number(config.lineHeight ?? 1.2) * 10)]}
                             min={10}
                             max={30}
                             step={1}

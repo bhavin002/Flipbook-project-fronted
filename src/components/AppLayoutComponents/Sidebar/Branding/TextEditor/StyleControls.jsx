@@ -4,15 +4,16 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 
 export default function StyleControls({ config, updateConfig }) {
     const toggleBold = () => {
-        const isBold = config.styles.includes('bold');
+        const currentStyles = config.styles || [];
+        const isBold = currentStyles.includes('bold');
         if (isBold) {
             updateConfig({
-                styles: config.styles.filter(s => s !== 'bold'),
+                styles: currentStyles.filter(s => s !== 'bold'),
                 fontWeight: 'normal'
             });
         } else {
             updateConfig({
-                styles: [...config.styles, 'bold'],
+                styles: [...currentStyles, 'bold'],
                 fontWeight: 'bold'
             });
         }
@@ -24,7 +25,8 @@ export default function StyleControls({ config, updateConfig }) {
             return;
         }
 
-        const newStyles = [...config.styles];
+        const currentStyles = config.styles || [];
+        const newStyles = [...currentStyles];
         const styleIndex = newStyles.indexOf(style);
 
         if (styleIndex === -1) {
@@ -39,9 +41,9 @@ export default function StyleControls({ config, updateConfig }) {
     };
 
     return (
-        <ToggleGroup type="multiple" className="flex gap-2" value={config.styles}>
+        <ToggleGroup type="multiple" className="flex gap-2" value={config.styles || []}>
             <ToggleGroupItem
-            disabled={config.isBoldDisabled}
+                disabled={config.isBoldDisabled}
                 value="bold"
                 aria-label="Toggle bold"
                 variant="outline"
