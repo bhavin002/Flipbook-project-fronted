@@ -73,7 +73,7 @@ export default function Appearance() {
                 "animate": dataToUse.animateInteraction || false,
                 "highlights": dataToUse.highlightsOnLink || false,
             });
-            setPlayerSkin(Object.keys(PlayerSkin)[dataToUse.playerSkin]?.toLowerCase() || "classic");
+            setPlayerSkin(Object.keys(PlayerSkin)[dataToUse.playerSkin]?.toLowerCase() || PlayerSkin.CLASSIC);
             setPageTransition(Object.keys(PageTransition)[dataToUse.pageTransition]?.toLowerCase() || "flip");
             setLayoutStyle(layoutStyleMapping[dataToUse.layoutStyle] || "smart-view");
             setAutomaticTransitionDelay(dataToUse.automaticTransitionDelay || 7);
