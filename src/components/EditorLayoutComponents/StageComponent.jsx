@@ -301,6 +301,49 @@ export default function StageComponent({ imageLoadCounterPageWise, setImageLoadC
         }
     }, [stage.selectedShapes]);
 
+    useEffect(() => {
+        if (!stage.stageref?.current || !stage.shapes) return;
+
+        const shapesToSelectIds = stage.shapes.filter(s => s.shouldSelect).map(s => s.id);
+
+        if (shapesToSelectIds.length > 0) {
+            // Give Konva a moment to render the new nodes if they are not yet available
+            setTimeout(() => {
+                const layerGroup = stage.stageref.current?.children[0]?.children[1];
+                if (!layerGroup) return;
+
+                const nodesToSelect = [];
+                layerGroup.children.forEach(node => {
+                    if (shapesToSelectIds.includes(node.attrs.id)) {
+                        nodesToSelect.push(node);
+                    }
+                });
+
+                if (nodesToSelect.length > 0) {
+                    setMainStage(prevState => {
+                        const updatedState = [...prevState];
+                        const currentStage = updatedState[index];
+
+                        const cleanShapes = currentStage.shapes.map(s => {
+                            if (s.shouldSelect) {
+                                const { shouldSelect, ...rest } = s;
+                                return rest;
+                            }
+                            return s;
+                        });
+
+                        updatedState[index] = {
+                            ...currentStage,
+                            shapes: cleanShapes,
+                            selectedShapes: nodesToSelect
+                        };
+                        return updatedState;
+                    });
+                }
+            }, 50);
+        }
+    }, [stage.shapes]);
+
 
     // new code 
     const getLineGuideStops = (skipShape, stageref) => {
