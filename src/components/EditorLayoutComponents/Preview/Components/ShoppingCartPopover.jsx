@@ -292,11 +292,11 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings, fullscr
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 15 }}
                             transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                            className={`absolute ${isRTL ? "left-0" : "right-0"} mt-2 w-auto bg-black text-white border border-neutral-800 rounded-md shadow-lg z-50 max-h-[600px] min-w-[20rem] flex flex-col ${isMobile ? 'md:w-[23rem]' : 'md:w-[28rem]'}`}
+                            className={`absolute ${isRTL ? "left-0" : "right-0"} mt-2 w-auto bg-black text-white border border-neutral-800 rounded-md shadow-lg z-50 max-h-[600px] min-w-[20rem] flex flex-col overflow-hidden ${isMobile ? 'md:w-[23rem]' : 'md:w-[28rem]'}`}
                             style={{ top: '100%' }}
                             dir={isRTL ? "rtl" : "ltr"}
                         >
-                            <div className="flex items-center justify-between p-4">
+                            <div className="flex items-center justify-between p-4 flex-shrink-0">
                                 <div className="flex items-center gap-2">
                                     <h3 className="font-semibold">My list</h3>
                                     <Badge
@@ -329,7 +329,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings, fullscr
                                 </div>
                             </div>
 
-                            <div className="flex-1 p-4 bg-[#1E1E1E]" style={{ maxHeight: '200px' }}>
+                            <div className="flex-1 p-4 bg-[#1E1E1E] overflow-y-auto">
                                 {isLoading ? (
                                     <div className="text-center text-muted-foreground">
                                         Loading cart...
@@ -408,7 +408,7 @@ const ShoppingCartPopover = ({ flipbookId, isMobile, visibilitySettings, fullscr
 
                             {cartItems.length > 0 && (
                                 <>
-                                    <div className="p-4 space-y-4">
+                                    <div className="p-4 space-y-4 flex-shrink-0 border-t border-neutral-800">
                                         <div className="flex justify-between items-center">
                                             <span className="text-lg font-semibold">Total:</span>
                                             <span className="text-lg font-bold">{getTotalPrice()} {getCurrentCurrency()}</span>
