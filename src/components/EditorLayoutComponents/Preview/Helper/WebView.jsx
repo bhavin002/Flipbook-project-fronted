@@ -261,13 +261,9 @@ const WebView = forwardRef(function WebView({
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: visibilitySettings?.backgroundColor === BackgroundColorType.SOLID
-                    ? visibilitySettings.backgroundColorHash
-                    : 'white',
-                backgroundImage: visibilitySettings?.backgroundColor === BackgroundColorType.IMAGE
-                    ? `url(${visibilitySettings.backgroundImage})`
-                    : 'none',
-                ...(visibilitySettings?.backgroundImageType === BackgroundImageType.SCALE_CROP && {
+                backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? visibilitySettings.playerAccentColorHash : 'white',
+                backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
+                ...(visibilitySettings.backgroundImageType === BackgroundImageType.SCALE_CROP && {
                     backgroundSize: 'cover',
                     backgroundPosition: 'center'
                 }),

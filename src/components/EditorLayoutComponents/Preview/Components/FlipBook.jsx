@@ -374,7 +374,7 @@ const FlipBook = forwardRef(function FlipBook({ flipbookId, onPageChange, contai
         <>
             <div className="w-full h-full"
                 style={{
-                    backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : 'white',
+                    backgroundColor: visibilitySettings.backgroundColor === BackgroundColorType.SOLID ? visibilitySettings.backgroundColorHash : visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? visibilitySettings.playerAccentColorHash : 'white',
                     backgroundImage: visibilitySettings.backgroundColor === BackgroundColorType.IMAGE ? `url(${visibilitySettings.backgroundImage})` : 'none',
                     ...(visibilitySettings.backgroundImageType === BackgroundImageType.SCALE_CROP && {
                         backgroundSize: 'cover',
