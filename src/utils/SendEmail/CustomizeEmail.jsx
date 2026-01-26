@@ -44,7 +44,7 @@ export default function CustomizeEmail({ flipbookId, thumbnail, component }) {
         resetLogo();
     };
 
-    const href = component === "flipbook" ? `${import.meta.env.WEBSITE_URL}/public-flipbook/${flipbookId}` : `${import.meta.env.WEBSITE_URL}/public-bookshelf/${flipbookId}`;
+    const href = component === "flipbook" ? `${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}` : `${import.meta.env.VITE_WEBSITE_URL}/public-bookshelf/${flipbookId}`;
 
     const isDefaultLogo = emailData.logo === "/assets/logo.png";
 

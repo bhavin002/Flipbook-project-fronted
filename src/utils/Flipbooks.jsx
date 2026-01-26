@@ -74,9 +74,9 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
             router(`/editor/${flipbookId}`)
         } else if (action === "view") {
             if (flipbookState === "Bookshelf") {
-                window.open(`/public-bookshelf/${flipbookId}`, '_blank');
+                window.open(`${import.meta.env.VITE_WEBSITE_URL}/public-bookshelf/${flipbookId}`, '_blank');
             } else {
-                window.open(`/public-flipbook/${flipbookId}`, '_blank');
+                window.open(`${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}`, '_blank');
             }
         } else {
             console.error("Invalid action:", action);

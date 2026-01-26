@@ -22,7 +22,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
     const canvasRef = useRef(null)
     const isRTL = visibilitySettings?.rightToLeftOrientation;
 
-    const shareUrl = `${import.meta.env.WEBSITE_URL}/public-flipbook/${flipbookId}`;
+    const shareUrl = `${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}`;
 
     useEffect(() => {
         if (isShareModalOpen && flipbookId) {

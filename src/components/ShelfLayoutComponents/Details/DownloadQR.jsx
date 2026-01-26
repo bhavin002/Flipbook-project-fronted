@@ -20,7 +20,7 @@ export default function DownloadQR({ flipbookId }) {
     const fileInputRef = useRef(null);
     const [logoSize, setLogoSize] = useState("Large");
 
-    const redirectURL = `${import.meta.env.WEBSITE_URL}/public-flipbook/${flipbookId}`;
+    const redirectURL = `${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}`;
 
     useEffect(() => {
         generateQRCode();
