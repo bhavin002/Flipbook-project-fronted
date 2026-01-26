@@ -14,7 +14,7 @@ export default function DetailsTab({ flipbookId }) {
     const { bookshelfSettings } = useBookshelf();
 
     const handleCopy = () => {
-        const shareUrl = `${import.meta.env.VITE_APP_URL}/public-bookshelf/${flipbookId}`;
+        const shareUrl = `${import.meta.env.WEBSITE_URL}/public-bookshelf/${flipbookId}`;
         navigator.clipboard.writeText(shareUrl)
             .then(() => {
                 setCopied(true);
@@ -40,7 +40,7 @@ export default function DetailsTab({ flipbookId }) {
                 <CardContent className="space-y-4">
                     <div className="flex items-center space-x-2">
                         <Input
-                            value={`${import.meta.env.VITE_APP_URL}/public-bookshelf/${flipbookId}`}
+                            value={`${import.meta.env.WEBSITE_URL}/public-bookshelf/${flipbookId}`}
                             readOnly
                         />
                         <Button variant="outline" onClick={handleCopy}>
