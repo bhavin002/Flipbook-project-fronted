@@ -72,7 +72,7 @@ export default function BrandingSettings() {
                 <div className="flex items-center justify-between w-full">
                   <CardTitle>Settings</CardTitle>
                   <a
-                    href={import.meta.env.VITE_APP_URL + `/profile/${myWorkspaceId}`}
+                    href={import.meta.env.VITE_WEBSITE_URL + `/profile/${myWorkspaceId}`}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -104,7 +104,7 @@ export default function BrandingSettings() {
 
                   <Input
                     className="max-w-md focus-visible:ring-0 focus-visible:ring-ring"
-                    value={import.meta.env.VITE_APP_URL + `/profile/${myWorkspaceId}`}
+                    value={import.meta.env.VITE_WEBSITE_URL + `/profile/${myWorkspaceId}`}
                     readOnly
                   />
 

@@ -24,7 +24,7 @@ export default function ProfileDropDownCom() {
 
     const handleMyProfileClick = () => {
         if (myWorkspaceId) {
-            window.open(`/profile/${currentWorkspace._id}`, '_blank');
+            window.open(`${import.meta.env.VITE_WEBSITE_URL}/profile/${currentWorkspace._id}`, '_blank');
         }
     };
 

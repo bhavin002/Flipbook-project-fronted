@@ -30,7 +30,7 @@ const linkAreaActionHandlers = {
     },
 
     'go-to-profile': (htmlData) => {
-        const url = import.meta.env.VITE_APP_URL + htmlData.url;
+        const url = import.meta.env.VITE_WEBSITE_URL + htmlData.url;
         window.open(url, "_blank");
     },
 

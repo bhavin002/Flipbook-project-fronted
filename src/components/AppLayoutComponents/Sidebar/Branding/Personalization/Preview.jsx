@@ -15,7 +15,7 @@ export default function Preview() {
     const { form, hasChanges, previewUrls, setHasChanges, getPayload } = useBranding();
     const formValues = form.watch();
     const [isLoading, setIsLoading] = useState(false);
-    const {myWorkspaceId, updateWorkspaceName} = useWorkspaces();
+    const { myWorkspaceId, updateWorkspaceName } = useWorkspaces();
 
     const socialIcons = {
         facebook: Facebook,
@@ -88,7 +88,7 @@ export default function Preview() {
                         {isLoading ? "Saving..." : "Save Changes"}
                     </Button>
                     <a
-                        href={import.meta.env.VITE_APP_URL + `/profile/${myWorkspaceId}`}
+                        href={import.meta.env.VITE_WEBSITE_URL + `/profile/${myWorkspaceId}`}
                         target="_blank"
                         rel="noopener noreferrer"
                     >
@@ -113,7 +113,7 @@ export default function Preview() {
                                 alt="Logo"
                             />
                             <span className="text-gray-500 max-md:max-w-[235px] truncate overflow-hidden whitespace-nowrap">
-                                {import.meta.env.VITE_APP_URL + `/profile/${myWorkspaceId}`}
+                                {import.meta.env.VITE_WEBSITE_URL + `/profile/${myWorkspaceId}`}
                             </span>
                         </div>
                     </div>
@@ -205,8 +205,8 @@ export default function Preview() {
                                 key={index}
                                 href={link.url}
                                 className="text-gray-500 hover:transition-colors duration-200"
-                                style={{ 
-                                    '--hover-color': formValues.elementColor 
+                                style={{
+                                    '--hover-color': formValues.elementColor
                                 }}
                                 target="_blank"
                                 rel="noopener noreferrer"
