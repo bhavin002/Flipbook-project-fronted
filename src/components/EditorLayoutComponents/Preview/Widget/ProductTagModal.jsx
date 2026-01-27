@@ -136,7 +136,13 @@ const ProductTagModal = ({ open, onOpenChange, htmlData, container }) => {
                             <div className="space-y-3">
                                 <Button
                                     className="bg-black text-white hover:bg-black/80"
-                                    onClick={() => window.open(htmlData.productUrl, '_blank')}
+                                    onClick={() => {
+                                        let url = htmlData.productUrl;
+                                        if (url && !/^https?:\/\//i.test(url)) {
+                                            url = 'https://' + url;
+                                        }
+                                        window.open(url, '_blank');
+                                    }}
                                 >
                                     {buttonLabel}
                                 </Button>

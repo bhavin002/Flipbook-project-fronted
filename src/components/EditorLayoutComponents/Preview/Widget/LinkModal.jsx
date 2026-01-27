@@ -25,7 +25,11 @@ const LinkModal = ({ open, onOpenChange, htmlData, container, visibilitySettings
           }}
           onClick={() => {
             if (htmlData?.url) {
-              window.open(htmlData.url, '_blank');
+              let url = htmlData.url;
+              if (!/^https?:\/\//i.test(url)) {
+                url = 'https://' + url;
+              }
+              window.open(url, '_blank');
             }
             onOpenChange(false);
           }}

@@ -8,9 +8,10 @@ export default function ShopButton({ shape, visibilitySettings, flipbookId, isVi
     const { getCurrentCurrency } = useShopSettings();
     const [svgUrl, setSvgUrl] = useState(null);
 
-    const labelColor = shape.data?.labelColor || '#ffffff';
-    const buttonColor = shape.data?.buttonColor || '#000000';
-    const labelText = shape.data?.label || "Shop this item";
+    // updated logic to use customizeButton data
+    const labelColor = shape.htmlData?.customizeButton?.labelColor || '#ffffff';
+    const buttonColor = shape.htmlData?.customizeButton?.buttonColor || '#000000';
+    const labelText = shape.htmlData?.customizeButton?.buttonLabel || "Shop this item";
 
     useEffect(() => {
         if (visibilitySettings.showAnimateInteraction && isVisible) {
@@ -24,27 +25,60 @@ export default function ShopButton({ shape, visibilitySettings, flipbookId, isVi
         }
     }, [visibilitySettings.showAnimateInteraction, isVisible]);
 
+    const [svgContent, setSvgContent] = useState(null);
+
     useEffect(() => {
-        const updateSvgImage = () => {
-            if (shape.src && shape.src.startsWith('<svg')) {
-                const randomizeColors = (svgString) => {
-                    return svgString.replace(/fill="(.*?)"|stroke="(.*?)"/g, (match, fill, stroke) => {
-                        if (fill) return `fill="${labelColor}"`;
-                        if (stroke) return `stroke="${labelColor}"`;
-                        return match;
-                    });
-                };
-                const modifiedSvg = randomizeColors(shape.src);
-                const blob = new Blob([modifiedSvg], { type: 'image/svg+xml' });
-                const url = URL.createObjectURL(blob);
-                setSvgUrl(url);
-                return () => URL.revokeObjectURL(url);
-            } else {
-                setSvgUrl(shape.src);
+        let isActive = true;
+        const fetchSvg = async () => {
+            if (!shape.src) return;
+
+            // Handle inline SVG
+            if (shape.src.trim().startsWith('<svg')) {
+                if (isActive) setSvgContent(shape.src);
+                return;
+            }
+
+            try {
+                const response = await fetch(shape.src);
+                const text = await response.text();
+                // Simple check if it's an SVG
+                if (isActive) {
+                    if (text.trim().startsWith('<svg')) {
+                        setSvgContent(text);
+                    } else {
+                        // Not an SVG, just use the URL
+                        setSvgUrl(shape.src);
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading image/svg", error);
+                if (isActive) setSvgUrl(shape.src);
             }
         };
-        updateSvgImage();
-    }, [shape.src, labelColor]);
+
+        fetchSvg();
+
+        return () => {
+            isActive = false;
+        };
+    }, [shape.src]);
+
+    useEffect(() => {
+        if (svgContent) {
+            const randomizeColors = (svgString) => {
+                return svgString.replace(/fill="(.*?)"|stroke="(.*?)"/g, (match, fill, stroke) => {
+                    if (fill) return `fill="${labelColor}"`;
+                    if (stroke) return `stroke="${labelColor}"`;
+                    return match;
+                });
+            };
+            const modifiedSvg = randomizeColors(svgContent);
+            const blob = new Blob([modifiedSvg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            setSvgUrl(url);
+            return () => URL.revokeObjectURL(url);
+        }
+    }, [svgContent, labelColor]);
 
     const handleClick = () => {
         if (shape.htmlType === 'shop-button' && shape.htmlData?.variantId) {

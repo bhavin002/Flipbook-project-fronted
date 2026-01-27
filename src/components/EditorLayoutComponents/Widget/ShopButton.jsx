@@ -6,8 +6,8 @@ export default function ShopButton({ mainStage, selectedIndex, shape, handleDrag
     ...props }) {
     const [image, setImage] = useState(null);
     const [colors, setColors] = useState({
-        labelColor: shape?.data?.labelColor || '#ffffff',
-        buttonColor: shape?.data?.buttonColor || '#000000',
+        labelColor: shape?.htmlData?.customizeButton?.labelColor || '#ffffff',
+        buttonColor: shape?.htmlData?.customizeButton?.buttonColor || '#000000',
     });
 
     const [dimensions, setDimensions] = useState({
@@ -21,14 +21,16 @@ export default function ShopButton({ mainStage, selectedIndex, shape, handleDrag
     const textRef = useRef();
 
     useEffect(() => {
-        const newShape = mainStage[selectedIndex].shapes.find(ele => ele.id === shape.id);
-        if (newShape) {
+        const newShape = mainStage[selectedIndex]?.shapes?.find(ele => ele.id === shape.id);
+        if (newShape?.htmlData?.customizeButton) {
             setColors({
-                labelColor: newShape?.data?.labelColor || '#ffffff',
-                buttonColor: newShape?.data?.buttonColor || '#000000',
+                labelColor: newShape.htmlData.customizeButton.labelColor || '#ffffff',
+                buttonColor: newShape.htmlData.customizeButton.buttonColor || '#000000',
             });
         }
     }, [mainStage, selectedIndex, shape.id]);
+
+    const [svgContent, setSvgContent] = useState(null);
 
     const randomizeColors = (svgString) => {
         return svgString.replace(/fill="(.*?)"|stroke="(.*?)"/g, (match, fill, stroke) => {
@@ -41,68 +43,91 @@ export default function ShopButton({ mainStage, selectedIndex, shape, handleDrag
         });
     };
 
-    const updateSvgImage = () => {
-        if (shape.src && shape.src.startsWith('<svg')) {
-            const modifiedSvg = randomizeColors(shape.src);
+    useEffect(() => {
+        let isActive = true;
+        const fetchSvg = async () => {
+            if (!shape.src) return;
+
+            // Handle inline SVG
+            if (shape.src.trim().startsWith('<svg')) {
+                if (isActive) setSvgContent(shape.src);
+                return;
+            }
+
+            // Handle URL
+            setImageLoadCounterPageWise((prev) => ({
+                ...prev,
+                [index]: (prev[index] || 0) + 1,
+            }));
+
+            try {
+                const response = await fetch(shape.src);
+                const text = await response.text();
+                // Simple check if it's an SVG
+                if (isActive) {
+                    if (text.trim().startsWith('<svg')) {
+                        setSvgContent(text);
+                    } else {
+                        // Not an SVG (e.g. PNG), load as standard image
+                        const img = new window.Image();
+                        img.src = shape.src;
+                        img.crossOrigin = 'Anonymous';
+                        img.onload = () => {
+                            if (isActive) setImage(img);
+                        };
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading image/svg", error);
+                // Fallback attempt
+                if (isActive) {
+                    const img = new window.Image();
+                    img.src = shape.src;
+                    img.crossOrigin = 'Anonymous';
+                    img.onload = () => {
+                        if (isActive) setImage(img);
+                    };
+                }
+            } finally {
+                if (isActive) {
+                    setImageLoadCounterPageWise((prev) => ({
+                        ...prev,
+                        [index]: (prev[index] || 1) - 1,
+                    }));
+                }
+            }
+        };
+
+        fetchSvg();
+
+        return () => {
+            isActive = false;
+        };
+    }, [shape.src, index, setImageLoadCounterPageWise]);
+
+    // Effect to colorize SVG when content or color changes
+    useEffect(() => {
+        if (svgContent) {
+            const modifiedSvg = randomizeColors(svgContent);
             const blob = new Blob([modifiedSvg], { type: 'image/svg+xml' });
             const url = URL.createObjectURL(blob);
 
             const img = new window.Image();
             img.src = url;
-            setImageLoadCounterPageWise((prev) => ({
-                ...prev,
-                [index]: (prev[index] || 0) + 1,
-            }));
             img.crossOrigin = 'Anonymous';
             img.onload = () => {
-                setImageLoadCounterPageWise((prev) => ({
-                    ...prev,
-                    [index]: (prev[index] || 1) - 1,
-                }));
                 setImage(img);
                 URL.revokeObjectURL(url);
             };
-            img.onerror = () => {
-                setImageLoadCounterPageWise((prev) => ({
-                    ...prev,
-                    [index]: (prev[index] || 1) - 1,
-                }));
-            }
-        } else if (shape.src) {
-            const img = new window.Image();
-            img.src = shape.src;
-            setImageLoadCounterPageWise((prev) => ({
-                ...prev,
-                [index]: (prev[index] || 0) + 1,
-            }));
-            img.crossOrigin = 'Anonymous';
-            img.onload = () => {
-                setImageLoadCounterPageWise((prev) => ({
-                    ...prev,
-                    [index]: (prev[index] || 1) - 1,
-                }));
-                setImage(img);
-            };
-            img.onerror = () => {
-                setImageLoadCounterPageWise((prev) => ({
-                    ...prev,
-                    [index]: (prev[index] || 1) - 1,
-                }));
-            }
         }
-    };
-
-    // Update image when colors change
-    useEffect(() => {
-        updateSvgImage();
-    }, [colors.labelColor, shape.src]);
+    }, [svgContent, colors.labelColor]);
 
     // Measure text width for centering
     useEffect(() => {
         if (textRef.current) {
             setTextWidth(textRef.current.width());
         }
-    }, [shape.data?.label, dimensions.height]);
+    }, [shape.htmlData?.customizeButton?.buttonLabel, dimensions.height]);
 
     const handleGroupClick = (e) => {
         e.cancelBubble = true;
@@ -124,7 +149,7 @@ export default function ShopButton({ mainStage, selectedIndex, shape, handleDrag
     // Layout calculations (relative to base dimensions)
     const baseWidth = dimensions.width;
     const baseHeight = dimensions.height;
-    const labelText = shape?.data?.label || "Shop this item";
+    const labelText = shape?.htmlData?.customizeButton?.buttonLabel || "Shop this item";
 
     const iconSize = baseHeight * 0.45;
     const fontSize = baseHeight * 0.32;

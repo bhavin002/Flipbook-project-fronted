@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import BrandColors from '@/utils/BrandColors';
@@ -25,6 +25,10 @@ export default function ColorPaletteSelector({ disabled, onChange, backgroundCol
             }
         }, 500) // 500ms delay
     ).current;
+
+    useEffect(() => {
+        setSelectedColor(backgroundColor);
+    }, [backgroundColor]);
 
     const handleAddColor = () => {
         if (disabled) return;
@@ -71,7 +75,7 @@ export default function ColorPaletteSelector({ disabled, onChange, backgroundCol
                             <input
                                 ref={colorInputRef}
                                 type="color"
-                                value={'#FFFFFF'}
+                                value={selectedColor || backgroundColor}
                                 onChange={handleColorPickerChange}
                                 onClick={handleColorPickerClick}
                                 className="opacity-0 absolute w-1 h-1 left-0 right-0 m-auto bottom-0"

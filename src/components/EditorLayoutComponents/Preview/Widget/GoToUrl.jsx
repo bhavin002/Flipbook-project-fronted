@@ -17,10 +17,14 @@ const linkAreaActionHandlers = {
     'go-to-url': (htmlData) => {
         const { url, openIn } = htmlData || {};
         if (url) {
+            let targetUrl = url;
+            if (!/^https?:\/\//i.test(targetUrl)) {
+                targetUrl = 'https://' + targetUrl;
+            }
             if (openIn === "new-tab") {
-                window.open(url, "_blank");
+                window.open(targetUrl, "_blank");
             } else {
-                window.location.href = url;
+                window.location.href = targetUrl;
             }
         }
     },

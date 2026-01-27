@@ -22,6 +22,7 @@ import { getProductApi, getPublishedProductApi } from '@/service/product.service
 import cartService from '@/service/IndexedDBCart.service';
 
 const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurrency, container, isPublicView }) => {
+    console.log("htmlData ???", htmlData)
     const [isLoading, setIsLoading] = useState(false);
     const [productInfo, setProductInfo] = useState(null);
     const [selectedVariant, setSelectedVariant] = useState({});
@@ -481,14 +482,6 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurren
                             </div>
 
                             <div className="space-x-3">
-                                {htmlData?.customizeButton?.secondaryButton && (
-                                    <Button
-                                        variant="outline"
-                                        onClick={() => window.open(htmlData.customizeButton.secondaryButtonLink, '_blank')}
-                                    >
-                                        {htmlData.customizeButton.secondaryButtonLabel}
-                                    </Button>
-                                )}
                                 <Button
                                     style={{
                                         backgroundColor: htmlData?.customizeButton?.buttonColor || '#774B15',
@@ -498,6 +491,20 @@ const ShopAreaModal = ({ open, onOpenChange, htmlData, flipbookId, currentCurren
                                 >
                                     {htmlData?.customizeButton?.buttonLabel || 'Add to Cart'}
                                 </Button>
+                                {htmlData?.customizeButton?.secondaryButton && (
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            let url = htmlData.customizeButton.secondaryButtonLink;
+                                            if (url && !/^https?:\/\//i.test(url)) {
+                                                url = 'https://' + url;
+                                            }
+                                            window.open(url, '_blank');
+                                        }}
+                                    >
+                                        {htmlData.customizeButton.secondaryButtonLabel}
+                                    </Button>
+                                )}
                             </div>
                         </div>
                     </div>

@@ -19,7 +19,11 @@ const actionHandlers = {
     "open-link": (htmlData) => {
         const { url } = htmlData || {};
         if (url) {
-            window.open(url, "_blank");
+            let targetUrl = url;
+            if (!/^https?:\/\//i.test(targetUrl)) {
+                targetUrl = 'https://' + targetUrl;
+            }
+            window.open(targetUrl, "_blank");
         }
     },
 

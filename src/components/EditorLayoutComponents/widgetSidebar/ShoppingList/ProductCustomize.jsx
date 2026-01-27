@@ -206,14 +206,14 @@ export default function ProductCustomize({
 
     return (
         <Tabs defaultValue="open-overlay" className="w-full">
-            <TabsList className="w-full">
+            {/* <TabsList className="w-full">
                 <TabsTrigger className="items-center gap-2 w-full" value="open-overlay">
                     <span className="text-xs">Open overlay</span>
                 </TabsTrigger>
                 <TabsTrigger className="items-center gap-2 w-full" value="add-directly">
                     <span className="text-xs">Add directly to list</span>
                 </TabsTrigger>
-            </TabsList>
+            </TabsList> */}
             <div className="flex-grow overflow-y-auto w-full">
                 <TabsContent value="open-overlay" className="my-2 border rounded-sm">
                     <div className="flex gap-2 p-2">
