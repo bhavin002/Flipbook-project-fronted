@@ -1,7 +1,11 @@
 import { useParams } from "react-router-dom";
+import NotFound404 from "../components/ui/NotFound404";
 
-export default function PublicFlipbook() {
-    const { id } = useParams();
+export default function PublicFlipbook({ idOverride }) {
+    const { id: paramId } = useParams();
+    const id = idOverride || paramId;
+
+    if (!id) return <NotFound404 />;
 
     return (
         <div className="w-full h-full relative">
