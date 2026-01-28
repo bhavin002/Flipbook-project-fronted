@@ -155,6 +155,7 @@ export default function App() {
 
   useEffect(() => {
     const checkDomain = async () => {
+      setDomainLoading(true); // Ensure loading state is active during path changes
       const host = window.location.host.split(":")[0].toLowerCase();
       const SYSTEM_DOMAINS = ["flipdrag.com", "app.flipdrag.com", "www.flipdrag.com", "localhost", "127.0.0.1", "api.flipdrag.com"];
 
