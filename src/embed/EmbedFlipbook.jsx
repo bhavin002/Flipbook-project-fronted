@@ -32,6 +32,35 @@ export default function EmbedFlipbook() {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (publicData) {
+            document.title = publicData.flipbook.name || "Flipbook";
+
+            // Canonical Link
+            let canonical = document.head.querySelector('link[rel="canonical"]');
+            if (!canonical) {
+                canonical = document.createElement('link');
+                canonical.setAttribute('rel', 'canonical');
+                document.head.appendChild(canonical);
+            }
+
+            const host = window.location.host;
+            const path = window.location.pathname;
+            const systemDomains = ["flipdrag.com", "app.flipdrag.com", "localhost"];
+            const isCustom = !systemDomains.includes(host.split(':')[0].toLowerCase());
+
+            if (isCustom) {
+                // For custom domains, canonical is the current URL
+                canonical.setAttribute('href', `https://${host}${path}`);
+            } else {
+                // For system domains, maybe point to the public link if desired, 
+                // but usually the goal is to make sure custom domains are indexed as primary.
+                // We'll leave it as current path for now or target the primary domain.
+                canonical.setAttribute('href', `https://${host}${path}`);
+            }
+        }
+    }, [publicData]);
+
+    useEffect(() => {
         async function fetchData() {
             setIsInitialLoading(true);
             try {

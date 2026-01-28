@@ -82,6 +82,7 @@ import { Cancel } from "./pages/Settings/payment/cancel";
 import { initCrisp } from "./crisp";
 import { Crisp } from "crisp-sdk-web";
 import ExpireAccount from "./pages/ExpireAccount";
+import { ResolveDomainApi } from "./service/custom.domain.service";
 
 
 // Route configurations
@@ -112,6 +113,9 @@ const settingsRoutes = [
 
 export default function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [domainInfo, setDomainInfo] = useState(null);
+  const [domainLoading, setDomainLoading] = useState(true);
+  const [domainError, setDomainError] = useState(null);
   const apiCounter = useApiCounterStore((state) => state.counter);
   const location = useLocation();
 
@@ -149,6 +153,62 @@ export default function App() {
     }
   }, [location.pathname]);
 
+  useEffect(() => {
+    const checkDomain = async () => {
+      const host = window.location.host.split(":")[0].toLowerCase();
+      const SYSTEM_DOMAINS = ["flipdrag.com", "app.flipdrag.com", "www.flipdrag.com", "localhost", "127.0.0.1", "api.flipdrag.com"];
+
+      if (!SYSTEM_DOMAINS.includes(host)) {
+        try {
+          const res = await ResolveDomainApi();
+          if (res.success) {
+            setDomainInfo(res.data);
+          }
+        } catch (err) {
+          console.error("Domain resolution failed", err);
+          setDomainError(err.message || "Failed to resolve domain");
+        }
+      } else {
+        setDomainInfo({ isCustom: false, isSystemDomain: true, isPathAllowed: true });
+      }
+      setDomainLoading(false);
+    };
+    checkDomain();
+  }, [location.pathname]);
+
+  if (domainLoading) return <Loader />;
+
+  if (domainError && !domainInfo) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen w-screen p-4 text-center">
+        <h1 className="text-2xl font-bold mb-4">Domain Error</h1>
+        <p className="text-gray-600 mb-8">{domainError}</p>
+        <div className="text-sm text-gray-400">
+          Powered by <span className="font-semibold">FlipDrag</span>
+        </div>
+      </div>
+    );
+  }
+
+  // If on a custom domain and the path is NOT allowed (not a public route or valid slug)
+  if (domainInfo?.isCustom && !domainInfo?.isPathAllowed) {
+    // Only redirect if we are NOT already on the target profile page to avoid loops
+    const targetPath = `/profile/${domainInfo.workspaceId}`;
+    if (location.pathname !== targetPath && domainInfo.workspaceId) {
+      return <Navigate to={targetPath} replace />;
+    } else if (!domainInfo.workspaceId) {
+      // If we don't even have a workspace ID, something is wrong with the configuration
+      return <NotFound404 />;
+    }
+  }
+
+  // If hitting the root of a custom domain but no default flipbook is assigned
+  if (domainInfo?.isCustom && location.pathname === "/" && !domainInfo?.mappedFlipbookId) {
+    if (domainInfo.workspaceId) {
+      return <Navigate to={`/profile/${domainInfo.workspaceId}`} replace />;
+    }
+  }
+
   return (
     <AuthProvider>
       <Routes>
@@ -164,6 +224,11 @@ export default function App() {
         <Route path="/public-bookshelf/:id" element={<PublicBookShelf />} />
         <Route path="/embed-bookshelf/:id" element={<EmbedBookShelf />} />
         <Route path="/profile/:id" element={<MyProfile />} />
+
+        {/* Catch-all for custom domain resolved IDs - placed before private routes */}
+        {domainInfo?.isCustom && domainInfo?.mappedFlipbookId && (
+          <Route path="*" element={<PublicFlipbook idOverride={domainInfo.mappedFlipbookId} />} />
+        )}
 
         {/* Private/protected routes (wrapped in providers) */}
         <Route
