@@ -7,7 +7,7 @@ export const useApiCounterStore = create((set) => ({
     decrement: () => set((state) => ({ counter: state.counter - 1 })),
 }));
 
-export default function ApiClient() {
+export default function ApiClient(options = {}) {
     const token = localStorage.getItem('fd_access_token');
     const workspaceid = localStorage.getItem('fd_workspace_id');
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -60,7 +60,7 @@ export default function ApiClient() {
                 useApiCounterStore.getState().decrement();
             }
 
-            if (error.response && error.response.status === 401) {
+            if (error.response && error.response.status === 401 && !options.skipLogout) {
                 localStorage.clear();
                 sessionStorage.clear();
                 return Promise.reject({

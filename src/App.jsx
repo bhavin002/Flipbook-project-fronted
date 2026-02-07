@@ -83,6 +83,7 @@ import { initCrisp } from "./crisp";
 import { Crisp } from "crisp-sdk-web";
 import ExpireAccount from "./pages/ExpireAccount";
 import { ResolveDomainApi } from "./service/custom.domain.service";
+import UsersReport from "./pages/UsersReport";
 
 
 // Route configurations
@@ -618,6 +619,18 @@ export default function App() {
                         </PermissionRoute>
                       }>
                         <Route index element={<FlipbookFromScratch />} />
+                      </Route>
+
+                      <Route path="/users-report" element={
+                        <PrivateRoute>
+                          <FlipbookProvider>
+                            <FolderProvider>
+                              <AppLayout setIsSidebarOpen={setIsSidebarOpen} />
+                            </FolderProvider>
+                          </FlipbookProvider>
+                        </PrivateRoute>
+                      }>
+                        <Route index element={<UsersReport />} />
                       </Route>
 
 
