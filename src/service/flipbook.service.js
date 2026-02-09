@@ -1,4 +1,5 @@
 import ApiClient from '@/utils/ApiClient'
+import axios from 'axios'
 
 export const GetPageLayoutsApi = async () => {
   const response = await ApiClient().get('/page-layout/get', {
@@ -172,3 +173,26 @@ export const MakeAdminTemplateApi = async data => {
   return response.data
 }
 
+
+export const GetR2UploadUrlApi = async (fileName, fileType) => {
+  const response = await ApiClient().post('/file-upload/presigned-url-r2', {
+    fileName,
+    fileType
+  })
+  return response.data
+}
+
+export const CreateFlipbookFromR2Api = async data => {
+  const response = await ApiClient().post('/file-upload/create-from-r2', data)
+  return response.data
+}
+
+export const UploadToR2Url = async (url, file, onProgress) => {
+  const response = await axios.put(url, file, {
+    headers: {
+      'Content-Type': file.type
+    },
+    onUploadProgress: onProgress
+  })
+  return response
+}

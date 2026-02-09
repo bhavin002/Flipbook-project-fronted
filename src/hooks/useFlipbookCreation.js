@@ -2,10 +2,11 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import {
-    UploadFilesNewApi,
-    GenerateFlipbookApi,
-    subscribeToUploadProgress,
+    GetR2UploadUrlApi,
+    UploadToR2Url,
+    CreateFlipbookFromR2Api,
 } from "@/service/flipbook.service";
+
 import { useFileUpload } from "@/context/FileUploadContext";
 import { useFlipbook } from "@/context/FlipbookContext";
 import { FlipbookUploadMode } from "@/utils/enum";
@@ -47,56 +48,54 @@ export const useFlipbookCreation = () => {
     const uploadSingleFile = async (file) => {
         resetUpload();
         setUploadDialogOpen(true);
-        setProgressText("Uploading your file...");
+        setProgressText("Starting upload...");
 
         try {
-            const formData = new FormData();
-            formData.append("files", file);
-            formData.append("mode", FlipbookUploadMode.COMBINE);
+            // 1. Get Presigned URL
+            const { url, key } = await GetR2UploadUrlApi(file.name, file.type);
+            if (!url || !key) throw new Error("Failed to get upload URL");
 
-            const uploadRes = await UploadFilesNewApi(formData);
-            const { sessionId, mainFolderId, files: uploadedFiles } = uploadRes;
-
-            eventSourceRef.current = subscribeToUploadProgress(sessionId, async (data) => {
-                if (data.status === "rendering") {
-                    const percent = Math.round((data.page / (data.total || 1)) * 100);
-                    setProgressText(`Hang tight! Processing pages... ${data.page}/${data.total}`);
-                    setProgressPercent(percent);
-                }
-
-                if (data.stage === "all_done") {
-                    smoothTo100(setProgressPercent);
-                    setProgressText("Generating your flipbook...");
-
-                    setTimeout(async () => {
-                        try {
-                            const genRes = await GenerateFlipbookApi({
-                                mainFolderId,
-                                files: uploadedFiles,
-                                mode: FlipbookUploadMode.COMBINE,
-                            });
-
-                            const { bookIds } = genRes.data;
-                            if (bookIds?.length) {
-                                setProgressPercent(100);
-                                setProgressText("Flipbook created successfully 🎉");
-
-                                setTimeout(() => {
-                                    setUploadDialogOpen(false);
-                                    navigate(`/customize/${bookIds[0]}`);
-                                }, 1000);
-                            } else {
-                                toast.error("Flipbook creation failed");
-                                setUploadDialogOpen(false);
-                            }
-                        } catch (err) {
-                            toast.error("Flipbook creation failed", { description: err.message });
-                            setUploadDialogOpen(false);
-                        }
-                    }, 600);
-                }
+            // 2. Upload to R2
+            await UploadToR2Url(url, file, (progressEvent) => {
+                const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                setProgressPercent(percent);
+                setProgressText(`Uploading: ${percent}%`);
             });
+
+            setProgressText("We're working our magic... Optimizing your flipbook!");
+            
+            // 3. Create Flipbook
+            const genRes = await CreateFlipbookFromR2Api({
+                pdfKey: key,
+                mode: FlipbookUploadMode.COMBINE,
+                fileName: file.name
+            });
+
+            // Handle response
+            const bookId = genRes?.book?._id || genRes?.data?.book?._id || genRes?.bookIds?.[0] || genRes?.data?.bookIds?.[0];
+            
+            if (bookId) {
+                setProgressPercent(100);
+                setProgressText("Flipbook created successfully 🎉");
+
+                setTimeout(() => {
+                    setUploadDialogOpen(false);
+                    navigate(`/customize/${bookId}`);
+                }, 1000);
+            } else {
+                // Fallback attempt
+                const possibleId = genRes?._id || genRes?.id;
+                if(possibleId) {
+                     setUploadDialogOpen(false);
+                     navigate(`/customize/${possibleId}`);
+                } else {
+                     toast.error("Flipbook creation failed: No ID returned");
+                     setUploadDialogOpen(false);
+                }
+            }
+
         } catch (error) {
+            console.error("Upload failed", error);
             toast.error("Upload failed", { description: error.message });
             setUploadDialogOpen(false);
         }
@@ -137,78 +136,65 @@ export const useFlipbookCreation = () => {
         setUploadDialogOpen(true);
         resetUpload();
 
+        // Initialize progress list
+        setFileProgressList(
+            pendingFiles.map((file) => ({
+                name: file.name,
+                percent: 0,
+                status: "waiting",
+            }))
+        );
+
         try {
-            const formData = new FormData();
-            pendingFiles.forEach((file) => formData.append("files", file));
-            formData.append("mode", FlipbookUploadMode.SEPARATELY);
-
-            const uploadRes = await UploadFilesNewApi(formData);
-            const { sessionId, mainFolderId, files: uploadedFiles } = uploadRes;
-
-            setFileProgressList(
-                pendingFiles.map((file) => ({
-                    name: file.name,
-                    percent: 0,
-                    status: "waiting",
-                }))
-            );
-
-            eventSourceRef.current = subscribeToUploadProgress(sessionId, async (data) => {
-                if (!data) return;
-
-                if (data.status === "rendering") {
-                    const percent = Math.min(
-                        Math.round((data.page / (data.total || 1)) * 100),
-                        100
-                    );
-
-                    setFileProgressList((prev) =>
-                        prev.map((f) =>
-                            f.name === data.file
-                                ? { ...f, percent, status: "rendering" }
-                                : f
-                        )
-                    );
-                }
-
-                if (data.stage === "file_done") {
-                    setFileProgressList((prev) =>
-                        prev.map((f) =>
-                            f.name === data.file ? { ...f, percent: 100, status: "done" } : f
-                        )
-                    );
-                }
-
-                if (data.stage === "all_done") {
-                    setFileProgressList((prev) =>
-                        prev.map((item) => ({ ...item, percent: 100, status: "done" }))
-                    );
-
-                    setProgressText("Generating flipbooks...");
-
+            // 1. Upload All Files to R2
+            const uploadedKeys = await Promise.all(
+                pendingFiles.map(async (file) => {
                     try {
-                        const genRes = await GenerateFlipbookApi({
-                            mainFolderId,
-                            files: uploadedFiles,
-                            mode: FlipbookUploadMode.SEPARATELY,
+                        // Update status to uploading
+                        setFileProgressList(prev => prev.map(p => p.name === file.name ? { ...p, status: 'uploading' } : p));
+
+                        const { url, key } = await GetR2UploadUrlApi(file.name, file.type);
+                        if (!url || !key) throw new Error("No upload URL");
+
+                        await UploadToR2Url(url, file, (progressEvent) => {
+                             const percent = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                             setFileProgressList(prev => prev.map(p => p.name === file.name ? { ...p, percent } : p));
                         });
 
-                        if (genRes.data.bookIds?.length) {
-                            toast.success("All flipbooks created successfully 🎉");
-                            fetchFlipbooks();
-                            setTimeout(() => {
-                                setUploadDialogOpen(false);
-                                setMultiFileDialogOpen(false);
-                                setPendingFiles([]);
-                            }, 1000);
-                        } else {
-                            toast.error("Flipbook generation failed");
-                        }
-                    } catch (err) {
-                        toast.error("Flipbook generation failed", { description: err.message });
+                         setFileProgressList(prev => prev.map(p => p.name === file.name ? { ...p, percent: 100, status: 'done' } : p));
+                         return key;
+                    } catch (e) {
+                         setFileProgressList(prev => prev.map(p => p.name === file.name ? { ...p, status: 'error' } : p));
+                         throw e;
                     }
-                }
-            });
+                })
+            );
+
+            setProgressText("Almost there! Generating your flipbooks...");
+
+            // 2. Create Flipbooks
+            // We'll try sending all keys with mode SEPARATELY
+            const payload = {
+                pdfKey: uploadedKeys, // Array of keys
+                mode: FlipbookUploadMode.SEPARATELY,
+                fileName: pendingFiles.map(f => f.name) // Send names array
+            };
+
+            const genRes = await CreateFlipbookFromR2Api(payload);
+            const bookIds = genRes?.bookIds || genRes?.data?.bookIds || (genRes?.book?._id ? [genRes.book._id] : []);
+
+            if (bookIds.length) {
+                 toast.success("All flipbooks created successfully 🎉");
+                 fetchFlipbooks();
+                 setTimeout(() => {
+                     setUploadDialogOpen(false);
+                     setMultiFileDialogOpen(false);
+                     setPendingFiles([]);
+                 }, 1000);
+            } else {
+                 toast.error("Flipbook generation failed");
+            }
+
         } catch (err) {
             toast.error("Failed to upload", { description: err.message });
             setUploadDialogOpen(false);
