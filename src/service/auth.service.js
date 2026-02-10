@@ -60,7 +60,7 @@ export const UpdateProfileApi = async (data) => {
     return response.data;
 }
 
-export const GetUsersWithFlipbookCountApi = async (offset = 0) => {
-    const response = await ApiClient({ skipLogout: true }).get(`/auth/get-users-with-flipbook-count?offset=${offset}`);
+export const GetUsersWithFlipbookCountApi = async (offset = 0, limit = 10) => {
+    const response = await ApiClient({ skipLogout: true }).get(`/auth/get-users-with-flipbook-count?offset=${offset}&limit=${limit}`);
     return response.data;
 }

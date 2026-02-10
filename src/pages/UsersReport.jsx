@@ -1,81 +1,57 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GetUsersWithFlipbookCountApi } from '@/service/auth.service';
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader } from '@/components/ui/loader';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, User, Copy, Check } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { User, Copy, Check } from 'lucide-react';
 import { format } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
+import { Skeleton } from '@/components/ui/skeleton';
+import TablePagination from '@/utils/TablePagination';
+import { toast } from 'sonner';
 
 export default function UsersReport() {
     const [users, setUsers] = useState([]);
     const [totalCount, setTotalCount] = useState(0);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [offset, setOffset] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1);
     const [copiedEmail, setCopiedEmail] = useState(null);
-    const limit = 20;
-    const navigate = useNavigate();
+    const recordsPerPage = 10;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                // Pass the current offset to the API
-                const responseCallback = await GetUsersWithFlipbookCountApi(offset);
-
-                // Based on the provided JSON: responseCallback.data.users and responseCallback.data.totalCount
-                // But the previous implementation assumed responseCallback might be the data itself.
-                // Let's handle both cases flexibly or stick to the new structure given by user.
-                // User provided structure: { status: 200, data: { users: [], totalCount: 39 }, ... }
-
-                let fetchedUsers = [];
-                let fetchedTotal = 0;
-
-                if (responseCallback?.data?.users) {
-                    fetchedUsers = responseCallback.data.users;
-                    fetchedTotal = responseCallback.data.totalCount || 0;
-                } else if (responseCallback?.users) {
-                    // Fallback for flat structure
-                    fetchedUsers = responseCallback.users;
-                    fetchedTotal = responseCallback.totalCount || 0;
-                } else if (Array.isArray(responseCallback)) {
-                    // Fallback if API returns just array
-                    fetchedUsers = responseCallback;
-                    fetchedTotal = responseCallback.length; // Can't know real total if just array
-                }
-
-                setUsers(fetchedUsers);
-                setTotalCount(fetchedTotal);
-
+                const offset = (currentPage - 1) * recordsPerPage;
+                const response = await GetUsersWithFlipbookCountApi(offset, recordsPerPage);
+                setUsers(response.data.users);
+                setTotalCount(response.data.totalCount || 0);
             } catch (err) {
-                console.error("Error fetching users report:", err);
-                setError("Failed to load users report.");
-                navigate('/');
+                toast.error("Users report fetch failed", {
+                    description: err.message || "Oops! Something went wrong.",
+                });
             } finally {
                 setLoading(false);
             }
         };
 
         fetchData();
-    }, [offset, navigate]);
+    }, [currentPage]);
 
-    const handlePrevious = () => {
-        setOffset((prev) => Math.max(0, prev - limit));
-    };
+    const indexOfLastRecord = currentPage * recordsPerPage;
+    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+    const totalPages = Math.ceil(totalCount / recordsPerPage);
 
-    const handleNext = () => {
-        setOffset((prev) => prev + limit);
+    const changePage = (page) => {
+        if (page > 0 && page <= totalPages) {
+            setCurrentPage(page);
+        }
     };
 
     const copyToClipboard = async (email) => {
@@ -88,81 +64,47 @@ export default function UsersReport() {
         }
     };
 
-    // Improved Next button logic:
-    // Disable if loading
-    // OR if we have displayed all available records (offset + users.length >= totalCount)
-    // If totalCount is 0 or unavailable, fallback to checking if users.length < limit
-    const isNextDisabled = loading || (totalCount > 0 ? (offset + users.length >= totalCount) : (users.length < limit));
-
-    if (loading && offset === 0 && users.length === 0) {
-        return (
-            <div className="flex justify-center items-center h-screen">
-                <Loader />
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="flex justify-center items-center h-screen text-red-500">
-                {error}
-            </div>
-        );
-    }
-
     return (
         <div className="p-8">
             <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                    <div className="space-y-1">
-                        <CardTitle className="text-xl">Users Report</CardTitle>
-                        <CardDescription>
-                            Showing {users.length > 0 ? offset + 1 : 0} - {offset + users.length} of {totalCount} users
-                        </CardDescription>
-                    </div>
-                    <Badge variant="secondary" className="px-3 py-1 font-normal">
-                        Page {Math.floor(offset / limit) + 1}
-                    </Badge>
+                <CardHeader>
+                    <CardTitle>Users Report</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="rounded-md border">
+                    <div className="border rounded-lg overflow-hidden">
                         <Table>
                             <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-[60px]">#</TableHead>
-                                    <TableHead>User</TableHead>
-                                    <TableHead>Email</TableHead>
-                                    <TableHead>Created At</TableHead>
-                                    <TableHead className="text-right">Flipbook Count</TableHead>
+                                <TableRow className="bg-gray-50">
+                                    <TableHead className="font-medium w-[60px]">No</TableHead>
+                                    <TableHead className="font-medium">User</TableHead>
+                                    <TableHead className="font-medium">Email</TableHead>
+                                    <TableHead className="font-medium">Created At</TableHead>
+                                    <TableHead className="font-medium text-right">Flipbook Count</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {loading ? (
-                                    // Keep existing data with slight opacity or show skeleton if no data
-                                    Array.from({ length: 5 }).map((_, i) => (
-                                        <TableRow key={i} className="animate-pulse">
-                                            <TableCell><div className="h-4 bg-muted rounded w-8"></div></TableCell>
-                                            <TableCell><div className="h-4 bg-muted rounded w-32"></div></TableCell>
-                                            <TableCell><div className="h-4 bg-muted rounded w-48"></div></TableCell>
-                                            <TableCell><div className="h-4 bg-muted rounded w-24"></div></TableCell>
-                                            <TableCell className="text-right"><div className="h-4 bg-muted rounded w-12 ml-auto"></div></TableCell>
+                                    Array.from({ length: 10 }).map((_, idx) => (
+                                        <TableRow key={idx}>
+                                            <TableCell><Skeleton className="h-4 w-8" /></TableCell>
+                                            <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                                            <TableCell><Skeleton className="h-4 w-48" /></TableCell>
+                                            <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                                            <TableCell className="text-right"><Skeleton className="h-4 w-12 ml-auto" /></TableCell>
                                         </TableRow>
                                     ))
                                 ) : users.length > 0 ? (
                                     users.map((user, index) => (
                                         <TableRow key={user.id || index}>
-                                            <TableCell className="font-medium">{offset + index + 1}</TableCell>
-                                            <TableCell>
+                                            <TableCell className="text-sm font-medium">{indexOfFirstRecord + index + 1}</TableCell>
+                                            <TableCell className="text-sm">
                                                 <div className="flex items-center gap-2">
-                                                    <div className="h-8 w-8 rounded-full bg-muted flex items-center justify-center">
-                                                        <User className="h-4 w-4 text-muted-foreground" />
-                                                    </div>
                                                     <span className="font-medium">
                                                         {user.name || (user.firstName ? `${user.firstName} ${user.lastName || ''}` : 'N/A')}
                                                     </span>
                                                 </div>
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="text-sm">
                                                 <div className="flex items-center gap-2 group">
                                                     <span>{user.email || 'N/A'}</span>
                                                     {user.email && (
@@ -182,14 +124,14 @@ export default function UsersReport() {
                                                     )}
                                                 </div>
                                             </TableCell>
-                                            <TableCell>
+                                            <TableCell className="text-sm">
                                                 {user.createdAt ? (
                                                     <span title={new Date(user.createdAt).toString()}>
                                                         {format(new Date(user.createdAt), 'PPP')}
                                                     </span>
                                                 ) : 'N/A'}
                                             </TableCell>
-                                            <TableCell className="text-right font-bold">
+                                            <TableCell className="text-sm text-right font-bold">
                                                 {user.flipbookCount ?? user.count ?? 0}
                                             </TableCell>
                                         </TableRow>
@@ -205,25 +147,15 @@ export default function UsersReport() {
                         </Table>
                     </div>
 
-                    <div className="flex items-center justify-end space-x-2 py-4">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handlePrevious}
-                            disabled={offset === 0 || loading}
-                        >
-                            <ChevronLeft className="h-4 w-4 mr-2" />
-                            Previous
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={handleNext}
-                            disabled={isNextDisabled}
-                        >
-                            Next
-                            <ChevronRight className="h-4 w-4 ml-2" />
-                        </Button>
+                    {users.length > 0 && (
+                        <TablePagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onChangePage={changePage}
+                        />
+                    )}
+                    <div className="text-sm text-gray-500 mt-4 text-center">
+                        Showing {users.length === 0 ? 0 : indexOfFirstRecord + 1}-{Math.min(indexOfLastRecord, totalCount)} of {totalCount} users
                     </div>
                 </CardContent>
             </Card>

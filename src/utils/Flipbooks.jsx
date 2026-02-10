@@ -317,7 +317,7 @@ export default function Flipbooks({ isLoading, flipbooks, isSidebarOpen, setFlip
         const isSelectionMode = selectedFlipbooks.length > 0;
 
         return (
-            <div className="p-6 max-md:p-3 pt-0">
+            <div className="md:p-6 p-3 max-w-[100vw] overflow-auto space-y-4 pt-0">
                 <div className="space-y-3 sm:space-y-4">
                     {isLoading
                         ? [...Array(6)].map((_, index) => <ListSkeleton key={index} />)
