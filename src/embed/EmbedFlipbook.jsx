@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import LoadingButton from "@/utils/LoadingButton";
 import { Lock } from "lucide-react";
 import { GetConfigApi, GetPublishFlipbookApi, VerifyFlipbookPasswordApi } from "@/service/flipbook.publish.service";
+import { ResolveDomainApi } from "@/service/custom.domain.service";
 import { CurrencyProvider } from "@/context/CurrencyContext";
 import { ViewModeProvider } from "@/context/ViewModeContext";
 import { Loader } from "@/components/ui/loader";
@@ -88,6 +89,23 @@ export default function EmbedFlipbook() {
                 }
                 setVisibilityChecked(true);
             } catch (e) {
+                // Proactive redirect for custom domains on unauthorized errors
+                const host = window.location.host.toLowerCase();
+                const systemDomains = ["flipdrag.com", "app.flipdrag.com", "localhost"];
+                const isCustom = !systemDomains.some(d => host.includes(d));
+
+                if (isCustom && (e.message?.includes("Unauthorized access") || e.message?.includes("from this domain"))) {
+                    try {
+                        const domainRes = await ResolveDomainApi();
+                        if (domainRes.success && domainRes.data.workspaceId) {
+                            navigate(`/profile/${domainRes.data.workspaceId}`, { replace: true });
+                            return;
+                        }
+                    } catch (domainErr) {
+                        console.error("Automatic redirect failed", domainErr);
+                    }
+                }
+
                 toast.error('Failed to fetch flipbook data', {
                     description: e.message,
                 });
