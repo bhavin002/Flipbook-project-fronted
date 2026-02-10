@@ -15,6 +15,7 @@ import {
     LinkedinShareButton,
 } from "react-share"
 import { getPublicUrl } from '@/utils/Helper';
+import QRCode from "qrcode";
 
 export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalOpen, flipbookId, container, visibilitySettings }) {
     const [copied, setCopied] = useState(false)

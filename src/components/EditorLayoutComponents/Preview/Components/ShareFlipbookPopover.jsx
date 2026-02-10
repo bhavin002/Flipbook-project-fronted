@@ -16,6 +16,7 @@ import {
 } from "react-share";
 import QRCode from "qrcode";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 import { getPublicUrl } from '@/utils/Helper';
 
 export default function ShareFlipbookPopover({ children, flipbookId, visibilitySettings, container }) {
