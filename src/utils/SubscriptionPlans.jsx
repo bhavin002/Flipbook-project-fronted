@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Loader2, Crown, RefreshCw } from "lucide-react";
@@ -7,14 +6,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { cancelSubscription, createCheckoutSession, getAllPlans, reactiveSubscription } from '@/service/subscription.service';
 import { toast } from 'sonner';
 import { PlanCardSkeleton, TabContentSkeleton } from '@/utils/Skeleton';
-import { getData } from '@/utils/datas';
 import ConfirmationDialog from '@/utils/ConfirmationDialog';
 
 export default function SubscriptionPlans({ showReactivationBanner = true }) {
     const [isLoading, setIsLoading] = useState(false);
     const [plans, setPlans] = useState([]);
     const [currentSubscription, setCurrentSubscription] = useState(null);
-    const [isYearly, setIsYearly] = useState(false);
     const [activeTab, setActiveTab] = useState("starter");
     const [upgradeLoading, setUpgradeLoading] = useState(null);
     const [reactivatingPlan, setReactivatingPlan] = useState(false);
@@ -43,98 +40,33 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
     }, []);
 
     const processPlans = () => {
-        if (!plans.length) return { monthly: [], yearly: [] };
+        if (!plans.length) return [];
 
-        const monthly = [];
-        const yearly = [];
+        // Filter only LTD plans
+        const ltdPlans = plans.filter(plan => plan.isLTDPlan === true);
+        
+        if (!ltdPlans.length) return [];
 
-        const planGroups = {};
-        let trialPlan = null;
+        // Sort by sequence and process LTD plans
+        const sortedPlans = [...ltdPlans].sort((a, b) => a.sequence - b.sequence);
 
-        const sortedPlans = [...plans].sort((a, b) => a.sequence - b.sequence);
-
-        sortedPlans.forEach(plan => {
-            if (plan.isTrialPlan) {
-                trialPlan = plan;
-                return;
-            }
-
-            const planType = plan.name.split(' ')[0].toLowerCase();
-
-            if (!planGroups[planType]) {
-                planGroups[planType] = { monthly: null, yearly: null, sequence: plan.sequence };
-            }
-
-            if (plan.interval === 0) {
-                planGroups[planType].monthly = plan;
-            } else if (plan.interval === 1) {
-                planGroups[planType].yearly = plan;
-            }
-        });
-
-        if (trialPlan) {
-            const trialFeatures = getFeaturesByPlanType('trial');
-            const trialPlanData = {
-                id: 'trial',
-                title: trialPlan.name,
-                price: 'Free',
-                billedAs: '14 day free trial',
-                features: trialFeatures,
-                planId: trialPlan._id,
-                buttonLabel: trialPlan.buttonLabel,
-                action: trialPlan.action,
-                isCurrentPlan: trialPlan.isCurrentPlan,
-                sequence: trialPlan.sequence
+        const processedPlans = sortedPlans.map(plan => {
+            const planId = plan.name.toLowerCase().replace(/\s+/g, '-');
+            return {
+                id: planId,
+                title: plan.name,
+                price: `$${plan.rate}`,
+                billedAs: 'Lifetime Deal',
+                features: plan.features || [],
+                planId: plan._id,
+                buttonLabel: plan.buttonLabel,
+                action: plan.action,
+                isCurrentPlan: plan.isCurrentPlan,
+                sequence: plan.sequence
             };
-            monthly.push(trialPlanData);
-            yearly.push(trialPlanData);
-        }
-
-        const sortedPlanGroups = Object.entries(planGroups).sort(([, a], [, b]) => a.sequence - b.sequence);
-        sortedPlanGroups.forEach(([type, planData]) => {
-            const baseFeatures = getFeaturesByPlanType(type);
-
-            if (planData.monthly) {
-                monthly.push({
-                    id: type,
-                    title: planData.monthly.name.replace(' Monthly', ''),
-                    price: `₹${planData.monthly.rate}`,
-                    billedAs: 'Billed monthly',
-                    features: baseFeatures,
-                    planId: planData.monthly._id,
-                    buttonLabel: planData.monthly.buttonLabel,
-                    action: planData.monthly.action,
-                    isCurrentPlan: planData.monthly.isCurrentPlan,
-                    sequence: planData.monthly.sequence
-                });
-            }
-
-            if (planData.yearly) {
-                const monthlyRate = Math.round(planData.yearly.rate / 12);
-                yearly.push({
-                    id: type,
-                    title: planData.yearly.name.replace(' Yearly', ''),
-                    price: `₹${monthlyRate}`,
-                    billedAs: `₹${planData.yearly.rate} billed annually`,
-                    features: baseFeatures,
-                    planId: planData.yearly._id,
-                    buttonLabel: planData.yearly.buttonLabel,
-                    action: planData.yearly.action,
-                    isCurrentPlan: planData.yearly.isCurrentPlan,
-                    sequence: planData.yearly.sequence
-                });
-            }
         });
 
-        monthly.sort((a, b) => a.sequence - b.sequence);
-        yearly.sort((a, b) => a.sequence - b.sequence);
-
-        return { monthly, yearly };
-    };
-
-    const getFeaturesByPlanType = (planType) => {
-        const featuresMap = getData("planFeatures")
-        return featuresMap[planType] || [];
+        return processedPlans;
     };
 
     const getCurrentPlanName = () => {
@@ -181,11 +113,7 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
         }
     };
 
-    const processedPlans = processPlans();
-    const activePlans = isYearly ? processedPlans.yearly : processedPlans.monthly;
-
-    const enterprisePlans = getData('enterprisePlans');
-    const activeEnterprisePlan = isYearly ? enterprisePlans.yearly : enterprisePlans.monthly;
+    const activePlans = processPlans();
 
     useEffect(() => {
         if (activePlans.length > 0 && !activePlans.find(p => p.id === activeTab)) {
@@ -275,15 +203,6 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
         setConfirmDialog({ open: false, planId: null, action: null });
     };
 
-    const handleContactSales = () => {
-        if (window.$crisp) {
-            window.$crisp.push(["do", "chat:open"]);
-        } else {
-            toast.error("Chat support not available", {
-                description: "Please contact support directly"
-            });
-        }
-    };
 
     return (
         <>
@@ -327,7 +246,7 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                 </div>
             )}
 
-            <div className="flex justify-center gap-4 mb-8">
+            {/* <div className="flex justify-center gap-4 mb-8">
                 <span className={`font-medium ${!isYearly ? 'text-violet-600' : 'text-gray-500'}`}>Monthly</span>
                 <Switch
                     checked={isYearly}
@@ -336,9 +255,9 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                     disabled={isLoading}
                 />
                 <span className={`font-medium ${isYearly ? 'text-violet-600' : 'text-gray-500'}`}>Yearly</span>
-            </div>
+            </div> */}
 
-            <div className="hidden lg:grid lg:grid-cols-3 gap-6 mb-8">
+            <div className="hidden lg:grid lg:grid-cols-3 gap-6">
                 {isLoading ? (
                     Array(3).fill(0).map((_, index) => (
                         <PlanCardSkeleton key={index} />
@@ -357,7 +276,7 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                                 <Badge
                                     className="absolute -top-3 right-4 bg-violet-600 text-white px-3 py-1 text-xs font-semibold shadow-sm"
                                 >
-                                    {plan.id !== "trial" && <Crown className="w-3 h-3 mr-1" />}
+                                    <Crown className="w-3 h-3 mr-1" />
                                     Current Plan
                                 </Badge>
                             )}
@@ -365,12 +284,10 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                             <h3 className="text-xl font-bold mb-1">{plan.title}</h3>
                             <div className="mb-6">
                                 <span className="text-3xl font-bold">{plan.price}</span>
-                                {plan.id !== 'trial' && <span className="text-gray-500">/mo</span>}
                                 <p className="text-sm text-gray-500 mt-1">{plan.billedAs}</p>
                             </div>
 
                             <Button
-                                className="mb-6"
                                 onClick={() => handleUpgrade(plan.planId, plan.action)}
                                 disabled={upgradeLoading === plan.planId || plan.action === "none"}
                             >
@@ -384,14 +301,16 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                                 )}
                             </Button>
 
-                            <div className="space-y-3">
-                                {plan.features.map((feature, idx) => (
-                                    <div key={idx} className="flex items-start gap-2">
-                                        <Check className="text-primary h-5 w-5 mt-0.5 flex-shrink-0" />
-                                        <span className="text-sm">{feature}</span>
-                                    </div>
-                                ))}
-                            </div>
+                            {plan.features && plan.features.length > 0 && (
+                                <div className="space-y-3">
+                                    {plan.features.map((feature, idx) => (
+                                        <div key={idx} className="flex items-start gap-2">
+                                            <Check className="text-primary h-5 w-5 mt-0.5 flex-shrink-0" />
+                                            <span className="text-sm">{feature}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     ))
                 )}
@@ -445,7 +364,6 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                                 <h3 className="text-xl font-bold mb-1">{plan.title}</h3>
                                 <div className="mb-6">
                                     <span className="text-3xl font-bold">{plan.price}</span>
-                                    {plan.id !== 'trial' && <span className="text-gray-500">/mo</span>}
                                     <p className="text-sm text-gray-500 mt-1">{plan.billedAs}</p>
                                 </div>
 
@@ -464,14 +382,16 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                                     )}
                                 </Button>
 
-                                <div className="space-y-3">
-                                    {plan.features.map((feature, idx) => (
-                                        <div key={idx} className="flex items-start gap-2">
-                                            <Check className="text-primary h-5 w-5 mt-0.5 flex-shrink-0" />
-                                            <span className="text-sm">{feature}</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                {plan.features && plan.features.length > 0 && (
+                                    <div className="space-y-3">
+                                        {plan.features.map((feature, idx) => (
+                                            <div key={idx} className="flex items-start gap-2">
+                                                <Check className="text-primary h-5 w-5 mt-0.5 flex-shrink-0" />
+                                                <span className="text-sm">{feature}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
                             </TabsContent>
                         ))}
                     </Tabs>
@@ -480,25 +400,6 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                         No plans available
                     </div>
                 )}
-            </div>
-
-            <div className="border rounded-lg p-6">
-                <h3 className="text-2xl font-bold mb-6">{activeEnterprisePlan.title}</h3>
-                
-                <div className="space-y-4">
-                    {activeEnterprisePlan.features.map((feature, idx) => (
-                        <div key={idx} className="flex items-start gap-2">
-                            <Check className="text-primary h-5 w-5 mt-0.5 flex-shrink-0" />
-                            <span>{feature}</span>
-                        </div>
-                    ))}
-                </div>
-                
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 mt-6">
-                    <Button onClick={handleContactSales}>
-                        Contact sales
-                    </Button>
-                </div>
             </div>
 
             <ConfirmationDialog

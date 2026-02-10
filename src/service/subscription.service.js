@@ -1,12 +1,12 @@
 import ApiClient from "@/utils/ApiClient"
 
 export const getAllPlans = async () => {
-    const response = await ApiClient().get(`/subscription-plan/get`);
+    const response = await ApiClient().get(`/subscription-plan/ltd-get`);
     return response.data;
 }
 
 export const createCheckoutSession = async (planId) => {
-    const response = await ApiClient().get(`/stripe/create-checkout-session/${planId}`);
+    const response = await ApiClient().get(`/dodo/create-checkout-session/${planId}`);
     return response.data;
 }
 
