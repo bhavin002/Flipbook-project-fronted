@@ -16,7 +16,7 @@ import {
 } from "react-share";
 import QRCode from "qrcode";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { getPublicUrl } from '@/utils/Helper';
 
 export default function ShareFlipbookPopover({ children, flipbookId, visibilitySettings, container }) {
     const [open, setOpen] = useState(false);
@@ -24,7 +24,7 @@ export default function ShareFlipbookPopover({ children, flipbookId, visibilityS
     const [qrCodeDataURL, setQrCodeDataURL] = useState("");
     const canvasRef = useRef(null);
 
-    const shareUrl = `${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}`;
+    const shareUrl = getPublicUrl(`/public-flipbook/${flipbookId}`);
 
     useEffect(() => {
         if (open && flipbookId) {
