@@ -221,7 +221,7 @@ export default function MyProfile() {
                                     onMouseLeave={() => setHoveredId(null)}
                                 >
                                     <a
-                                        href={fb.type === 'bookshelf' ? `${import.meta.env.VITE_WEBSITE_URL}/public-bookshelf/${fb._id}` : `${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${fb._id}`}
+                                        href={fb.type === 'bookshelf' ? `/public-bookshelf/${fb._id}` : `/public-flipbook/${fb._id}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="flex-grow flex items-end justify-center"
@@ -235,7 +235,7 @@ export default function MyProfile() {
                                     </a>
                                     <div className="space-y-2">
                                         <a
-                                            href={fb.type === 'bookshelf' ? `${import.meta.env.VITE_WEBSITE_URL}/public-bookshelf/${fb._id}` : `${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${fb._id}`}
+                                            href={fb.type === 'bookshelf' ? `/public-bookshelf/${fb._id}` : `/public-flipbook/${fb._id}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             style={{ textDecoration: 'none' }}

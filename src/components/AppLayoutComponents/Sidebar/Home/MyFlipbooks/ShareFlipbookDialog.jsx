@@ -14,7 +14,7 @@ import {
     WhatsappShareButton,
     LinkedinShareButton,
 } from "react-share"
-import QRCode from "qrcode"
+import { getPublicUrl } from '@/utils/Helper';
 
 export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalOpen, flipbookId, container, visibilitySettings }) {
     const [copied, setCopied] = useState(false)
@@ -22,7 +22,7 @@ export default function ShareFlipbookDialog({ isShareModalOpen, setIsShareModalO
     const canvasRef = useRef(null)
     const isRTL = visibilitySettings?.rightToLeftOrientation;
 
-    const shareUrl = `${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}`;
+    const shareUrl = getPublicUrl(`/public-flipbook/${flipbookId}`);
 
     useEffect(() => {
         if (isShareModalOpen && flipbookId) {

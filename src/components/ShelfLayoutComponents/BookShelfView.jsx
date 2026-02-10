@@ -333,7 +333,7 @@ export default function BookShelfView({ id, isPublicView = false }) {
                                             >
                                                 <div className="rounded-lg flex justify-center items-end h-full relative group">
                                                     <a
-                                                        href={`${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${book._id}`}
+                                                        href={`/public-flipbook/${book._id}`}
                                                         target={bookshelfSettings.openInNewTab ? "_blank" : "_self"}
                                                         rel="noopener noreferrer"
                                                         className="block"

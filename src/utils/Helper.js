@@ -30,8 +30,8 @@ export const duplicateStage = async (mainStage, setMainStage, index, setSelected
     try {
         setIsLoading(true);
         const temp = JSON.parse(JSON.stringify(mainStage[index]));
-        const currentShapes = mainStage[index].stageref && mainStage[index].stageref.current 
-            ? mainStage[index].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs))) 
+        const currentShapes = mainStage[index].stageref && mainStage[index].stageref.current
+            ? mainStage[index].stageref.current.children[0].children[1].children.map(e => JSON.parse(JSON.stringify(e.attrs)))
             : (mainStage[index].shapes || []);
 
         const newShapes = [];
@@ -199,7 +199,7 @@ const addEntryInDB = async (htmlType, id, setIsLoading) => {
 
 export const duplicateShapes = async (mainStage, selectedIndex, setMainStage, setIsLoading, selectedShape) => {
     if (!selectedShape || selectedShape.length === 0) return;
-    
+
     // We handle duplication of all selected shapes properly
     const selectedShapesAttrs = mainStage[selectedIndex]?.selectedShapes.map((e) => e.attrs);
     const newShapes = [];
@@ -295,6 +295,21 @@ export const copyInAllPages = async (mainStage, selectedIndex, setMainStage, set
     setMainStage([...mainStage]);
 }
 
+export const getPublicUrl = (path = "") => {
+    const host = window.location.host.toLowerCase();
+    const systemDomains = ["flipdrag.com", "app.flipdrag.com", "www.flipdrag.com", "localhost", "127.0.0.1", "api.flipdrag.com"];
+    const isCustom = !systemDomains.some(d => host.split(":")[0].includes(d));
+
+    if (isCustom) {
+        // If on a custom domain, use the current origin
+        return `${window.location.origin}${path}`;
+    } else {
+        // If on a system domain, use the configured website URL
+        const websiteUrl = import.meta.env.VITE_WEBSITE_URL || "https://flipdrag.com";
+        return `${websiteUrl}${path}`;
+    }
+}
+
 export const IsPublished = () => {
     const currentUrlBasePath = window.location.pathname.split('/')[1];
     if (currentUrlBasePath === "public-flipbook") {
@@ -327,30 +342,30 @@ export const detectDeviceType = () => {
 }
 
 export const isPngImage = async (src) => {
-  if (!src) return false;
-    
-  const srcStr = String(src).toLowerCase();
+    if (!src) return false;
 
-  // Base64 PNG
-  if (srcStr.startsWith('data:image/png')) return true;
+    const srcStr = String(src).toLowerCase();
 
-  // Check for any extension in the filename
-  const cleanSrc = srcStr.split('?')[0];
-  const filename = cleanSrc.split('/').pop() || '';
+    // Base64 PNG
+    if (srcStr.startsWith('data:image/png')) return true;
 
-  // If it has an extension (contains a dot), trust the extension
-  if (filename.includes('.')) {
-    return filename.toLowerCase().endsWith('.png');
-  }
+    // Check for any extension in the filename
+    const cleanSrc = srcStr.split('?')[0];
+    const filename = cleanSrc.split('/').pop() || '';
 
-  try {
-    const response = await fetch(src, { method: 'HEAD' });
-    const contentType = response.headers.get('content-type');
-    return contentType === 'image/png';
-  } catch (err) {
-    console.error('PNG check failed:', err);
-    return false;
-  }
+    // If it has an extension (contains a dot), trust the extension
+    if (filename.includes('.')) {
+        return filename.toLowerCase().endsWith('.png');
+    }
+
+    try {
+        const response = await fetch(src, { method: 'HEAD' });
+        const contentType = response.headers.get('content-type');
+        return contentType === 'image/png';
+    } catch (err) {
+        console.error('PNG check failed:', err);
+        return false;
+    }
 };
 
 export const applyTemplate = async (templateId, mainStage, index, setMainStage, setIsLoading, flipbookId, setLatestSettings, setLatestJson) => {
@@ -393,7 +408,7 @@ export const applyTemplate = async (templateId, mainStage, index, setMainStage, 
         setMainStage([...mainStage]);
 
         // Check if any shop widgets are present in the new shapes
-        const hasShopWidget = finalNewStageData.some(page => 
+        const hasShopWidget = finalNewStageData.some(page =>
             page.shapes.some(shape => shape.htmlType === 'shop-area' || shape.htmlType === 'shop-button')
         );
 
