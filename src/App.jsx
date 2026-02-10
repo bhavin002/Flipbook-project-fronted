@@ -191,6 +191,12 @@ export default function App() {
     );
   }
 
+  // If on a custom domain and the status is NOT active, redirect to main site
+  if (domainInfo?.isCustom && domainInfo?.status !== "active") {
+    window.location.href = import.meta.env.VITE_WEBSITE_URL || "https://flipdrag.com";
+    return null;
+  }
+
   // If on a custom domain and the path is NOT allowed (not a public route or valid slug)
   if (domainInfo?.isCustom && !domainInfo?.isPathAllowed) {
     // Only redirect if we are NOT already on the target profile page to avoid loops
