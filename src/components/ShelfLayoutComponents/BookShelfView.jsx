@@ -1,4 +1,6 @@
 import { GetShelfPreview } from "@/service/bookshelf.service"
+import { ResolveDomainApi } from "@/service/custom.domain.service"
+import { useNavigate } from "react-router-dom"
 import { useEffect, useState, useRef } from "react"
 import { toast } from "sonner"
 import bookLogo from '/assets/book_thumbnail.jpg';
@@ -9,6 +11,7 @@ import { detectDeviceType } from "@/utils/Helper";
 import { UpdateFlipbookViewCountApi } from "@/service/flipbook.publish.service";
 
 export default function BookShelfView({ id, isPublicView = false }) {
+    const navigate = useNavigate();
     const { bookshelfSettings } = useBookshelf();
     const [data, setData] = useState(null);
     const [filteredData, setFilteredData] = useState(null);
@@ -58,6 +61,23 @@ export default function BookShelfView({ id, isPublicView = false }) {
                 setData(response.data);
                 setFilteredData(response.data); // Initialize filteredData with all books
             } catch (error) {
+                // Proactive redirect for custom domains on unauthorized errors
+                const host = window.location.host.toLowerCase();
+                const systemDomains = ["flipdrag.com", "app.flipdrag.com", "localhost"];
+                const isCustom = !systemDomains.some(d => host.includes(d));
+
+                if (isCustom && (error.message?.includes("Unauthorized access") || error.message?.includes("from this domain"))) {
+                    try {
+                        const domainRes = await ResolveDomainApi();
+                        if (domainRes.success && domainRes.data.workspaceId) {
+                            navigate(`/profile/${domainRes.data.workspaceId}`, { replace: true });
+                            return;
+                        }
+                    } catch (domainErr) {
+                        console.error("Automatic redirect failed", domainErr);
+                    }
+                }
+
                 toast.error("Failed to fetch bookshelf", {
                     description: error.message
                 })
