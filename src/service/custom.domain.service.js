@@ -8,7 +8,11 @@ export const ResolveDomainApi = async () => {
 };
 
 export const AddDomainApi = async (data) => {
-    const response = await ApiClient().post("/custom-domain/add", data);
+    const response = await ApiClient().post("/custom-domain/add", data, {
+        headers: {
+            'Content-Type': "multipart/form-data"
+        }
+    });
     return response.data;
 };
 
