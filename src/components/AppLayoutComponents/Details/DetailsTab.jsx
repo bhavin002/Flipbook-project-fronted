@@ -35,7 +35,7 @@ export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, set
     const navigate = useNavigate();
 
     const handleCopy = () => {
-        const shareUrl = `${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}`;
+        const shareUrl = `${import.meta.env.VITE_WEBSITE_URL}/public/flipbook/${flipbookId}`;
         navigator.clipboard.writeText(shareUrl)
             .then(() => {
                 setCopied(true);
@@ -90,7 +90,7 @@ export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, set
         return <DetailsTabSkeleton />;
     }
 
-    const shareUrl = `${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}`;
+    const shareUrl = `${import.meta.env.VITE_WEBSITE_URL}/public/flipbook/${flipbookId}`;
 
     return (
         <div className="py-6 max-w-[100vw] overflow-auto space-y-4">
@@ -105,7 +105,7 @@ export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, set
                 <CardContent className="space-y-4">
                     <div className="flex items-center space-x-2">
                         <Input
-                            value={`${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}`}
+                            value={`${import.meta.env.VITE_WEBSITE_URL}/public/flipbook/${flipbookId}`}
                             readOnly
                         />
                         <Button variant="outline" onClick={handleCopy}>
@@ -206,7 +206,7 @@ export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, set
                             </div>
                             <div className="flex items-center space-x-2">
                                 <Input
-                                    value={`${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}`}
+                                    value={`${import.meta.env.VITE_WEBSITE_URL}/public/flipbook/${flipbookId}`}
                                     readOnly
                                 />
                                 <Button variant="outline" onClick={handleCopy}>
@@ -330,7 +330,7 @@ export default function DetailsTab({ flipbookId, flipbookDetails, isLoading, set
                         <Button
                             variant="outline"
                             onClick={() => {
-                                window.open(`${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}`, "_blank");
+                                window.open(`${import.meta.env.VITE_WEBSITE_URL}/public/flipbook/${flipbookId}`, "_blank");
                             }}
                             className="text-primary cursor-pointer font-medium"
                         >

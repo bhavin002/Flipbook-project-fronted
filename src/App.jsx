@@ -122,10 +122,10 @@ export default function App() {
 
   useEffect(() => {
     const disallowedRoutes = [
-      '/public-flipbook',
-      '/embed-flipbook',
-      '/public-bookshelf',
-      '/embed-bookshelf',
+      '/public/flipbook',
+      '/embed/flipbook',
+      '/public/bookshelf',
+      '/embed/bookshelf',
       '/profile',
       '/customize'
     ];
@@ -227,10 +227,10 @@ export default function App() {
         <Route path="/auth/forgot-password/:token" element={<PublicRoute><ResetPassword /></PublicRoute>} />
         <Route path="/account/confirm-account" element={<PublicRoute><ConfirmAccount /></PublicRoute>} />
         <Route path="/accept-invitation/:token" element={<VerifyReader />} />
-        <Route path="/public-flipbook/:id" element={<PublicFlipbook />} />
-        <Route path="/embed-flipbook/:id" element={<EmbedFlipbook />} />
-        <Route path="/public-bookshelf/:id" element={<PublicBookShelf />} />
-        <Route path="/embed-bookshelf/:id" element={<EmbedBookShelf />} />
+        <Route path="/public/flipbook/:id" element={<PublicFlipbook />} />
+        <Route path="/embed/flipbook/:id" element={<EmbedFlipbook />} />
+        <Route path="/public/bookshelf/:id" element={<PublicBookShelf />} />
+        <Route path="/embed/bookshelf/:id" element={<EmbedBookShelf />} />
         <Route path="/profile/:id" element={<MyProfile />} />
 
         {/* Catch-all for custom domain resolved IDs - placed before private routes */}

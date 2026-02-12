@@ -9,7 +9,7 @@ export default function PublicFlipbook({ idOverride }) {
 
     return (
         <div className="w-full h-full relative">
-            <iframe data-src={`/embed-flipbook/${id}`} width="100%" height="100%" seamless="seamless" scrolling="no" frameBorder="0" allowTransparency="true" allowFullScreen="true" allow="clipboard-read; clipboard-write; autoplay;" autoFocus="true" src={`/embed-flipbook/${id}`}></iframe>
+            <iframe data-src={`/embed/flipbook/${id}`} width="100%" height="100%" seamless="seamless" scrolling="no" frameBorder="0" allowTransparency="true" allowFullScreen="true" allow="clipboard-read; clipboard-write; autoplay;" autoFocus="true" src={`/embed/flipbook/${id}`}></iframe>
         </div>
     );
 }

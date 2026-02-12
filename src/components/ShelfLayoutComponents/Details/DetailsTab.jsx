@@ -14,7 +14,7 @@ export default function DetailsTab({ flipbookId }) {
     const { bookshelfSettings } = useBookshelf();
 
     const handleCopy = () => {
-        const shareUrl = `${import.meta.env.VITE_WEBSITE_URL}/public-bookshelf/${flipbookId}`;
+        const shareUrl = `${import.meta.env.VITE_WEBSITE_URL}/public/bookshelf/${flipbookId}`;
         navigator.clipboard.writeText(shareUrl)
             .then(() => {
                 setCopied(true);
@@ -40,7 +40,7 @@ export default function DetailsTab({ flipbookId }) {
                 <CardContent className="space-y-4">
                     <div className="flex items-center space-x-2">
                         <Input
-                            value={`${import.meta.env.VITE_WEBSITE_URL}/public-bookshelf/${flipbookId}`}
+                            value={`${import.meta.env.VITE_WEBSITE_URL}/public/bookshelf/${flipbookId}`}
                             readOnly
                         />
                         <Button variant="outline" onClick={handleCopy}>
@@ -67,7 +67,7 @@ export default function DetailsTab({ flipbookId }) {
                     <Button
                         variant="outline"
                         onClick={() => {
-                            window.open(`${import.meta.env.VITE_WEBSITE_URL}/public-bookshelf/${flipbookId}`, "_blank");
+                            window.open(`${import.meta.env.VITE_WEBSITE_URL}/public/bookshelf/${flipbookId}`, "_blank");
                         }}
                         className="text-primary cursor-pointer font-medium"
                     >

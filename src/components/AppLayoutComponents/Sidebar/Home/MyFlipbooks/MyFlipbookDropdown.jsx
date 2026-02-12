@@ -146,7 +146,7 @@ export default function MyFlipbookDropdown({ status, flipbook, setFlipbooks, isT
             navigate(`/shelf/stats/${flipbook._id}`);
             closeDropdown();
         } else if (action === "open") {
-            const path = flipbook.flipbookState === "Bookshelf" ? "/public-bookshelf" : "/public-flipbook";
+            const path = flipbook.flipbookState === "Bookshelf" ? "/public/bookshelf" : "/public/flipbook";
             window.open(`${import.meta.env.VITE_WEBSITE_URL}${path}/${flipbook._id}`, '_blank');
             closeDropdown();
         } else if (action === "overview") {

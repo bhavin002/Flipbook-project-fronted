@@ -4,7 +4,7 @@ import { useEmailCustomization } from "@/context/EmailCustomizationContext";
 
 export default function EmailPreview({ flipbookId, isLoading, thumbnail, component }) {
     const { emailData } = useEmailCustomization();
-    const href = component === "flipbook" ? `${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}` : `${import.meta.env.VITE_WEBSITE_URL}/public-bookshelf/${flipbookId}`;
+    const href = component === "flipbook" ? `${import.meta.env.VITE_WEBSITE_URL}/public/flipbook/${flipbookId}` : `${import.meta.env.VITE_WEBSITE_URL}/public/bookshelf/${flipbookId}`;
 
     return (
         <Card className="w-full max-w-4xl mx-auto">

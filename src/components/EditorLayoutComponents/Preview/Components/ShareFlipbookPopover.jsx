@@ -25,7 +25,7 @@ export default function ShareFlipbookPopover({ children, flipbookId, visibilityS
     const [qrCodeDataURL, setQrCodeDataURL] = useState("");
     const canvasRef = useRef(null);
 
-    const shareUrl = getPublicUrl(`/public-flipbook/${flipbookId}`);
+    const shareUrl = getPublicUrl(`/public/flipbook/${flipbookId}`);
 
     useEffect(() => {
         if (open && flipbookId) {

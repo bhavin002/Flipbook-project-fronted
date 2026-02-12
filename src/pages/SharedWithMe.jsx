@@ -35,7 +35,7 @@ export default function SharedWithMe({ isSidebarOpen }) {
     }
 
     const handleViewFlipbook = (flipbookId) => {
-        window.open(`${import.meta.env.VITE_WEBSITE_URL}/public-flipbook/${flipbookId}`, '_blank');
+        window.open(`${import.meta.env.VITE_WEBSITE_URL}/public/flipbook/${flipbookId}`, '_blank');
     };
 
     return (
