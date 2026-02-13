@@ -243,6 +243,7 @@ export default function App() {
         <Route path="/profile/:id" element={<MyProfile />} />
 
 
+
         {/* Private/protected routes (wrapped in providers) */}
         <Route
           path="*"
