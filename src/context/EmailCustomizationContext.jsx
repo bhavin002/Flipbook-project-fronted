@@ -24,6 +24,7 @@ export const EmailCustomizationProvider = ({ children }) => {
         backgroundColor: "#e6e7e8",
         accentColor: "#7b39ed",
         logo: DEFAULT_LOGO,
+        logoId: null, // Store logo ID for backend
     });
 
     const [errors, setErrors] = useState({});
@@ -75,10 +76,11 @@ export const EmailCustomizationProvider = ({ children }) => {
         }
     };
 
-    const updateLogo = (logoUrl) => {
+    const updateLogo = (logoUrl, logoId = null) => {
         setEmailData(prev => ({
             ...prev,
-            logo: logoUrl
+            logo: logoUrl,
+            logoId: logoId
         }));
 
         if (errors.logo) {
@@ -92,7 +94,8 @@ export const EmailCustomizationProvider = ({ children }) => {
     const resetLogo = () => {
         setEmailData(prev => ({
             ...prev,
-            logo: DEFAULT_LOGO
+            logo: DEFAULT_LOGO,
+            logoId: null
         }));
 
         if (errors.logo) {
@@ -126,6 +129,7 @@ export const EmailCustomizationProvider = ({ children }) => {
             backgroundColor: "#e6e7e8",
             accentColor: "#7b39ed",
             logo: DEFAULT_LOGO,
+            logoId: null,
         });
         clearErrors();
     };

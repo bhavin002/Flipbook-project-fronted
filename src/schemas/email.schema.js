@@ -9,5 +9,5 @@ export const emailSchema = z.object({
     footerDescription: z.string().min(1, 'Footer description is required'),
     backgroundColor: z.string().min(1, 'Background color is required'),
     accentColor: z.string().min(1, 'Accent color is required'),
-    logo: z.string().url('Logo must be a valid URL'),
+    logo: z.string().min(1, 'Logo is required'),
 });

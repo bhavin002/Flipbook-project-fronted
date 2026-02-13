@@ -37,7 +37,7 @@ export default function CustomizeEmail({ flipbookId, thumbnail, component }) {
     } = useEmailCustomization();
 
     const handleLogoSelect = (selectedLogo) => {
-        updateLogo(selectedLogo.src);
+        updateLogo(selectedLogo.src, selectedLogo.id);
     };
 
     const handleDeleteLogo = () => {
@@ -65,7 +65,9 @@ export default function CustomizeEmail({ flipbookId, thumbnail, component }) {
 
             const payload = {
                 emails: emailData.emails,
-                htmlBody: emailHtml
+                subject: emailData.subject,
+                htmlBody: emailHtml,
+                logoId: emailData.logoId || null, // Pass logoId to backend
             };
 
             const response = await SendEmailApi(payload);
@@ -219,7 +221,7 @@ export default function CustomizeEmail({ flipbookId, thumbnail, component }) {
                     </div>
                     <Button
                         onClick={handleSendEmail}
-                        disabled={!emailData.emails.length > 0 || hasErrors || isLoading}
+                        disabled={emailData.emails.length === 0 || hasErrors || isLoading}
                         className="min-w-[120px]"
                     >
                         {isLoading ? <LoadingButton /> : 'Send email'}
