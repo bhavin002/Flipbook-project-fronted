@@ -237,6 +237,7 @@ export default function App() {
           <Route path="*" element={<PublicFlipbook idOverride={domainInfo.mappedFlipbookId} />} />
         )}
 
+
         {/* Private/protected routes (wrapped in providers) */}
         <Route
           path="*"
