@@ -127,7 +127,6 @@ export default function App() {
       '/public/bookshelf',
       '/embed/bookshelf',
       '/profile',
-      '/customize'
     ];
 
     const shouldShowCrisp = !disallowedRoutes.some(route => location.pathname.startsWith(route));
@@ -198,23 +197,33 @@ export default function App() {
     return null;
   }
 
-  // If on a custom domain and the path is NOT allowed (not a public route or valid slug)
-  if (domainInfo?.isCustom && !domainInfo?.isPathAllowed) {
-    // Only redirect if we are NOT already on the target profile page to avoid loops
-    const targetPath = `/profile/${domainInfo.workspaceId}`;
-    if (location.pathname !== targetPath && domainInfo.workspaceId) {
-      return <Navigate to={targetPath} replace />;
-    } else if (!domainInfo.workspaceId) {
-      // If we don't even have a workspace ID, something is wrong with the configuration
-      return <NotFound404 />;
-    }
-  }
+  // --- CUSTOM DOMAIN ROUTE ENFORCEMENT ---
+  // On custom domains, ONLY allow these specific routes.
+  // Everything else (including root /) redirects to /profile/{workspaceId}
+  if (domainInfo?.isCustom && domainInfo?.workspaceId) {
+    const allowedCustomDomainPrefixes = [
+      '/public/flipbook',
+      '/embed/flipbook',
+      '/public/bookshelf',
+      '/embed/bookshelf',
+      '/profile',
+    ];
 
-  // If hitting the root of a custom domain but no default flipbook is assigned
-  if (domainInfo?.isCustom && location.pathname === "/" && !domainInfo?.mappedFlipbookId) {
-    if (domainInfo.workspaceId) {
-      return <Navigate to={`/profile/${domainInfo.workspaceId}`} replace />;
+    const isAllowedRoute = allowedCustomDomainPrefixes.some(prefix =>
+      location.pathname.startsWith(prefix)
+    );
+
+    const targetProfilePath = `/profile/${domainInfo.workspaceId}`;
+
+    // If NOT on an allowed route, redirect to the workspace profile page
+    if (!isAllowedRoute) {
+      if (location.pathname !== targetProfilePath) {
+        return <Navigate to={targetProfilePath} replace />;
+      }
     }
+  } else if (domainInfo?.isCustom && !domainInfo?.workspaceId) {
+    // Custom domain but no workspace found — show error
+    return <NotFound404 />;
   }
 
   return (
@@ -233,10 +242,6 @@ export default function App() {
         <Route path="/embed/bookshelf/:id" element={<EmbedBookShelf />} />
         <Route path="/profile/:id" element={<MyProfile />} />
 
-        {/* Catch-all for custom domain resolved IDs - placed before private routes */}
-        {domainInfo?.isCustom && domainInfo?.mappedFlipbookId && (
-          <Route path="*" element={<PublicFlipbook idOverride={domainInfo.mappedFlipbookId} />} />
-        )}
 
         {/* Private/protected routes (wrapped in providers) */}
         <Route
