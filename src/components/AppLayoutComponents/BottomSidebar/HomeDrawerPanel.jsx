@@ -297,7 +297,7 @@ export default function HomeDrawerPanel({ onCloseDrawer }) {
             </Button>}
             <Button
               className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-600 hover:to-indigo-700"
-              onClick={() => { navigate('/settings/billing/subscription'); if (onCloseDrawer) onCloseDrawer(); }}
+              onClick={() => { navigate('/settings/billing/lifetime-deal'); if (onCloseDrawer) onCloseDrawer(); }}
             >
               <Crown className="h-4 w-4 mr-2" />Upgrade
             </Button>

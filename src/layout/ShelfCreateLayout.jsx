@@ -8,6 +8,8 @@ import { GetShelfFlipbookIdsApi } from "@/service/bookshelf.service";
 import { toast } from "sonner";
 import { useWorkspaces } from "@/context/WorkspaceContext";
 import { GetPublicFlipbookForBookshelfApi } from "@/service/flipbook.publish.service";
+import TrialExpirationBanner from "@/components/AppLayoutComponents/TrialExpirationBanner";
+import { useTrialExpiration } from "@/hooks/useTrialExpiration";
 
 export const ShelfCreateContext = createContext();
 export const useShelfCreate = () => useContext(ShelfCreateContext);
@@ -24,6 +26,7 @@ export default function ShelfCreateLayout() {
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState(null);
     const { currentWorkspace } = useWorkspaces();
+    const { shouldShowBanner } = useTrialExpiration();
 
     const isEditMode = Boolean(id);
 
@@ -181,8 +184,9 @@ export default function ShelfCreateLayout() {
                         </div>
                     </div>
                 </header>
+                <TrialExpirationBanner  />
 
-                <div className="max-md:flex mt-[64px] flex overflow-y-auto h-[calc(100vh-64px)]">
+                <div className={`max-md:flex ${shouldShowBanner ? "mt-[104px]" : "mt-[64px]"} flex overflow-y-auto ${shouldShowBanner ? "h-[calc(100vh-104px)]" : "h-[calc(100vh-64px)]"}`}>
                     <Outlet />
                 </div>
                 <PublishShelfDailog

@@ -66,7 +66,7 @@ const settingMenuItems = [
         label: 'Billing',
         path: '/settings/billing',
         subItems: [
-            { id: 'subscription', label: 'Subscription', path: '/settings/billing/subscription' },
+            { id: 'lifetime-deal', label: 'Lifetime Deal', path: '/settings/billing/lifetime-deal' },
             // { id: 'invoice', label: 'Invoices', path: '/settings/billing/invoice' }
         ]
     },

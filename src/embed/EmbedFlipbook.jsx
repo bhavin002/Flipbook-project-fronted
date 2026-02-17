@@ -223,7 +223,7 @@ export default function EmbedFlipbook() {
                 </div>
             )}
             {!publicData && !showUnlockDialog && !privateState.status && visibilityChecked && !isInitialLoading && !privateState.loading && (
-                <div className="flex items-center justify-center h-[100vh] w-[100vw] text-lg text-gray-500">This flipbook is not available for public access.</div>
+                <div className="flex items-center justify-center h-[100vh] w-[100vw] text-lg text-gray-500">This flipbook is no longer available.</div>
             )}
         </>
     );

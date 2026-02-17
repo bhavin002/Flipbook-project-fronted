@@ -8,6 +8,86 @@ import { toast } from 'sonner';
 import { PlanCardSkeleton, TabContentSkeleton } from '@/utils/Skeleton';
 import ConfirmationDialog from '@/utils/ConfirmationDialog';
 
+// Get plan description based on plan name
+const getPlanDescription = (planName) => {
+    if (planName === 'Starter') {
+        return 'Get started with digital publishing create and share flipbooks in minutes.';
+    }
+    if (planName === 'Growth') {
+        return 'Unlock advanced tools to design, brand, and analyze your interactive flipbooks.';
+    }
+    if (planName === 'Pro') {
+        return 'For teams and agencies that need unlimited publishing, branding, and control.';
+    }
+    return '';
+};
+
+// Static features mapping based on plan price
+const getStaticFeatures = (planName, price) => {
+
+    // Plan 2 - Basic Plan ($129)
+    if (planName === 'Starter') {
+        return [
+            '100 Flipbooks',
+            '5 Bookshelves',
+            '100 Pages allowed per book',
+            'Custom Domain',
+            'Domain Restriction',
+            'Send Email',
+            'Advanced customization & design tools',
+            'Analytics & engagement stats'
+        ];
+    }
+
+    // Plan 3 - Professional Plan ($249)
+    if (planName === 'Growth') {
+        return [
+            '200 Flipbooks',
+            '20 Bookshelves',
+            '200 Pages allowed per book',
+            'Custom Domain',
+            'Domain Restriction',
+            'Send Email',
+            'All interactive elements unlocked',
+            'Advanced customization & design tools',
+            'Private & password-protected sharing',
+            'Embed flipbooks anywhere',
+            'Analytics & engagement stats',
+            'Bookshelves & profile page',
+            'Priority support'
+        ];
+    }
+
+    // Plan 4 - Enterprise/Ultimate Plan ($399)
+    if (planName === 'Pro') {
+        return [
+            '300 Flipbooks',
+            '50 Bookshelves',
+            '500 Pages allowed per book',
+            'Teammate flow allow',
+            'Custom Domain',
+            'Domain Restriction',
+            'Send Email',
+            'All interactive elements unlocked',
+            'Advanced customization & design tools',
+            'Private & password-protected sharing',
+            'Embed flipbooks anywhere',
+            'Analytics & engagement stats',
+            'Team collaboration',
+            'Bookshelves & profile page',
+            'Priority support'
+        ];
+    }
+
+    // Default features if plan doesn't match
+    return [
+        'Custom Domain',
+        'Domain Restriction',
+        'Send Email',
+        'Advanced customization & design tools'
+    ];
+};
+
 export default function SubscriptionPlans({ showReactivationBanner = true }) {
     const [isLoading, setIsLoading] = useState(false);
     const [plans, setPlans] = useState([]);
@@ -52,12 +132,15 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
 
         const processedPlans = sortedPlans.map(plan => {
             const planId = plan.name.toLowerCase().replace(/\s+/g, '-');
+            // Use static features instead of backend features
+            const staticFeatures = getStaticFeatures(plan.name, plan.rate);
+            const description = getPlanDescription(plan.name);
             return {
                 id: planId,
                 title: plan.name,
                 price: `$${plan.rate}`,
-                billedAs: 'Lifetime Deal',
-                features: plan.features || [],
+                description: description,
+                features: staticFeatures,
                 planId: plan._id,
                 buttonLabel: plan.buttonLabel,
                 action: plan.action,
@@ -88,8 +171,8 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
             setReactivatingPlan(true);
             const response = await reactiveSubscription();
             if (!response.data.isRequiredToCheckout) {
-                toast.success("Subscription reactivated", {
-                    description: response.data.message || "Your subscription has been reactivated."
+                toast.success("Lifetime Deal reactivated", {
+                    description: response.data.message || "Your lifetime deal has been reactivated."
                 });
                 const plansData = await getAllPlans();
                 setPlans(plansData.data.plans || []);
@@ -158,8 +241,8 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
             }
             if (action === "cancel") {
                 const response = await cancelSubscription();
-                toast.success("Subscription cancelled", {
-                    description: response.data.message || "Your subscription has been cancelled."
+                toast.success("Lifetime Deal cancelled", {
+                    description: response.data.message || "Your lifetime deal has been cancelled."
                 });
                 const plansData = await getAllPlans();
                 setPlans(plansData.data.plans || []);
@@ -168,8 +251,8 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
             if (action === "reactive") {
                 const response = await reactiveSubscription();
                 if (!response.data.isRequiredToCheckout) {
-                    toast.success("Subscription reactivated", {
-                        description: response.data.message || "Your subscription has been reactivated."
+                    toast.success("Lifetime Deal reactivated", {
+                        description: response.data.message || "Your lifetime deal has been reactivated."
                     });
                     const plansData = await getAllPlans();
                     setPlans(plansData.data.plans || []);
@@ -246,18 +329,7 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                 </div>
             )}
 
-            {/* <div className="flex justify-center gap-4 mb-8">
-                <span className={`font-medium ${!isYearly ? 'text-violet-600' : 'text-gray-500'}`}>Monthly</span>
-                <Switch
-                    checked={isYearly}
-                    onCheckedChange={setIsYearly}
-                    className="data-[state=checked]:bg-violet-600"
-                    disabled={isLoading}
-                />
-                <span className={`font-medium ${isYearly ? 'text-violet-600' : 'text-gray-500'}`}>Yearly</span>
-            </div> */}
-
-            <div className="hidden lg:grid lg:grid-cols-3 gap-6">
+            <div className="hidden lg:grid lg:grid-cols-3 gap-8 mb-8">
                 {isLoading ? (
                     Array(3).fill(0).map((_, index) => (
                         <PlanCardSkeleton key={index} />
@@ -266,7 +338,7 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                     activePlans.map((plan, index) => (
                         <div
                             key={index}
-                            className={`border rounded-lg p-6 flex flex-col h-full relative ${
+                            className={`border rounded-lg p-8 flex flex-col h-full relative ${
                                 plan.isCurrentPlan
                                     ? 'border-violet-500 bg-violet-50/30 shadow-md'
                                     : 'border-gray-200'
@@ -281,13 +353,18 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                                 </Badge>
                             )}
 
-                            <h3 className="text-xl font-bold mb-1">{plan.title}</h3>
-                            <div className="mb-6">
-                                <span className="text-3xl font-bold">{plan.price}</span>
-                                <p className="text-sm text-gray-500 mt-1">{plan.billedAs}</p>
-                            </div>
+                            <h3 className="text-2xl font-bold mb-3">{plan.title}</h3>
+                            {plan.price && (
+                                <div className="mb-3">
+                                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                                </div>
+                            )}
+                            {plan.description && (
+                                <p className="text-gray-600 mb-6 text-base">{plan.description}</p>
+                            )}
 
                             <Button
+                                className="mb-2 text-base py-6"
                                 onClick={() => handleUpgrade(plan.planId, plan.action)}
                                 disabled={upgradeLoading === plan.planId || plan.action === "none"}
                             >
@@ -300,16 +377,17 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                                     plan.buttonLabel || 'Upgrade'
                                 )}
                             </Button>
+                            <p className="text-center text-gray-500 text-sm mb-8">Lifetime access</p>
 
                             {plan.features && plan.features.length > 0 && (
-                                <div className="space-y-3">
+                                <ul className="text-[#64676C] ml-0 space-y-3 mb-4 list-none">
                                     {plan.features.map((feature, idx) => (
-                                        <div key={idx} className="flex items-start gap-2">
-                                            <Check className="text-primary h-5 w-5 mt-0.5 flex-shrink-0" />
-                                            <span className="text-sm">{feature}</span>
-                                        </div>
+                                        <li key={idx} className="flex items-start gap-3">
+                                            <Check className="text-[#7c3aed] h-5 w-5 mt-0.5 flex-shrink-0" />
+                                            <span className="text-base">{feature}</span>
+                                        </li>
                                     ))}
-                                </div>
+                                </ul>
                             )}
                         </div>
                     ))
@@ -324,12 +402,12 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                     </div>
                 ) : activePlans.length > 0 ? (
                     <Tabs defaultValue={activePlans[0]?.id} value={activeTab} onValueChange={setActiveTab} className="w-full">
-                        <TabsList className="grid gap-2 mb-6" style={{ gridTemplateColumns: `repeat(${activePlans.length}, 1fr)` }}>
+                        <TabsList className="grid gap-2 mb-8" style={{ gridTemplateColumns: `repeat(${activePlans.length}, 1fr)` }}>
                             {activePlans.map((plan) => (
                                 <TabsTrigger
                                     key={plan.id}
                                     value={plan.id}
-                                    className={`capitalize relative ${
+                                    className={`capitalize relative text-base ${
                                         plan.isCurrentPlan ? 'data-[state=active]:bg-violet-600 data-[state=active]:text-white' : ''
                                     }`}
                                 >
@@ -345,7 +423,7 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                             <TabsContent
                                 key={plan.id}
                                 value={plan.id}
-                                className={`border rounded-lg p-6 relative ${
+                                className={`border rounded-lg p-8 relative ${
                                     plan.isCurrentPlan
                                         ? 'border-violet-500 bg-violet-50/30'
                                         : 'border-gray-200'
@@ -361,14 +439,18 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                                     </Badge>
                                 )}
 
-                                <h3 className="text-xl font-bold mb-1">{plan.title}</h3>
-                                <div className="mb-6">
-                                    <span className="text-3xl font-bold">{plan.price}</span>
-                                    <p className="text-sm text-gray-500 mt-1">{plan.billedAs}</p>
-                                </div>
+                                <h3 className="text-2xl font-bold mb-3">{plan.title}</h3>
+                                {plan.price && (
+                                    <div className="mb-3">
+                                        <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                                    </div>
+                                )}
+                                {plan.description && (
+                                    <p className="text-gray-600 mb-6 text-base">{plan.description}</p>
+                                )}
 
                                 <Button
-                                    className="w-full mb-6"
+                                    className="w-full mb-2 text-base py-6"
                                     onClick={() => handleUpgrade(plan.planId, plan.action)}
                                     disabled={upgradeLoading === plan.planId || plan.action === "none"}
                                 >
@@ -381,16 +463,17 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                                         plan.buttonLabel || 'Upgrade'
                                     )}
                                 </Button>
+                                <p className="text-center text-gray-500 text-sm mb-8">Lifetime access</p>
 
                                 {plan.features && plan.features.length > 0 && (
-                                    <div className="space-y-3">
+                                    <ul className="text-[#64676C] ml-0 space-y-3 mb-4 list-none">
                                         {plan.features.map((feature, idx) => (
-                                            <div key={idx} className="flex items-start gap-2">
-                                                <Check className="text-primary h-5 w-5 mt-0.5 flex-shrink-0" />
-                                                <span className="text-sm">{feature}</span>
-                                            </div>
+                                            <li key={idx} className="flex items-start gap-3">
+                                                <Check className="text-[#7c3aed] h-5 w-5 mt-0.5 flex-shrink-0" />
+                                                <span className="text-base">{feature}</span>
+                                            </li>
                                         ))}
-                                    </div>
+                                    </ul>
                                 )}
                             </TabsContent>
                         ))}
@@ -405,8 +488,8 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
             <ConfirmationDialog
                 isConfirmModalOpen={confirmDialog.open}
                 setIsConfirmModalOpen={(open) => setConfirmDialog(prev => ({ ...prev, open }))}
-                title="Cancel Subscription"
-                description="Are you sure you want to cancel your subscription?"
+                title="Cancel Lifetime Deal"
+                description="Are you sure you want to cancel your lifetime deal?"
                 onConfirm={handleConfirmCancel}
                 onCancel={handleCancelDialog}
                 isLoading={upgradeLoading === confirmDialog.planId}

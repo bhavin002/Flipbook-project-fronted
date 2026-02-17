@@ -4,6 +4,7 @@ import { useSidebar } from '@/components/ui/sidebar';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getData } from '@/utils/datas';
 import { useAuth } from '@/context/AuthContext';
+import { useTrialExpiration } from '@/hooks/useTrialExpiration';
 
 function NavItem({ item, isSelected, onClick, onMouseEnter, onMouseLeave }) {
     const { icon: Icon, label } = item;
@@ -30,6 +31,7 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
     const defaultRoutes = getData('defaultRoutes');
     const navItems = getData('navItems');
     const { permissions } = useAuth();
+    const { shouldShowBanner } = useTrialExpiration();
 
     const filteredNavItems = navItems.filter(item => {
         if (!item.permission) return true;
@@ -113,7 +115,7 @@ export default function SidebarNavigation({ setIsSidebarOpen }) {
     };
 
     return (
-        <div className="flex h-[calc(100vh-64px)] w-[75px] flex-col items-center justify-between bg-primary py-4 z-[11]">
+        <div className={`flex ${shouldShowBanner ? "h-[calc(100vh-112px)]" : "h-[calc(100vh-64px)]"} w-[75px] flex-col items-center justify-between bg-primary py-4 z-[11]`}>
             <div className="items-center flex flex-col">
                 {filteredNavItems.slice(0, 1).map(item => (
                     <NavItem

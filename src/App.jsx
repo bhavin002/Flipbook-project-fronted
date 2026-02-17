@@ -99,7 +99,7 @@ const brandingRoutes = [
 const settingsRoutes = [
   { path: "workspace", element: <SettingWorkspace />, permission: "settings" },
   // { path: "general", element: <SettingGeneral /> },
-  { path: "billing/subscription", element: <SettingBillingSubscription />, permission: "billing" },
+  { path: "billing/lifetime-deal", element: <SettingBillingSubscription />, permission: "billing" },
   { path: "billing/invoice", element: <SettingBillingInvoices />, permission: "billing" },
   { path: "teammates", element: <SettingTeammates />, permission: "invite_teammate" },
   { path: "readers", element: <SettingReaders />, permission: "settings" },

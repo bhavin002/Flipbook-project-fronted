@@ -318,7 +318,7 @@ export default function HomeSidebarPanel() {
                             </Button>}
                             {permissions.upgradePlan && <Button
                                 className="w-full bg-gradient-to-r from-purple-700 to-indigo-800 hover:from-purple-600 hover:to-indigo-700"
-                                onClick={() => navigate('/settings/billing/subscription')}
+                                onClick={() => navigate('/settings/billing/lifetime-deal')}
                             >
                                 <Crown />Upgrade
                             </Button>}

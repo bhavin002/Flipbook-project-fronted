@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 import { getData } from '@/utils/datas';
 import useWindowWidth from '@/hooks/use-window-width';
+import { useTrialExpiration } from "@/hooks/useTrialExpiration";
 
 function NavItem({ item, isSelected, onClick }) {
     const { icon: Icon, label } = item;
@@ -212,8 +213,10 @@ export default function EditorSidebarNavigation({ currentView, setCurrentView, m
         }
     }, [selectedSubMenu])
 
+    const { shouldShowBanner } = useTrialExpiration();
+
     return (
-        <div className="flex h-[calc(100vh-64px)] w-[75px] flex-col items-center bg-primary py-4 z-[11] ">
+        <div className={`flex ${shouldShowBanner ? "h-[calc(100vh-104px)]" : "h-[calc(100vh-64px)]"} w-[75px] flex-col items-center bg-primary py-4 z-[11] `}>
             <div className="space-y-3 w-full">
                 {navItems.map(item => (
                     <NavItem

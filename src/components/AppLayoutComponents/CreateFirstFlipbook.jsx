@@ -5,9 +5,12 @@ import ProfileDropDownCom from "./ProfileDropDownCom";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import LoadingButton from "@/utils/LoadingButton";
 import { useFlipbookCreation } from "@/hooks/useFlipbookCreation";
+import { useTrialExpiration } from "@/hooks/useTrialExpiration";
+import TrialExpirationBanner from "./TrialExpirationBanner";
 
 export default function CreateFirstFlipbook() {
     const navigate = useNavigate();
+    const { shouldShowBanner } = useTrialExpiration();
 
     const {
         uploadDialogOpen,
@@ -46,8 +49,9 @@ export default function CreateFirstFlipbook() {
                     </div>
                 </div>
             </header>
+            <TrialExpirationBanner />
 
-            <div className="max-md:flex mt-[64px] flex overflow-y-auto h-[calc(100vh-64px)]">
+            <div className={`max-md:flex ${shouldShowBanner ? "mt-[104px]" : "mt-[64px]"} flex overflow-y-auto ${shouldShowBanner ? "h-[calc(100vh-104px)]" : "h-[calc(100vh-64px)]"}`}>
                 <div className="flex items-center justify-center w-full">
                     <div className="w-full bg-white flex h-full overflow-auto flex-col">
                         <div className='flex flex-col overflow-y-auto max-md:px-3'>

@@ -1,8 +1,11 @@
 import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom"
 import { Outlet, useNavigate } from "react-router-dom";
+import TrialExpirationBanner from "@/components/AppLayoutComponents/TrialExpirationBanner";
+import { useTrialExpiration } from "@/hooks/useTrialExpiration";
 
 export default function ScratchAppLayout() {
     const navigate = useNavigate();
+    const { shouldShowBanner } = useTrialExpiration();
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -24,8 +27,9 @@ export default function ScratchAppLayout() {
                     </div>
                 </div>
             </header>
+            <TrialExpirationBanner  />
 
-            <div className="flex-1 max-md:flex mt-[64px] flex overflow-y-auto">
+            <div className={`flex-1 max-md:flex ${shouldShowBanner ? "mt-[104px]" : "mt-[64px]"} flex overflow-y-auto`}>
                 <Outlet />
             </div>
         </div>

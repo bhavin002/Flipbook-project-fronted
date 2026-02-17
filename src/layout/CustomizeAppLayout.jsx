@@ -5,10 +5,13 @@ import { Button } from "@/components/ui/button";
 import { useViewMode } from "@/context/ViewModeContext";
 import { Eye, Share2 } from "lucide-react";
 import PreviewDialog from "@/components/EditorLayoutComponents/Preview/PreviewDialog";
+import TrialExpirationBanner from "@/components/AppLayoutComponents/TrialExpirationBanner";
+import { useTrialExpiration } from "@/hooks/useTrialExpiration";
 
 export default function CustomizeAppLayout() {
     const { activeTab, setActiveTab } = useViewMode();
     const navigate = useNavigate();
+    const { shouldShowBanner } = useTrialExpiration();
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
     const { id } = useParams();
 
@@ -67,8 +70,9 @@ export default function CustomizeAppLayout() {
                     </div>
                 </div>
             </header>
+            <TrialExpirationBanner  />
 
-            <div className="flex-1 max-md:flex mt-[64px] flex overflow-y-auto">
+            <div className={`flex-1 max-md:flex ${shouldShowBanner ? "mt-[104px]" : "mt-[64px]"} flex overflow-y-auto`}>
                 <Outlet />
             </div>
             <PreviewDialog

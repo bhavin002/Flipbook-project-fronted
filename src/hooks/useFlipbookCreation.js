@@ -48,7 +48,7 @@ export const useFlipbookCreation = () => {
     const uploadSingleFile = async (file) => {
         resetUpload();
         setUploadDialogOpen(true);
-        setProgressText("Starting upload...");
+        setProgressText("Uploading your file...");
 
         try {
             // 1. Get Presigned URL
@@ -62,7 +62,7 @@ export const useFlipbookCreation = () => {
                 setProgressText(`Uploading: ${percent}%`);
             });
 
-            setProgressText("We're working our magic... Optimizing your flipbook!");
+            setProgressText("Generating your flipbook...");
             
             // 3. Create Flipbook
             const genRes = await CreateFlipbookFromR2Api({
@@ -173,7 +173,6 @@ export const useFlipbookCreation = () => {
             setProgressText("Almost there! Generating your flipbooks...");
 
             // 2. Create Flipbooks
-            // We'll try sending all keys with mode SEPARATELY
             const payload = {
                 pdfKey: uploadedKeys, // Array of keys
                 mode: FlipbookUploadMode.SEPARATELY,

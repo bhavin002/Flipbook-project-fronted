@@ -24,9 +24,12 @@ import SessionConflictDialog from "@/components/EditorLayoutComponents/SessionCo
 import SaveConfirmationDialog from "@/components/EditorLayoutComponents/SaveConfirmationDialog";
 import dynamicFontManager from '@/utils/dynamicFontManager';
 import { useFlipbookSettings } from "@/context/FlipbookSettingsProvider";
+import TrialExpirationBanner from "@/components/AppLayoutComponents/TrialExpirationBanner";
+import { useTrialExpiration } from "@/hooks/useTrialExpiration";
 
 export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
     const { setLatestSettings, setLatestJson } = useFlipbookSettings();
+    const { shouldShowBanner } = useTrialExpiration();
     const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
     const [isFormCustomize, setIsFormCustomize] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -560,11 +563,12 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                         </div>
                     </div>
                 </header>
+                <TrialExpirationBanner  />
 
                 {mainStage.length > 0 && <>
-                    <div className="flex-1 max-lg:flex lg:mt-[64px] max-lg:mt-[110px] max-lg:mb-[80px] overflow-y-auto">
+                    <div className={`flex-1 max-lg:flex ${shouldShowBanner ? "lg:mt-[104px]" : "lg:mt-[64px]"} ${shouldShowBanner ? "max-lg:mt-[150px]" : "max-lg:mt-[110px]"} max-lg:mb-[80px] overflow-y-auto`}>
                         <div className="flex flex-1">
-                            <div className="max-lg:hidden relative lg:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
+                            <div className={`max-lg:hidden relative lg:flex ${shouldShowBanner ? "h-[calc(var(--vh, 1vh) * 100 - 104px)]" : "h-[calc(var(--vh, 1vh) * 100 - 64px)]"} flex-col items-center justify-between overflow-hidden`}>
                                 <SidebarProvider value={{ selectedItem, setSelectedItem, width: "23rem" }}>
                                     <EditorSidebarNavigation setIsShapeDrawerOpen={setIsShapeDrawerOpen} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} setSelectedShape={setSelectedShape} selectedSubMenu={selectedSubMenu} setSelectedSubMenu={setSelectedSubMenu} selectedIndex={selectedIndex} setSelectedItem={setSelectedItem} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} />
                                     <AppSidebar setIsEditorDrawerOpen={setIsEditorDrawerOpen} setMainStage={setMainStage} currentView={currentView} setCurrentView={setCurrentView} mainStage={mainStage} selectedIndex={selectedIndex} stageWidth={stageWidth} stageHeight={stageHeight} />
@@ -572,7 +576,7 @@ export default function EditorAppLayout({ isSidebarOpen, setIsSidebarOpen }) {
                                 </SidebarProvider>
                             </div>
 
-                            <div className="flex flex-1 flex-col lg:max-h-[calc(100vh-64px)] lg:overflow-y-auto">
+                            <div className={`flex flex-1 flex-col ${shouldShowBanner ? "lg:max-h-[calc(100vh-104px)]" : "lg:max-h-[calc(100vh-64px)]"} lg:overflow-y-auto`}>
                                 <Outlet context={{ setIsShapeDrawerOpen, isSidebarOpen, selectedShape, selectedIndex, setSelectedIndex, mainStage, setMainStage, selectedSubMenu, setSelectedSubMenu, isInitialLoad, setIsInitialLoad, isPublishModalOpen, setIsPublishModalOpen, pageCounter, setPageCounter, imageLoadCounterPageWise, setImageLoadCounterPageWise, isFormCustomize, isAnyChangeMadeInStage, setIsAnyChangeMadeInStage, stageWidth, stageHeight, flipbookId: id, setLatestSettings, setLatestJson }} />
                             </div>
                         </div>

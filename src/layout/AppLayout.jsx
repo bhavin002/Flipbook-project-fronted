@@ -11,6 +11,8 @@ import CreateDropDownCom from "@/components/AppLayoutComponents/CreateDropDownCo
 import { AppSidebar } from "@/utils/AppSidebar";
 import BottomSidebarNavigation from "@/components/AppLayoutComponents/BottomSidebarNavigation";
 import { useAuth } from "@/context/AuthContext";
+import TrialExpirationBanner from "@/components/AppLayoutComponents/TrialExpirationBanner";
+import { useTrialExpiration } from "@/hooks/useTrialExpiration";
 
 export default function AppLayout({ setIsSidebarOpen }) {
     const [searchValue, setSearchValue] = useState("");
@@ -18,6 +20,7 @@ export default function AppLayout({ setIsSidebarOpen }) {
     const navigate = useNavigate();
     const location = useLocation();
     const { permissions } = useAuth();
+    const { shouldShowBanner } = useTrialExpiration();
 
     // Check if current path should show search and filter components
     const shouldShowSearchAndFilter = () => {
@@ -69,17 +72,18 @@ export default function AppLayout({ setIsSidebarOpen }) {
                         </div>
                     )}
                 </header>
+                <TrialExpirationBanner hasSearch={shouldShowSearchAndFilter()} />
 
-                <div className={`flex-1 z-0 max-md:flex md:mt-[64px] ${shouldShowSearchAndFilter() ? "max-md:mt-[116px]" : "max-md:mt-[68px]"} max-md:mb-[80px] overflow-y-auto`}>
+                <div className={`flex-1 z-0 max-md:flex ${shouldShowBanner ? "md:mt-[104px]" : "md:mt-[64px]"} ${shouldShowSearchAndFilter() ? shouldShowBanner ? "max-md:mt-[156px]" : "max-md:mt-[116px]" : shouldShowBanner ? "max-md:mt-[104px]" : "max-md:mt-[68px]"} max-md:mb-[80px] overflow-y-auto`}>
                     <div className="flex flex-1">
-                        <div className="hidden relative md:flex h-[calc(var(--vh, 1vh) * 100 - 64px)] flex-col items-center justify-between overflow-hidden">
+                        <div className={`hidden relative md:flex ${shouldShowBanner ? "h-[calc(var(--vh, 1vh) * 100 - 104px)]" : "h-[calc(var(--vh, 1vh) * 100 - 64px)]"} flex-col items-center justify-between overflow-hidden`}>
                             <SidebarProvider value={{ selectedItem, setSelectedItem, width: "15rem" }}>
                                 <SidebarNavigation setIsSidebarOpen={setIsSidebarOpen} />
                                 <AppSidebar />
                             </SidebarProvider>
                         </div>
 
-                        <div className="flex flex-1 flex-col md:max-h-[calc(100vh-64px)] md:overflow-y-auto">
+                        <div className={`flex flex-1 flex-col ${shouldShowBanner ? "md:max-h-[calc(100vh-104px)]" : "md:max-h-[calc(100vh-64px)]"} md:overflow-y-auto`}>
                             <Outlet />
                         </div>
                     </div>

@@ -1,8 +1,11 @@
 import ProfileDropDownCom from "../components/AppLayoutComponents/ProfileDropDownCom"
 import { Outlet, useNavigate } from "react-router-dom";
+import TrialExpirationBanner from "@/components/AppLayoutComponents/TrialExpirationBanner";
+import { useTrialExpiration } from "@/hooks/useTrialExpiration";
 
 export default function UploadFilesLayout() {
     const navigate = useNavigate();
+    const { shouldShowBanner } = useTrialExpiration();
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -24,8 +27,9 @@ export default function UploadFilesLayout() {
                     </div>
                 </div>
             </header>
+            <TrialExpirationBanner  />
 
-            <div className="max-md:flex mt-[64px] flex overflow-y-auto h-[calc(100vh-64px)]">
+            <div className={`max-md:flex ${shouldShowBanner ? "mt-[104px]" : "mt-[64px]"} flex overflow-y-auto ${shouldShowBanner ? "h-[calc(100vh-104px)]" : "h-[calc(100vh-64px)]"}`}>
                 <Outlet />
             </div>
         </div>
