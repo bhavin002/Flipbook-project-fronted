@@ -198,6 +198,21 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
 
     const activePlans = processPlans();
 
+    // Determine the recommended plan (center plan)
+    const getRecommendedPlanIndex = () => {
+        if (activePlans.length === 0) return -1;
+        // For 3 plans, the middle one (index 1) is recommended
+        // For other odd numbers, use the middle index
+        if (activePlans.length % 2 === 1) {
+            return Math.floor(activePlans.length / 2);
+        }
+        // For even numbers, prefer the second-to-last (e.g., for 4 plans, index 1)
+        return Math.floor(activePlans.length / 2) - 1;
+    };
+
+    const recommendedPlanIndex = getRecommendedPlanIndex();
+    const isRecommendedPlan = (index) => index === recommendedPlanIndex;
+
     useEffect(() => {
         if (activePlans.length > 0 && !activePlans.find(p => p.id === activeTab)) {
             setActiveTab(activePlans[0].id);
@@ -340,7 +355,9 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                             key={index}
                             className={`border rounded-lg p-8 flex flex-col h-full relative ${
                                 plan.isCurrentPlan
-                                    ? 'border-violet-500 bg-violet-50/30 shadow-md'
+                                    ? 'border-violet-500'
+                                    : isRecommendedPlan(index)
+                                    ? 'border-violet-500'
                                     : 'border-gray-200'
                             }`}
                         >
@@ -352,15 +369,23 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                                     Current Plan
                                 </Badge>
                             )}
+                            {!plan.isCurrentPlan && isRecommendedPlan(index) && (
+                                <Badge
+                                    className="absolute -top-3 left-1/2 -translate-x-1/2 bg-violet-600 text-white px-3 py-1 text-xs font-semibold shadow-sm"
+                                >
+                                    Recommended
+                                </Badge>
+                            )}
 
                             <h3 className="text-2xl font-bold mb-3">{plan.title}</h3>
                             {plan.price && (
                                 <div className="mb-3">
                                     <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                                    <span className="ml-2 text-sm font-medium text-black">one time</span>
                                 </div>
                             )}
                             {plan.description && (
-                                <p className="text-gray-600 mb-6 text-base">{plan.description}</p>
+                                <p className="text-gray-600 mb-6 text-base min-h-[72px]">{plan.description}</p>
                             )}
 
                             <Button
@@ -403,12 +428,13 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                 ) : activePlans.length > 0 ? (
                     <Tabs defaultValue={activePlans[0]?.id} value={activeTab} onValueChange={setActiveTab} className="w-full">
                         <TabsList className="grid gap-2 mb-8" style={{ gridTemplateColumns: `repeat(${activePlans.length}, 1fr)` }}>
-                            {activePlans.map((plan) => (
+                            {activePlans.map((plan, index) => (
                                 <TabsTrigger
                                     key={plan.id}
                                     value={plan.id}
                                     className={`capitalize relative text-base ${
-                                        plan.isCurrentPlan ? 'data-[state=active]:bg-violet-600 data-[state=active]:text-white' : ''
+                                        plan.isCurrentPlan ? 'data-[state=active]:bg-violet-600 data-[state=active]:text-white' : 
+                                        isRecommendedPlan(index) ? 'data-[state=active]:bg-violet-600 data-[state=active]:text-white' : ''
                                     }`}
                                 >
                                     {plan.title}
@@ -419,13 +445,15 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                             ))}
                         </TabsList>
 
-                        {activePlans.map((plan) => (
+                        {activePlans.map((plan, index) => (
                             <TabsContent
                                 key={plan.id}
                                 value={plan.id}
                                 className={`border rounded-lg p-8 relative ${
                                     plan.isCurrentPlan
-                                        ? 'border-violet-500 bg-violet-50/30'
+                                        ? 'border-violet-500'
+                                        : isRecommendedPlan(index)
+                                        ? 'border-violet-500'
                                         : 'border-gray-200'
                                 }`}
                             >
@@ -438,15 +466,24 @@ export default function SubscriptionPlans({ showReactivationBanner = true }) {
                                         Current Plan
                                     </Badge>
                                 )}
+                                {!plan.isCurrentPlan && isRecommendedPlan(index) && (
+                                    <Badge
+                                        variant="secondary"
+                                        className="absolute -top-3 left-1/2 -translate-x-1/2 bg-violet-600 text-white px-3 py-1 text-xs font-semibold shadow-sm"
+                                    >
+                                        Recommended
+                                    </Badge>
+                                )}
 
                                 <h3 className="text-2xl font-bold mb-3">{plan.title}</h3>
                                 {plan.price && (
                                     <div className="mb-3">
                                         <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
+                                        <span className="ml-2 text-sm font-medium text-black">one time</span>
                                     </div>
                                 )}
                                 {plan.description && (
-                                    <p className="text-gray-600 mb-6 text-base">{plan.description}</p>
+                                    <p className="text-gray-600 mb-6 text-base min-h-[72px]">{plan.description}</p>
                                 )}
 
                                 <Button
