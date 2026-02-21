@@ -1,0 +1,36 @@
+{
+  "appId": "com.flipdrag.app",
+  "appName": "FlipDrag",
+  "webDir": "dist",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "minVersion": 22,
+    "targetVersion": 33
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "launchAutoHide": true,
+      "backgroundColor": "#ffffff",
+      "androidSplashResourceName": "splash",
+      "androidScaleType": "CENTER_CROP",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "dark",
+      "backgroundColor": "#000000"
+    },
+    "Camera": {
+      "permissions": {
+        "camera": "This app needs camera access to take photos for your flipbooks.",
+        "photos": "This app needs photo library access to select images for your flipbooks."
+      }
+    },
+    "Filesystem": {
+      "androidStorageLocation": "EXTERNAL_STORAGE"
+    }
+  }
+}
+

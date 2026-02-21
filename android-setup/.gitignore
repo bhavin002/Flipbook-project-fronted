@@ -1,0 +1,15 @@
+# Keystore files (NEVER commit these!)
+*.keystore
+*.jks
+keystore.properties
+
+# Android build files
+android/app/build/
+android/.gradle/
+android/local.properties
+
+# Generated assets (optional - you may want to commit these)
+# android/app/src/main/res/mipmap-*/
+# android/app/src/main/res/drawable-*/
+
+

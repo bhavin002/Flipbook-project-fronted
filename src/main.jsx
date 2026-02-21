@@ -6,6 +6,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { Toaster } from "@/components/ui/sonner";
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { PostHogProvider } from '@posthog/react'
+import { initializeCapacitor } from '@/utils/capacitor'
+
+// Initialize Capacitor for mobile platforms
+// Why: Sets up native plugins, status bar, splash screen, etc.
+initializeCapacitor().catch(console.error);
 
 const options = {
   api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
